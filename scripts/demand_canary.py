@@ -55,6 +55,36 @@ def default_gh(*args: str) -> str:
     return p.stdout
 
 
+DEMAND_SCOPE = ("data/", "docs/demand/")
+
+
+def trusted_autonomy(base: str, repo: Path = REPO) -> Path:
+    """The switch file as committed on `base` (main), never the PR's own tree: a PR could otherwise set its own
+    flag true and merge itself (review BLOCK of #1809, 2026-11-19). Unreadable → a path that does not exist →
+    off."""
+    p = subprocess.run(["git", "show", f"{base}:jr/autonomy.json"], cwd=repo, capture_output=True, text=True)
+    out = Path(os.environ.get("RUNNER_TEMP") or "/tmp") / "jr-autonomy-from-main.json"
+    if p.returncode != 0:
+        return out.with_name("jr-autonomy-unreadable.json")
+    out.write_text(p.stdout)
+    return out
+
+
+def changed_paths(base: str, head: str, repo: Path = REPO) -> list[str] | None:
+    """Every path the PR changes against its merge base with `base`, or None when git cannot say."""
+    p = subprocess.run(["git", "diff", "--name-only", "--no-renames", f"{base}...{head}"], cwd=repo,
+                       capture_output=True, text=True)
+    return [l for l in p.stdout.splitlines() if l] if p.returncode == 0 else None
+
+
+def out_of_scope(paths: list[str] | None, scope: tuple) -> list[str] | None:
+    """The changed paths a canary may not merge (anything outside `scope`: code, workflows, the switch file).
+    None when the list is unreadable — no merge on a guess."""
+    if paths is None:
+        return None
+    return [p for p in paths if not any(p == s or p.startswith(s) for s in scope)]
+
+
 def switches(autonomy_path: Path, env: dict, flag: str = FLAG, variable: str = VARIABLE) -> tuple[bool, str]:
     """(on, why) for the two switches: the reviewed file flag AND the kill variable. The tick canary
     (scripts/tick_canary.py) uses the same rule with its own flag and variable."""
@@ -112,7 +142,7 @@ def quotes_verdict(base: str, fetch=None, repo: Path = REPO) -> tuple[str, list[
 
 def decide(*, pr: int, head: str, branch: str, base: str, repo_slug: str, today: str, env: dict,
            autonomy_path: Path = AUTONOMY, gh=default_gh, fetch=None, repo: Path = REPO, dry_run: bool = False,
-           out=None) -> str:
+           out=None, paths=None) -> str:
     """Run the decisions D1-D6 and act; returns the one-word outcome: off | not_demand | capped | fail |
     inconclusive | merge_requested | dry_run."""
     out = out or sys.stdout
@@ -125,6 +155,11 @@ def decide(*, pr: int, head: str, branch: str, base: str, repo_slug: str, today:
         say(f"D3 {branch!r} is not a {BRANCH_PREFIX}* branch: not a demand PR")
         return "not_demand"
     say(f"D3 demand PR #{pr} on {branch} at {head}")
+    bad = out_of_scope(changed_paths(base, head, repo) if paths is None else paths, DEMAND_SCOPE)
+    if bad is None or bad:
+        say("D3 scope: " + ("changed paths unreadable" if bad is None else
+                            f"changes outside {', '.join(DEMAND_SCOPE)}: {', '.join(bad[:5])}") + " — never merged by a canary")
+        return "out_of_scope"
     done = merged_today(gh, repo_slug, today)
     if len(done) >= DAILY_CAP:
         say(f"D4 daily cap: {len(done)} demand PR(s) merged today ({', '.join(done)}); this one waits for tomorrow")
@@ -170,7 +205,7 @@ def main(argv=None) -> int:
     base = a.base or (f"origin/{os.environ['GITHUB_BASE_REF']}" if os.environ.get("GITHUB_BASE_REF") else "origin/main")
     try:
         outcome = decide(pr=a.pr, head=a.head, branch=a.branch or "", base=base, repo_slug=a.repo_slug, today=a.today,
-                         env=dict(os.environ), dry_run=a.dry_run)
+                         env=dict(os.environ), dry_run=a.dry_run, autonomy_path=trusted_autonomy(base))
     except Unreadable as e:
         print(f"demand canary: cannot act: {e}", file=sys.stderr)
         return 2

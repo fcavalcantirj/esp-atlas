@@ -33,6 +33,7 @@ import receipt_guard  # noqa: E402
 FLAG, VARIABLE = "tick_automerge", "JR_TICK_AUTOMERGE"
 BRANCH_PREFIX, LABEL = "jr/tick-", "jr-review"
 DAILY_CAP = 1
+TICK_SCOPE = ("data/", "jr/proposed_ledger.json", "jr/board_cooldown.json", "docs/telemetry/")
 Unreadable = demand_canary.Unreadable
 
 
@@ -46,7 +47,7 @@ def pr_labels(gh, repo_slug: str, pr: int) -> list[str]:
 
 def decide(*, pr: int, head: str, branch: str, base: str, repo_slug: str, today: str, env: dict,
            autonomy_path: Path = demand_canary.AUTONOMY, gh=demand_canary.default_gh, api=None, raw=None,
-           repo: Path = REPO, dry_run: bool = False, out=None) -> str:
+           repo: Path = REPO, dry_run: bool = False, out=None, paths=None) -> str:
     out = out or sys.stdout
     say = lambda s: print(s, file=out)  # noqa: E731
     on, why = demand_canary.switches(autonomy_path, env, flag=FLAG, variable=VARIABLE)
@@ -61,6 +62,11 @@ def decide(*, pr: int, head: str, branch: str, base: str, repo_slug: str, today:
         say(f"T3 #{pr} carries no {LABEL} label (an AUTO-routed tick PR merges itself): nothing to do")
         return "not_review"
     say(f"T3 review-routed tick PR #{pr} on {branch} at {head}")
+    bad = demand_canary.out_of_scope(demand_canary.changed_paths(base, head, repo) if paths is None else paths, TICK_SCOPE)
+    if bad is None or bad:
+        say("T3 scope: " + ("changed paths unreadable" if bad is None else
+                            f"changes outside {', '.join(TICK_SCOPE)}: {', '.join(bad[:5])}") + " — never merged by a canary")
+        return "out_of_scope"
     done = demand_canary.merged_today(gh, repo_slug, today, prefix=BRANCH_PREFIX, label=LABEL)
     if len(done) >= DAILY_CAP:
         say(f"T4 daily cap: {len(done)} review-routed tick PR(s) merged today ({', '.join(done)}); this one waits")
@@ -101,7 +107,7 @@ def main(argv=None) -> int:
     base = a.base or (f"origin/{os.environ['GITHUB_BASE_REF']}" if os.environ.get("GITHUB_BASE_REF") else "origin/main")
     try:
         outcome = decide(pr=a.pr, head=a.head, branch=a.branch or "", base=base, repo_slug=a.repo_slug, today=a.today,
-                         env=dict(os.environ), dry_run=a.dry_run)
+                         env=dict(os.environ), dry_run=a.dry_run, autonomy_path=demand_canary.trusted_autonomy(base))
     except Unreadable as e:
         print(f"tick canary: cannot act: {e}", file=sys.stderr)
         return 2

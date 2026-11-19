@@ -65,6 +65,11 @@ def read_verdict(doc) -> dict | None:
     return {"verdict": doc["verdict"], "head": doc["head"].lower(), "findings": findings, "checked": checked}
 
 
+def _defang(text: str) -> str:
+    """No code fence can open inside the human part of a verdict comment."""
+    return str(text).replace("```", "ʼʼʼ")
+
+
 def render_comment(verdict: dict, lane: str) -> str:
     """ONE comment per verdict: the marker, a human line, the findings, and the JSON the canary parses."""
     v = read_verdict(verdict)
@@ -76,12 +81,13 @@ def render_comment(verdict: dict, lane: str) -> str:
         for f in v["findings"]:
             if isinstance(f, dict):
                 where = f"{f.get('file', '?')}" + (f":{f['line']}" if isinstance(f.get("line"), int) else "")
-                lines.append(f"- `{where}` — {f.get('summary', '')}. Failure: {f.get('failure', '')}")
+                lines.append(_defang(f"- `{where}` — {f.get('summary', '')}. Failure: {f.get('failure', '')}"))
         if not v["findings"]:
             lines.append("- (no finding listed: the reviewer could not complete the review; see `checked`)")
     if v["checked"]:
         lines += ["", "Checked: " + ", ".join(str(c) for c in v["checked"])[:600]]
-    lines += ["", "```json", json.dumps({**v, "lane": lane}, sort_keys=True), "```"]
+    # backticks escaped as \u0060 (valid JSON): no text inside the verdict can close or open a fence
+    lines += ["", "```json", json.dumps({**v, "lane": lane}, sort_keys=True).replace("`", "\\u0060"), "```"]
     return "\n".join(lines)
 
 
@@ -89,11 +95,12 @@ def parse_comment(body: str) -> dict | None:
     """The verdict a MARKER comment carries (with its `lane`), or None for any other comment."""
     if not isinstance(body, str) or not body.lstrip().startswith(MARKER):
         return None
-    m = re.search(r"```json\s*(\{.*?\})\s*```", body, re.S)
-    if not m:
+    # the LAST block is the verdict: findings rendered above it may quote anything (review BLOCK of #1809)
+    blocks = re.findall(r"```json\s*(\{.*?\})\s*```", body, re.S)
+    if not blocks:
         return None
     try:
-        doc = json.loads(m.group(1))
+        doc = json.loads(blocks[-1])
     except json.JSONDecodeError:
         return None
     v = read_verdict(doc)
@@ -128,7 +135,9 @@ def candidates(prs: list[dict], comments_by_pr: dict) -> list[dict]:
     out = []
     for pr in prs:
         branch = str(pr.get("headRefName") or "")
-        if pr.get("isDraft") or branch.startswith(SKIP_PREFIXES) or not pr.get("headRefOid"):
+        # a fork's PR never reaches the runner: its own tests would run there with the bot's credentials
+        # (review BLOCK of #1809, 2026-11-19); a human reviews forks
+        if pr.get("isDraft") or pr.get("isCrossRepository") or branch.startswith(SKIP_PREFIXES) or not pr.get("headRefOid"):
             continue
         labels = {(l.get("name") if isinstance(l, dict) else l) for l in (pr.get("labels") or [])}
         if FALLBACK_LABEL in labels:
@@ -182,7 +191,7 @@ def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_ru
     say = lambda s: print(s, file=out)  # noqa: E731
     day = now.astimezone(timezone.utc).date().isoformat()
     prs = json.loads(gh("pr", "list", "--repo", slug, "--state", "open", "--limit", "100",
-                        "--json", "number,headRefOid,headRefName,isDraft,labels,updatedAt") or "[]")
+                        "--json", "number,headRefOid,headRefName,isDraft,labels,updatedAt,isCrossRepository") or "[]")
     comments = {}
     for pr in prs:
         if not pr.get("isDraft") and not str(pr.get("headRefName") or "").startswith(SKIP_PREFIXES):
