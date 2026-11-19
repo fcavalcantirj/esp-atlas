@@ -867,3 +867,44 @@ def test_a_failure_beside_a_canary_that_ran_reruns_the_canary_not_the_failed_job
     retry(gh, _store(tmp_path), tmp_path)
     assert gh.acts() == [("api", "-X", "POST", "repos/o/r/actions/jobs/950/rerun")]
 
+
+# --- Jr never parks a PR on a person (2026-11-19) ----------------------------------------------------------------
+
+def _third_block(tmp_path, branch):
+    store = _store(tmp_path)
+    for day in ("2026-11-15", "2026-11-16"):                                 # two fix rounds that did not end it
+        rec = store.record(cw.pr_fix_verdict("review-fix", 11, branch, H1), f"{day}T09:00:00+00:00")
+        data = store._load()
+        data["incidents"][rec["id"]]["state"] = "resolved"
+        store._save(data)
+    gh = Gh([pr(11, branch=branch, labels=["needs-human"], head=H1)], comments={11: [block(H1)]})
+    out = chores.run(gh, store, NOW, slug="o/r")
+    return store, gh, out
+
+
+def test_the_third_block_on_a_persons_pr_is_given_up_with_one_comment_and_the_pr_stays_open(tmp_path):
+    store, gh, out = _third_block(tmp_path, "feat/x")
+    rec = _incidents(store)["review-fix:#11"]
+    assert rec["state"] == "abandoned"
+    said = [c for c in gh.calls if c[:2] == ("pr", "comment")]
+    assert len(said) == 1 and said[0][2] == "11" and "Nobody is waited on" in said[0][-1]
+    assert not [c for c in gh.calls if c[:2] == ("pr", "close")]
+    again = Gh(gh.prs, comments=gh.comments)
+    chores.run(again, store, LATER, slug="o/r")                              # next tick: said once, never again
+    assert not [c for c in again.calls if c[:2] in {("pr", "comment"), ("pr", "close")}]
+    assert store.claim(LATER, allow_pr_fix=True) is None                     # and never handed to the delegate
+
+
+def test_the_third_block_on_jrs_own_heal_pr_closes_it(tmp_path):
+    store, gh, out = _third_block(tmp_path, "jr/heal-0cf1acb95f79")
+    closed = [c for c in gh.calls if c[:2] == ("pr", "close")]
+    assert len(closed) == 1 and closed[0][2] == "11" and "Jr stops here" in closed[0][-1]
+
+
+def test_a_pause_is_named_in_the_daily_line_only_on_its_own_day(tmp_path):
+    store = _store(tmp_path)
+    data = store._load()
+    data.update(halted=True, halted_day="2026-11-19")
+    store._save(data)
+    assert "self-heal paused until 00:00 UTC" in _day(store, Gh([], merged=[]), 19)
+

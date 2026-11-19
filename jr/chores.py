@@ -249,6 +249,25 @@ def canary_retry(gh, slug: str, prs: list, store: ci_watch.Store, now: str, dry_
     return out
 
 
+GAVE_UP = ("Jr's fix agent has tried this PR {n} times and it is still not mergeable ({kind}). Jr stops here and "
+           "does not try again for {days} days. Nobody is waited on: the author decides what happens next.")
+
+
+def _give_up_on_pr(gh, rec: dict) -> None:
+    """The third time the same PR needs the same kind of fix, Jr says so on the PR once and moves on. A PR Jr
+    opened itself (a heal) is closed with that comment; a person's PR stays open for its author."""
+    ev = rec["context"].get("evidence") or {}
+    n, branch = ev.get("pr"), str(ev.get("pr_branch") or "")
+    if not n:
+        return
+    text = GAVE_UP.format(n=ci_watch.MAX_PER_FINGERPRINT, kind=rec["context"].get("kind_detail") or "fix",
+                          days=ci_watch.ABANDON_DAYS)
+    if branch.startswith(ci_watch.HEAL_BRANCH):
+        gh("pr", "close", str(n), "--comment", text)
+    else:
+        gh("pr", "comment", str(n), "--body", text)
+
+
 def _behind_main(gh, slug: str, head: str) -> bool:
     """main has commits the PR head lacks (compare head...main: ahead_by > 0). Unreadable → False: never
     merge into a PR on a guess."""
@@ -331,7 +350,7 @@ def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
                        f"{_hours_since(idle[0].get('createdAt'), now):.0f} h)")
     stuck = [f"{r['id']} {r['state']}" for r in data["incidents"].values() if r["state"] in ("needs_human", "stalled")]
     if data.get("halted"):
-        stuck.append("self-heal halted (run `ci_watch.py ack`)")
+        stuck.append("self-heal paused until 00:00 UTC")
     if merged is None:
         by_jr = by_person = None
         ok = False
@@ -388,6 +407,8 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
             rec = store.record(v, now)
             if rec:
                 recorded.append(rec["id"])
+                if rec["state"] == "abandoned" and ci_watch.is_pr_fix(rec):
+                    _give_up_on_pr(gh, rec)
         progress = store.pr_fix_progress({p["number"]: p.get("headRefOid") for p in prs},
                                          {v.check for v in wanted if ci_watch.is_pr_fix(v.check)},
                                          _closed(gh, store, {p["number"] for p in prs}), now)
