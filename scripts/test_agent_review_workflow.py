@@ -188,7 +188,8 @@ def test_the_api_lane_proves_its_shell_sandbox_starts_before_it_reviews(jobs):
     review = next(n for n, s in enumerate(steps) if str(s.get("uses", "")).startswith("anthropics/claude-code-action@"))
     assert i < review and steps[i]["if"] == steps[review]["if"]
     lines = [ln.strip() for ln in steps[i]["run"].splitlines() if ln.strip() and not ln.strip().startswith("#")]
-    assert "sudo apt-get install -y -qq socat bubblewrap" in lines
+    assert any("apt-get install" in ln and "socat bubblewrap" in ln and "Acquire::Retries=3" in ln for ln in lines)
+    assert "for attempt in 1 2 3; do" in lines                    # the mirror blinked on the first live run
     # the two proofs end the step and nothing swallows their exit code: a sandbox that cannot start fails the job
     assert lines[-2:] == ["command -v socat", "bwrap --ro-bind / / --unshare-net true"]
     assert not steps[i].get("continue-on-error")

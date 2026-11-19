@@ -67,8 +67,11 @@ jobs:
         # leaves, the post job releases the label, and the subscription lane reviews the PR.
         if: steps.key.outputs.configured == 'true'
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq socat bubblewrap
+          # the mirror blinks (first live run: "Failed to fetch … socat … Resource temporarily unavailable")
+          for attempt in 1 2 3; do
+            sudo apt-get update -qq && sudo apt-get install -y -qq -o Acquire::Retries=3 socat bubblewrap && break
+            sleep 15
+          done
           # ubuntu 24.04 confines unprivileged user namespaces, which bubblewrap needs
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
           command -v socat
