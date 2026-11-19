@@ -121,6 +121,9 @@ def test_a_push_disarms_any_queued_auto_merge_and_drops_agent_pass(jobs):
     assert "!(startsWith(github.head_ref, 'jr/tick-') && !contains(github.event.pull_request.labels.*.name, 'jr-review'))" in cond
     run = job["steps"][0]["run"]
     assert '--disable-auto' in run and "--remove-label agent-pass" in run and "${{" not in run
+    # needs-human describes a verdict (a BLOCK, or a PASS only a person may merge) at the OLD head: after a push
+    # nobody was asked anything yet, and the daily line must not count the PR as waiting on a person
+    assert "--remove-label needs-human" in run
     # the review lane never runs on a push
     assert "github.event.label.name == 'review-fallback'" in jobs["agent-review"]["if"]
 
