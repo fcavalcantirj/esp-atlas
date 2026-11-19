@@ -124,6 +124,25 @@ BLOCK waiting for a person, stacked PRs retargeted by hand. Now:
 - **The owner's audit**: once a UTC day from 12Z one Telegram line names what still needs a human
   (`needs-human` PRs with age, `needs_human`/stalled incidents, a halted heal). Nothing waits → no line.
 
+### 1e. A canary that said "not now" is asked again (2026-11-19)
+
+A canary (`scripts/demand_canary.py`, `scripts/tick_canary.py`) runs only on a pull-request event. A Jr content
+PR it did not merge — capped for the day, a quoted page that did not answer, a guard since fixed on main — was
+never looked at again: the chores skip `jr/research-*` and `jr/tick-*`, and the tick refreshes only its own
+conflicting tick PRs. Measured: demand PR #1846, judged once on Nov 18 and waiting since.
+
+`jr/chores.py canary_retry`, every tick, oldest PR first, at most **once per PR per UTC day** and **two per
+tick**, only for a lane whose switch in `jr/autonomy.json` is true:
+
+- a demand PR behind main is merged with main (`PUT …/update-branch` at the exact head): a new event, so main's
+  current guards and canary judge it;
+- otherwise the failed jobs of its last run are rerun (the canary behind them follows), or the canary job alone;
+- a review-routed tick PR is only ever rerun; `jr/review_refresh.py` owns its merges with main.
+
+Left alone: `needs-human`, a red required check (that is `red_prs`), checks still running, no run at all, a fork,
+another base, an AUTO-route tick PR, a PR whose fix the delegate is working on. A refused retry is remembered
+like a done one. Memory: `canary_retry` in the incident store. No delegate, no model.
+
 ## 2. Known causes — handled in code, no model
 
 | Signal | Action |

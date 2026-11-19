@@ -18,8 +18,10 @@ Incidents are recorded always; they reach the delegate only through `ci_watch.py
 """
 from __future__ import annotations
 
+import json
 import time
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import agent_review
 import ci_watch
@@ -162,6 +164,79 @@ def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> d
     return out
 
 
+# --- canary retry ---------------------------------------------------------------------------------------
+# A canary (scripts/demand_canary.py, scripts/tick_canary.py) runs only on a pull-request event. A Jr content
+# PR it did not merge (capped today, a quoted page that did not answer, a guard fixed on main since) was never
+# looked at again: these chores skip such branches and the tick refreshes only its own CONFLICTING tick PRs
+# (2026-11-19: demand PR #1846, judged once on Nov 18). Each gets one more look per UTC day.
+RETRY_LANES = {"jr/research-": ("demand_automerge", "demand-canary"), "jr/tick-": ("tick_automerge", "tick-canary")}
+RETRY_PER_TICK = 2
+
+
+def _ok(p) -> bool:
+    return getattr(p, "returncode", 1) == 0
+
+
+def canary_retry(gh, slug: str, prs: list, store: ci_watch.Store, now: str, dry_run: bool,
+                 autonomy_path: Path = ci_watch.AUTONOMY_PATH) -> dict:
+    """One more canary decision for an open Jr content PR, at most once per PR per UTC day and RETRY_PER_TICK
+    per tick, oldest first; only for a lane whose switch in jr/autonomy.json is true. A demand PR behind main
+    is merged with main (a new event: main's current guards and canary judge it); otherwise the failed jobs of
+    its last run are rerun (the canary behind them follows), or the canary job alone. A tick PR is only ever
+    rerun: jr/review_refresh.py owns its merges with main. Left alone: needs-human, a red REQUIRED check
+    (red_prs' business), checks still running, no run at all, a fork, another base, an AUTO-route tick PR, a
+    PR whose fix the delegate is working on. A refused retry is remembered like a done one.
+    Returns {"update_branch": [(n, head)], "rerun": [(n, run id)], "failed": [n]}."""
+    out = {"update_branch": [], "rerun": [], "failed": []}
+    try:
+        flags = json.loads(Path(autonomy_path).read_text())
+    except (OSError, ValueError):
+        return out
+    lanes = {prefix: job for prefix, (flag, job) in RETRY_LANES.items() if isinstance(flags, dict) and flags.get(flag) is True}
+    data = store._load()
+    seen, day = dict(data.get("canary_retry") or {}), ci_watch._utc_day(now)
+    in_flight = {((r["context"].get("evidence") or {}).get("pr")) for r in (data.get("incidents") or {}).values()
+                 if ci_watch.is_pr_fix(r) and r["state"] in ("dispatched", "pushed")}
+    required = None
+    for p in sorted(prs, key=lambda p: int(p.get("number") or 0)):
+        if len(out["update_branch"]) + len(out["rerun"]) + len(out["failed"]) >= RETRY_PER_TICK:
+            break
+        n, head, branch = p.get("number"), p.get("headRefOid"), str(p.get("headRefName") or "")
+        prefix = next((x for x in lanes if branch.startswith(x)), None)
+        rollup = [c for c in p.get("statusCheckRollup") or [] if c.get("name")]          # check runs, not statuses
+        if (prefix is None or not head or p.get("isCrossRepository") or p.get("baseRefName") != "main"
+                or HUMAN_LABEL in _labels(p) or n in in_flight or seen.get(str(n)) == day or not rollup
+                or any(str(c.get("status") or "COMPLETED").upper() != "COMPLETED" for c in rollup)):
+            continue
+        if prefix == "jr/tick-" and (p.get("isDraft") or "jr-review" not in _labels(p)):
+            continue
+        if required is None:
+            required = ci_watch.required_checks(gh, slug) or []
+        if _red_required(p, required):
+            continue
+        failed = [c for c in rollup if str(c.get("conclusion") or "").upper() == ci_watch.FAILURE]
+        canary = next((ci_watch._RUN_JOB.search(str(c.get("detailsUrl") or "")) for c in rollup if c.get("name") == lanes[prefix]), None)
+        any_run = next((m for m in (ci_watch._RUN_JOB.search(str(c.get("detailsUrl") or "")) for c in (failed or rollup)) if m), None)
+        if prefix == "jr/research-" and _behind_main(gh, slug, head):
+            kind, call = "update_branch", ("api", "-X", "PUT", f"repos/{slug}/pulls/{n}/update-branch", "-f", f"expected_head_sha={head}")
+        elif failed and any_run:
+            kind, call = "rerun", ("run", "rerun", any_run.group(1), "--failed")
+        elif canary:
+            kind, call = "rerun", ("api", "-X", "POST", f"repos/{slug}/actions/jobs/{canary.group(2)}/rerun")
+        else:
+            continue
+        seen[str(n)] = day
+        if dry_run or _ok(gh(*call)):
+            out[kind].append((n, head) if kind == "update_branch" else (n, (any_run if failed and any_run else canary).group(1)))
+        else:
+            out["failed"].append(n)
+    if not dry_run and (out["update_branch"] or out["rerun"] or out["failed"]):
+        data = store._load()
+        data["canary_retry"] = dict(list(seen.items())[-300:])
+        store._save(data)
+    return out
+
+
 def _behind_main(gh, slug: str, head: str) -> bool:
     """main has commits the PR head lacks (compare head...main: ahead_by > 0). Unreadable → False: never
     merge into a PR on a guess."""
@@ -269,7 +344,8 @@ def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
     return f"🧹 Jr daily {day} (last 24 h): {merges} · {held} · {verdict}"
 
 
-def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False) -> dict:
+def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False,
+        autonomy_path: Path = ci_watch.AUTONOMY_PATH) -> dict:
     try:
         prs = list_settled(lambda: ci_watch._json(gh, "pr", "list", "--state", "open", "--limit", "200", "--json", PR_FIELDS),
                            lambda p: p.get("mergeStateStatus") == "UNKNOWN")
@@ -278,10 +354,15 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
         wanted = plan(gh, slug, prs)
         reds = red_prs(gh, slug, prs, store, dry_run)
         wanted += reds["verdicts"]
+        touched = {n for n, _ in reds["reruns"]} | {n for n, _ in reds["update_branch"]}
+        retries = canary_retry(gh, slug, [p for p in prs if p.get("number") not in touched], store, now, dry_run,
+                               autonomy_path=autonomy_path)
         if dry_run:
             return {"status": "ok", "would": [f"record {v.check}" for v in wanted]
                     + [f"rerun #{n} run {r}" for n, r in reds["reruns"]]
-                    + [f"merge main into #{n}" for n, _ in reds["update_branch"]], "digest": None}
+                    + [f"merge main into #{n}" for n, _ in reds["update_branch"]]
+                    + [f"canary retry #{n} (merge main)" for n, _ in retries["update_branch"]]
+                    + [f"canary retry #{n} (rerun {r})" for n, r in retries["rerun"]], "digest": None}
         for _, run_id in reds["reruns"]:
             gh("run", "rerun", str(run_id), "--failed")
         for n, head in reds["update_branch"]:
@@ -299,6 +380,8 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
         progress["resolved"] += store.resolve_pr_red(reds["fingerprints"], now)
         return {"status": "ok", "recorded": recorded, "labels_created": ensure_labels(gh, store, now),
                 "reruns": [n for n, _ in reds["reruns"]],
+                "canary_retries": [n for n, _ in retries["update_branch"] + retries["rerun"]],
+                "canary_retry_failed": retries["failed"],
                 "updated": [n for n, _ in reds["update_branch"]], "resolved": progress["resolved"], "pushed": progress["pushed"],
                 "stalled": progress["stalled"], "nudges": store.nudges(), "digest": daily(gh, store, prs, now)}
     except Exception as e:      # noqa: BLE001 — the tick must keep running whatever happens here

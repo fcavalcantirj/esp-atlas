@@ -633,3 +633,152 @@ def test_missing_labels_are_created_once_a_day(tmp_path):
     chores.run(gh, store, LATER, slug="o/r")
     assert len([c for c in gh.calls if c[:2] == ("label", "list")]) == 1            # once per UTC day
     assert len([c for c in gh.calls if c[:2] == ("label", "create")]) == 3
+
+
+# --- canary retry (2026-11-19): a Jr content PR the canary did not merge gets another look, once a day -----------
+# #1846 (a demand PR) was judged once and never again: chores skip jr/research-*, the tick only refreshes its own
+# CONFLICTING tick PRs, and a canary runs only on a pull-request event. "Capped today", a quote page that did
+# not answer, a guard fixed on main since: each left the PR waiting for a person.
+
+def check(name, conclusion="SUCCESS", run=900, job=901, status="COMPLETED"):
+    return {"name": name, "status": status, "conclusion": conclusion,
+            "detailsUrl": f"https://github.com/o/r/actions/runs/{run}/job/{job}"}
+
+
+def content(n, branch, checks, **kw):
+    return {**pr(n, branch=branch, **kw), "statusCheckRollup": checks}
+
+
+class RetryGh(RedGh):
+    def __call__(self, *a):
+        if a[:3] == ("api", "-X", "POST") and a[3].endswith("/rerun"):
+            self.calls.append(a)
+            return SimpleNamespace(returncode=0, stdout="", stderr="")
+        return super().__call__(*a)
+
+    def acts(self):
+        return [c for c in self.calls if c[:2] == ("run", "rerun") or c[:3] in {("api", "-X", "PUT"), ("api", "-X", "POST")}]
+
+
+def _flags(tmp_path, **flags):
+    f = tmp_path / "autonomy.json"
+    f.write_text(json.dumps({"demand_automerge": True, "tick_automerge": True, **flags}))
+    return f
+
+
+def retry(gh, store, tmp_path, now=NOW, dry_run=False, **flags):
+    return chores.canary_retry(gh, "o/r", gh.prs, store, now, dry_run, autonomy_path=_flags(tmp_path, **flags))
+
+
+GREEN_DEMAND = [check("schema"), check("tests"), check("jr-tests"), check("demand-canary", job=950)]
+
+
+def test_a_demand_pr_behind_main_is_refreshed_with_main_once_a_day(tmp_path):
+    gh = RetryGh([content(1846, "jr/research-pam-c2", GREEN_DEMAND, draft=True)], behind=3)
+    store = _store(tmp_path)
+    assert retry(gh, store, tmp_path)["update_branch"] == [(1846, H1)]
+    assert gh.acts() == [("api", "-X", "PUT", "repos/o/r/pulls/1846/update-branch", "-f", f"expected_head_sha={H1}")]
+    again = RetryGh(gh.prs, behind=3)
+    assert retry(again, store, tmp_path, now=LATER) == {"update_branch": [], "rerun": [], "failed": []} and again.acts() == []
+    tomorrow = RetryGh(gh.prs, behind=3)
+    assert retry(tomorrow, store, tmp_path, now="2026-11-20T00:05:00+00:00")["update_branch"] == [(1846, H1)]
+
+
+def test_a_demand_pr_level_with_main_gets_its_canary_job_run_again(tmp_path):
+    gh = RetryGh([content(1846, "jr/research-pam-c2", GREEN_DEMAND, draft=True)], behind=0)
+    assert retry(gh, _store(tmp_path), tmp_path)["rerun"] == [(1846, "900")]
+    assert gh.acts() == [("api", "-X", "POST", "repos/o/r/actions/jobs/950/rerun")]
+
+
+def test_a_failed_guard_reruns_the_failed_jobs_so_the_canary_behind_them_runs_too(tmp_path):
+    checks = [check("schema"), check("tests"), check("jr-tests"), check("demand-guard", "FAILURE", job=940),
+              check("demand-canary", "SKIPPED", job=950)]
+    gh = RetryGh([content(1846, "jr/research-pam-c2", checks, draft=True)], behind=0)
+    retry(gh, _store(tmp_path), tmp_path)
+    assert gh.acts() == [("run", "rerun", "900", "--failed")]
+
+
+def test_a_review_routed_tick_pr_is_only_ever_rerun_never_merged_with_main(tmp_path):
+    checks = [check("schema"), check("tests"), check("jr-tests"), check("tick-canary", job=960)]
+    gh = RetryGh([content(1860, "jr/tick-20261119-0200", checks, labels=("jr-review",))], behind=5)
+    retry(gh, _store(tmp_path), tmp_path)
+    assert gh.acts() == [("api", "-X", "POST", "repos/o/r/actions/jobs/960/rerun")]     # the tick's refresher owns merges
+
+
+def test_what_is_left_alone(tmp_path):
+    running = [check("schema"), check("tests", status="IN_PROGRESS", conclusion=""), check("demand-canary", job=950)]
+    prs = [content(1, "jr/research-a", GREEN_DEMAND, labels=("needs-human",)),          # a person was asked
+           content(2, "jr/research-b", running),                                          # CI still running
+           content(3, "jr/research-c", []),                                               # nothing ever ran
+           content(4, "jr/research-d", GREEN_DEMAND, fork=True),
+           content(5, "jr/research-e", GREEN_DEMAND, base="feat/x"),
+           content(6, "jr/tick-20261119-0500", GREEN_DEMAND),                             # AUTO route: merges itself
+           content(7, "feat/x", GREEN_DEMAND)]                                            # a code PR: the sweep's
+    gh = RetryGh(prs, behind=3)
+    assert retry(gh, _store(tmp_path), tmp_path) == {"update_branch": [], "rerun": [], "failed": []}
+    assert gh.acts() == []
+
+
+def test_a_lane_whose_switch_is_off_is_never_retried(tmp_path):
+    checks = [check("schema"), check("tests"), check("jr-tests"), check("tick-canary", job=960)]
+    prs = [content(1860, "jr/tick-20261119-0200", checks, labels=("jr-review",)),
+           content(1846, "jr/research-pam-c2", GREEN_DEMAND, draft=True)]
+    gh = RetryGh(prs, behind=0)
+    out = retry(gh, _store(tmp_path), tmp_path, tick_automerge=False)
+    assert out["rerun"] == [(1846, "900")]
+    off = RetryGh(prs, behind=0)
+    assert retry(off, _store(tmp_path / "x"), tmp_path, tick_automerge=False, demand_automerge=False)["rerun"] == []
+    (tmp_path / "autonomy.json").write_text("not json")
+    assert chores.canary_retry(off, "o/r", prs, _store(tmp_path / "y"), NOW, False, autonomy_path=tmp_path / "autonomy.json")["rerun"] == []
+
+
+def test_at_most_two_retries_a_tick_oldest_first_and_the_rest_come_next_hour(tmp_path):
+    prs = [content(n, f"jr/research-{n}", GREEN_DEMAND, draft=True) for n in (30, 10, 20)]
+    store = _store(tmp_path)
+    gh = RetryGh(prs, behind=1)
+    assert [n for n, _ in retry(gh, store, tmp_path)["update_branch"]] == [10, 20]
+    nxt = RetryGh(prs, behind=1)
+    assert [n for n, _ in retry(nxt, store, tmp_path, now=LATER)["update_branch"]] == [30]
+
+
+def test_a_pr_whose_fix_the_delegate_is_working_on_is_never_moved_under_it(tmp_path):
+    store = _store(tmp_path)
+    store.record(cw.pr_fix_verdict("conflict", 1846, "jr/research-pam-c2", H1), NOW)
+    assert store.claim(NOW, allow_pr_fix=True)
+    gh = RetryGh([content(1846, "jr/research-pam-c2", GREEN_DEMAND, draft=True)], behind=3)
+    assert retry(gh, store, tmp_path, now=LATER)["update_branch"] == [] and gh.acts() == []
+
+
+def test_a_dry_run_names_the_retry_and_does_and_remembers_nothing(tmp_path):
+    gh = RetryGh([content(1846, "jr/research-pam-c2", GREEN_DEMAND, draft=True)], behind=3)
+    store = _store(tmp_path)
+    assert retry(gh, store, tmp_path, dry_run=True)["update_branch"] == [(1846, H1)] and gh.acts() == []
+    assert "canary_retry" not in store._load()
+
+
+def test_a_refused_retry_is_reported_remembered_and_never_stops_the_others(tmp_path):
+    class Refusing(RetryGh):
+        def __call__(self, *a):
+            if a[:3] == ("api", "-X", "PUT") and "/pulls/10/" in a[3]:
+                self.calls.append(a)
+                return SimpleNamespace(returncode=1, stdout="", stderr="HTTP 422: merge conflict")
+            return super().__call__(*a)
+    prs = [content(n, f"jr/research-{n}", GREEN_DEMAND, draft=True) for n in (10, 20)]
+    store = _store(tmp_path)
+    out = retry(Refusing(prs, behind=1), store, tmp_path)
+    assert out["failed"] == [10] and out["update_branch"] == [(20, H1)]
+    assert retry(Refusing(prs, behind=1), store, tmp_path, now=LATER) == {"update_branch": [], "rerun": [], "failed": []}
+
+
+def test_the_chores_run_the_retry_and_report_it(tmp_path):
+    gh = RetryGh([content(1846, "jr/research-pam-c2", GREEN_DEMAND, draft=True)], behind=3)
+    out = chores.run(gh, _store(tmp_path), NOW, slug="o/r", autonomy_path=_flags(tmp_path))
+    assert out["status"] == "ok" and out["canary_retries"] == [1846]
+    dry = chores.run(RetryGh(gh.prs, behind=3), _store(tmp_path / "d"), NOW, slug="o/r", dry_run=True, autonomy_path=_flags(tmp_path))
+    assert "canary retry #1846 (merge main)" in dry["would"]
+
+
+def test_a_red_required_check_belongs_to_red_prs_not_to_the_retry(tmp_path):
+    checks = [check("schema"), check("tests", "FAILURE", job=930), check("jr-tests"), check("demand-canary", "SKIPPED", job=950)]
+    gh = RetryGh([content(1846, "jr/research-pam-c2", checks, draft=True)], behind=3)
+    assert retry(gh, _store(tmp_path), tmp_path) == {"update_branch": [], "rerun": [], "failed": []} and gh.acts() == []
