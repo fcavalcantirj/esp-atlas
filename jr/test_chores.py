@@ -11,6 +11,7 @@ the owner what still needs a human. Incidents reach the delegate only through `c
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 from types import SimpleNamespace
@@ -866,4 +867,16 @@ def test_a_failure_beside_a_canary_that_ran_reruns_the_canary_not_the_failed_job
     gh = RetryGh([content(1846, "jr/research-pam-c2", checks, draft=True)], behind=0)
     retry(gh, _store(tmp_path), tmp_path)
     assert gh.acts() == [("api", "-X", "POST", "repos/o/r/actions/jobs/950/rerun")]
+
+
+def test_the_fix_prompt_tells_the_agent_how_to_correct_a_pr_description_and_to_leave_a_conflict_job_small():
+    # 2026-11-19: 8 PRs were blocked on a future check tagged [REAL] in their description, and #1840 was blocked
+    # again after its code fix because the description still told the old mechanism. The fix agent could push
+    # commits but had no way to change a description, so those blocks could never clear.
+    prompt = (Path(chores.__file__).resolve().parent.parent / "docs" / "ops" / "HEAL-PROMPT.md").read_text()
+    section = prompt[prompt.index("## When `INCIDENT.context.check` starts with `conflict:`"):]
+    assert "`PR_DESCRIPTION`" in section and "the relay replaces" in section
+    assert "`[REAL]` only on something already observed" in section
+    assert "git commit --allow-empty" in section                       # a verdict is tied to the head
+    assert "do not refactor or split files" in section                 # the 516-line split the relay refused
 
