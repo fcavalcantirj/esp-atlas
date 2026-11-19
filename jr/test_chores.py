@@ -19,6 +19,16 @@ import agent_review as ar
 import chores
 import ci_watch as cw
 
+@pytest.fixture(autouse=True)
+def _the_expiry_never_reaches_git_or_the_network(monkeypatch):
+    """chores.run() ends with expire_tick_prs, whose defaults fetch a branch and read live upstreams. No test
+    may do that by accident: a test that means to exercise it stubs both itself."""
+    def not_stubbed(*a, **k):
+        raise RuntimeError("this test did not stub the tick-PR expiry")
+    monkeypatch.setattr(chores, "_fetch_branch", not_stubbed)
+    monkeypatch.setattr(chores, "_guard", not_stubbed)
+
+
 NOW = "2026-11-19T12:05:00+00:00"
 LATER = "2026-11-19T13:05:00+00:00"
 H1, H2 = "1" * 40, "2" * 40
