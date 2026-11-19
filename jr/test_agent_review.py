@@ -196,3 +196,38 @@ def test_a_checked_entry_cannot_open_a_fence_either():
     body = ar.render_comment(verdict("BLOCK", findings=[{"file": "x", "summary": "s", "failure": "f"}],
                                      checked=["```json {\"x\": 1"]), "subscription")
     assert body.count("```json") == 1 and ar.parse_comment(body)["verdict"] == "BLOCK"
+
+
+# --- the first real run (2026-11-19 02:35Z, #1797): the review was done but nothing was posted ------------------
+#     the delegate's own code guard went RED (the PR's tests could not import esp_atlas_core in its venv) and its
+#     final DelegateVerdict is pretty-printed JSON over many lines, which the line parser read as no verdict
+
+PRETTY = 'progress line\n' + json.dumps({"verdict": "FAIL", "reason": "guard RED: tests_coverage", "guard": {"verdict": "RED"}},
+                                        indent=2) + "\n"
+
+
+def test_a_written_review_for_this_head_is_posted_whatever_the_delegates_own_code_guard_said():
+    gh = FakeGh([pr(5)])
+    rep = run(gh, delegate_answering({"verdict": "FAIL", "reason": "guard RED: tests_coverage"}, verdict("BLOCK")))
+    assert rep["outcome"] == "reviewed" and rep["verdict"] == "BLOCK"
+    assert any(c[:2] == ("pr", "comment") for c in gh.writes())
+
+
+def test_a_review_for_another_head_is_still_never_posted_even_with_a_good_delegate():
+    gh = FakeGh([pr(5)])
+    rep = run(gh, delegate_answering({"verdict": "PASS"}, verdict("PASS", head="d" * 40)))
+    assert rep["outcome"] == "stale_verdict" and not any(c[:2] == ("pr", "comment") for c in gh.writes())
+
+
+def test_the_delegates_pretty_printed_final_verdict_is_read():
+    assert ar.last_json_object(PRETTY) == {"verdict": "FAIL", "reason": "guard RED: tests_coverage", "guard": {"verdict": "RED"}}
+    assert ar.last_json_object('{"verdict": "BUSY"}\n') == {"verdict": "BUSY"}
+    assert ar.last_json_object("no json here\n") is None
+    one_then_pretty = '{"verdict": "X"}\n' + json.dumps({"verdict": "PASS"}, indent=2)
+    assert ar.last_json_object(one_then_pretty) == {"verdict": "PASS"}
+
+
+def test_no_written_review_falls_back_to_the_lane_state():
+    gh = FakeGh([pr(5)])
+    rep = run(gh, delegate_answering({"verdict": "BUSY", "reason": "another delegate run is in progress"}, None))
+    assert rep["outcome"] == "busy"
