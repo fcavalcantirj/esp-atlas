@@ -3267,14 +3267,14 @@
       "timestamp": "2026-11-07T08:00:55.079521+00:00"
     },
     "devour-sphere": {
-      "expires": "2026-11-19T07:00:59.645797+00:00",
+      "expires": "2026-12-19T08:00:32.756472+00:00",
       "id": "devour-sphere",
       "pr_ref": null,
-      "reason": "below_floor: 9 stars / 2 forks",
+      "reason": "below_floor: 10 stars / 2 forks",
       "repo": "shapoco/devour-sphere",
       "repo_id": 1369088965,
       "status": "rejected",
-      "timestamp": "2026-10-20T07:00:59.645797+00:00"
+      "timestamp": "2026-11-19T08:00:32.756472+00:00"
     },
     "dht11-and-dht22-m5stick": {
       "expires": "2026-12-15T19:00:32.749098+00:00",
@@ -3875,7 +3875,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-19T07:00:32.950177+00:00"
+      "timestamp": "2026-11-19T08:00:32.756472+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4028,11 +4028,11 @@
     },
     "fennek": {
       "id": "fennek",
-      "pr_ref": null,
+      "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "repo_id": 1266907380,
       "status": "proposed",
-      "timestamp": "2026-11-19T07:00:32.950177+00:00"
+      "timestamp": "2026-11-19T08:00:32.756472+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -17210,11 +17210,11 @@
     },
     "pisces-moon-os": {
       "id": "pisces-moon-os",
-      "pr_ref": null,
+      "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "repo_id": 1213090064,
       "status": "proposed",
-      "timestamp": "2026-11-19T07:00:32.950177+00:00"
+      "timestamp": "2026-11-19T08:00:32.756472+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",

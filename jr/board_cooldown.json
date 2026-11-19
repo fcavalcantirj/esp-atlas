@@ -845,7 +845,7 @@
     },
     "m5stack-core": {
       "board": "m5stack-core",
-      "expires": "2026-11-26T07:00:32.950177+00:00",
+      "expires": "2026-11-26T08:00:32.756472+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -864,7 +864,7 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-19T07:00:32.950177+00:00"
+      "timestamp": "2026-11-19T08:00:32.756472+00:00"
     },
     "m5stack-core-aws": {
       "board": "m5stack-core-aws",
@@ -891,7 +891,7 @@
     },
     "m5stack-core2": {
       "board": "m5stack-core2",
-      "expires": "2026-11-26T07:00:32.950177+00:00",
+      "expires": "2026-11-26T08:00:32.756472+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -899,7 +899,7 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-19T07:00:32.950177+00:00"
+      "timestamp": "2026-11-19T08:00:32.756472+00:00"
     },
     "sparkfun-iot-redboard-esp32": {
       "board": "sparkfun-iot-redboard-esp32",

@@ -1220,6 +1220,122 @@
    },
    "closed_on": "2026-11-10",
    "snapshot": "docs/demand/2026-11-10.json"
+  },
+  "pam-c2beecd3b941f4023d832c9d": {
+   "term": "Heltec WiFi LoRa 32 V4",
+   "source": "pam_feed",
+   "status": "linked",
+   "first_seen": "2026-11-17",
+   "history": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1846"
+   ],
+   "snapshot": "docs/demand/pam-leads.json",
+   "feed": {
+    "checked_at": "2026-11-17T11:15:31.248373Z",
+    "feeds": {
+     "products": {
+      "url": "https://pamfinds.com/api/products.json",
+      "fetched_at": "2026-11-06T04:22:34.124739Z",
+      "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+      "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+      "bytes": 110684
+     },
+     "specs": {
+      "url": "https://pamfinds.com/api/specs.json",
+      "fetched_at": "2026-11-06T04:22:34.124739Z",
+      "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+      "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+      "bytes": 349157
+     }
+    },
+    "lead": {
+     "source_id": "heltec-wifi-lora-32-v4",
+     "name_hint": "Heltec WiFi LoRa 32 V4",
+     "chip_hint": "ESP32-S3",
+     "page": "https://pamfinds.com/esp32/heltec-wifi-lora-32-v4/",
+     "source_pointers": {
+      "cpu_arch": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "cpu_cores": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "cpu_freq_mhz": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "flash_mb": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "sram_kb": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "psram_mb": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "wifi": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "ble": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "lora": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "lora_tx_power": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "meshtastic": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "display": [
+       "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/"
+      ],
+      "gps": [
+       "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/"
+      ],
+      "usb_type": [
+       "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/"
+      ],
+      "battery_charging": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "deep_sleep_ua": [
+       "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+      ],
+      "dimensions_mm": [
+       "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/"
+      ],
+      "form_factor": [
+       "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/"
+      ]
+     },
+     "fingerprint": "e4bf3b30e2f4ee930ce296178887c84aee63d253e51b30f9ddcfc263759f7e5b",
+     "matches": [],
+     "status": "potential_identity_gap"
+    }
+   },
+   "validation": {
+    "verified_on": "2026-11-18",
+    "forbidden_ids": [
+     "heltec-wifi-lora-32-v4-r8"
+    ],
+    "verification_kind": "catalog_part",
+    "validated_by": "demand-executor delegate (Claude Code), run jr/research-pam-c2beecd3b941f4023d832c9d 2026-11-18",
+    "primary_sources": [
+     "https://heltec.org/project/wifi-lora-32-v4/",
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.3.1_Datasheet.pdf",
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf",
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/Pinmap/V4_pinmap.png",
+     "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/"
+    ],
+    "expected_ids": [
+     "heltec-wifi-lora-32-v4"
+    ],
+    "notes": "Heltec WiFi LoRa 32 V4 (model HTIT-WB32LAF): ESP32-S3R2 (2MB PSRAM) + external 16MB flash + SX1262, CP2102 removed (native USB). The product page now sells a sibling WiFi LoRa 32 V4-R8 (ESP32-S3R8, 8MB PSRAM, different firmware and Vext/VGNSS/LED pin map) which is a distinct SKU and must not be authored by this work. The predecessor WiFi LoRa 32 V3 (ESP32-S3FN8, CP2102) is already catalogued as heltec-wifi-lora-32-v3 and stays separate. The low-power HTIT-WB32LAF-N-HF/-LF/-433 radio variants (21 dBm) are the same board with a different LoRa front end and are covered in notes, not as separate ids.",
+    "identity_verified": true,
+    "term_key": "heltec wifi lora 32 v4"
+   }
   }
  }
 }
