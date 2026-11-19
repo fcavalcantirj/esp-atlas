@@ -142,16 +142,20 @@ def merged(*logins):
     return [{"number": 100 + i, "headRefName": "x", "mergedBy": {"login": l}} for i, l in enumerate(logins)]
 
 
+def merged_jr(*logins, branch="jr/tick-20261119-0100"):
+    return [{"number": 200 + i, "headRefName": branch, "mergedBy": {"login": l}} for i, l in enumerate(logins)]
+
+
 def test_the_daily_line_comes_once_a_utc_day_from_12z_with_the_numbers(tmp_path):
     store = _store(tmp_path)
-    prs = [pr(3, labels=["needs-human"], updated="2026-11-18T12:00:00Z")]
-    gh = Gh(prs, merged=merged("espatlas-jr", "espatlas-jr", "fcavalcantirj"))
+    prs = [pr(3, branch="jr/tick-20261118-0700", labels=["needs-human"], updated="2026-11-18T12:00:00Z")]
+    gh = Gh(prs, merged=merged_jr("espatlas-jr", "espatlas-jr", "fcavalcantirj"))
     early = chores.run(gh, store, "2026-11-19T11:05:00+00:00", slug="o/r")
     first = chores.run(gh, store, NOW, slug="o/r")
     again = chores.run(gh, store, LATER, slug="o/r")
     assert early["digest"] is None and again["digest"] is None
     line = first["digest"]
-    assert line.startswith("🧹 Jr daily 2026-11-19") and "merged by Jr 2" in line and "by a person 1" in line
+    assert line.startswith("🧹 Jr daily 2026-11-19") and "merged by Jr 2" in line and "Jr's PRs merged by a person 1" in line
     assert "#3 needs-human 24 h" in line and "self-sufficient 0/7 days" in line
 
 
@@ -164,13 +168,13 @@ def test_self_sufficient_days_count_up_and_a_human_merge_breaks_the_run(tmp_path
     clean = Gh([], merged=merged("espatlas-jr", "github-actions[bot]"))
     assert "self-sufficient 1/7 days" in _day(store, clean, 19)
     assert "self-sufficient 2/7 days" in _day(store, clean, 20)
-    assert "self-sufficient 0/7 days" in _day(store, Gh([], merged=merged("fcavalcantirj")), 21)
+    assert "self-sufficient 0/7 days" in _day(store, Gh([], merged=merged_jr("fcavalcantirj")), 21)   # a person merged JR'S PR
     assert "self-sufficient 1/7 days" in _day(store, clean, 22)
 
 
 def test_a_waiting_needs_human_pr_or_a_halted_heal_is_not_a_self_sufficient_day(tmp_path):
     store = _store(tmp_path)
-    assert "self-sufficient 0/7 days" in _day(store, Gh([pr(3, labels=["needs-human"])], merged=[]), 19)
+    assert "self-sufficient 0/7 days" in _day(store, Gh([pr(3, branch="jr/heal-abc", labels=["needs-human"])], merged=[]), 19)
     data = store._load()
     data["halted"] = True
     store._save(data)
@@ -291,8 +295,9 @@ def test_a_merged_ci_heal_pr_resets_the_ack_brake_too(tmp_path):
 
 
 def test_a_pr_open_a_day_without_any_label_still_waits_on_someone(tmp_path):
-    prs = [pr(5, created="2026-11-17T12:00:00Z"), pr(6, created="2026-11-18T06:00:00Z", updated=NOW), pr(7),
-           pr(8, draft=True, created="2026-11-01T00:00:00Z")]
+    T = "jr/tick-20261117-1200"
+    prs = [pr(5, branch=T, created="2026-11-17T12:00:00Z"), pr(6, branch=T, created="2026-11-18T06:00:00Z", updated=NOW),
+           pr(7, branch=T), pr(8, branch=T, draft=True, created="2026-11-01T00:00:00Z")]
     line = chores.run(Gh(prs, merged=merged("espatlas-jr")), _store(tmp_path), NOW, slug="o/r")["digest"]
     assert "2 PR(s) open ≥ 24 h (oldest #5, 48 h)" in line and "self-sufficient 0/7 days" in line   # CI touching #6 changes nothing
 
@@ -866,4 +871,40 @@ def test_a_failure_beside_a_canary_that_ran_reruns_the_canary_not_the_failed_job
     gh = RetryGh([content(1846, "jr/research-pam-c2", checks, draft=True)], behind=0)
     retry(gh, _store(tmp_path), tmp_path)
     assert gh.acts() == [("api", "-X", "POST", "repos/o/r/actions/jobs/950/rerun")]
+
+
+# --- the scoreboard measures Jr, not people (2026-11-19) ------------------------------------------------------
+# The first daily line read "by a person 18 · waiting 6 → 0/7": the 18 were a person's own infrastructure PRs and
+# the 6 were a person's PRs blocked by review. Under that rule one ordinary merge by anyone, or one human PR left
+# open a day, reset the count for good: it could never reach 7 while anybody worked on the repository.
+
+def test_people_merging_and_holding_their_own_prs_never_break_a_self_sufficient_day(tmp_path):
+    store = _store(tmp_path)
+    prs = [pr(1840, branch="feat/analytics", labels=["needs-human"], created="2026-11-17T00:00:00Z"),   # a person's, blocked
+           pr(1852, branch="perf/inline-css", created="2026-11-16T00:00:00Z")]                           # a person's, idle
+    gh = Gh(prs, merged=merged("fcavalcantirj", "fcavalcantirj") + merged_jr("espatlas-jr", "github-actions[bot]"))
+    line = _day(store, gh, 19)
+    assert "self-sufficient 1/7 days" in line and "nothing of Jr's waits on a person" in line
+    assert "merged by Jr 2" in line and "Jr's PRs merged by a person 0" in line
+    assert "people's own: 2 merged, 2 open (1 blocked by review)" in line
+    row = store._load()["scoreboard"][-1]
+    assert row["ok"] is True and row["by_person"] == 0 and row["own_merged"] == 2 and row["own_open"] == 2
+
+
+@pytest.mark.parametrize("branch", ["jr/tick-20261119-0100", "jr/research-pam-abc", "jr/heal-0cf1acb95f79"])
+def test_a_person_merging_any_of_jrs_own_prs_breaks_the_day(tmp_path, branch):
+    line = _day(_store(tmp_path), Gh([], merged=merged_jr("fcavalcantirj", branch=branch)), 19)
+    assert "Jr's PRs merged by a person 1" in line and "self-sufficient 0/7 days" in line
+
+
+def test_the_machine_merging_a_persons_pr_is_jrs_work(tmp_path):
+    line = _day(_store(tmp_path), Gh([], merged=merged("github-actions[bot]", "espatlas-jr")), 19)
+    assert "merged by Jr 2" in line and "self-sufficient 1/7 days" in line
+
+
+def test_jrs_own_pr_waiting_a_day_or_labelled_still_breaks_the_day(tmp_path):
+    waiting = [pr(1875, branch="jr/tick-20261119-0700", created="2026-11-18T07:00:00Z")]
+    assert "self-sufficient 0/7 days" in _day(_store(tmp_path), Gh(waiting, merged=[]), 19)
+    labelled = [pr(1897, branch="jr/heal-0cf1acb95f79", labels=["needs-human"])]
+    assert "self-sufficient 0/7 days" in _day(_store(tmp_path / "b"), Gh(labelled, merged=[]), 19)
 
