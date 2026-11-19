@@ -121,8 +121,12 @@ BLOCK waiting for a person, stacked PRs retargeted by hand. Now:
   (one fix + one recurrence, then a human). A merged CI-heal PR (`jr/heal-*`) resets the brake.
 - **Heal PRs are code**: the agent review covers `jr/heal-*` too; only tick and demand PRs have their own
   canaries.
-- **The owner's audit**: once a UTC day from 12Z one Telegram line names what still needs a human
-  (`needs-human` PRs with age, `needs_human`/stalled incidents, a halted heal). Nothing waits → no line.
+- **The owner's audit and the scoreboard**: once a UTC day from 12Z one Telegram line. The scoreboard
+  measures **Jr, not people** (2026-11-19): a day is self-sufficient when no person merged one of Jr's own
+  PRs (`jr/tick-*`, `jr/research-*`, `jr/heal-*`) in the last 24 h, none of Jr's own PRs waits (`needs-human`,
+  or open a day), and no incident is stuck (`needs_human`, stalled, a halted heal). People merging and holding
+  their own PRs is ordinary work: the line shows it ("people's own: N merged, M open (K blocked by review)"),
+  and it never breaks a day. Seven such days in a row is the claim "self-sufficient", and nothing less is.
 
 ### 1e. A canary that said "not now" is asked again (2026-11-19)
 
