@@ -11,6 +11,8 @@ the owner what still needs a human. Incidents reach the delegate only through `c
 from __future__ import annotations
 
 import json
+
+import pytest
 from types import SimpleNamespace
 
 import agent_review as ar
@@ -558,3 +560,76 @@ def test_an_open_fix_follows_the_prs_live_head_before_it_is_handed_out(tmp_path)
     chores.run(Gh([pr(7, "DIRTY", head=H2)]), store, LATER, slug="o/r")       # a person pushed; still conflicting
     rec = store.claim(LATER, allow_pr_fix=True)
     assert rec["context"]["evidence"]["pr_head"] == H2
+
+
+# --- 2026-11-19: GitHub computes mergeability lazily -----------------------------------------------------------
+# Measured: one listing right after main moved read 17 of 25 PRs as UNKNOWN; 12 s later 6 were CONFLICTING. The
+# tick lists once an hour, so conflicts were (almost) never seen: #1835/#1836 stayed conflicting for 14 h although
+# review_refresh's dry run said would_refresh. A listing with UNKNOWN in it is read again, a few times.
+
+@pytest.fixture(autouse=True)
+def no_sleep(monkeypatch):
+    slept = []
+    monkeypatch.setattr(chores, "SLEEP", slept.append)
+    return slept
+
+
+class Lazy(Gh):
+    """The first `after` listings answer UNKNOWN for every PR, then the real state."""
+    def __init__(self, prs, after=1, **kw):
+        super().__init__(prs, **kw)
+        self.after, self.lists = after, 0
+
+    def __call__(self, *a):
+        if a[:2] == ("pr", "list") and "merged" not in a:
+            self.lists += 1
+            if self.lists <= self.after:
+                self.calls.append(a)
+                return SimpleNamespace(returncode=0, stdout=json.dumps([{**p, "mergeStateStatus": "UNKNOWN"} for p in self.prs]), stderr="")
+        return super().__call__(*a)
+
+
+def test_a_listing_that_reads_unknown_is_read_again_until_github_has_computed_it(tmp_path, no_sleep):
+    store, gh = _store(tmp_path), Lazy([pr(7, "DIRTY")], after=1)
+    chores.run(gh, store, NOW, slug="o/r")
+    assert "conflict:#7" in _incidents(store) and gh.lists == 2 and no_sleep == [chores.SETTLE_WAIT]
+
+
+def test_the_wait_is_bounded_and_a_still_unknown_pr_is_simply_not_judged(tmp_path, no_sleep):
+    store, gh = _store(tmp_path), Lazy([pr(7, "DIRTY")], after=99)
+    out = chores.run(gh, store, NOW, slug="o/r")
+    assert out["status"] == "ok" and _incidents(store) == {} and gh.lists == chores.SETTLE_TRIES
+
+
+def test_a_settled_listing_costs_one_call(tmp_path, no_sleep):
+    gh = Lazy([pr(7, "CLEAN")], after=0)
+    chores.run(gh, _store(tmp_path), NOW, slug="o/r")
+    assert gh.lists == 1 and no_sleep == []
+
+
+# --- the labels the machine needs exist (2026-11-19: agent-pass, needs-human, review-fallback, jr-heal were all
+#     missing; every `gh pr edit --add-label` would have raised) ------------------------------------------------
+
+class LabelGh(Gh):
+    def __init__(self, prs, labels=(), **kw):
+        super().__init__(prs, **kw)
+        self.labels = list(labels)
+
+    def __call__(self, *a):
+        if a[:2] == ("label", "list"):
+            self.calls.append(a)
+            return SimpleNamespace(returncode=0, stdout=json.dumps([{"name": n} for n in self.labels]), stderr="")
+        if a[:2] == ("label", "create"):
+            self.calls.append(a)
+            self.labels.append(a[2])
+            return SimpleNamespace(returncode=0, stdout="", stderr="")
+        return super().__call__(*a)
+
+
+def test_missing_labels_are_created_once_a_day(tmp_path):
+    store, gh = _store(tmp_path), LabelGh([pr(1)], labels=["jr-review", "needs-human"])
+    out = chores.run(gh, store, NOW, slug="o/r")
+    assert sorted(out["labels_created"]) == ["agent-pass", "jr-heal", "review-fallback"]
+    chores.run(gh, store, LATER, slug="o/r")
+    assert len([c for c in gh.calls if c[:2] == ("label", "list")]) == 1            # once per UTC day
+    assert len([c for c in gh.calls if c[:2] == ("label", "create")]) == 3

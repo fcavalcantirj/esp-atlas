@@ -176,3 +176,15 @@ def test_an_old_pass_receipt_the_current_rules_no_longer_grant_is_not_eligible(r
     problems = run(repo, description="Firmware for M5Stack devices",
                    readme="- Devices: M5StickCPlus2, M5StickS3, Cardputer-ADV (Cardputer v1.1)")[0]
     assert any(p.startswith("E2") and "UNCERTAIN" in p for p in problems), problems
+
+
+
+def test_report_only_prints_the_verdict_and_exits_zero_when_not_eligible(repo, monkeypatch, capsys):
+    add_edge(repo, receipt="")                                               # no receipt: E1
+    api, raw = fake_upstream(description="UHF expansion firmware for the M5Stack Cardputer-Adv")
+    real = rg.check
+    monkeypatch.setattr(rg, "check", lambda r, **kw: real(r, **{**kw, "api": api, "raw": raw, "catalog": CATALOG}))
+    args = ["--repo", str(repo), "--base", "main", "--branch", BRANCH]
+    assert rg.main(args) == 1
+    assert rg.main(args + ["--report-only"]) == 0
+    assert "NOT ELIGIBLE" in capsys.readouterr().out
