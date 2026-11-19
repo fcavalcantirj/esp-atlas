@@ -178,3 +178,63 @@ def test_r6_a_demand_file_changed_outside_a_chore_demand_commit_fails(repo):
 def test_key_of_reads_the_branch_name_only():
     assert dg.key_of(BRANCH) == KEY and dg.key_of(f"refs/heads/{BRANCH}") == KEY
     assert dg.key_of("jr/research-") is None and dg.key_of("main") is None and dg.key_of(None) is None
+
+
+# --- R6 and merges of main (2026-11-19) -----------------------------------------------------------------
+# #1846 was refreshed with main ("Merge branch 'main' into jr/research-…") and demand-guard went red on that
+# commit's subject: main had changed docs/demand since the branch was cut, so the merge touches it. Every
+# refresh (a person's Update branch, Jr's chores, a conflict fix) and GitHub's own test merge hit the same wall.
+
+def _merge(repo: Path, what: str, subject: str, *extra: str) -> None:
+    _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "merge", "-q", "--no-ff", *extra, "-m", subject, what)
+
+
+def _main_moves(repo: Path) -> None:
+    _git(repo, "checkout", "-q", "main")
+    _write(repo, "docs/demand/pam-leads.json", '{"refreshed": true}')
+    _commit(repo, "chore(demand): daily leads refresh")
+    _git(repo, "checkout", "-q", BRANCH)
+
+
+def test_r6_a_merge_of_main_that_carries_mains_demand_changes_is_not_a_hand_edit(repo):
+    _main_moves(repo)
+    _merge(repo, "main", f"Merge branch 'main' into {BRANCH}")
+    problems, lines = run(repo)
+    assert problems == []
+    assert any("R6 demand commits: 1, all chore(demand):" in ln and "1 merge of main not counted" in ln for ln in lines)
+
+
+def test_r6_githubs_own_test_merge_of_the_pr_into_a_moved_main_passes(repo):
+    _main_moves(repo)
+    head = _git(repo, "rev-parse", "HEAD").strip()
+    _git(repo, "checkout", "-q", "--detach", "main")
+    _merge(repo, head, f"Merge {head} into {_git(repo, 'rev-parse', 'main').strip()}")     # refs/pull/N/merge
+    assert run(repo)[0] == []
+
+
+def test_r6_a_hand_edit_hidden_in_a_merge_of_main_is_still_caught_by_the_content_rules(repo):
+    _main_moves(repo)
+    _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "merge", "-q", "--no-ff", "--no-commit", "main")
+    _write(repo, dg.QUEUE, json.dumps(_queue(status="linked", links=[PR], other_status="closed"), indent=1))
+    _commit(repo, f"Merge branch 'main' into {BRANCH}")
+    assert any(p.startswith("R4") for p in run(repo)[0])
+
+
+def test_r6_a_merge_of_anything_but_main_gets_no_exemption(repo):
+    _git(repo, "checkout", "-q", "-b", "side")
+    _write(repo, dg.RECEIPTS, json.dumps(_receipts(phase="author", pr_url=PR, links=[PR]), indent=1) + "\n")
+    _commit(repo, "feat(catalog): hand tweak on a side branch")
+    _git(repo, "checkout", "-q", BRANCH)
+    _write(repo, "docs/demand/note.txt", "x")
+    _commit(repo, "chore(demand): unrelated")
+    _merge(repo, "side", "Merge branch 'side'")
+    bad = next(p for p in run(repo)[0] if p.startswith("R6"))
+    assert "hand tweak on a side branch" in bad and "Merge branch 'side'" in bad
+
+
+def test_r6_an_ordinary_commit_sitting_directly_on_main_gets_no_exemption(repo):
+    # its only parent IS main's history; one parent is never a merge
+    _git(repo, "checkout", "-q", "-b", "fresh", "main")
+    _write(repo, dg.RECEIPTS, json.dumps(_receipts(phase="author", pr_url=PR, links=[PR]), indent=1))
+    _commit(repo, "feat(catalog): receipts edited by hand as the first commit")
+    assert any(p.startswith("R6") and "edited by hand as the first commit" in p for p in run(repo, branch=BRANCH)[0])

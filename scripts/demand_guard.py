@@ -15,7 +15,8 @@ PR adds are the ones the validation receipt promised. This script is that readin
   R5  the catalog records the PR adds under data/boards/<vendor>/<id>/board.md are exactly
       validation.expected_ids; no forbidden id appears in any changed path or added record id; no other
       data/** file changes;
-  R6  every commit that touches docs/demand has a subject starting with `chore(demand):`.
+  R6  every commit that touches docs/demand has a subject starting with `chore(demand):`. A merge commit with
+      a parent in the base's history (main merged in, or GitHub's test merge) is not such a commit.
 
 Exit 0: every rule holds (the receipt lines say what was checked). Exit 1: a rule failed, named.
 Exit 2: not a demand branch, or git/JSON could not be read.
@@ -58,6 +59,16 @@ def _git(repo: Path, *args: str) -> str:
     if p.returncode != 0:
         raise Unreadable(f"git {' '.join(args)}: {p.stderr.strip()[:200]}")
     return p.stdout
+
+
+def _is_ancestor(repo: Path, commit: str, of: str) -> bool:
+    """True when `commit` is in the history of `of`. Anything but a clean yes (an unknown sha, a git error) is no."""
+    try:
+        p = subprocess.run(["git", "merge-base", "--is-ancestor", commit, of], cwd=repo, capture_output=True,
+                           text=True, timeout=120)
+    except (subprocess.TimeoutExpired, OSError):
+        return False
+    return p.returncode == 0
 
 
 def _json_at(repo: Path, ref: str, path: str) -> dict:
@@ -162,11 +173,24 @@ def check(repo: Path, *, base: str, head: str, branch: str, pr_url: str | None) 
         problems.append(f"R5 data/** changed beyond the expected records: {', '.join(other_data)}")
     lines.append(f"R5 records added: {sorted(added_ids)}")
 
-    subjects = [s for s in _git(repo, "log", "--format=%s", f"{base}..{head}", "--", "docs/demand").split("\n") if s.strip()]
+    # A merge that brings main in (a parent is main's history) is not a hand edit of the demand files: it
+    # carries what main changed there since the branch was cut. That is every refresh of the branch and
+    # GitHub's own test merge. What such a merge leaves in docs/demand is still judged by R1-R5 against the
+    # base, so an edit hidden inside one does not pass. (2026-11-19: #1846 went red on "Merge branch 'main'".)
+    subjects, merges_of_main = [], 0
+    for row in _git(repo, "log", "--format=%H%x1f%P%x1f%s", f"{base}..{head}", "--", "docs/demand").split("\n"):
+        if not row.strip():
+            continue
+        _sha, parents, subject = (row.split("\x1f") + ["", ""])[:3]
+        if len(parents.split()) >= 2 and any(_is_ancestor(repo, par, base) for par in parents.split()):
+            merges_of_main += 1
+            continue
+        subjects.append(subject)
     bad = [s for s in subjects if not s.startswith(COMMIT_PREFIX)]
     if bad:
         problems.append(f"R6 commit(s) touching docs/demand without the {COMMIT_PREFIX} subject: {bad[:3]}")
-    lines.append(f"R6 demand commits: {len(subjects)}, all {COMMIT_PREFIX}" if not bad else "R6 see above")
+    merged = f" ({merges_of_main} merge of main not counted)" if merges_of_main else ""
+    lines.append(f"R6 demand commits: {len(subjects)}, all {COMMIT_PREFIX}{merged}" if not bad else "R6 see above")
     return problems, lines
 
 
