@@ -1,0 +1,19 @@
+# THROWAWAY SPIKE (2026-11-19): why does the API review lane fail in 0.3 s? One 1-token call with the same
+# secret; prints only the HTTP status and the API's error type/message. This branch is never merged.
+name: api-key-probe (throwaway spike)
+on: pull_request
+permissions: {}
+jobs:
+  probe:
+    if: github.head_ref == 'spike/api-key-probe-20261119'
+    runs-on: ubuntu-latest
+    steps:
+      - name: One 1-token call; print the status and the error body only
+        env:
+          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          code=$(curl -sS -o body.json -w "%{http_code}" https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $KEY" -H "anthropic-version: 2023-06-01" -H "content-type: application/json" \
+            -d '{"model":"claude-haiku-5-5","max_tokens":1,"messages":[{"role":"user","content":"hi"}]}')
+          echo "HTTP $code"
+          python3 -c "import json;d=json.load(open('body.json'));print({'type':d.get('type'),'error':d.get('error')} if 'error' in d else {'type':d.get('type'),'model':d.get('model'),'stop_reason':d.get('stop_reason')})"
