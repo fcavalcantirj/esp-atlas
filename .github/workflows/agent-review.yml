@@ -96,12 +96,15 @@ jobs:
             exactly; docs/ops/REVIEW-PROMPT.md is the same task as the runner's delegate gets). The PR branch
             is checked out at HEAD. Read the whole diff with `gh pr diff`, read the PR body with `gh pr view`,
             match every [TEST] and [REAL] claim, run only the test files the diff adds or changes with
-            `python3 -m pytest <files> -q` (PYTHONPATH=apps/core/src), and answer with the structured
+            `python3 -m pytest <files> -q` (PYTHONPATH=apps/core/src). A changed test file under apps/web/
+            (TypeScript) is READ, not run: the required check `tests` runs the web suite at this head before
+            anything merges; look at `gh pr checks` and treat only a FAILED `tests` as a finding, never
+            "could not run it". Answer with the structured
             verdict whose `head` is exactly HEAD. Never comment, edit, commit, push, merge or label anything:
             the workflow posts your verdict.
           claude_args: |
             --max-turns 40
-            --allowedTools "Bash(gh pr diff:*),Bash(gh pr view:*),Bash(python3 -m pytest:*),Bash(PYTHONPATH=apps/core/src python3 -m pytest:*),Read,Grep,Glob"
+            --allowedTools "Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr checks:*),Bash(python3 -m pytest:*),Bash(PYTHONPATH=apps/core/src python3 -m pytest:*),Read,Grep,Glob"
             --json-schema '{"type":"object","required":["verdict","head","findings","checked"],"properties":{"verdict":{"type":"string","enum":["PASS","BLOCK"]},"head":{"type":"string"},"findings":{"type":"array","items":{"type":"object","required":["file","summary","failure"],"properties":{"file":{"type":"string"},"line":{"type":"integer"},"summary":{"type":"string"},"failure":{"type":"string"}}}},"checked":{"type":"array","items":{"type":"string"}}}}'
 
   agent-review-post:

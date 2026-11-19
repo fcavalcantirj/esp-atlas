@@ -353,7 +353,8 @@ def test_clean_sources_are_kept_including_engaged_direct():
 
 def test_row_both_denylisted_and_junk_is_subtracted_once():
     rows = [_src("aocr.org", 39, 0, 0.0), _src("github.com", 20, 15, 180.0)]
-    assert telemetry._is_junk_segment(telemetry._channel_of("aocr.org"), 0.0, 0.0) is False
+    # aocr.org is both denylisted and (since 2026-11-18) a bouncing referral segment: still subtracted once
+    assert telemetry._is_junk_segment(telemetry._channel_of("aocr.org"), 0.0, 0.0) is True
     rows.append(_src("(direct)", 7, 0, 0.5))
     assert telemetry.spam_adjusted(66, rows, DENY) == {"sessions": 20, "engaged_sessions": 15}
 
@@ -434,7 +435,7 @@ def test_digest_prints_raw_and_spam_adjusted_ga4(monkeypatch, tmp_path):
     assert "raw *17* distinct active users / 22 sessions" in ga_line
     assert "spam-adjusted 10 sessions / 7 engaged sessions" in ga_line   # 22 - 9 aocr - 3 junk
     breakdown = [a for s, a in calls if s == "GOOGLE_ANALYTICS_RUN_REPORT" and a["dimensions"]]
-    assert breakdown[0]["dimensions"] == [{"name": "sessionSource"}]
+    assert breakdown[0]["dimensions"] == [{"name": "sessionSource"}, {"name": "city"}, {"name": "sessionDefaultChannelGroup"}]
     assert breakdown[0]["metrics"] == [{"name": "sessions"}, {"name": "engagedSessions"},
                                        {"name": "averageSessionDuration"}]
 
@@ -489,3 +490,52 @@ def test_digest_states_the_undated_horizon_and_the_always_increasing_goal(monkey
     assert "28d window" in telemetry.GOAL_LINE and "≥" in telemetry.GOAL_LINE
     assert "days left" not in message and " by 20" not in message
     assert not hasattr(telemetry, "TARGET_DATE")
+
+
+# --- the junk rule judges every city × source segment, never a search or AI channel (2026-11-18) -----------
+# Measured before the change (GA4, 2026-10-20..11-16): the Direct-only, whole-source rule removed 24 of 682
+# sessions while Ashburn / Singapore / The Dalles / Council Bluffs / Beijing direct segments (0 engaged, avg
+# under 2 s) stayed in, because the whole "(direct)" row averaged real users in. Splitting by city and
+# applying the same thresholds to every non-search, non-AI segment removes 142 sessions with 0 engaged
+# sessions inside them (two earlier windows: 143 / 2 engaged, 55 / 0).
+
+def _seg(source, city, channel, sessions, engaged, avg_s):
+    return {"dimensionValues": [{"value": source}, {"value": city}, {"value": channel}],
+            "metricValues": [{"value": str(sessions)}, {"value": str(engaged)}, {"value": str(avg_s)}]}
+
+
+def test_a_datacenter_direct_segment_is_junk_even_when_direct_overall_is_human():
+    rows = [_seg("(direct)", "Ashburn", "Direct", 26, 0, 0.2),
+            _seg("(direct)", "Rio de Janeiro", "Direct", 10, 8, 200.0),
+            _seg("google", "Lisbon", "Organic Search", 25, 18, 95.0)]
+    assert telemetry.spam_adjusted(61, rows, DENY) == {"sessions": 35, "engaged_sessions": 26}
+
+
+def test_search_and_ai_channels_are_never_junk_even_when_they_bounce():
+    rows = [_seg("google", "Gdynia", "Organic Search", 3, 0, 0.0),
+            _seg("chatgpt.com", "(not set)", "AI Assistant", 2, 0, 2.4),
+            _seg("bing", "Glenview", "Organic Search", 3, 0, 0.0)]
+    assert telemetry.spam_adjusted(8, rows, DENY) == {"sessions": 8, "engaged_sessions": 0}
+    for channel in ("Organic Search", "AI Assistant", "Paid Search", "Organic Social", "Email"):
+        assert telemetry._is_junk_segment(channel, 0.0, 0.0) is False
+
+
+def test_referral_and_unassigned_bounce_segments_are_junk():
+    assert telemetry._is_junk_segment("Referral", 0.0, 0.0) is True
+    assert telemetry._is_junk_segment("Unassigned", 3.0, 0.05) is True
+    assert telemetry._is_junk_segment("Referral", 30.0, 0.05) is False        # slow: a person reading
+    assert telemetry._is_junk_segment("Direct", 2.0, 0.5) is False            # engaged: a person
+
+
+def test_the_breakdown_asks_for_source_city_and_channel():
+    calls = []
+    def fake(slug, args):
+        calls.append(args)
+        return {"rows": []}
+    telemetry_ex = telemetry._ex
+    try:
+        telemetry._ex = fake
+        assert telemetry._ga4_source_rows("2026-10-20", "2026-11-16") == []
+    finally:
+        telemetry._ex = telemetry_ex
+    assert calls[0]["dimensions"] == [{"name": "sessionSource"}, {"name": "city"}, {"name": "sessionDefaultChannelGroup"}]
