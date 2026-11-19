@@ -249,6 +249,64 @@ def canary_retry(gh, slug: str, prs: list, store: ci_watch.Store, now: str, dry_
     return out
 
 
+# --- Jr's own tick PRs never wait for a person ----------------------------------------------------------------
+# A review-routed tick PR merges by itself when scripts/receipt_guard.py can vouch for every recipe it adds
+# (the tick canary, one a day). One the guard cannot vouch for used to sit open until a person read it
+# (2026-11-19: four of them, 25 to 38 hours old). After EXPIRE_HOURS Jr asks the same guard once more and, when
+# it still says no, closes the PR with the reasons. A tick PR closed unmerged is the existing 30-day veto of what
+# it proposed (jr/pending_prs.py), so Jr does not propose the same unverifiable thing every hour. An eligible
+# PR is never closed here: it only waits for the canary's daily slot. An unreadable upstream closes nothing.
+REPO = Path(__file__).resolve().parent.parent
+EXPIRE_HOURS, EXPIRE_PER_TICK = 72, 2
+EXPIRED = ("Jr closes this tick PR after {hours} h: the evidence check cannot vouch for everything it adds, so "
+           "nothing here may merge without a person, and Jr does not wait for one.\n\n{why}\n\n"
+           "Nothing is lost for good: a tick PR closed unmerged is not proposed again for 30 days, and it comes "
+           "back by itself when the upstream's evidence changes. A person who has verified it can reopen and merge it.")
+
+
+def _fetch_branch(branch: str) -> None:
+    import subprocess
+    for ref in ("main", branch):
+        p = subprocess.run(["git", "-C", str(REPO), "fetch", "-q", "origin", f"+refs/heads/{ref}:refs/remotes/origin/{ref}"],
+                           capture_output=True, text=True, timeout=300)
+        if p.returncode != 0:
+            raise RuntimeError(f"git fetch {ref}: {p.stderr.strip()[:200]}")
+
+
+def _guard(repo, *, base, head, branch):
+    import sys
+    sys.path.insert(0, str(REPO / "scripts"))
+    import receipt_guard
+    return receipt_guard.check(repo, base=base, head=head, branch=branch)
+
+
+def expire_tick_prs(gh, prs: list, now: str, dry_run: bool, guard=None, fetch=None) -> dict:
+    """Close the review-routed tick PRs older than EXPIRE_HOURS that the receipt guard still cannot vouch for:
+    at most EXPIRE_PER_TICK a tick, oldest first. {"closed", "kept" (eligible), "unreadable"}."""
+    guard, fetch = guard or _guard, fetch or _fetch_branch
+    out = {"closed": [], "kept": [], "unreadable": []}
+    old = sorted((p for p in prs if str(p.get("headRefName") or "").startswith(ci_watch.TICK_BRANCH)
+                  and "jr-review" in _labels(p) and not p.get("isDraft") and not p.get("isCrossRepository")
+                  and p.get("baseRefName") == "main" and _hours_since(p.get("createdAt"), now) >= EXPIRE_HOURS),
+                 key=lambda p: (str(p.get("createdAt") or ""), p["number"]))
+    for p in old[:EXPIRE_PER_TICK]:
+        n, branch = p["number"], p["headRefName"]
+        try:
+            fetch(branch)
+            problems, _ = guard(REPO, base="origin/main", head=f"origin/{branch}", branch=branch)
+        except Exception:  # noqa: BLE001 — git or an upstream unreadable: never close on a guess
+            out["unreadable"].append(n)
+            continue
+        if not problems:
+            out["kept"].append(n)
+            continue
+        if not dry_run:
+            why = "\n".join(f"- {x}" for x in problems[:8])
+            gh("pr", "close", str(n), "--comment", EXPIRED.format(hours=EXPIRE_HOURS, why=why))
+        out["closed"].append(n)
+    return out
+
+
 def _behind_main(gh, slug: str, head: str) -> bool:
     """main has commits the PR head lacks (compare head...main: ahead_by > 0). Unreadable → False: never
     merge into a PR on a guess."""
@@ -315,8 +373,8 @@ def _machine(login: str | None) -> bool:
 def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
     """Once a UTC day from DIGEST_HOUR: the owner's audit and the self-sufficiency scoreboard in one line.
     The scoreboard measures JR, not people: a day is self-sufficient when no person had to merge one of Jr's
-    own PRs (`jr/tick-*`, `jr/research-*`, `jr/heal-*`) in the last 24 h, none of Jr's own PRs waits
-    (`needs-human`, or open a day), and no heal incident is stuck (needs_human, stalled, halted). People
+    own PRs (`jr/tick-*`, `jr/research-*`, `jr/heal-*`) in the last 24 h, none of Jr's own PRs carries
+    `needs-human`, and no heal incident is stuck (needs_human, stalled, halted). People
     merging and holding their OWN PRs is ordinary work: counted and shown, never a broken day (2026-11-19:
     the first line read 0/7 for a person's 18 infrastructure merges and 6 PRs blocked by review; under that
     rule the count could never reach 7 while anybody worked here). Merges unreadable → not proven → not
@@ -334,15 +392,11 @@ def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
     theirs = [p for p in prs if not _jr_authored(p.get("headRefName")) and not p.get("isDraft")]
     waiting = [f"#{p['number']} needs-human {_hours_since(p.get('updatedAt'), now):.0f} h" for p in mine
                if HUMAN_LABEL in _labels(p)]
-    # an open, non-draft PR still open a day after it was opened is waiting on someone too, label or not
-    # (Nov 18: 25 code PRs waited on one reviewer with no label at all). createdAt, not updatedAt: CI runs and
-    # label changes touch updatedAt without anyone deciding anything.
-    idle = sorted((p for p in mine if not p.get("isDraft") and HUMAN_LABEL not in _labels(p)
-                   and _hours_since(p.get("createdAt"), now) >= 24),
-                  key=lambda p: str(p.get("createdAt") or ""))
-    if idle:
-        waiting.append(f"{len(idle)} PR(s) open ≥ 24 h (oldest #{idle[0]['number']}, "
-                       f"{_hours_since(idle[0].get('createdAt'), now):.0f} h)")
+    # Jr's own open PRs without that label are Jr's QUEUE, not a wait on a person: an eligible tick PR waits for
+    # the canary's daily slot, one the guard cannot vouch for is closed by expire_tick_prs after EXPIRE_HOURS, a
+    # heal PR waits for the agent review. Shown, never counted.
+    queue = sorted((p for p in mine if not p.get("isDraft") and HUMAN_LABEL not in _labels(p)),
+                   key=lambda p: str(p.get("createdAt") or ""))
     stuck = [f"{r['id']} {r['state']}" for r in data["incidents"].values() if r["state"] in ("needs_human", "stalled")]
     if data.get("halted"):
         stuck.append("self-heal halted (run `ci_watch.py ack`)")
@@ -372,9 +426,12 @@ def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
     held = (("Jr needs a person: " + ", ".join(waiting + stuck)) if (waiting or stuck)
             else "nothing of Jr's waits on a person")
     people = f"people's own: {own if own is not None else '?'} merged, {len(theirs)} open ({blocked} blocked by review)"
+    jrq = ("Jr's own queue: empty" if not queue else
+           f"Jr's own queue: {len(queue)} open (oldest #{queue[0]['number']}, "
+           f"{_hours_since(queue[0].get('createdAt'), now):.0f} h)")
     verdict = (f"self-sufficient {min(streak, SELF_SUFFICIENT_DAYS)}/{SELF_SUFFICIENT_DAYS} days"
                + (" — SELF-SUFFICIENT" if streak >= SELF_SUFFICIENT_DAYS else ""))
-    return f"🧹 Jr daily {day} (last 24 h): {merges} · {held} · {people} · {verdict}"
+    return f"🧹 Jr daily {day} (last 24 h): {merges} · {held} · {jrq} · {people} · {verdict}"
 
 
 def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False,
@@ -391,11 +448,13 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
         rest = [p for p in prs if p.get("number") not in touched]
         if dry_run:
             retries = canary_retry(gh, slug, rest, store, now, True, autonomy_path=autonomy_path)
+            expired = expire_tick_prs(gh, rest, now, True)
             return {"status": "ok", "would": [f"record {v.check}" for v in wanted]
                     + [f"rerun #{n} run {r}" for n, r in reds["reruns"]]
                     + [f"merge main into #{n}" for n, _ in reds["update_branch"]]
                     + [f"canary retry #{n} (merge main)" for n, _ in retries["update_branch"]]
-                    + [f"canary retry #{n} (rerun {r})" for n, r in retries["rerun"]], "digest": None}
+                    + [f"canary retry #{n} (rerun {r})" for n, r in retries["rerun"]]
+                    + [f"close tick PR #{n} ({EXPIRE_HOURS} h, not eligible)" for n in expired["closed"]], "digest": None}
         for _, run_id in reds["reruns"]:
             gh("run", "rerun", str(run_id), "--failed")
         for n, head in reds["update_branch"]:
@@ -404,6 +463,8 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
             gh("api", "-X", "PUT", f"repos/{slug}/pulls/{n}/update-branch", "-f", f"expected_head_sha={head}")
         # after the actions red_prs already remembered: a budget that ends here must never cost them
         retries = canary_retry(gh, slug, rest, store, now, False, autonomy_path=autonomy_path)
+        acted = {n for n, _ in retries["update_branch"] + retries["rerun"]}
+        expired = expire_tick_prs(gh, [p for p in rest if p.get("number") not in acted], now, False)
         recorded = []
         for v in wanted:
             rec = store.record(v, now)
@@ -417,6 +478,7 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
                 "reruns": [n for n, _ in reds["reruns"]],
                 "canary_retries": [n for n, _ in retries["update_branch"] + retries["rerun"]],
                 "canary_retry_failed": retries["failed"],
+                "expired": expired["closed"], "expire_unreadable": expired["unreadable"],
                 "updated": [n for n, _ in reds["update_branch"]], "resolved": progress["resolved"], "pushed": progress["pushed"],
                 "stalled": progress["stalled"], "nudges": store.nudges(), "digest": daily(gh, store, prs, now)}
     except Exception as e:      # noqa: BLE001 — the tick must keep running whatever happens here
