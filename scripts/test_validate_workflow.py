@@ -191,7 +191,7 @@ def test_the_canary_needs_every_machine_check_and_both_switches(jobs):
     assert set(job["needs"]) >= {"schema", "tests", "jr-tests", "quotes", "demand-guard", "jr-pr-guard", "g2-guard", "ledger-guard"}
     cond = job["if"]
     assert "startsWith(github.head_ref, 'jr/research-')" in cond and "vars." not in cond   # the script enforces the kill
-    assert job["permissions"] == {"contents": "write", "pull-requests": "write"}
+    assert job["permissions"] == {"contents": "write", "pull-requests": "write", "actions": "write"}
 
 
 def test_the_canary_merges_at_the_exact_head_it_was_given(jobs):
@@ -222,7 +222,7 @@ def test_the_tick_canary_needs_the_receipt_guard_and_every_machine_check_and_bot
     job = jobs["tick-canary"]
     assert set(job["needs"]) >= {"schema", "tests", "jr-tests", "receipt-guard", "jr-pr-guard", "g2-guard", "ledger-guard"}
     assert "startsWith(github.head_ref, 'jr/tick-')" in job["if"] and "vars." not in job["if"]
-    assert job["permissions"] == {"contents": "write", "pull-requests": "write"}
+    assert job["permissions"] == {"contents": "write", "pull-requests": "write", "actions": "write"}
     step = next(s for s in job["steps"] if "scripts/tick_canary.py" in str(s.get("run", "")))
     assert '--head "$PR_HEAD"' in step["run"] and step["env"]["PR_HEAD"] == "${{ github.event.pull_request.head.sha }}"
     assert step["env"]["JR_TICK_AUTOMERGE"] == "${{ vars.JR_TICK_AUTOMERGE }}"

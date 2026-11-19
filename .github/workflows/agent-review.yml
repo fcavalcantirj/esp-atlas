@@ -155,6 +155,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write     # only to start validate on main after a merge (last step)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -168,3 +169,10 @@ jobs:
           GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
           JR_CODE_AUTOMERGE: ${{ vars.JR_CODE_AUTOMERGE }}
         run: python3 scripts/code_canary.py --pr ${{ github.event.issue.number }} --from-comments
+      - name: main gets its CI even when this job's token merged (a workflow-token push starts no workflow)
+        # 2026-11-19: #1799, the first PR the machine merged, left main's new head with zero runs. Dispatch is
+        # the documented exception.
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/validate_main.py

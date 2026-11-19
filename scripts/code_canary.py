@@ -35,7 +35,8 @@ HOURLY_CAP = 1
 # and its contract (4th review of #1809, 2026-11-19: an agent-PASSed PR could otherwise switch automation on)
 HUMAN_ONLY = ("jr/autonomy.json", ".github/", "scripts/code_canary.py", "scripts/demand_canary.py",
               "scripts/tick_canary.py", "scripts/demand_guard.py", "scripts/receipt_guard.py", "scripts/ledger_guard.py",
-              "scripts/jr_pr_guard.py", "jr/agent_review.py", "docs/REVIEW-CONTRACT.md", "docs/ops/REVIEW-PROMPT.md")
+              "scripts/jr_pr_guard.py", "scripts/validate_main.py", "jr/agent_review.py", "docs/REVIEW-CONTRACT.md",
+              "docs/ops/REVIEW-PROMPT.md")
 
 
 def human_only_paths(gh, repo_slug: str, pr: int) -> list[str] | None:
