@@ -147,7 +147,9 @@ star is that none of this needs a person, so each becomes a CI job a PR must pas
 - **`demand-guard`** (`scripts/demand_guard.py`, `jr/research-*` pull requests): the queue candidate `<KEY>` (from the
   branch name) is `linked` to exactly this PR and nothing else in the two demand files changed; the ids added under
   `data/boards/**` are exactly its `expected_ids`, no `forbidden_id` appears in the diff, and the demand
-  files changed only in `chore(demand):` commits.
+  files changed only in `chore(demand):` commits. A refresh of the branch is not such a change: a two-parent
+  merge of main whose `docs/demand` equals git's automatic merge of its parents is not counted (2026-11-19);
+  a merge with anything typed into those files, a hand-resolved conflict included, is.
 - **Canary auto-merge** (`scripts/demand_canary.py`, job `demand-canary`): on a `jr/research-*` PR, when
   every job it needs is green (schema, tests, jr-tests, quotes, demand-guard, jr-pr-guard, g2-guard,
   ledger-guard), `jr/autonomy.json` has `demand_automerge: true` (turned on by a reviewed PR) AND the

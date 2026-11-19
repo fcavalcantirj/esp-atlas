@@ -15,7 +15,9 @@ PR adds are the ones the validation receipt promised. This script is that readin
   R5  the catalog records the PR adds under data/boards/<vendor>/<id>/board.md are exactly
       validation.expected_ids; no forbidden id appears in any changed path or added record id; no other
       data/** file changes;
-  R6  every commit that touches docs/demand has a subject starting with `chore(demand):`.
+  R6  every commit that touches docs/demand has a subject starting with `chore(demand):`. Not counted: a
+      two-parent merge of the base's history whose docs/demand is exactly git's automatic merge of its
+      parents (a refresh of the branch, GitHub's test merge). A hand-resolved or edited merge is counted.
 
 Exit 0: every rule holds (the receipt lines say what was checked). Exit 1: a rule failed, named.
 Exit 2: not a demand branch, or git/JSON could not be read.
@@ -58,6 +60,34 @@ def _git(repo: Path, *args: str) -> str:
     if p.returncode != 0:
         raise Unreadable(f"git {' '.join(args)}: {p.stderr.strip()[:200]}")
     return p.stdout
+
+
+def _is_ancestor(repo: Path, commit: str, of: str) -> bool:
+    """True when `commit` is in the history of `of`. Anything but a clean yes (an unknown sha, a git error) is no."""
+    try:
+        p = subprocess.run(["git", "merge-base", "--is-ancestor", commit, of], cwd=repo, capture_output=True,
+                           text=True, timeout=120)
+    except (subprocess.TimeoutExpired, OSError):
+        return False
+    return p.returncode == 0
+
+
+def _clean_merge_of_base(repo: Path, sha: str, parents: list[str], base: str) -> bool:
+    """True only for a two-parent merge with a parent in the base's history whose docs/demand tree is exactly
+    what `git merge-tree` computes from the two parents without a conflict. Fail closed: an octopus, a
+    conflict, a git too old for `merge-tree --write-tree`, any error -> False, and R6 judges the commit."""
+    if len(parents) != 2 or not any(_is_ancestor(repo, par, base) for par in parents):
+        return False
+    try:
+        p = subprocess.run(["git", "merge-tree", "--write-tree", parents[0], parents[1]], cwd=repo,
+                           capture_output=True, text=True, timeout=120)
+        if p.returncode != 0:
+            return False
+        auto = p.stdout.split("\n")[0].strip()
+        return bool(auto) and (_git(repo, "rev-parse", f"{auto}:docs/demand").strip()
+                               == _git(repo, "rev-parse", f"{sha}:docs/demand").strip())
+    except (subprocess.TimeoutExpired, OSError, Unreadable):
+        return False
 
 
 def _json_at(repo: Path, ref: str, path: str) -> dict:
@@ -162,11 +192,24 @@ def check(repo: Path, *, base: str, head: str, branch: str, pr_url: str | None) 
         problems.append(f"R5 data/** changed beyond the expected records: {', '.join(other_data)}")
     lines.append(f"R5 records added: {sorted(added_ids)}")
 
-    subjects = [s for s in _git(repo, "log", "--format=%s", f"{base}..{head}", "--", "docs/demand").split("\n") if s.strip()]
+    # A merge that brings main in and leaves docs/demand exactly as git's own automatic merge of its two
+    # parents does is not a hand edit: it only carries what main changed there since the branch was cut (every
+    # refresh of the branch, GitHub's test merge; 2026-11-19: #1846 went red on "Merge branch 'main'"). Anything
+    # typed into such a merge, a hand-resolved conflict included, makes it differ and R6 judges its subject.
+    subjects, merges_of_main = [], 0
+    for row in _git(repo, "log", "--format=%H%x1f%P%x1f%s", f"{base}..{head}", "--", "docs/demand").split("\n"):
+        if not row.strip():
+            continue
+        _sha, parents, subject = (row.split("\x1f") + ["", ""])[:3]
+        if _clean_merge_of_base(repo, _sha, parents.split(), base):
+            merges_of_main += 1
+            continue
+        subjects.append(subject)
     bad = [s for s in subjects if not s.startswith(COMMIT_PREFIX)]
     if bad:
         problems.append(f"R6 commit(s) touching docs/demand without the {COMMIT_PREFIX} subject: {bad[:3]}")
-    lines.append(f"R6 demand commits: {len(subjects)}, all {COMMIT_PREFIX}" if not bad else "R6 see above")
+    merged = f" ({merges_of_main} clean merge of main not counted)" if merges_of_main else ""
+    lines.append(f"R6 demand commits: {len(subjects)}, all {COMMIT_PREFIX}{merged}" if not bad else "R6 see above")
     return problems, lines
 
 
