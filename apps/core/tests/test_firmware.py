@@ -78,17 +78,17 @@ def test_recipes_for_firmware_unknown_firmware_returns_empty():
 
 def test_recipes_for_firmware_infiltra_is_no_longer_orphaned():
     ids = {r["id"] for r in recipes_for_firmware("infiltra")}
-    assert ids == {"m5stick-cplus2__infiltra", "m5cardputer__infiltra"}
+    assert ids >= {"m5stick-cplus2__infiltra", "m5cardputer__infiltra"}   # the catalog grows: these exist, more may
 
 
 def test_recipes_for_firmware_m5_crystal_is_no_longer_orphaned():
     ids = {r["id"] for r in recipes_for_firmware("m5-crystal")}
-    assert ids == {"m5stick-cplus2__m5-crystal", "m5stick-s3__m5-crystal"}
+    assert ids >= {"m5stick-cplus2__m5-crystal", "m5stick-s3__m5-crystal"}   # the catalog grows: these exist, more may
 
 
 def test_recipes_for_firmware_rogueduck_is_no_longer_orphaned():
     ids = {r["id"] for r in recipes_for_firmware("rogueduck")}
-    assert ids == {"m5stick-s3__rogueduck"}
+    assert ids >= {"m5stick-s3__rogueduck"}   # the catalog grows: these exist, more may
 
 
 def test_every_recipe_carries_a_valid_trust_tier():
