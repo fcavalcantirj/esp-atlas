@@ -151,6 +151,18 @@ count. Memory: `canary_retry` in the incident store, written **before** each cal
 refused, or cut short by the tick's call budget is never sent twice in a day; it runs after the actions
 `red_prs` already remembered. No delegate, no model.
 
+### 1f. Jr's own tick PRs never wait for a person (2026-11-19)
+
+A review-routed tick PR merges by itself when `scripts/receipt_guard.py` vouches for every recipe it adds (the
+tick canary, one a day). One the guard cannot vouch for used to sit open until a person read it (four of them,
+25 to 38 hours old, on Nov 19). `jr/chores.py expire_tick_prs`, every tick: a `jr/tick-*` PR labelled
+`jr-review`, open 72 h (`EXPIRE_HOURS`), is checked by the same guard once more (branch fetched, live
+upstream); when it still cannot vouch for it, Jr closes the PR with the guard's reasons, at most two a tick,
+oldest first. Closed unmerged is the existing 30-day veto (`jr/pending_prs.py`), so the same unverifiable
+thing is not proposed every hour. An eligible PR is never closed (it waits for the canary's daily slot); an
+unreadable git or upstream closes nothing. The daily line shows Jr's open PRs as "Jr's own queue" and does not
+count them as waiting on a person; only `needs-human` on one of Jr's PRs, or a stuck incident, does.
+
 ## 2. Known causes — handled in code, no model
 
 | Signal | Action |
