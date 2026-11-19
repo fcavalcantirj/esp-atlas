@@ -3267,14 +3267,14 @@
       "timestamp": "2026-11-07T08:00:55.079521+00:00"
     },
     "devour-sphere": {
-      "expires": "2026-11-19T07:00:59.645797+00:00",
+      "expires": "2026-12-19T08:00:32.756472+00:00",
       "id": "devour-sphere",
       "pr_ref": null,
-      "reason": "below_floor: 9 stars / 2 forks",
+      "reason": "below_floor: 10 stars / 2 forks",
       "repo": "shapoco/devour-sphere",
       "repo_id": 1369088965,
       "status": "rejected",
-      "timestamp": "2026-10-20T07:00:59.645797+00:00"
+      "timestamp": "2026-11-19T08:00:32.756472+00:00"
     },
     "dht11-and-dht22-m5stick": {
       "expires": "2026-12-15T19:00:32.749098+00:00",
@@ -3875,7 +3875,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-19T06:00:32.213183+00:00"
+      "timestamp": "2026-11-19T08:00:32.756472+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4025,6 +4025,14 @@
       "repo_id": 1447952497,
       "status": "rejected",
       "timestamp": "2026-11-15T16:00:31.979974+00:00"
+    },
+    "fennek": {
+      "id": "fennek",
+      "pr_ref": "#1875",
+      "repo": "danst0/fennek",
+      "repo_id": 1266907380,
+      "status": "proposed",
+      "timestamp": "2026-11-19T08:00:32.756472+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -17200,6 +17208,14 @@
       "status": "rejected",
       "timestamp": "2026-11-15T22:00:31.751655+00:00"
     },
+    "pisces-moon-os": {
+      "id": "pisces-moon-os",
+      "pr_ref": "#1875",
+      "repo": "fluidfortune/pisces-moon-os",
+      "repo_id": 1213090064,
+      "status": "proposed",
+      "timestamp": "2026-11-19T08:00:32.756472+00:00"
+    },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
       "id": "pixel-tower-defense",
@@ -18127,6 +18143,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T05:00:31.748945+00:00"
     },
+    "repo-note:aserhat81/kivil": {
+      "expires": "2026-12-19T07:00:32.950177+00:00",
+      "id": "repo-note:aserhat81/kivil",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "aserhat81/kivil",
+      "status": "rejected",
+      "timestamp": "2026-11-19T07:00:32.950177+00:00"
+    },
     "repo-note:askrejans/g86-info": {
       "expires": "2026-12-18T04:00:31.917403+00:00",
       "id": "repo-note:askrejans/g86-info",
@@ -18396,6 +18421,15 @@
       "repo": "camemake/cm_esp_p4_c5-open-hardware-platform",
       "status": "rejected",
       "timestamp": "2026-11-18T02:00:31.876893+00:00"
+    },
+    "repo-note:cdrlpart/tdongle-yk": {
+      "expires": "2026-12-19T07:00:32.950177+00:00",
+      "id": "repo-note:cdrlpart/tdongle-yk",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "cdrlpart/tdongle-yk",
+      "status": "rejected",
+      "timestamp": "2026-11-19T07:00:32.950177+00:00"
     },
     "repo-note:celliesprojects/esp32_vs1053_stream": {
       "expires": "2026-12-17T18:00:31.692410+00:00",
@@ -19792,6 +19826,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T14:00:31.448865+00:00"
     },
+    "repo-note:llams/esp-md": {
+      "expires": "2026-12-19T07:00:32.950177+00:00",
+      "id": "repo-note:llams/esp-md",
+      "pr_ref": null,
+      "reason": "stopword_name: 'ESP-MD' names a radio, not a firmware",
+      "repo": "llams/esp-md",
+      "status": "rejected",
+      "timestamp": "2026-11-19T07:00:32.950177+00:00"
+    },
     "repo-note:lorenzwolf/crab-puck": {
       "expires": "2026-12-18T08:00:31.492566+00:00",
       "id": "repo-note:lorenzwolf/crab-puck",
@@ -20035,6 +20078,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T10:00:32.143438+00:00"
     },
+    "repo-note:mhamidjamil/ttgo_tcall": {
+      "expires": "2026-12-19T07:00:32.950177+00:00",
+      "id": "repo-note:mhamidjamil/ttgo_tcall",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "mhamidjamil/ttgo_tcall",
+      "status": "rejected",
+      "timestamp": "2026-11-19T07:00:32.950177+00:00"
+    },
     "repo-note:michtronics/axloratnc": {
       "expires": "2026-12-18T09:00:32.863482+00:00",
       "id": "repo-note:michtronics/axloratnc",
@@ -20142,6 +20194,15 @@
       "repo": "mrcodetastic/esp32-hub75-matrixpanel-dma",
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
+    "repo-note:mrmoses1911/tdisplays3_touch": {
+      "expires": "2026-12-19T07:00:32.950177+00:00",
+      "id": "repo-note:mrmoses1911/tdisplays3_touch",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'library'",
+      "repo": "mrmoses1911/tdisplays3_touch",
+      "status": "rejected",
+      "timestamp": "2026-11-19T07:00:32.950177+00:00"
     },
     "repo-note:muellera/esp32-c5-its": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
@@ -20404,6 +20465,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
     },
+    "repo-note:paixonite/loverboy": {
+      "expires": "2026-12-19T07:00:32.950177+00:00",
+      "id": "repo-note:paixonite/loverboy",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'framework'",
+      "repo": "paixonite/loverboy",
+      "status": "rejected",
+      "timestamp": "2026-11-19T07:00:32.950177+00:00"
+    },
     "repo-note:papercodein/elecrow": {
       "expires": "2026-12-17T16:00:31.699892+00:00",
       "id": "repo-note:papercodein/elecrow",
@@ -20484,6 +20554,15 @@
       "repo": "phodara/lilygotdisplayc5",
       "status": "rejected",
       "timestamp": "2026-11-19T02:00:32.224989+00:00"
+    },
+    "repo-note:pigro141/ble-hud-navigation-esp32-lilygotdisplays3": {
+      "expires": "2026-12-19T07:00:32.950177+00:00",
+      "id": "repo-note:pigro141/ble-hud-navigation-esp32-lilygotdisplays3",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "pigro141/ble-hud-navigation-esp32-lilygotdisplays3",
+      "status": "rejected",
+      "timestamp": "2026-11-19T07:00:32.950177+00:00"
     },
     "repo-note:pingequalab/scout-lite": {
       "expires": "2026-12-19T02:00:32.224989+00:00",
@@ -20898,6 +20977,15 @@
       "repo": "santoru/pihole-dashboard",
       "status": "rejected",
       "timestamp": "2026-11-17T23:00:31.883511+00:00"
+    },
+    "repo-note:saturnsvoid/lilystrike": {
+      "expires": "2026-12-19T07:00:32.950177+00:00",
+      "id": "repo-note:saturnsvoid/lilystrike",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "saturnsvoid/lilystrike",
+      "status": "rejected",
+      "timestamp": "2026-11-19T07:00:32.950177+00:00"
     },
     "repo-note:schnoog/joystick_esp32s2": {
       "expires": "2026-12-17T18:00:31.692410+00:00",
@@ -24683,6 +24771,7 @@
     "arturockpk/imufishinggame": "imufishinggame",
     "arturockpk/m5stickradio.git": "m5stickradio",
     "arturockpk/stickbananaboxing": "stickbananaboxing",
+    "aserhat81/kivil": "repo-note:aserhat81/kivil",
     "asg02fever/m5-dial-rgb-light-strip-controller-": "m5-dial-rgb-light-strip-controller",
     "askrejans/g86-info": "repo-note:askrejans/g86-info",
     "aspikray/solotputer": "solotputer",
@@ -24781,6 +24870,7 @@
     "carlosdanieldev/copyrfid": "copyrfid",
     "cattivole/darkroomtimer": "darkroomtimer",
     "cc": "cc",
+    "cdrlpart/tdongle-yk": "repo-note:cdrlpart/tdongle-yk",
     "celliesprojects/esp32_vs1053_stream": "repo-note:celliesprojects/esp32_vs1053_stream",
     "cgdsyldrm/macrocard": "macrocard",
     "chadvavra/papercolor.git": "papercolor",
@@ -24919,6 +25009,7 @@
     "dalianblue/mbti_book": "mbti-book",
     "daniebker/paperos": "paperos",
     "danpodeanu/seeed-reterminal-e100x": "seeed-reterminal-e100x",
+    "danst0/fennek": "fennek",
     "darabos/imu-data": "imu-data",
     "darabos/m5-mod-wheel": "m5-mod-wheel",
     "darabos/tamagacha": "tamagacha",
@@ -25073,6 +25164,7 @@
     "flipperdevices/blackmagic-esp32-s2": "repo-note:flipperdevices/blackmagic-esp32-s2",
     "flock-you": "flock-you",
     "fluddel94/mvg_abfahrtsdisplay_e290": "repo-note:fluddel94/mvg_abfahrtsdisplay_e290",
+    "fluidfortune/pisces-moon-os": "pisces-moon-os",
     "forairaaaaa/stupinake.git": "stupinake",
     "forshaws/cardputer-ntfy": "cardputer-ntfy",
     "forshaws/fraudtagger-cardputer": "fraudtagger-cardputer",
@@ -26265,6 +26357,7 @@
     "liu-zhongxian/zongzhu-bot": "repo-note:liu-zhongxian/zongzhu-bot",
     "liuscraft/conference-hosting": "repo-note:liuscraft/conference-hosting",
     "liyongjian5179/m5stack_sticks3_lucky_slots": "m5stack-sticks3-lucky-slots",
+    "llams/esp-md": "repo-note:llams/esp-md",
     "locosp/bruce-firmware-wdgwars": "bruce-firmware-wdgwars",
     "lolzik-2/medusa": "medusa",
     "lordlexat/m5core2_simpleclock": "m5core2-simpleclock",
@@ -26412,6 +26505,7 @@
     "meshdeck-os/meshdeck": "meshdeck",
     "meshmapper/meshmapper_flutter_app": "repo-note:meshmapper/meshmapper_flutter_app",
     "meshtastic/firmware": "meshtastic",
+    "mhamidjamil/ttgo_tcall": "repo-note:mhamidjamil/ttgo_tcall",
     "mhrsntrk/ask-master": "ask-master",
     "michaelrizn/hi5stack-m5stack-papsers3-m5papers3": "hi5stack-m5stack-papsers3-m5papers3",
     "michtronics/axloratnc": "repo-note:michtronics/axloratnc",
@@ -26465,6 +26559,7 @@
     "mrarm/hakrwatch": "repo-note:mrarm/hakrwatch",
     "mrchaosbude/esp32-cyd-aquarium": "esp32-cyd-aquarium",
     "mrcodetastic/esp32-hub75-matrixpanel-dma": "repo-note:mrcodetastic/esp32-hub75-matrixpanel-dma",
+    "mrmoses1911/tdisplays3_touch": "repo-note:mrmoses1911/tdisplays3_touch",
     "mrnet15/ravenrf": "ravenrf",
     "msm187/stickpet": "stickpet",
     "mtoolstec/cardputer-adv-uhf-expansion": "cardputer-adv-uhf-expansion",
@@ -26578,6 +26673,7 @@
     "oxoooox/stackchan-remote-sticks3-joystick2": "stackchan-remote-sticks3-joystick2",
     "ozinfl/elecrow-3.5-rgb-tft-squareline-example": "repo-note:ozinfl/elecrow-3.5-rgb-tft-squareline-example",
     "paciente8159/ucnc": "repo-note:paciente8159/ucnc",
+    "paixonite/loverboy": "repo-note:paixonite/loverboy",
     "palaniraja/sudoku-m5papers3": "sudoku-m5papers3",
     "panpanweijie/cardputer-adv-pocket-market.git": "cardputer-adv-pocket-market",
     "panpanweijie/cardputer-adv-sport-companion.git": "cardputer-adv-sport-companion",
@@ -26608,6 +26704,7 @@
     "phodara/lilygotdisplayc5": "repo-note:phodara/lilygotdisplayc5",
     "piaoxuebingfeng/m5tab5-demos": "m5tab5-demos",
     "pierrebak/m5cardputer_voice-changer": "m5cardputer-voice-changer",
+    "pigro141/ble-hud-navigation-esp32-lilygotdisplays3": "repo-note:pigro141/ble-hud-navigation-esp32-lilygotdisplays3",
     "pingequalab/scout-lite": "repo-note:pingequalab/scout-lite",
     "pingequalab/sigroam-wardriving": "repo-note:pingequalab/sigroam-wardriving",
     "pinoyunknown/ghost-firmware": "ghost-firmware",
@@ -26751,6 +26848,7 @@
     "sanjidahjahan/row-the-boat": "repo-note:sanjidahjahan/row-the-boat",
     "santoru/pihole-dashboard": "repo-note:santoru/pihole-dashboard",
     "sarah-c/m5stickc_plus_slot_machine": "m5stickc-plus-slot-machine",
+    "saturnsvoid/lilystrike": "repo-note:saturnsvoid/lilystrike",
     "sau412/esp32_cyd_pda": "esp32-cyd-pda",
     "saurav2107/paperos": "paperos",
     "say4n/edf-energy-monitor": "edf-energy-monitor",
