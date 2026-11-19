@@ -2,6 +2,7 @@
 id: pydos
 type: firmware
 name: PyDOS
+seo_title: "PyDOS \u2014 DOS-like MicroPython shell for ESP32-S3"
 url: https://github.com/RetiredWizard/PyDOS
 category: multi
 maintainer: retiredwizard

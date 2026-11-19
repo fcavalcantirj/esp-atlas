@@ -1,0 +1,101 @@
+[
+  {
+    "page": "/parts/m5stick-s3",
+    "top_query": "m5 stick s3",
+    "impressions": 195,
+    "position": 8.4,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-20",
+      "end": "2026-11-16"
+    }
+  },
+  {
+    "page": "/",
+    "top_query": "advanceos for cardputer adv",
+    "impressions": 87,
+    "position": 6.6,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-20",
+      "end": "2026-11-16"
+    }
+  },
+  {
+    "page": "/firmware/pydos",
+    "top_query": "esp32 dos",
+    "impressions": 33,
+    "position": 7.4,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-20",
+      "end": "2026-11-16"
+    }
+  },
+  {
+    "page": "/firmware/esp32marauder",
+    "top_query": null,
+    "impressions": 28,
+    "position": 8.7,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-20",
+      "end": "2026-11-16"
+    }
+  },
+  {
+    "page": "/parts/m5nanoc6",
+    "top_query": null,
+    "impressions": 25,
+    "position": 7.6,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-20",
+      "end": "2026-11-16"
+    }
+  },
+  {
+    "page": "/firmware/mclite",
+    "top_query": "mclite",
+    "impressions": 23,
+    "position": 7.4,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-20",
+      "end": "2026-11-16"
+    }
+  },
+  {
+    "page": "/firmware/esp32-homekit-remote",
+    "top_query": null,
+    "impressions": 22,
+    "position": 7,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-20",
+      "end": "2026-11-16"
+    }
+  },
+  {
+    "page": "/parts/esp32-c5-devkitc-1",
+    "top_query": null,
+    "impressions": 21,
+    "position": 7.2,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-20",
+      "end": "2026-11-16"
+    }
+  },
+  {
+    "page": "/parts/lolin-d32",
+    "top_query": null,
+    "impressions": 20,
+    "position": 8.8,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-20",
+      "end": "2026-11-16"
+    }
+  }
+]
