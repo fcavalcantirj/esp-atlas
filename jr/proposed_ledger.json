@@ -3924,7 +3924,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-19T18:00:33.048349+00:00"
+      "timestamp": "2026-11-19T19:00:34.793788+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4080,7 +4080,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-19T18:00:33.048349+00:00"
+      "timestamp": "2026-11-19T19:00:34.793788+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -17297,7 +17297,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-19T18:00:33.048349+00:00"
+      "timestamp": "2026-11-19T19:00:34.793788+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -25187,11 +25187,11 @@
     },
     "xmas-tree": {
       "id": "xmas-tree",
-      "pr_ref": null,
+      "pr_ref": "#1895",
       "repo": "designer2k2/xmas-tree",
       "repo_id": 71814059,
       "status": "proposed",
-      "timestamp": "2026-11-19T18:00:33.048349+00:00"
+      "timestamp": "2026-11-19T19:00:34.793788+00:00"
     },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
