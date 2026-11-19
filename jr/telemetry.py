@@ -51,15 +51,23 @@ GA4_BREAKDOWN_DIMS = ["country", "sessionDefaultChannelGroup"]
 GA4_BREAKDOWN_METRICS = ["activeUsers", "sessions", "averageSessionDuration", "engagedSessions"]
 
 
+# Channels whose visitors arrived from a search engine, an AI assistant, social, email or an ad: a person
+# clicked a result or a link there, so a fast bounce is still a person (2026-11-18).
+HUMAN_CHANNELS = frozenset({"Organic Search", "Paid Search", "AI Assistant", "Organic Social", "Paid Social",
+                            "Email", "Organic Video", "Organic Shopping", "Paid Shopping", "Paid Video", "Display"})
+
+
 def _is_junk_segment(channel: str, avg_duration_s: float, engagement_rate: float, *,
-                      junk_channel: str = "Direct",
                       max_avg_duration_s: float = 5.0,
                       max_engagement_rate: float = 0.10) -> bool:
-    """A behavioral bot/junk rule, matching deep-analytics' bot_filter.py: a segment is junk
-    only when its channel is `junk_channel` AND its average session duration is at most
-    `max_avg_duration_s` AND its engagement rate is at most `max_engagement_rate`. Country is
-    never part of the rule -- humans anywhere can be Direct and fast."""
-    return (channel == junk_channel
+    """A behavioral bot/junk rule, matching deep-analytics' bot_filter.py: a segment is junk only when its
+    channel is NOT a human-arrival channel (`HUMAN_CHANNELS`: search, AI assistants, social, email, ads) AND
+    its average session duration is at most `max_avg_duration_s` AND its engagement rate is at most
+    `max_engagement_rate`. Applied per city × source segment (`_ga4_source_rows`), so a datacenter's direct
+    hits no longer hide inside the site-wide "(direct)" average. Country or city is never part of the rule --
+    humans anywhere can be Direct and fast; only the behaviour decides. (Until 2026-11-18 the rule judged
+    the Direct channel alone, per whole source: 24 of 682 sessions removed where 142 were junk.)"""
+    return (channel not in HUMAN_CHANNELS
             and avg_duration_s <= max_avg_duration_s
             and engagement_rate <= max_engagement_rate)
 
@@ -139,9 +147,9 @@ def _is_denylisted(source: str, denylist: frozenset) -> bool:
 
 
 def _channel_of(source: str) -> str:
-    """GA4's Direct channel is exactly the `(direct)` session source; other sources are not
-    Direct, which is all _is_junk_segment asks."""
-    return "Direct" if source == "(direct)" else source
+    """The channel of a row that carries none (a source-only row): GA4's Direct channel is exactly the
+    `(direct)` source; any other bare source is treated as a referral."""
+    return "Direct" if source == "(direct)" else "Referral"
 
 
 def spam_adjusted(raw_sessions: float, rows: list, denylist: frozenset) -> dict:
@@ -151,12 +159,13 @@ def spam_adjusted(raw_sessions: float, rows: list, denylist: frozenset) -> dict:
     for row in rows:
         dims = row.get("dimensionValues", [])
         source = dims[0].get("value", "") if dims else ""
+        channel = dims[2].get("value", "") if len(dims) > 2 else _channel_of(source)
         mvals = row.get("metricValues", [])
         m = {name: float(mvals[i]["value"]) if i < len(mvals) else 0.0
              for i, name in enumerate(GA4_SOURCE_METRICS)}
         rate = (m["engagedSessions"] / m["sessions"]) if m["sessions"] else 0.0
         if (_is_denylisted(source, denylist)
-                or _is_junk_segment(_channel_of(source), m["averageSessionDuration"], rate)):
+                or _is_junk_segment(channel, m["averageSessionDuration"], rate)):
             excluded_sessions += m["sessions"]
         else:
             engaged += m["engagedSessions"]
@@ -195,11 +204,13 @@ def completed_window(days: int = 7, today_utc: dt.date | None = None) -> tuple[s
 
 
 def _ga4_source_rows(start: str, end: str) -> list | None:
-    """The sessionSource breakdown behind the spam-adjusted numbers; None when the fetch fails."""
+    """The source × city × channel breakdown behind the spam-adjusted numbers (one row per segment the
+    junk rule judges); None when the fetch fails."""
     ga = _ex("GOOGLE_ANALYTICS_RUN_REPORT", {"property": GA4_PROPERTY,
              "dateRanges": [{"startDate": start, "endDate": end}],
-             "dimensions": [{"name": "sessionSource"}],
-             "metrics": [{"name": name} for name in GA4_SOURCE_METRICS]})
+             "dimensions": [{"name": "sessionSource"}, {"name": "city"}, {"name": "sessionDefaultChannelGroup"}],
+             "metrics": [{"name": name} for name in GA4_SOURCE_METRICS],
+             "limit": 10000})
     return None if ga is None else ga.get("rows", [])
 
 
