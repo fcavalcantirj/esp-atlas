@@ -185,6 +185,25 @@ def note_fallback(state: dict, day: str, pr: int) -> dict:
     return state
 
 
+WORKFLOW_REL = ".github/workflows/agent-review.yml"
+
+
+def snapshot_is_stale(gh, slug: str, number: int) -> bool | None:
+    """True when the PR's merge snapshot carries another review workflow than main does. A pull_request event
+    (the fallback label) runs the workflow FROM that snapshot, and GitHub rebuilds snapshots hours late
+    (2026-11-19: #1876's was six hours old, so its fallback review ran without a fix merged a minute before
+    and posted "BLOCK: the reviewer could not read the diff"). None when either blob cannot be read."""
+    try:
+        merge = json.loads(gh("api", f"repos/{slug}/pulls/{number}") or "{}").get("merge_commit_sha")
+        if not merge:
+            return None
+        blobs = [json.loads(gh("api", f"repos/{slug}/contents/{WORKFLOW_REL}?ref={ref}") or "{}").get("sha")
+                 for ref in (merge, "main")]
+        return None if not all(blobs) else blobs[0] != blobs[1]
+    except Exception:  # noqa: BLE001 — unreadable: the caller labels as before
+        return None
+
+
 # --- one pass -------------------------------------------------------------------------------------------
 
 def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_run: bool = False,
@@ -254,6 +273,20 @@ def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_ru
             say(f"agent-review: subscription lane DOWN ({(dv or {}).get('reason', '')[:120]}); fallback budget "
                 f"{used}/{fallback_per_day} spent today; #{number} waits")
             return {"outcome": "fallback_capped", "pr": number, "head": head, "state": state}
+        # the label runs the workflow from the PR's merge snapshot: bring a stale one up to main first (a new
+        # head, labelled on a later pass), at most once per PR per day; a refusal or an unreadable snapshot
+        # is labelled as before
+        refreshed = state.setdefault("fallback_refreshed", {})
+        if refreshed.get(str(number)) != day and snapshot_is_stale(gh, slug, number):
+            try:
+                gh("api", "-X", "PUT", f"repos/{slug}/pulls/{number}/update-branch", "-f", f"expected_head_sha={head}")
+            except Exception as e:  # noqa: BLE001 — a conflict, a moved head: label what is there
+                say(f"agent-review: #{number}: stale snapshot, refresh refused ({str(e)[:100]}); labelling anyway")
+            else:
+                state["fallback_refreshed"] = {**{k: v for k, v in refreshed.items() if v == day}, str(number): day}
+                say(f"agent-review: subscription lane DOWN; #{number}'s merge snapshot carries an older review "
+                    f"workflow: merged main into it; it gets {FALLBACK_LABEL} on a later pass")
+                return {"outcome": "fallback_refresh", "pr": number, "head": head, "state": state}
         gh("pr", "edit", str(number), "--repo", slug, "--add-label", FALLBACK_LABEL)
         state = note_fallback(state, day, number)
         say(f"agent-review: subscription lane DOWN ({(dv or {}).get('reason', '')[:120]}); #{number} labelled "

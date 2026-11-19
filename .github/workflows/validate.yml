@@ -181,7 +181,10 @@ jobs:
       # checkout, a commit on the branch could rewrite the canary that judges it)
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          # main's TIP, not base.sha: base.sha is main as it was when the PR's head was last synchronized
+          # (measured 2026-11-19: a day old on PRs opened the day before), so "main's code decides" ran
+          # yesterday's canary on them
+          ref: ${{ github.event.repository.default_branch }}
           path: trusted
           persist-credentials: false
       - uses: actions/checkout@v4
@@ -258,7 +261,10 @@ jobs:
       # checkout, a commit on the branch could rewrite the canary that judges it)
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          # main's TIP, not base.sha: base.sha is main as it was when the PR's head was last synchronized
+          # (measured 2026-11-19: a day old on PRs opened the day before), so "main's code decides" ran
+          # yesterday's canary on them
+          ref: ${{ github.event.repository.default_branch }}
           path: trusted
           persist-credentials: false
       - uses: actions/checkout@v4
