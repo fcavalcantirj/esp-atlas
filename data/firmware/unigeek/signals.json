@@ -1,7 +1,7 @@
 {
  "calls": 21,
  "errors": 0,
- "fetched": "2026-11-10",
+ "fetched": "2026-11-18",
  "notes": [],
  "ref": "main",
  "repo": "lshaf/unigeek",
@@ -10,6 +10,7 @@
    "lilygo-t-display",
    "lilygo-t-display-s3",
    "m5cardputer",
+   "m5cardputer-adv",
    "m5stack-cores3",
    "m5stick-cplus2",
    "m5stick-s3"
@@ -26,7 +27,6 @@
    "cyd_3248s035r",
    "diy_marauder",
    "diy_smoochie",
-   "m5_cardputer_adv",
    "m5stickcplus_11",
    "reaper",
    "t_display_s3_touch",
@@ -374,7 +374,10 @@
   {
    "extra": {
     "env": "m5_cardputer",
-    "file": "firmware/boards/m5_cardputer/config.ini"
+    "file": "firmware/boards/m5_cardputer/config.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 2,
@@ -386,7 +389,10 @@
   {
    "extra": {
     "env": "m5_cardputer_adv",
-    "file": "firmware/boards/m5_cardputer_adv/config.ini"
+    "file": "firmware/boards/m5_cardputer_adv/config.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 2,
@@ -446,7 +452,10 @@
   {
    "extra": {
     "env": "m5sticks3",
-    "file": "firmware/boards/m5sticks3/config.ini"
+    "file": "firmware/boards/m5sticks3/config.ini",
+    "product_markers": [
+     "sticks3"
+    ]
    },
    "kind": "platformio",
    "line": 2,

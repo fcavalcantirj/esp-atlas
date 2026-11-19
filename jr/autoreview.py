@@ -14,7 +14,7 @@ import re
 from dataclasses import dataclass, field
 
 PASS, FAIL, UNCERTAIN = "PASS", "FAIL", "UNCERTAIN"
-RULES_VERSION = "3"
+RULES_VERSION = "4"
 
 # Boards whose name is the prefix of a more specific product that is NOT compatible hardware.
 # claimed board -> regex of the sibling that does not prove it (SIBLING_LABEL names it in reasons).
@@ -110,6 +110,21 @@ def _prose(text: str) -> str:
     return _NOT_PROSE.sub(" ", text or "")
 
 
+_ADDS = re.compile(r"\b(and|or|also|plus|as\s+well)\b|[&+]", re.I)
+
+
+def _without_gloss(board: str, sentence: str) -> str:
+    """`sentence` minus a parenthetical attached directly to the sibling's name that adds nothing with a
+    conjunction: "Cardputer-ADV (Cardputer v1.1)" glosses the ADV, it does not list the original as a second
+    device (v4, 2026-11-19: m5-crystal builds only [env:cardputer-adv] and v3 PASSed the original on that
+    gloss). "(and the original Cardputer)" / "(also Cardputer v1.1)" still add it."""
+    sib = SIBLINGS.get(board)
+    if not sib:
+        return sentence
+    return re.sub(rf"((?:{sib}))\s*\(([^)]*)\)",
+                  lambda m: m.group(0) if _ADDS.search(m.group(m.lastindex)) else m.group(1), sentence, flags=re.I)
+
+
 def _names_plain(board: str, text: str, catalog: dict) -> bool:
     low = _prose(text).lower()
     sib = SIBLINGS.get(board)
@@ -154,7 +169,7 @@ def check(board: str, sources: dict, catalog: dict) -> Verdict:
     sib_named = bool(sib and re.search(sib, all_text, re.I))
     if sib_named:
         sentences = [x for x in re.split(r"(?<=[.!?])\s+|\n", _prose(all_text)) if x.strip()]
-        orig = [x for x in sentences if re.search(EXPLICIT_ORIGINAL.get(board, r"(?!)"), x, re.I)]
+        orig = [x for x in sentences if re.search(EXPLICIT_ORIGINAL.get(board, r"(?!)"), _without_gloss(board, x), re.I)]
         excl = EXCLUSION.get(board)
         statement = lambda x: not x.strip().strip("*_ ").endswith("?")  # noqa: E731
         # "ADV only" rules the original out only when it is about the device, i.e. contrasted with the
