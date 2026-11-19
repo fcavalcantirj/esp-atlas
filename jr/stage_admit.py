@@ -235,7 +235,7 @@ def _fetch_meta(gh, owner_repo: str):
         return {"error": f"unparseable api response: {e}"}, False
 
 
-REPO_NOTE_PREFIX = "repo-note:"
+REPO_NOTE_PREFIX = memory.REPO_NOTE_PREFIX
 
 
 def repo_note_key(owner_repo: str) -> str:
