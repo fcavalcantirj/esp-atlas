@@ -70,6 +70,9 @@ def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> d
     data = store._load() if not dry_run else {}
     seen = data.get("reruns") or {}
     updated = data.get("updated_branch") or {}
+    # a PR whose fix the delegate is working on is never moved under it (its push must fast-forward)
+    in_flight = {((r["context"].get("evidence") or {}).get("pr")) for r in (data.get("incidents") or {}).values()
+                 if ci_watch.is_pr_fix(r) and r["state"] in ("dispatched", "pushed")}
     # a pr-red heal that MERGED earns the red PRs one more merge of main (its fix is on main now)
     healed = {r["fingerprint"] for r in (data.get("incidents") or {}).values()
               if str(r["context"].get("check") or "").startswith(ci_watch.PR_RED_CHECK) and r.get("merged")}
@@ -90,7 +93,7 @@ def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> d
                 seen[key] = run_id
                 continue
             ukey = key if key not in updated or fp not in healed else f"{key}:after-heal"
-            if ukey not in updated and _behind_main(gh, slug, head):
+            if ukey not in updated and n not in in_flight and _behind_main(gh, slug, head):
                 out["update_branch"].append((n, head))
                 updated[ukey] = head
                 continue
@@ -144,14 +147,11 @@ def plan(gh, slug: str, prs: list) -> list[ci_watch.Verdict]:
 
 
 def _closed(gh, store: ci_watch.Store, open_numbers: set) -> dict:
-    """{number: MERGED|CLOSED} for the PRs behind live chore incidents (or fixed, not yet credited ones) that
-    are no longer open."""
+    """{number: MERGED|CLOSED} for the PRs behind live chore incidents that are no longer open."""
     out = {}
     for rec in store._load()["incidents"].values():
         n = ((rec["context"].get("evidence") or {}).get("pr"))
-        waiting_credit = rec["state"] == "resolved" and rec.get("fixed") and not rec.get("credited")
-        if (not ci_watch.is_pr_fix(rec) or not (rec["state"] in ci_watch.LIVE or waiting_credit)
-                or n in open_numbers or n in out):
+        if not ci_watch.is_pr_fix(rec) or rec["state"] not in ci_watch.LIVE or n in open_numbers or n in out:
             continue
         st = (ci_watch._json(gh, "pr", "view", str(n), "--json", "state") or {}).get("state")
         if st in ("MERGED", "CLOSED"):

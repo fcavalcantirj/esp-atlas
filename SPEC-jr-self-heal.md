@@ -88,9 +88,8 @@ BLOCK waiting for a person, stacked PRs retargeted by hand. Now:
   `relay-check --pr-fix` judges only the delegate's first-parent commits; a merge counts only its conflict
   resolution (`git show --remerge-diff`), never what `main` brings.
 - **Progress**: a dispatched fix whose PR has a new head is `pushed` (the agent review re-judges it); none
-  after `STALL_HOURS` is stalled; a cleared condition or a closed PR resolves the incident. **A PR the fix
-  led to merge resets the ack brake** (`MAX_AUTO_WITHOUT_ACK` counts dispatches since a human ack OR the
-  last productive merge), so only an unproductive loop halts.
+  after `STALL_HOURS` is stalled; a cleared condition or a closed PR resolves the incident. **PR fixes never move the human-ack brake**: they are bounded by their own daily budget and per PR
+  (one fix + one recurrence, then a human). A merged CI-heal PR (`jr/heal-*`) resets the brake.
 - **Heal PRs are code**: the agent review covers `jr/heal-*` too; only tick and demand PRs have their own
   canaries.
 - **The owner's audit**: once a UTC day from 12Z one Telegram line names what still needs a human
@@ -143,7 +142,7 @@ row with the incident that taught it.
 - **Gate (owner, 2026-11-19: "autonomous, subscription with API fallback"):** the agent review
   (`jr/agent_review.py`, a fresh reviewer run that is not the delegate's session) judges the heal PR at its exact
   head like any code PR, and the code canary merges a PASS (`code_automerge` + `JR_CODE_AUTOMERGE`, one an hour,
-  `--match-head-commit`). A BLOCK is a `review-fix:` chore; a second BLOCK goes to a human.
+  `--match-head-commit`). A BLOCK is a `review-fix:` chore: one fix and one recurrence, the third BLOCK goes to a human.
 - The tick marks the incident `resolved` when the required check is green on main and on the next
   tick PR, and records time to detect, time to PR and time to green.
 

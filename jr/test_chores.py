@@ -116,19 +116,16 @@ def test_a_fixed_pr_resolves_its_incident(tmp_path):
     assert _incidents(store)["conflict:#7"]["state"] == "resolved" and len(out["resolved"]) == 1
 
 
-def test_a_merged_fixed_pr_resets_the_ack_brake_a_closed_one_does_not(tmp_path):
+def test_pr_fix_dispatches_never_move_the_human_ack_brake(tmp_path):
+    # 5th review of #1857: every "credit" rule for a PR fix could be gamed; PR fixes are bounded on their own
     store = _store(tmp_path)
-    chores.run(Gh([pr(7, "DIRTY"), pr(8, "DIRTY")]), store, NOW, slug="o/r")
-    store.claim(NOW, allow_pr_fix=True), store.claim(NOW, allow_pr_fix=True)     # both fixes in flight
-    data = store._load()
-    data["auto_since_ack"] = 2
-    store._save(data)
-    chores.run(Gh([pr(8, "DIRTY")], states={7: "CLOSED"}), store, LATER, slug="o/r")
-    assert store._load()["auto_since_ack"] == 2 and _incidents(store)["conflict:#8"]["state"] == "dispatched"
-    chores.run(Gh([], states={8: "MERGED"}), store, LATER, slug="o/r")
-    assert store._load()["auto_since_ack"] == 0
+    chores.run(Gh([pr(n, "DIRTY") for n in (7, 8, 9)]), store, NOW, slug="o/r")
+    for _ in range(3):
+        assert store.claim(NOW, allow_pr_fix=True)
+    assert int(store._load().get("auto_since_ack") or 0) == 0 and not store._load().get("halted")
+    chores.run(Gh([], states={7: "MERGED", 8: "CLOSED", 9: "MERGED"}), store, LATER, slug="o/r")
+    assert int(store._load().get("auto_since_ack") or 0) == 0
     assert {r["state"] for r in _incidents(store).values()} == {"resolved"}
-
 
 def test_a_dispatched_fix_that_pushed_a_new_head_is_marked_pushed(tmp_path):
     store = _store(tmp_path)
@@ -223,7 +220,7 @@ def test_with_the_flag_pr_fixes_have_their_own_daily_budget(tmp_path):
     got = [store.claim(NOW, allow_pr_fix=True) for _ in range(6)]
     data = store._load()
     data["auto_since_ack"] = 0
-    assert sum(1 for g in got if g) == min(cw.PR_FIX_DAILY, cw.MAX_AUTO_WITHOUT_ACK)
+    assert sum(1 for g in got if g) == cw.PR_FIX_DAILY                 # own budget; the ack brake is not theirs
 
 
 def test_pr_fix_dispatch_needs_the_reviewed_flag_and_no_kill_variable(tmp_path):
@@ -470,22 +467,17 @@ def test_a_failure_whose_assertion_text_changes_every_run_still_becomes_a_job(tm
 
 # --- 3rd review of #1857 (2026-11-19): blinks, and the pushed -> productive path ---------------------------
 
-def test_a_dispatched_fix_is_never_resolved_by_a_blink_and_a_pushed_fix_is_credited_when_its_pr_merges(tmp_path):
+def test_a_dispatched_fix_is_never_resolved_by_a_blink_and_a_pushed_fix_resolves_after_two_clean_passes(tmp_path):
     store = _store(tmp_path)
     chores.run(Gh([pr(7, "DIRTY", head=H1)]), store, NOW, slug="o/r")
     store.claim(NOW, allow_pr_fix=True)
     for t in ("13", "14"):                                                    # blinks while the fix is in flight
         chores.run(Gh([pr(7, "UNKNOWN", head=H1)]), store, f"2026-11-19T{t}:05:00+00:00", slug="o/r")
     assert _incidents(store)["conflict:#7"]["state"] == "dispatched"
-    data = store._load()
-    data["auto_since_ack"] = 2
-    store._save(data)
     chores.run(Gh([pr(7, "CLEAN", head=H2)]), store, "2026-11-19T15:05:00+00:00", slug="o/r")   # our push
     assert _incidents(store)["conflict:#7"]["state"] == "pushed"
     chores.run(Gh([pr(7, "CLEAN", head=H2)]), store, "2026-11-19T16:05:00+00:00", slug="o/r")
-    assert _incidents(store)["conflict:#7"]["state"] == "resolved" and store._load()["auto_since_ack"] == 2   # not merged yet
-    chores.run(Gh([], states={7: "MERGED"}), store, "2026-11-19T17:05:00+00:00", slug="o/r")
-    assert store._load()["auto_since_ack"] == 0                                # credited at the merge
+    assert _incidents(store)["conflict:#7"]["state"] == "resolved"
 
 
 def test_a_one_pass_blink_never_records_a_second_incident(tmp_path):
@@ -533,3 +525,16 @@ def test_a_pushed_fix_that_stays_broken_stalls_for_a_human(tmp_path):
     assert _incidents(store)["conflict:#7"]["state"] == "pushed"
     chores.run(Gh([pr(7, "DIRTY", head=H2)]), store, "2026-11-19T19:05:00+00:00", slug="o/r")
     assert _incidents(store)["conflict:#7"]["state"] == "stalled"
+
+
+
+def test_chores_never_merge_main_into_a_pr_whose_fix_is_in_flight(tmp_path):
+    p = pr(40, branch="feat/z")
+    p["statusCheckRollup"] = [red("jr-tests")]
+    store = _store(tmp_path)
+    chores.run(Gh([pr(40, "DIRTY", branch="feat/z")]), store, NOW, slug="o/r")
+    store.claim(NOW, allow_pr_fix=True)                                      # conflict:#40 is with the delegate
+    gh = RedGh([p], behind=2)
+    chores.run(gh, store, LATER, slug="o/r")
+    chores.run(gh, store, "2026-11-19T14:05:00+00:00", slug="o/r")
+    assert not [c for c in gh.calls if c[:3] == ("api", "-X", "PUT")]

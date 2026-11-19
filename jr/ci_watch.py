@@ -397,7 +397,11 @@ class Store:
             return None
         rec = waiting[0]
         rec.update(state="dispatched", dispatched_at=now)
-        data["auto_since_ack"] = data.get("auto_since_ack", 0) + 1
+        if not is_pr_fix(rec):
+            # a PR fix is bounded on its own: its daily budget, and per PR one fix + one recurrence before a
+            # human (MAX_PER_FINGERPRINT). It never moves the human-ack brake, so no "credit" logic is needed
+            # to keep the lane alive (5th review of #1857, 2026-11-19: every credit rule could be gamed).
+            data["auto_since_ack"] = data.get("auto_since_ack", 0) + 1
         self._save(data)
         return rec
 
@@ -454,30 +458,17 @@ class Store:
         """jr/chores.py's view of the PRs behind live PR-fix incidents. `open_prs` {number: head sha},
         `active` {check} the chores still see, `closed` {number: "MERGED"|"CLOSED"} for PRs no longer open.
         A dispatched fix whose PR has a new head -> `pushed`; one with no push after STALL_HOURS -> stalled;
-        a live incident whose check is no longer active, or whose PR closed, -> resolved. A PR the fix led
-        to MERGE is a productive outcome: the ack brake (MAX_AUTO_WITHOUT_ACK) starts again, so only an
-        unproductive loop halts. Returns {"pushed", "stalled", "resolved", "productive"}."""
+        a live incident whose check is no longer active (two passes in a row, never while dispatched), or
+        whose PR closed, -> resolved. PR fixes never touch the human-ack brake (see claim). Returns
+        {"pushed", "stalled", "resolved"}."""
         data = self._load()
-        out = {"pushed": [], "stalled": [], "resolved": [], "productive": []}
+        out = {"pushed": [], "stalled": [], "resolved": []}
         for rec in data["incidents"].values():
-            ev = rec["context"].get("evidence") or {}
-            # credit lands at MERGE (spec §1d): a fix that cleared its condition and was resolved earlier is
-            # credited when its PR merges (4th review of #1857, 2026-11-19)
-            if (is_pr_fix(rec) and rec["state"] == "resolved" and rec.get("fixed") and not rec.get("credited")
-                    and closed.get(ev.get("pr")) == "MERGED"):
-                rec["credited"] = True
-                out["productive"].append(rec["id"])
-                continue
             if not is_pr_fix(rec) or rec["state"] not in LIVE:
                 continue
             ev = rec["context"].get("evidence") or {}
             n, check = ev.get("pr"), rec["context"].get("check")
             if n in closed:
-                # productive only when OUR fix was in flight and the PR MERGED: a person merging a PR whose chore
-                # never reached the delegate lifts no brake (review BLOCK of #1857, 2026-11-19)
-                if closed[n] == "MERGED" and rec["state"] in ("dispatched", "pushed"):
-                    out["productive"].append(rec["id"])
-                    rec["credited"] = True
                 rec.update(state="resolved", resolved_at=now, closed_as=closed[n])
                 out["resolved"].append(rec["id"])
                 continue
@@ -499,12 +490,8 @@ class Store:
             rec["absent"] = int(rec.get("absent") or 0) + 1
             if rec["state"] == "dispatched" or rec["absent"] < 2:
                 continue
-            if rec["state"] == "pushed":
-                rec["fixed"] = True                       # credited only if the PR merges (above)
             rec.update(state="resolved", resolved_at=now)
             out["resolved"].append(rec["id"])
-        if out["productive"]:
-            data.update(auto_since_ack=0, halted=False, halt_nudged=False)
         self._save(data)
         return out
 
@@ -756,6 +743,11 @@ def _watch(gh, slug: str, store: Store, now: str, dry_run: bool) -> dict:
         heal_prs = {p["headRefName"]: p.get("number") for p in prs if str(p.get("headRefName", "")).startswith(HEAL_BRANCH)}
         merged = {p.get("number") for p in prs if str(p.get("headRefName", "")).startswith(HEAL_BRANCH)
                   and p.get("state") == "MERGED"}
+        # a heal PR merged after 12 newer PRs were opened is still found (5th review of #1857): one extra call
+        older = [p for p in (_json(gh, "pr", "list", "--state", "merged", "--search", "head:jr/heal-", "--limit", "30",
+                                   "--json", "number,headRefName") or []) if str(p.get("headRefName", "")).startswith(HEAL_BRANCH)]
+        merged |= {p.get("number") for p in older}
+        heal_prs.update({p["headRefName"]: p.get("number") for p in older if p["headRefName"] not in heal_prs})
         out["stalled"] = store.progress(heal_prs, now, merged)
         out["nudges"] = store.nudges()
         return out
