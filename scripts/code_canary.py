@@ -31,6 +31,23 @@ import demand_canary  # noqa: E402
 FLAG, VARIABLE = "code_automerge", "JR_CODE_AUTOMERGE"
 PASS_LABEL, HUMAN_LABEL = "agent-pass", "needs-human"
 HOURLY_CAP = 1
+# never merged by the machine, whatever the verdict: the switches, CI itself, the canaries and guards, the reviewer
+# and its contract (4th review of #1809, 2026-11-19: an agent-PASSed PR could otherwise switch automation on)
+HUMAN_ONLY = ("jr/autonomy.json", ".github/", "scripts/code_canary.py", "scripts/demand_canary.py",
+              "scripts/tick_canary.py", "scripts/demand_guard.py", "scripts/receipt_guard.py", "scripts/ledger_guard.py",
+              "scripts/jr_pr_guard.py", "jr/agent_review.py", "docs/REVIEW-CONTRACT.md", "docs/ops/REVIEW-PROMPT.md")
+
+
+def human_only_paths(gh, repo_slug: str, pr: int) -> list[str] | None:
+    """The PR's changed paths a canary may never merge; None when the list cannot be seen whole."""
+    try:
+        doc = json.loads(gh("pr", "view", str(pr), "--repo", repo_slug, "--json", "files,changedFiles") or "{}")
+    except json.JSONDecodeError:
+        return None
+    files = [f.get("path", "") for f in (doc.get("files") or []) if isinstance(f, dict)]
+    if not files or int(doc.get("changedFiles") or 0) != len(files):
+        return None
+    return [p for p in files if any(p == h or (h.endswith("/") and p.startswith(h)) for h in HUMAN_ONLY)]
 Unreadable = demand_canary.Unreadable
 
 
@@ -79,6 +96,13 @@ def decide(*, pr: int, head: str, verdict_json: str | None, repo_slug: str, now:
             gh("pr", "edit", str(pr), "--repo", repo_slug, "--add-label", HUMAN_LABEL)
         return "block"
     say(f"C3 PASS at exact head {head}; checked: {', '.join(v.get('checked') or [])[:200]}")
+    held = human_only_paths(gh, repo_slug, pr)
+    if held is None or held:
+        say("C3b " + ("the changed files cannot be listed whole" if held is None else
+                      f"touches {', '.join(held[:5])}") + f": a human merges this one; label {HUMAN_LABEL}")
+        if not dry_run:
+            gh("pr", "edit", str(pr), "--repo", repo_slug, "--add-label", HUMAN_LABEL)
+        return "human_only"
     done = merged_last_hour(gh, repo_slug, now)
     if len(done) >= HOURLY_CAP:
         say(f"C4 hourly cap: {', '.join(done)} merged in the last hour; this one waits for the next run")

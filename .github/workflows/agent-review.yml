@@ -33,17 +33,19 @@ jobs:
       !startsWith(github.head_ref, 'jr/research-') &&
       github.event.pull_request.draft == false
     runs-on: ubuntu-latest
+    # this job runs the PR's code (its tests, pip install): it holds NO write token; the verdict leaves only as a
+    # job output and a separate job posts it (4th review of #1809, 2026-11-19)
+    permissions:
+      contents: read
+      pull-requests: read
+      id-token: write
+    outputs:
+      verdict: ${{ steps.review.outputs.structured_output }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}   # review the exact head the verdict names, not the merge ref
-          persist-credentials: false
-      # the verdict is posted by MAIN's copy of the poster, never the reviewed PR's (3rd review of #1809)
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.base.sha }}
-          path: trusted
           persist-credentials: false
       - name: Is the fallback reviewer configured?
         id: key
@@ -78,12 +80,29 @@ jobs:
             --max-turns 40
             --allowedTools "Bash(gh pr diff:*),Bash(gh pr view:*),Bash(python3 -m pytest:*),Bash(PYTHONPATH=apps/core/src python3 -m pytest:*),Read,Grep,Glob"
             --json-schema '{"type":"object","required":["verdict","head","findings","checked"],"properties":{"verdict":{"type":"string","enum":["PASS","BLOCK"]},"head":{"type":"string"},"findings":{"type":"array","items":{"type":"object","required":["file","summary","failure"],"properties":{"file":{"type":"string"},"line":{"type":"integer"},"summary":{"type":"string"},"failure":{"type":"string"}}}},"checked":{"type":"array","items":{"type":"string"}}}}'
+
+  agent-review-post:
+    # posts the API lane's verdict with MAIN's code in a fresh job: no file the reviewed PR wrote or ran is here
+    needs: agent-review
+    if: needs.agent-review.outputs.verdict != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Post the verdict as the marker comment (api lane) and release the fallback label
-        if: steps.key.outputs.configured == 'true'
         env:
           GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
-          VERDICT_JSON: ${{ steps.review.outputs.structured_output }}
-        run: python3 trusted/jr/agent_review.py comment --pr ${{ github.event.pull_request.number }} --lane api
+          VERDICT_JSON: ${{ needs.agent-review.outputs.verdict }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python3 jr/agent_review.py comment --pr "$PR_NUMBER" --lane api
 
   code-canary:
     # The click, on every marker comment (either lane): PASS at exactly the PR's current head + every

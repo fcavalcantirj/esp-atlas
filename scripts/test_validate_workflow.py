@@ -196,8 +196,8 @@ def test_the_canary_needs_every_machine_check_and_both_switches(jobs):
 
 def test_the_canary_merges_at_the_exact_head_it_was_given(jobs):
     step = _canary_step(jobs)
-    assert "--head ${{ github.event.pull_request.head.sha }}" in step["run"]
-    assert "--pr ${{ github.event.pull_request.number }}" in step["run"]
+    assert '--head "$PR_HEAD"' in step["run"] and step["env"]["PR_HEAD"] == "${{ github.event.pull_request.head.sha }}"
+    assert '--pr "$PR_NUMBER"' in step["run"] and step["env"]["PR_NUMBER"] == "${{ github.event.pull_request.number }}"
     assert step["env"]["JR_DEMAND_AUTOMERGE"] == "${{ vars.JR_DEMAND_AUTOMERGE }}"
     assert "secrets.ESPATLAS_JR_TOKEN || github.token" in step["env"]["GH_TOKEN"]
     assert "continue-on-error" not in step and not SHELL_OPERATORS.search(step["run"]), step["run"]
@@ -224,7 +224,7 @@ def test_the_tick_canary_needs_the_receipt_guard_and_every_machine_check_and_bot
     assert "startsWith(github.head_ref, 'jr/tick-')" in job["if"] and "vars.JR_TICK_AUTOMERGE != '0'" in job["if"]
     assert job["permissions"] == {"contents": "write", "pull-requests": "write"}
     step = next(s for s in job["steps"] if "scripts/tick_canary.py" in str(s.get("run", "")))
-    assert "--head ${{ github.event.pull_request.head.sha }}" in step["run"]
+    assert '--head "$PR_HEAD"' in step["run"] and step["env"]["PR_HEAD"] == "${{ github.event.pull_request.head.sha }}"
     assert step["env"]["JR_TICK_AUTOMERGE"] == "${{ vars.JR_TICK_AUTOMERGE }}"
     assert not any("tick-canary" in (j.get("needs") or []) for j in jobs.values())
 

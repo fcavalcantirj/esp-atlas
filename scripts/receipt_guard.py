@@ -124,7 +124,7 @@ def check(repo: Path, *, base: str, head: str, branch: str, api=default_api, raw
         raise Unreadable(f"{branch!r} is not a {BRANCH_PREFIX}* branch")
     catalog = catalog if catalog is not None else board_alias.atlas_boards(repo)
     problems, lines = [], [f"tick PR on {branch}: {base}...{head}"]
-    changes = [(ln.split("\t")[0][0], ln.split("\t")[-1]) for ln in _git(repo, "diff", "--name-status", f"{base}...{head}").split("\n") if ln.strip()]
+    changes = [(ln.split("\t")[0][0], ln.split("\t")[-1]) for ln in _git(repo, "diff", "--name-status", "--no-renames", f"{base}...{head}").split("\n") if ln.strip()]
     added_recipes = [p for s, p in changes if s == "A" and _RECIPE.match(p)]
     edited = sorted(p for s, p in changes if s == "M" and p.startswith("data/") and p.endswith(".md"))
     deleted = sorted(p for s, p in changes if s == "D" and p.startswith("data/"))

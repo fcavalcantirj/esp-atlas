@@ -154,3 +154,13 @@ def test_receipt_of_reads_the_notes():
     assert rg.receipt_of({"notes": "x. Evidence check v3 PASS — named: y."}) == ("3", "PASS")
     assert rg.receipt_of({"notes": ["a", "Evidence check v2 UNCERTAIN — sibling"]}) == ("2", "UNCERTAIN")
     assert rg.receipt_of({"notes": "no receipt here"}) is None and rg.receipt_of({}) is None
+
+
+def test_a_renamed_and_edited_existing_record_is_not_eligible(repo):
+    # 4th review of #1809 (2026-11-19): without --no-renames a rename+edit showed as R096, neither M nor D
+    add_edge(repo)
+    _git(repo, "mv", "data/firmware/seed/firmware.md", "data/firmware/seed/firmware-renamed.md")
+    _write(repo, "data/firmware/seed/firmware-renamed.md", FW.format(fid="seed", name="Seed v2"))
+    _commit(repo, "feat(jr): rename and edit the seed")
+    problems = run(repo, description="Cardputer-Adv tool")[0]
+    assert any(p.startswith("E3") for p in problems), problems

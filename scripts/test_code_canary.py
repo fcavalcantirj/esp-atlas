@@ -17,11 +17,14 @@ def verdict(v="PASS", head=HEAD, findings=(), checked=("gh pr diff", "pytest jr/
 
 
 class FakeGh:
-    def __init__(self, merged=(), queued=()):
+    def __init__(self, merged=(), queued=(), files=("jr/x.py",), changed=None):
         self.calls, self.merged, self.queued = [], list(merged), list(queued)
+        self.files, self.changed = list(files), (len(files) if changed is None else changed)
 
     def __call__(self, *args):
         self.calls.append(args)
+        if args[:2] == ("pr", "view") and "files,changedFiles" in args:
+            return json.dumps({"files": [{"path": f} for f in self.files], "changedFiles": self.changed})
         if args[:2] == ("pr", "list"):
             assert "--label" in args and args[args.index("--label") + 1] == cc.PASS_LABEL
             if args[args.index("--state") + 1] == "open":
@@ -119,6 +122,8 @@ def test_the_cli_from_comments_is_a_noop_without_a_verdict_and_decides_with_one(
     comment = ar.render_comment(json.loads(verdict("PASS", head=HEAD)), "subscription")
     store = {"comments": []}
     def gh(*args):
+        if args[:2] == ("pr", "view") and "files,changedFiles" in args:
+            return json.dumps({"files": [{"path": "jr/x.py"}], "changedFiles": 1})
         if args[:2] == ("pr", "view"):
             return json.dumps({"headRefOid": HEAD})
         if args[:1] == ("api",):
@@ -144,3 +149,14 @@ def test_a_pass_already_queued_for_auto_merge_counts_against_the_hourly_cap(auto
     # review BLOCK of #1809: --auto merges wait for checks, so only counting MERGED PRs let two land in one hour
     gh = FakeGh(queued=[1791])
     assert run(autonomy(True), gh, verdict()) == "capped" and gh.writes() == []
+
+
+
+def test_a_pass_on_a_pr_touching_the_switches_ci_or_the_reviewer_goes_to_a_human(autonomy):
+    for files in (["jr/autonomy.json"], ["jr/x.py", ".github/workflows/validate.yml"], ["scripts/demand_canary.py"],
+                  ["jr/agent_review.py"], ["docs/REVIEW-CONTRACT.md"]):
+        gh = FakeGh(files=files)
+        assert run(autonomy(True), gh, verdict()) == "human_only", files
+        assert not [c for c in gh.calls if c[:2] == ("pr", "merge")]
+    gh = FakeGh(files=["jr/x.py"], changed=150)                         # list cut: cannot see every path
+    assert run(autonomy(True), gh, verdict()) == "human_only"
