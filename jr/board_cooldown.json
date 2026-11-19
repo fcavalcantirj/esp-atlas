@@ -1161,6 +1161,26 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-19T13:00:31.983678+00:00"
     },
+    "xiao-esp32c5": {
+      "board": "xiao-esp32c5",
+      "expires": "2026-11-26T14:00:32.325670+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
+    },
     "xiao-esp32c6": {
       "board": "xiao-esp32c6",
       "expires": "2026-11-23T02:00:31.729728+00:00",
@@ -1173,6 +1193,26 @@
       },
       "reason": "nothing-groundable",
       "timestamp": "2026-11-16T02:00:31.729728+00:00"
+    },
+    "xiao-esp32s3-sense": {
+      "board": "xiao-esp32s3-sense",
+      "expires": "2026-11-26T14:00:32.325670+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
     }
   }
 }
