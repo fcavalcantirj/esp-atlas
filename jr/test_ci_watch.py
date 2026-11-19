@@ -377,14 +377,14 @@ def test_watch_turns_two_red_tick_prs_into_one_incident_with_both_images(tmp_pat
     assert rec["context"]["red_image"] == "ubuntu-26.04 20261101.186.1"
     assert rec["context"]["green_image"] == "ubuntu-24.04 20261101.360.1"
     assert rec["context"]["first_red_number"] == 1677
-    assert len(gh.calls) <= 8, gh.calls
+    assert len(gh.calls) <= 9, gh.calls      # +1: merged heal PRs beyond the newest 12
     assert not any(c[:2] == ("run", "rerun") for c in gh.calls)
 
 
 def test_watch_on_a_green_ci_costs_at_most_four_calls_and_fetches_no_log(tmp_path):
     gh = github(tick_concl=("SUCCESS", "SUCCESS"))
     out = cw.watch(gh, "o/r", cw.Store(tmp_path / "i.json"), NOW)
-    assert out["verdict"] == "none" and len(gh.calls) <= 4, gh.calls
+    assert out["verdict"] == "none" and len(gh.calls) <= 5, gh.calls     # +1: merged heal PRs beyond the newest 12
     assert not any("logs" in " ".join(c) for c in gh.calls)
 
 

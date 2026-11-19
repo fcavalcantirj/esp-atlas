@@ -51,11 +51,15 @@ class TickReport:
     warnings: list = field(default_factory=list)      # dry-run preflight notes, never fatal
     ci_watch: dict = field(default_factory=dict)      # jr/ci_watch.watch() result (SPEC-jr-self-heal.md)
     stall_watch: dict = field(default_factory=dict)   # jr/ci_watch.stall_watch() result (§1b: a silent lane is an incident)
+    abort_watch: dict = field(default_factory=dict)   # jr/ci_watch.abort_watch() result (§1c: a repeated abort is an incident)
+
+    chores: dict = field(default_factory=dict)        # jr/chores.run() result (§1d: conflicts and agent BLOCKs become PR fixes)
     work_audit: dict = field(default_factory=dict)    # {class: {state: n}} from docs/demand/work-receipts.json (the audit block)
     admit_progress: dict = field(default_factory=dict)
     refreshed: list = field(default_factory=list)      # jr/review_refresh.refresh() results for own review PRs  # jr/admit_progress.watch() result: the admit stall alarm
     dry_writes: list = field(default_factory=list)    # dry-run: tick-owned would-be writes (ledger, trend), {"path","field","value"}
     aborted: str = ""                                 # non-empty → the tick stopped early, why
+    degraded: str = ""                                # non-empty → firmware stages skipped (pending-PR inventory incomplete), why
 
     @property
     def paths(self) -> list[str]:
@@ -105,6 +109,7 @@ def render_line(r: TickReport) -> str:
     head = "jr-tick" + (" (dry-run)" if r.dry_run else "")
     if r.aborted:
         return f"🛑 {head} {stamp}: aborted — {r.aborted}{render_review_prs(r)} · {r.budget}".rstrip(" ·")
+    deg = f"⚠️ degraded — {r.degraded} · " if r.degraded else ""
     mem = r.memory or {}
     mem_txt = (f"memory expired {mem.get('expired', 0)} / merged {mem.get('merged', 0)} / "
                f"rejected {mem.get('rejected', 0)} / removed {mem.get('removed', 0)}"
@@ -130,7 +135,7 @@ def render_line(r: TickReport) -> str:
     stage_txt = "".join(f" · {s.get('name', 'stage')}: {s.get('summary', '')[:300]}" for s in r.stages if s.get("summary"))
     if r.dry_run and r.would_write:
         stage_txt += render_would_write(r.would_write)
-    return (f"🤖 {head} {stamp}: boards {_pct(r.boards_pct)} (overall {_pct(r.overall_pct)}) · "
+    return (f"🤖 {head} {stamp}: {deg}boards {_pct(r.boards_pct)} (overall {_pct(r.overall_pct)}) · "
             f"{r.allocation or 'allocation n/a'} · admitted {r.admitted} · rejects {rej} · "
             f"{mem_txt}{guard_txt}{reval} · {pr_txt}{render_review_prs(r)}{stage_txt}{warn} · {r.budget}").rstrip(" ·")
 
