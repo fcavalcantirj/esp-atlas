@@ -67,7 +67,8 @@ def test_the_verdict_is_posted_by_the_shared_comment_renderer_and_the_label_rele
     post_job = jobs["agent-review-post"]
     post = next(s for s in post_job["steps"] if "jr/agent_review.py comment" in str(s.get("run", "")))
     assert "--lane api" in post["run"] and post["env"]["VERDICT_JSON"] == "${{ needs.agent-review.outputs.verdict }}"
-    assert post_job["if"] == "needs.agent-review.outputs.verdict != ''"
+    assert post_job["if"] == "always() && needs.agent-review.result != 'skipped'"
+    assert post["if"] == "needs.agent-review.outputs.verdict != ''"
 
 
 def test_the_code_canary_runs_on_marker_comments_reads_them_and_respects_the_kill_variable(wf, jobs):
@@ -86,12 +87,25 @@ def test_the_code_canary_runs_on_marker_comments_reads_them_and_respects_the_kil
 
 def test_the_api_lane_posts_from_a_fresh_job_that_never_ran_the_prs_code(jobs):
     review, post = jobs["agent-review"], jobs["agent-review-post"]
-    assert review["permissions"] == {"contents": "read", "pull-requests": "read", "id-token": "write"}
+    assert review["permissions"] == {"contents": "read", "pull-requests": "read"}       # no id-token: no app token
+    step = next(s for s in review["steps"] if "claude-code-action" in str(s.get("uses", "")))
+    assert step["with"]["github_token"] == "${{ github.token }}" and step["env"]["CLAUDE_CODE_SUBPROCESS_ENV_SCRUB"] == "1"
     assert not any("agent_review.py comment" in str(s.get("run", "")) for s in review["steps"])
     assert "verdict" in review["outputs"]
     assert post["needs"] == "agent-review" and post["permissions"]["pull-requests"] == "write"
+    assert any("--remove-label review-fallback" in str(s.get("run", "")) and s.get("if") == "needs.agent-review.outputs.verdict == ''"
+               for s in post["steps"])                                       # no verdict: the label is released
     co = [s for s in post["steps"] if "actions/checkout" in str(s.get("uses", ""))]
     assert len(co) == 1 and co[0]["with"]["ref"] == "${{ github.event.pull_request.base.sha }}"
     step = next(s for s in post["steps"] if "agent_review.py comment" in str(s.get("run", "")))
     assert step["env"]["VERDICT_JSON"] == "${{ needs.agent-review.outputs.verdict }}"
     assert "${{" not in step["run"]                                        # nothing pasted into the shell
+
+
+
+def test_every_canary_runs_one_at_a_time(jobs, wf):
+    import yaml
+    from pathlib import Path
+    v = yaml.safe_load((Path(__file__).resolve().parent.parent / ".github/workflows/validate.yml").read_text())["jobs"]
+    for job in (jobs["code-canary"], v["demand-canary"], v["tick-canary"]):
+        assert job["concurrency"]["cancel-in-progress"] is False and job["concurrency"]["group"]

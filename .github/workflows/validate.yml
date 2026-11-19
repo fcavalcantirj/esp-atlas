@@ -163,6 +163,9 @@ jobs:
     # person's merge does), else the workflow token.
     if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'jr/research-') && vars.JR_DEMAND_AUTOMERGE != '0'
     needs: [schema, tests, jr-tests, quotes, demand-guard, jr-pr-guard, g2-guard, ledger-guard]
+    concurrency:
+      group: demand-canary   # one at a time, so two runs never both see the daily cap free
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -225,6 +228,9 @@ jobs:
     # the receipt guard says eligible, `gh pr merge --auto --match-head-commit <head>` is requested.
     if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'jr/tick-') && vars.JR_TICK_AUTOMERGE != '0'
     needs: [schema, tests, jr-tests, receipt-guard, jr-pr-guard, g2-guard, ledger-guard]
+    concurrency:
+      group: tick-canary   # one at a time, so two runs never both see the daily cap free
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     permissions:
       contents: write

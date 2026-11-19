@@ -39,7 +39,6 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
-      id-token: write
     outputs:
       verdict: ${{ steps.review.outputs.structured_output }}
     steps:
@@ -63,8 +62,12 @@ jobs:
         if: steps.key.outputs.configured == 'true'
         id: review
         uses: anthropics/claude-code-action@v1
+        env:
+          CLAUDE_CODE_SUBPROCESS_ENV_SCRUB: "1"   # the PR's tests never see a credential (5th review of #1809)
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # the job's own read-only token: no id-token exchange for a write-scoped app token (5th review of #1809)
+          github_token: ${{ github.token }}
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
@@ -83,9 +86,10 @@ jobs:
             --json-schema '{"type":"object","required":["verdict","head","findings","checked"],"properties":{"verdict":{"type":"string","enum":["PASS","BLOCK"]},"head":{"type":"string"},"findings":{"type":"array","items":{"type":"object","required":["file","summary","failure"],"properties":{"file":{"type":"string"},"line":{"type":"integer"},"summary":{"type":"string"},"failure":{"type":"string"}}}},"checked":{"type":"array","items":{"type":"string"}}}}'
 
   agent-review-post:
-    # posts the API lane's verdict with MAIN's code in a fresh job: no file the reviewed PR wrote or ran is here
+    # posts the API lane's verdict with MAIN's code in a fresh job: no file the reviewed PR wrote or ran is here.
+    # Runs even when the review produced no verdict, to release the fallback label (else neither lane reviews the PR)
     needs: agent-review
-    if: needs.agent-review.outputs.verdict != ''
+    if: always() && needs.agent-review.result != 'skipped'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -98,7 +102,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: No verdict came back — release the fallback label so the runner lane can pick the PR up again
+        if: needs.agent-review.outputs.verdict == ''
+        env:
+          GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label review-fallback
       - name: Post the verdict as the marker comment (api lane) and release the fallback label
+        if: needs.agent-review.outputs.verdict != ''
         env:
           GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
           VERDICT_JSON: ${{ needs.agent-review.outputs.verdict }}
@@ -114,6 +126,9 @@ jobs:
       github.event.issue.pull_request &&
       contains(github.event.comment.body, '<!-- agent-review verdict -->') &&
       vars.JR_CODE_AUTOMERGE != '0'
+    concurrency:
+      group: code-canary   # one at a time, so two runs never both see the hourly cap free
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     permissions:
       contents: write
