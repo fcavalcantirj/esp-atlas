@@ -9,8 +9,9 @@ maintainer: brucedevices
 license: AGPL-3.0
 socs:
 - esp32
-- esp32-s3
 - esp32-c5
+- esp32-c6
+- esp32-s3
 distribution:
 - releases
 - web-flasher
@@ -79,6 +80,9 @@ sources:
 - field: popularity.stars
   url: https://github.com/BruceDevices/firmware
   verified: '2026-11-08'
+- field: socs
+  url: https://github.com/BruceDevices/firmware/blob/main/boards/arduino-nesso-n1/arduino-nesso-n1.ini#L12
+  verified: '2026-11-19'
 summary: "Bruce is an ESP32\u2011based firmware that delivers a comprehensive suite\
   \ of offensive security tools\u2014including Wi\u2011Fi, Bluetooth, RF, RFID, IR,\
   \ FM, and scripting capabilities\u2014for fast, portable Red Team operations, and\
