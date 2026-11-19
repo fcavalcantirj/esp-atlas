@@ -225,3 +225,33 @@ def test_a_library_link_with_a_framework_word_is_not_a_device_row(catalog):
     for ref in ("M5Cardputer PlatformIO library", "the M5Cardputer SDK", "M5Cardputer libraries", "M5Cardputer ESP-IDF component"):
         v = _v("m5cardputer", catalog, readme=f"Runs on the T-Deck.\n- {ref}\n")
         assert v.verdict == autoreview.FAIL, (ref, v.reasons)
+
+
+# --- v4 (2026-11-19, tick PR #1828, m5cardputer__m5-crystal): a gloss attached to the sibling is not the original --
+# Upstream README: "Devices: M5StickCPlus2, M5StickS3, Cardputer-ADV (Cardputer v1.1)"; its only Cardputer build
+# is [env:cardputer-adv]. v3 read "(Cardputer v1.1)" as an explicit mention of the original and PASSed it.
+
+CRYSTAL_README = "- Devices: M5StickCPlus2, M5StickS3, Cardputer-ADV (Cardputer v1.1)\n- [x] M5 Stick S3 support\n"
+CRYSTAL_PIO = ("[env:m5stick-c-plus2]\nboard = m5stickc_plus2\n[env:m5sticks3]\nboard = esp32-s3-devkitc-1\n"
+               "[env:cardputer-adv]\nboard = esp32-s3-devkitc-1\nbuild_flags =\n\t-DSTICKS3\n\t-DCARDPUTER\n")
+
+
+def test_a_parenthetical_gloss_on_the_sibling_does_not_prove_the_original(catalog):
+    v = _v("m5cardputer", catalog, readme=CRYSTAL_README, platformio=CRYSTAL_PIO)
+    assert v.verdict == autoreview.UNCERTAIN and "sibling" in v.reasons[0], v
+    assert _v("m5cardputer-adv", catalog, readme=CRYSTAL_README, platformio=CRYSTAL_PIO).verdict == autoreview.PASS
+
+
+def test_a_parenthetical_that_adds_the_original_with_a_conjunction_still_counts(catalog):
+    for line in ("Runs on the Cardputer-ADV (and the original Cardputer)", "Cardputer ADV (also Cardputer v1.1)",
+                 "Cardputer-ADV (or Cardputer v1.0 / v1.1)"):
+        assert _v("m5cardputer", catalog, readme=line).verdict == autoreview.PASS, line
+
+
+def test_the_gloss_rule_leaves_a_separate_explicit_mention_alone(catalog):
+    readme = "Devices: Cardputer-ADV (Cardputer v1.1)\nAlso tested on the original Cardputer."
+    assert _v("m5cardputer", catalog, readme=readme).verdict == autoreview.PASS
+
+
+def test_the_rules_version_is_4():
+    assert autoreview.RULES_VERSION == "4"
