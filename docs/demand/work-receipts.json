@@ -1913,11 +1913,13 @@
    "key": "pam-93c3816cefd99e10e97cc0a4",
    "branch": "jr/research-pam-93c3816cefd99e10e97cc0a4",
    "term": "LILYGO T-Beam Supreme",
-   "phase": "research",
+   "phase": "author",
    "state": "reserved",
    "started_on": "2026-11-19",
    "source": "pam_feed",
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1893"
+   ],
    "feed": {
     "checked_at": "2026-11-19T11:15:31.127163Z",
     "feeds": {
@@ -2141,7 +2143,8 @@
     },
     "reserved_by": "jr/demand_run.py"
    },
-   "last_attempt_on": "2026-11-19"
+   "last_attempt_on": "2026-11-19",
+   "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1893"
   }
  ]
 }

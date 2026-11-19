@@ -1457,10 +1457,12 @@
   "pam-93c3816cefd99e10e97cc0a4": {
    "term": "LILYGO T-Beam Supreme",
    "source": "pam_feed",
-   "status": "validated",
+   "status": "linked",
    "first_seen": "2026-11-19",
    "history": [],
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1893"
+   ],
    "snapshot": "docs/demand/pam-leads.json",
    "feed": {
     "checked_at": "2026-11-19T11:15:31.127163Z",
