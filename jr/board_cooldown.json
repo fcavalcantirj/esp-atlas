@@ -763,53 +763,39 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-19T01:00:32.121052+00:00"
     },
-    "m5stack-fire": {
-      "board": "m5stack-fire",
-      "expires": "2026-11-19T01:00:57.508990+00:00",
+    "m5atom-lite": {
+      "board": "m5atom-lite",
+      "expires": "2026-11-26T02:00:32.224989+00:00",
       "field_reasons": {
         "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "doc_unreachable"
-        },
-        "getting_started": {
-          "vendor": "doc_unreachable"
-        },
-        "images": {
-          "vendor": "doc_unreachable"
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
         },
         "usb_serial": {
-          "boards_txt": "field_absent",
-          "manifest": "field_absent",
-          "vendor": "doc_unreachable"
-        }
-      },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-12T01:00:57.508990+00:00"
-    },
-    "m5stamp-c3": {
-      "board": "m5stamp-c3",
-      "expires": "2026-11-19T01:00:57.508990+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
           "vendor": "no_pattern_match"
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-12T01:00:57.508990+00:00"
+      "timestamp": "2026-11-19T02:00:32.224989+00:00"
     },
-    "m5stamp-s3": {
-      "board": "m5stamp-s3",
-      "expires": "2026-11-19T01:00:57.508990+00:00",
+    "m5atoms3-lite": {
+      "board": "m5atoms3-lite",
+      "expires": "2026-11-26T02:00:32.224989+00:00",
       "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        },
         "usb_serial": {
-          "boards_txt": "field_absent",
-          "manifest": "corroboration_only",
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
           "vendor": "field_absent"
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-12T01:00:57.508990+00:00"
+      "timestamp": "2026-11-19T02:00:32.224989+00:00"
     },
     "m5stick-c": {
       "board": "m5stick-c",
