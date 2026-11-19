@@ -106,14 +106,15 @@ def _held_pr(sim, catalog, substituted, vetoed=False):
 
 
 @pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
-def test_a_substituted_ledger_pair_fails_the_tick_closed_and_4242_stays_protected(sim, catalog, vetoed):
+def test_a_substituted_ledger_pair_degrades_the_tick_and_4242_stays_protected(sim, catalog, vetoed):
     pr = _held_pr(sim, catalog, substituted=True, vetoed=vetoed)
     prs_before, main_before = len(sim.prs), dict(sim.main)
     r = sim.tick(T0 + timedelta(hours=3))
     assert _staged_for(r, "newtool") == [] and r.paths == [], r.paths          # no firmware, no recipe for 4242
     assert not _new_prs_holding(sim, "newtool", pr["number"])
-    assert "incomplete" in (r.aborted or "") and f"#{pr['number']}" in r.aborted, r.aborted
-    assert len(sim.prs) == prs_before and sim.main == main_before
+    assert not r.aborted and f"#{pr['number']}" in r.degraded, (r.aborted, r.degraded)
+    assert r.stages == [] and {k for k in set(sim.main) | set(main_before) if sim.main.get(k) != main_before.get(k)} <= {"jr/proposed_ledger.json"}
+    assert not [f for x in sim.prs[prs_before:] for f in x["files"] if str(f).startswith(("data/firmware/", "data/recipes/"))]
     assert _later_owners_of(sim, OTHER_ID, pr["number"]) == set(), "unrelated 7777 was persisted"
 
 
@@ -194,3 +195,60 @@ def test_a_renamed_upstream_leaves_the_index_complete(vetoed):
     idx = _load(gh, []) if vetoed else _load(gh, [pr])
     assert idx.complete, idx.gaps
     assert idx.hold("oldtool").repo_id == REPO_ID and set(idx.by_repo_id) == {REPO_ID}
+
+
+
+# --- a stale record the PR never wrote (2026-11-18, the wled abort) ----------------------------------------
+# Tick PR #1839 held `wled` (data/firmware/wled, source wled/WLED, GitHub id 76990209). The ledger at its head
+# still carried a September record under the same id for a rejected fork (toshihiromakuuchi/wled, 846066903,
+# status expired) — unchanged since long before the PR. The strict rule above read it as this PR's claim and
+# aborted every tick for four hours. A record identical at the PR's head and at its merge base with main is
+# history, not the PR's claim: the hold takes its identity from the held firmware.md's own source as GitHub
+# confirms it. A record the PR changed keeps the strict rule (R2i), and anything unreadable stays a gap.
+
+STALE = {"id": "oldtool", "repo": "u/unrelated", "repo_id": OTHER_ID, "status": "expired", "reason": "below_floor: 0 stars / 0 forks"}
+
+
+def _ledger_with(record):
+    return json.dumps({"by_id": {"oldtool": dict(record)}, "by_repo": {}})
+
+
+def _stale_index(head_record=STALE, base_record=STALE, bases=None, repos=None, base_source="n/oldtool"):
+    pr = _pr(1500, LEGACY_FILES)
+    sources = {("oid1500", "oldtool"): "n/oldtool"}
+    if base_source:
+        sources[("base1500", "oldtool")] = base_source
+    gh = _gh([], ledgers={"oid1500": _ledger_with(head_record), "base1500": _ledger_with(base_record)},
+             repos={"n/oldtool": REPO_ID, "u/unrelated": OTHER_ID, "e/evil": 6666} if repos is None else repos,
+             sources=sources, bases={"oid1500": "base1500"} if bases is None else bases)
+    return _load(gh, [pr])
+
+
+def test_a_stale_record_the_pr_never_wrote_takes_the_identity_of_the_firmware_source():
+    idx = _stale_index()
+    assert idx.complete, idx.gaps
+    assert idx.hold("oldtool").repo_id == REPO_ID and set(idx.by_repo_id) == {REPO_ID}
+    assert idx.match("unrelated", OTHER_ID) is None                         # the stale fork id is not held
+
+
+def test_a_record_the_pr_rewrote_keeps_the_strict_rule():
+    _source_gap(_stale_index(head_record={**STALE, "status": "proposed"}))
+
+
+def test_an_unreadable_merge_base_keeps_the_gap():
+    _source_gap(_stale_index(bases={}))
+
+
+def test_a_stale_record_with_an_unconfirmed_source_keeps_the_gap():
+    idx = _stale_index(repos={"u/unrelated": OTHER_ID})                     # GitHub no longer answers n/oldtool
+    assert not idx.complete and any("#1500" in g and "oldtool" in g for g in idx.gaps), idx.gaps
+
+
+def test_a_source_the_pr_repointed_keeps_the_gap():
+    # a commit on the PR moved firmware.md away from the source committed at the merge base: the PR, not
+    # history, would choose the identity — strict rule
+    _source_gap(_stale_index(base_source="e/evil"))
+
+
+def test_a_firmware_md_absent_at_the_merge_base_keeps_the_gap():
+    _source_gap(_stale_index(base_source=None))
