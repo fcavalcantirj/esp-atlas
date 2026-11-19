@@ -90,6 +90,20 @@ def test_candidates_are_open_non_draft_code_prs_without_a_verdict_for_their_head
     assert [p["number"] for p in ar.candidates(prs, comments)] == [10, 12, 5]       # a heal PR is code too
 
 
+def test_a_pr_reviewed_before_whose_head_moved_is_reviewed_before_the_ones_never_looked_at():
+    # 2026-11-19: #1797 was BLOCKed, Jr's delegate pushed the fix at 06:20Z, and four hours later it was still
+    # unreviewed: its push made it the most recently updated PR, so "oldest update first" put it behind the
+    # whole backlog. The PR closest to merging waited longest.
+    fixed = pr(1797, head=HEAD2, updated="2026-11-18T09:00:00Z")                # newest update: the fix push
+    older_fix = pr(1840, head=HEAD2, updated="2026-11-18T08:00:00Z")
+    prs = [pr(1842, updated="2026-11-18T01:00:00Z"), fixed, pr(1843, updated="2026-11-18T02:00:00Z"), older_fix]
+    old_block = {"user": BOT, "body": ar.render_comment(verdict("BLOCK", head=HEAD, findings=[{"file": "x.py", "line": 1, "summary": "s", "failure": "f"}]), "subscription")}
+    forged = {"user": {"login": "mallory"}, "body": ar.render_comment(verdict("BLOCK", head=HEAD), "subscription")}
+    note = {"user": BOT, "body": "Relay note: only the merge was pushed."}       # trusted author, not a verdict
+    comments = {1797: [old_block], 1840: [old_block], 1843: [forged], 1842: [note]}   # neither earns a place
+    assert [p["number"] for p in ar.candidates(prs, comments)] == [1840, 1797, 1842, 1843]
+
+
 def test_lane_state_reads_the_delegates_own_answer():
     assert ar.lane_state({"verdict": "BUSY", "reason": "another delegate run is in progress"}) == "busy"
     assert ar.lane_state({"verdict": "FAIL", "reason": "no CLAUDE_CODE_OAUTH_TOKEN (env stripped and claude.env missing) — cannot start"}) == "down"

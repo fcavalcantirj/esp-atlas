@@ -60,6 +60,23 @@ jobs:
       - name: Install what the reviewer may run (the touched test files)
         if: steps.key.outputs.configured == 'true'
         run: pip install pyyaml jsonschema requests pytest pytrends httpx pypdf && pip install -e apps/core
+      - name: The reviewer's shell can start (socat + bubblewrap for its sandbox)
+        # CLAUDE_CODE_SUBPROCESS_ENV_SCRUB below makes every Bash call run in a sandbox, which needs socat and
+        # bubblewrap. Without them every command failed and the lane's first run ever (2026-11-19, #1876)
+        # posted a BLOCK that was about the runner, not the PR. This step fails the job instead: no verdict
+        # leaves, the post job releases the label, and the subscription lane reviews the PR.
+        if: steps.key.outputs.configured == 'true'
+        run: |
+          # the package mirror blinks (two live runs in a row: "Failed to fetch … socat … Resource temporarily
+          # unavailable"); when all three attempts fail, `command -v socat` below fails the job
+          for attempt in 1 2 3; do
+            sudo apt-get update -qq && sudo apt-get install -y -qq -o Acquire::Retries=3 socat bubblewrap && break
+            sleep 15
+          done
+          # ubuntu 24.04 confines unprivileged user namespaces, which bubblewrap needs
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          command -v socat
+          bwrap --ro-bind / / --unshare-net true
       - name: Review the exact head against docs/REVIEW-CONTRACT.md
         if: steps.key.outputs.configured == 'true'
         id: review
@@ -138,10 +155,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.head_ref }}   # via env, never pasted into the shell
           REPO: ${{ github.repository }}
         run: |
           gh pr merge "$PR_NUMBER" --repo "$REPO" --disable-auto || true
           gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label agent-pass || true
+          # needs-human is about a verdict at the old head (a BLOCK, or a PASS a person must merge). On a new
+          # head nobody has been asked anything yet; the canary sets it again if the new verdict says so.
+          # Not on a demand PR: there the demand canary sets it for a quote that FAILED, and when quotes is
+          # still red at the new head the canary is skipped and nothing would set it again.
+          case "$PR_BRANCH" in
+            jr/research-*) ;;
+            *) gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label needs-human || true ;;
+          esac
 
   code-canary:
     # The click, on every marker comment (either lane): PASS at exactly the PR's current head + every
