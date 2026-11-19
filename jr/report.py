@@ -52,6 +52,8 @@ class TickReport:
     ci_watch: dict = field(default_factory=dict)      # jr/ci_watch.watch() result (SPEC-jr-self-heal.md)
     stall_watch: dict = field(default_factory=dict)   # jr/ci_watch.stall_watch() result (§1b: a silent lane is an incident)
     abort_watch: dict = field(default_factory=dict)   # jr/ci_watch.abort_watch() result (§1c: a repeated abort is an incident)
+
+    chores: dict = field(default_factory=dict)        # jr/chores.run() result (§1d: conflicts and agent BLOCKs become PR fixes)
     work_audit: dict = field(default_factory=dict)    # {class: {state: n}} from docs/demand/work-receipts.json (the audit block)
     admit_progress: dict = field(default_factory=dict)
     refreshed: list = field(default_factory=list)      # jr/review_refresh.refresh() results for own review PRs  # jr/admit_progress.watch() result: the admit stall alarm

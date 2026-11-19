@@ -66,6 +66,11 @@ def _prepare(wt_dir, text=ORIGINAL):
     path = wt_dir / REL
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text)
+    # steady state: the catalogued firmware already owns its id (memory.reconcile_catalogued), so the
+    # tick's ledger has nothing to reconcile and only the stage decides whether a PR is opened
+    (wt_dir / "jr" / "proposed_ledger.json").write_text(json.dumps(
+        {"by_id": {"tool": {"id": "tool", "repo": "o/tool", "status": "merged", "timestamp": "2026-09-01T00:00:00+00:00",
+                            "pr_ref": None}}, "by_repo": {"o/tool": "tool"}}) + "\n")
     return path
 
 

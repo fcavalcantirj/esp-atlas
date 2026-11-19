@@ -396,6 +396,13 @@ def _note_abort_watch(r: report.TickReport) -> None:
     for i in w.get("resolved") or []:
         r.warnings.append(f"abort incident {i} resolved")
 
+def default_chores_runner(gh, now: datetime, dry_run: bool) -> dict:
+    """The chores (SPEC-jr-self-heal.md §1d): the same runner-local incident store as the CI watch."""
+    import chores
+    state = Path(os.environ["JR_HEAL_STATE"]) if os.environ.get("JR_HEAL_STATE") else ci_watch.DEFAULT_STATE
+    slug = os.environ.get("JR_REPO_SLUG") or "fcavalcantirj/esp-atlas"
+    return chores.run(gh, ci_watch.Store(state), now.isoformat(), slug=slug, dry_run=dry_run)
+
 
 def _note_stall_watch(r: report.TickReport) -> None:
     w = r.stall_watch
@@ -506,6 +513,33 @@ def _owner_repo_from_url(url: str) -> str:
     So the ledger's by_repo key aligns with the drain's ledger.is_blocked(repo=...) lookup."""
     fn = (url or "").strip().rstrip("/").replace("https://github.com/", "").lower()
     return "/".join(fn.split("/")[:2])
+
+
+def _github_repo_id(gh, repo: str) -> int | None:
+    """GitHub's numeric id for owner/repo (a rename's redirect followed), or None. Best-effort: any failure,
+    including a spent budget, answers None and the reconciliation decides nothing for that record."""
+    try:
+        p = gh("api", f"repos/{repo}")
+        meta = json.loads(getattr(p, "stdout", "") or "") if getattr(p, "returncode", 1) == 0 else None
+    except Exception:  # noqa: BLE001
+        return None
+    return meta["id"] if isinstance(meta, dict) and type(meta.get("id")) is int else None
+
+
+def _catalog_sources(firmware_dir: Path) -> dict[str, str]:
+    """{firmware id: owner/repo} for every data/firmware/<id>/firmware.md whose `url:` is a GitHub
+    repository, keyed as _owner_repo_from_url keys it. An unreadable record names no source."""
+    from esp_atlas_core import frontmatter
+    out = {}
+    for md in sorted(Path(firmware_dir).glob("*/firmware.md")):
+        try:
+            fm, _ = frontmatter.parse_frontmatter_text(md.read_text())
+        except Exception:  # noqa: BLE001 — one bad record must not stop the reconciliation
+            continue
+        url = str((fm or {}).get("url") or "")
+        if url.startswith("https://github.com/") and len(_owner_repo_from_url(url).split("/")) == 2:
+            out[md.parent.name] = _owner_repo_from_url(url)
+    return out
 
 
 def _pr_firmware_repo(gh, repo_slug, head_ref, fid) -> str | None:
@@ -665,7 +699,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              stall_watcher: Callable | None = None,
              admit_watcher: Callable | None = None,
              abort_watcher: Callable | None = None,
-             refresher: Callable | None = None) -> report.TickReport:
+             refresher: Callable | None = None,
+             chores_runner: Callable | None = None) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
     budget = budget or Budget()
@@ -778,8 +813,13 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         # catalogued on GitHub but not yet in this worktree: treat what reconcile_prs just
         # settled as catalogued, or it would be rejected as "removed from catalog".
         removed = memory.reconcile_removed(catalogued | set(settled["merged"]), path=ledger_path, now=now)
+        # 3d. every catalogued firmware's id belongs to its own source (2026-11-18): a namesake fork's
+        #     decision under that id moves to its repo note, so no tick PR aborts on a borrowed identity.
+        owned = memory.reconcile_catalogued(_catalog_sources(root / "data" / "firmware"), path=ledger_path, now=now,
+                                            resolve_id=lambda r: _github_repo_id(gh_c, r))
         counts = {"expired": len(expired), "merged": len(settled["merged"]) + len(merged),
-                  "rejected": len(settled["rejected"]), "removed": len(removed)}
+                  "rejected": len(settled["rejected"]), "removed": len(removed),
+                  "catalogued": len(owned["added"]) + len(owned["moved"]) + len(owned["renamed"])}
         purge = bool(settled["merged"] or merged or removed)
         if dry_run:
             r.memory = {}
@@ -995,6 +1035,18 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                 r.refreshed.append(refresher(pr, git=git, gh=gh_c, now=now, dry_run=dry_run))
             except Exception as e:  # noqa: BLE001
                 r.warnings.append(f"review PR refresh #{pr.get('number')} failed: {type(e).__name__}: {e}")
+    # 10. chores (jr/chores.py, SPEC-jr-self-heal.md §1d): what a person did on open PRs — a conflict or an
+    #     agent BLOCK becomes a PR-fix incident, cleared ones resolve, a daily digest names what still needs
+    #     a human. Runs after an abort too (the PRs need it most then); never changes the tick's outcome.
+    if chores_runner is not None:
+        try:
+            r.chores = chores_runner(gh_c, now, dry_run) or {}
+        except Exception as e:  # noqa: BLE001
+            r.chores = {"status": "unavailable", "why": f"{type(e).__name__}: {e}"}
+        if r.chores.get("status") != "ok":
+            r.warnings.append(f"chores unavailable: {r.chores.get('why')}")
+        for i in r.chores.get("recorded") or []:
+            r.warnings.append(f"chore incident {i} recorded")
     line = report.render_line(r)
     print(line)
     review_opened = (r.publish or {}).get("route") == review_routing.REVIEW
@@ -1005,7 +1057,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             pass
     if telegram and not dry_run and notifier is not None:
         for nudge in ((r.ci_watch or {}).get("nudges") or []) + ((r.stall_watch or {}).get("nudges") or []) \
-                + ((r.admit_progress or {}).get("nudges") or []) + ((r.abort_watch or {}).get("nudges") or []):
+                + ((r.admit_progress or {}).get("nudges") or []) + ((r.abort_watch or {}).get("nudges") or []) \
+                + ((r.chores or {}).get("nudges") or []) + ([r.chores["digest"]] if (r.chores or {}).get("digest") else []):
             try:
                 notifier(nudge)
             except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
@@ -1060,7 +1113,8 @@ def main(argv=None) -> int:
                  stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge,
                  lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None,
                  ci_watcher=default_ci_watcher, stall_watcher=default_stall_watcher, admit_watcher=default_admit_watcher,
-                 abort_watcher=default_abort_watcher, refresher=review_refresh.refresh)
+                 abort_watcher=default_abort_watcher, refresher=review_refresh.refresh,
+                 chores_runner=default_chores_runner)
     return 1 if r.aborted else 0
 
 
