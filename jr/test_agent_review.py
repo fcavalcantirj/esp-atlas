@@ -300,3 +300,65 @@ def test_the_review_worktree_is_always_a_throwaway_directory_and_nothing_else_is
     import inspect
     assert "rmtree" not in inspect.getsource(ar) and "--worktree" not in inspect.getsource(ar)
 
+
+
+# --- a verdict that says "I could not review" is not a review (2026-11-19) ------------------------------------
+# The API lane's first runs posted BLOCK on #1876 and #1864 with one finding at docs/REVIEW-CONTRACT.md:50:
+# "the reviewer could not read the diff or run the tests" (its shell sandbox could not start). The workflow that
+# runs the review comes from the PR's merge snapshot and can be days old; this code is always main's.
+
+def could_not(head=HEAD):
+    return verdict("BLOCK", head=head, findings=[{
+        "file": "docs/REVIEW-CONTRACT.md", "line": 50, "summary": "The reviewer could not read the PR diff or run the tests.",
+        "failure": "Every Bash call failed: sandbox could not start (socat not installed)."}],
+        checked=["docs/REVIEW-CONTRACT.md (read)", "gh pr diff: FAILED"])
+
+
+def real_block(head=HEAD, file="jr/x.py"):
+    return verdict("BLOCK", head=head, findings=[{"file": file, "line": 3, "summary": "s", "failure": "f"}])
+
+
+def test_only_a_block_that_cites_nothing_but_the_contract_on_a_pr_that_does_not_touch_it_is_no_review():
+    assert ar.no_review_happened(could_not(), ["jr/chores.py", "jr/test_chores.py"]) is True
+    assert ar.no_review_happened(real_block(), ["jr/x.py"]) is False
+    assert ar.no_review_happened(verdict("PASS"), ["jr/x.py"]) is False
+    # a PR that changes the contract may be BLOCKed for what it does to the contract
+    assert ar.no_review_happened(could_not(), ["docs/REVIEW-CONTRACT.md"]) is False
+    # one real finding beside it: a review happened
+    mixed = could_not()
+    mixed["findings"].append({"file": "jr/x.py", "line": 1, "summary": "s", "failure": "f"})
+    assert ar.no_review_happened(mixed, ["jr/x.py"]) is False
+    # a BLOCK without any finding, and an unreadable file list, are posted as they are (nothing is proven)
+    assert ar.no_review_happened(verdict("BLOCK"), ["jr/x.py"]) is False
+    assert ar.no_review_happened(could_not(), None) is False
+
+
+def test_the_api_lanes_comment_step_posts_nothing_for_it_and_releases_the_label(monkeypatch, capsys):
+    calls = []
+    def gh(*args):
+        calls.append(args)
+        if args[:2] == ("pr", "view"):
+            return json.dumps({"files": [{"path": "jr/chores.py"}], "changedFiles": 1})
+        return ""
+    monkeypatch.setattr(ar, "default_gh", gh)
+    assert ar.main(["comment", "--pr", "1876", "--lane", "api", "--slug", "o/r", "--verdict-json", json.dumps(could_not())]) == 0
+    assert not [c for c in calls if c[:2] == ("pr", "comment")]
+    assert ("pr", "edit", "1876", "--repo", "o/r", "--remove-label", ar.FALLBACK_LABEL) in calls
+    assert "could not review" in capsys.readouterr().out
+    calls.clear()
+    assert ar.main(["comment", "--pr", "1876", "--lane", "api", "--slug", "o/r", "--verdict-json", json.dumps(real_block(file="jr/chores.py"))]) == 0
+    assert [c for c in calls if c[:2] == ("pr", "comment")]
+
+
+def test_the_runner_lane_posts_nothing_for_it_and_tries_again_next_hour():
+    class Gh(FakeGh):
+        def __call__(self, *args):
+            if args[:2] == ("pr", "view"):
+                self.calls.append(args)
+                return json.dumps({"files": [{"path": "jr/chores.py"}], "changedFiles": 1})
+            return super().__call__(*args)
+    gh = Gh([pr(5)])
+    rep = run(gh, delegate_answering({"verdict": "PASS"}, could_not()))
+    assert rep["outcome"] == "no_review" and gh.writes() == []
+    real = Gh([pr(5)])
+    assert run(real, delegate_answering({"verdict": "PASS"}, real_block(file="jr/chores.py")))["outcome"] == "reviewed"

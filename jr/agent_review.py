@@ -66,6 +66,33 @@ def read_verdict(doc) -> dict | None:
     return {"verdict": doc["verdict"], "head": doc["head"].lower(), "findings": findings, "checked": checked}
 
 
+CONTRACT_REL = "docs/REVIEW-CONTRACT.md"
+
+
+def _cites_only_the_contract(v: dict) -> bool:
+    files = [str(f.get("file") or "").split(":")[0].strip() if isinstance(f, dict) else "" for f in v.get("findings") or []]
+    return v.get("verdict") == "BLOCK" and bool(files) and all(f == CONTRACT_REL for f in files)
+
+
+def no_review_happened(v: dict, changed_files: list | None) -> bool:
+    """True for the verdict of a reviewer that could not review: a BLOCK whose every finding points at the
+    review contract itself ("a reviewer that cannot read the diff or run the tests answers BLOCK") on a PR
+    that does not change the contract. That is a statement about the reviewer's host, not about the PR, and
+    posting it turns into a fix job for a problem the PR does not have (2026-11-19: the API lane's sandbox
+    could not start; #1876 and #1864 each got one). An unreadable file list proves nothing: False."""
+    return (_cites_only_the_contract(v) and changed_files is not None and CONTRACT_REL not in changed_files)
+
+
+def changed_files(gh, slug: str, number: int) -> list | None:
+    """Every path the PR changes, or None when the list is not whole."""
+    try:
+        doc = json.loads(gh("pr", "view", str(number), "--repo", slug, "--json", "files,changedFiles") or "{}")
+        paths = [f["path"] for f in doc.get("files") or []]
+        return paths if paths and len(paths) == int(doc.get("changedFiles") or 0) else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def _defang(text: str) -> str:
     """No code fence can open inside the human part of a verdict comment."""
     return str(text).replace("```", "ʼʼʼ")
@@ -242,6 +269,10 @@ def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_ru
         if v["head"] != head:
             say(f"agent-review: #{number}: verdict names {v['head'][:8]}, not {head[:8]}; nothing posted")
             return {"outcome": "stale_verdict", "pr": number, "head": head, "state": state}
+        if _cites_only_the_contract(v) and no_review_happened(v, changed_files(gh, slug, number)):
+            say(f"agent-review: #{number}: the reviewer could not review (it only cites the contract's own rule); "
+                "nothing posted, next hour")
+            return {"outcome": "no_review", "pr": number, "head": head, "state": state}
         gh("pr", "comment", str(number), "--repo", slug, "--body", render_comment(v, "subscription"))
         say(f"agent-review: #{number} {v['verdict']} at {head[:8]} posted (subscription lane)")
         return {"outcome": "reviewed", "pr": number, "head": head, "verdict": v["verdict"], "state": state}
@@ -362,6 +393,12 @@ def main(argv=None) -> int:
         if v is None:
             print("agent-review: VERDICT_JSON is not a verdict; nothing posted", file=sys.stderr)
             return 2
+        if _cites_only_the_contract(v) and no_review_happened(v, changed_files(default_gh, args.slug, args.pr)):
+            if args.lane == "api":
+                default_gh("pr", "edit", str(args.pr), "--repo", args.slug, "--remove-label", FALLBACK_LABEL)
+            print(f"agent-review: #{args.pr}: the reviewer could not review (it only cites the contract's own "
+                  "rule); nothing posted, the label is released")
+            return 0
         default_gh("pr", "comment", str(args.pr), "--repo", args.slug, "--body", render_comment(v, args.lane))
         if args.lane == "api":
             default_gh("pr", "edit", str(args.pr), "--repo", args.slug, "--remove-label", FALLBACK_LABEL)
