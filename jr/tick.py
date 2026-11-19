@@ -489,6 +489,17 @@ def _owner_repo_from_url(url: str) -> str:
     return "/".join(fn.split("/")[:2])
 
 
+def _github_repo_id(gh, repo: str) -> int | None:
+    """GitHub's numeric id for owner/repo (a rename's redirect followed), or None. Best-effort: any failure,
+    including a spent budget, answers None and the reconciliation decides nothing for that record."""
+    try:
+        p = gh("api", f"repos/{repo}")
+        meta = json.loads(getattr(p, "stdout", "") or "") if getattr(p, "returncode", 1) == 0 else None
+    except Exception:  # noqa: BLE001
+        return None
+    return meta["id"] if isinstance(meta, dict) and type(meta.get("id")) is int else None
+
+
 def _catalog_sources(firmware_dir: Path) -> dict[str, str]:
     """{firmware id: owner/repo} for every data/firmware/<id>/firmware.md whose `url:` is a GitHub
     repository, keyed as _owner_repo_from_url keys it. An unreadable record names no source."""
@@ -776,10 +787,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         removed = memory.reconcile_removed(catalogued | set(settled["merged"]), path=ledger_path, now=now)
         # 3d. every catalogued firmware's id belongs to its own source (2026-11-18): a namesake fork's
         #     decision under that id moves to its repo note, so no tick PR aborts on a borrowed identity.
-        owned = memory.reconcile_catalogued(_catalog_sources(root / "data" / "firmware"), path=ledger_path, now=now)
+        owned = memory.reconcile_catalogued(_catalog_sources(root / "data" / "firmware"), path=ledger_path, now=now,
+                                            resolve_id=lambda r: _github_repo_id(gh_c, r))
         counts = {"expired": len(expired), "merged": len(settled["merged"]) + len(merged),
                   "rejected": len(settled["rejected"]), "removed": len(removed),
-                  "catalogued": len(owned["added"]) + len(owned["moved"])}
+                  "catalogued": len(owned["added"]) + len(owned["moved"]) + len(owned["renamed"])}
         purge = bool(settled["merged"] or merged or removed)
         if dry_run:
             r.memory = {}

@@ -585,7 +585,7 @@ def repo_note_key(owner_repo: str) -> str:
 
 
 def reconcile_catalogued(sources: dict[str, str], path: Path | None = None,
-                         now: datetime | None = None) -> dict:
+                         now: datetime | None = None, resolve_id=None) -> dict:
     """A catalogued firmware's id belongs to its own source repository (2026-11-18). `sources` maps each
     catalogued firmware id to the owner/repo its firmware.md `url:` names (lowercased). For each:
     - no record → a `merged` record of that source ("added");
@@ -598,8 +598,14 @@ def reconcile_catalogued(sources: dict[str, str], path: Path | None = None,
       never touched ("kept"; a human or reconcile_prs decides those).
     The source record carries no repo_id: GitHub's id is backfilled by the next same-repo decision.
     Nothing is deleted (scripts/ledger_guard.py: append-only). An empty `sources` does nothing (a tick
-    looking at the wrong tree, as reconcile_removed refuses). Returns {"added", "moved", "kept"}."""
-    out = {"added": [], "moved": [], "kept": []}
+    looking at the wrong tree, as reconcile_removed refuses).
+    A record that carries a GitHub repo_id is compared BY ID, never by name (2nd review of #1855, 2026-11-19:
+    two "namesakes" were the catalogued repository itself under its pre-rename name): `resolve_id(owner/repo)`
+    answers GitHub's id for the catalog source. Same id → a rename: the record is updated in place (source
+    name, `merged`, id kept, the old name an alias) ("renamed"). Another id → a real namesake, moved as above.
+    Unresolvable (no resolver, GitHub silent) → left alone ("kept"): no identity decided on a name.
+    Returns {"added", "moved", "renamed", "kept"}."""
+    out = {"added": [], "moved": [], "renamed": [], "kept": []}
     if not sources:
         return out
     now = _aware(now)
@@ -615,6 +621,21 @@ def reconcile_catalogued(sources: dict[str, str], path: Path | None = None,
         if rec is not None and (is_permanent_rejection(rec) or rec.get("status") == "proposed"):
             out["kept"].append(fid)
             continue
+        rid = (rec or {}).get("repo_id")
+        if rec is not None and type(rid) is int:
+            sid = resolve_id(repo) if resolve_id is not None else None
+            if type(sid) is not int:
+                out["kept"].append(fid)                 # cannot tell rename from namesake: decide nothing
+                continue
+            if sid == rid:                              # the same repository, renamed upstream
+                old = str(rec.get("repo") or "").lower()
+                rec.update(repo=repo, status="merged", timestamp=_iso(now),
+                           reason="present in the catalog (reconciled from its firmware.md; renamed upstream)")
+                rec["aliases"] = _with_alias(rec, fid, old)          # after the update: the old name is an alias
+                rec.pop("expires", None)
+                led["by_repo"][repo] = fid
+                out["renamed"].append(fid)
+                continue
         if rec is not None:
             other = str(rec.get("repo") or "").lower()
             key = repo_note_key(other)
@@ -634,7 +655,7 @@ def reconcile_catalogued(sources: dict[str, str], path: Path | None = None,
         led["by_id"][fid] = {"id": fid, "repo": repo, "status": "merged", "timestamp": _iso(now), "pr_ref": None,
                              "reason": "present in the catalog (reconciled from its firmware.md)"}
         led["by_repo"][repo] = fid
-    if out["added"] or out["moved"]:
+    if out["added"] or out["moved"] or out["renamed"]:
         _save(led, path)
     return out
 
