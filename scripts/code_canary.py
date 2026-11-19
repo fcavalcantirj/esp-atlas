@@ -48,11 +48,16 @@ def merged_last_hour(gh, repo_slug: str, now: datetime) -> list[str]:
     since = (now - timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
     out = gh("pr", "list", "--repo", repo_slug, "--state", "merged", "--label", PASS_LABEL,
              "--search", f"merged:>={since}", "--json", "number,mergedAt", "--limit", "50")
+    queued = gh("pr", "list", "--repo", repo_slug, "--state", "open", "--label", PASS_LABEL,
+                "--json", "number", "--limit", "50")
     try:
-        rows = json.loads(out or "[]")
+        rows, waiting = json.loads(out or "[]"), json.loads(queued or "[]")
     except json.JSONDecodeError as e:
         raise Unreadable(f"merged list unparsable: {e}") from e
-    return [f"#{r.get('number')}" for r in rows if str(r.get("mergedAt", "")) >= since]
+    # an open PR labelled agent-pass is a merge already requested (--auto waits for its checks): it counts
+    # against the cap like a merged one (review BLOCK of #1809, 2026-11-19)
+    return ([f"#{r.get('number')}" for r in rows if str(r.get("mergedAt", "")) >= since]
+            + [f"#{r.get('number')} (queued)" for r in waiting])
 
 
 def decide(*, pr: int, head: str, verdict_json: str | None, repo_slug: str, now: datetime, env: dict,
