@@ -278,10 +278,7 @@ SUPERSEDED_COMMENT = ("Superseded by later Jr ticks. This PR only touched tick b
                       "the jr/tick.py preflight.")
 
 
-def _list_open_prs(gh) -> list | None:
-    """Every open PR with its age, mergeability, labels and changed files, or None when the query
-    itself fails — fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not
-    open another. The files feed jr/pending_prs.py: what an open tick PR holds is never staged again."""
+def _list_open_prs_once(gh) -> list | None:
     p = gh("pr", "list", "--state", "open", "--limit", str(OPEN_PR_LIMIT),
            "--json", f"number,createdAt,headRefName,mergeable,labels,{pending_prs.PR_LIST_FIELDS}")
     if getattr(p, "returncode", 1) != 0:
@@ -291,6 +288,17 @@ def _list_open_prs(gh) -> list | None:
     except json.JSONDecodeError:
         return None
     return [pr for pr in prs if isinstance(pr, dict)] if isinstance(prs, list) else None
+
+
+def _list_open_prs(gh) -> list | None:
+    """Every open PR with its age, mergeability, labels and changed files, or None when the query
+    itself fails — fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not
+    open another. The files feed jr/pending_prs.py: what an open tick PR holds is never staged again.
+    GitHub computes `mergeable` lazily (2026-11-19: the first listing after main moved read UNKNOWN for 17 of
+    25 PRs, so review_refresh never saw #1835/#1836 conflicting for 14 h): a listing with UNKNOWN in it is
+    read again, a bounded number of times (jr/chores.list_settled). A failed re-read keeps the first answer."""
+    import chores
+    return chores.list_settled(lambda: _list_open_prs_once(gh), lambda pr: pr.get("mergeable") == "UNKNOWN")
 
 
 def _pr_age_hours(pr: dict, now: datetime) -> float | None:

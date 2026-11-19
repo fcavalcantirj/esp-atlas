@@ -120,7 +120,12 @@ jobs:
     # a new head is a new review: any auto-merge a canary queued for the old head is switched off and the
     # agent-pass label removed, so nothing merges a commit no reviewer saw (6th review of #1809, 2026-11-19:
     # GitHub cancels auto-merge only on pushes by users WITHOUT write access)
-    if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
+    # Jr's own AUTO-routed tick PR (bookkeeping, no jr-review label) keeps the auto-merge the bot requested: a
+    # push to it is the bot's own refresh or the chores' merge of main, and disarming it would strand the PR
+    # until the tick aborts on "a Jr tick PR has been open > 3 h".
+    if: >-
+      github.event_name == 'pull_request' && github.event.action == 'synchronize' &&
+      !(startsWith(github.head_ref, 'jr/tick-') && !contains(github.event.pull_request.labels.*.name, 'jr-review'))
     runs-on: ubuntu-latest
     permissions:
       contents: write

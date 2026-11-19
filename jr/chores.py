@@ -18,6 +18,7 @@ Incidents are recorded always; they reach the delegate only through `ci_watch.py
 """
 from __future__ import annotations
 
+import time
 from datetime import datetime, timedelta
 
 import agent_review
@@ -30,6 +31,49 @@ HUMAN_LABEL = "needs-human"
 DIGEST_HOUR = 12
 PR_FIELDS = ("number,headRefName,headRefOid,mergeStateStatus,isDraft,labels,baseRefName,isCrossRepository,updatedAt,"
              "createdAt,statusCheckRollup")
+
+
+# GitHub computes mergeability lazily: the first listing after main moves answers UNKNOWN for most PRs
+# (2026-11-19, measured: 17 of 25 UNKNOWN, 12 s later 6 CONFLICTING). A listing with UNKNOWN in it is read again.
+SLEEP = time.sleep
+SETTLE_WAIT, SETTLE_TRIES = 10, 3
+REQUIRED_LABELS = {"agent-pass": "0E8A16", "needs-human": "B60205", "review-fallback": "FBCA04", "jr-heal": "D93F0B"}
+
+
+def list_settled(fetch, unknown, tries: int = SETTLE_TRIES, wait: int = SETTLE_WAIT):
+    """`fetch()` -> a PR list or None; read again (after `wait` s) while `unknown(pr)` holds for any PR, at most
+    `tries` listings in all. The last listing is returned as it is: a PR still unknown is simply not judged."""
+    prs = fetch()
+    for _ in range(max(tries, 1) - 1):
+        if prs is None or not any(unknown(p) for p in prs):
+            break
+        SLEEP(wait)
+        again = fetch()
+        if again is None:
+            break
+        prs = again
+    return prs
+
+
+def ensure_labels(gh, store: ci_watch.Store, now: str) -> list[str]:
+    """Once a UTC day: create every label the machine needs that the repository lacks (2026-11-19: four were
+    missing and every `gh pr edit --add-label` would have raised). Best-effort; returns the names created."""
+    day = now[:10]
+    data = store._load()
+    if data.get("labels_day") == day:
+        return []
+    have = ci_watch._json(gh, "label", "list", "--limit", "200", "--json", "name")
+    if have is None:
+        return []
+    names = {str(l.get("name")) for l in have if isinstance(l, dict)}
+    created = []
+    for name, color in REQUIRED_LABELS.items():
+        if name not in names and getattr(gh("label", "create", name, "--color", color), "returncode", 1) == 0:
+            created.append(name)
+    data = store._load()
+    data["labels_day"] = day
+    store._save(data)
+    return created
 
 
 def _labels(pr: dict) -> set:
@@ -227,7 +271,8 @@ def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
 
 def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False) -> dict:
     try:
-        prs = ci_watch._json(gh, "pr", "list", "--state", "open", "--limit", "200", "--json", PR_FIELDS)
+        prs = list_settled(lambda: ci_watch._json(gh, "pr", "list", "--state", "open", "--limit", "200", "--json", PR_FIELDS),
+                           lambda p: p.get("mergeStateStatus") == "UNKNOWN")
         if prs is None:
             return {"status": "unavailable", "why": "gh pr list failed"}
         wanted = plan(gh, slug, prs)
@@ -252,7 +297,8 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
                                          {v.check for v in wanted if ci_watch.is_pr_fix(v.check)},
                                          _closed(gh, store, {p["number"] for p in prs}), now)
         progress["resolved"] += store.resolve_pr_red(reds["fingerprints"], now)
-        return {"status": "ok", "recorded": recorded, "reruns": [n for n, _ in reds["reruns"]],
+        return {"status": "ok", "recorded": recorded, "labels_created": ensure_labels(gh, store, now),
+                "reruns": [n for n, _ in reds["reruns"]],
                 "updated": [n for n, _ in reds["update_branch"]], "resolved": progress["resolved"], "pushed": progress["pushed"],
                 "stalled": progress["stalled"], "nudges": store.nudges(), "digest": daily(gh, store, prs, now)}
     except Exception as e:      # noqa: BLE001 — the tick must keep running whatever happens here

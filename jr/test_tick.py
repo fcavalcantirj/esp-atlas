@@ -890,3 +890,33 @@ def test_a_pr_with_an_unreadable_age_is_judged_by_mergeability_alone(tmp_path):
     r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
     assert not r.aborted
     assert [w for w in r.warnings if "would close" in w] == ["would close superseded bookkeeping-only tick PR #787"]
+
+
+
+# --- 2026-11-19: mergeability is read until GitHub has computed it ------------------------------------------
+
+def test_the_preflight_listing_is_read_again_while_any_pr_reads_unknown(monkeypatch):
+    import chores
+    slept = []
+    monkeypatch.setattr(chores, "SLEEP", slept.append)
+    answers = [json.dumps([{"number": 1, "mergeable": "UNKNOWN"}, {"number": 2, "mergeable": "MERGEABLE"}]),
+               json.dumps([{"number": 1, "mergeable": "CONFLICTING"}, {"number": 2, "mergeable": "MERGEABLE"}])]
+    calls = []
+
+    def gh(*a):
+        calls.append(a)
+        return Proc(returncode=0, stdout=answers[min(len(calls), 2) - 1])
+    prs = tick._list_open_prs(gh)
+    assert [p["mergeable"] for p in prs] == ["CONFLICTING", "MERGEABLE"] and len(calls) == 2 and slept == [chores.SETTLE_WAIT]
+
+
+def test_a_failed_re_read_keeps_the_first_listing_and_a_failed_first_read_is_none(monkeypatch):
+    import chores
+    monkeypatch.setattr(chores, "SLEEP", lambda s: None)
+    n = {"i": 0}
+
+    def gh(*a):
+        n["i"] += 1
+        return Proc(returncode=0, stdout=json.dumps([{"number": 1, "mergeable": "UNKNOWN"}])) if n["i"] == 1 else Proc(returncode=1)
+    assert tick._list_open_prs(gh) == [{"number": 1, "mergeable": "UNKNOWN"}]
+    assert tick._list_open_prs(lambda *a: Proc(returncode=1)) is None
