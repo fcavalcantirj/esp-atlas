@@ -24,6 +24,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -212,23 +213,23 @@ def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_ru
     with tempfile.TemporaryDirectory(prefix="agent-review-") as tmp:
         # a FIXED worktree path (when given) lets the delegate's own code guard find a policy entry for it
         # instead of running the repo's tests in its own venv and re-running the agent for a "fix round"
-        wt = Path(worktree) if worktree else Path(tmp) / "pr"
+        wt = Path(worktree).resolve() if worktree else Path(tmp) / "pr"
         verdict_file = Path(tmp) / "verdict.json"
         contract_file = Path(tmp) / "REVIEW-CONTRACT.md"
         contract_file.write_text(contract if contract is not None else CONTRACT_PATH.read_text(encoding="utf-8"),
                                  encoding="utf-8")
         git("fetch", "origin", f"pull/{number}/head")
         if worktree:
-            try:
-                git("worktree", "remove", "--force", str(wt))       # a stale one from a killed run
-            except Exception:  # noqa: BLE001 — none there is the normal case
-                pass
+            clear_worktree(git, wt)                                  # whatever a killed run left there
         git("worktree", "add", "--detach", str(wt), "FETCH_HEAD")
         try:
             env = {"REPO_SLUG": slug, "PR_NUMBER": str(number), "HEAD": head, "VERDICT_FILE": str(verdict_file)}
             rc, dv, review_text = delegate(task + run_block(verdict_file, contract_file, review_python), str(wt), env)
         finally:
-            git("worktree", "remove", "--force", str(wt))
+            if worktree:
+                clear_worktree(git, wt)
+            else:
+                git("worktree", "remove", "--force", str(wt))
     # the review the agent WROTE is the deliverable: a verdict for this exact head is posted whatever the
     # delegate's own code guard said about the read-only tree (2026-11-19, first real run: the guard went RED
     # because the PR's tests could not import the core package in the delegate's venv, and the review was lost)
@@ -297,6 +298,28 @@ def last_json_object(text: str) -> dict | None:
         if isinstance(obj, dict):
             found = obj
         i = end
+
+
+def clear_worktree(git, wt: Path) -> None:
+    """Leave nothing at `wt`, whatever state a killed run left: a registered worktree, one whose .git file is
+    gone, or a plain non-empty directory (even with read-only parts). Never raises: a leftover must not stall
+    every later pass (review BLOCK of #1866, 2026-11-19)."""
+    wt = Path(wt)
+    try:
+        git("worktree", "remove", "--force", str(wt))
+    except Exception:  # noqa: BLE001 — not registered, or git refuses the broken one: handled below
+        pass
+    if wt.exists():
+        for d, _dirs, _files in os.walk(wt):
+            try:
+                os.chmod(d, 0o700)
+            except OSError:
+                pass
+        shutil.rmtree(wt, ignore_errors=True)
+    try:
+        git("worktree", "prune")
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def run_block(verdict_file: Path, contract_file: Path, review_python: str | None) -> str:

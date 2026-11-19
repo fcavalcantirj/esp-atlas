@@ -281,3 +281,42 @@ def test_the_real_delegate_process_never_sees_the_verdict_path_in_its_environmen
     delegate = ar.make_delegate(fake, sys.executable)
     rc, dv, review = delegate(f"TASK\nVERDICT_FILE={vf}\n", str(tmp_path), {"HEAD": HEAD, "PR_NUMBER": "5", "VERDICT_FILE": str(vf)})
     assert rc == 0 and dv["verdict"] == "FAIL" and json.loads(review)["verdict"] == "PASS"
+
+
+# --- review BLOCK of #1866 (2026-11-19): a leftover at the fixed worktree path must never stall the next pass ----
+
+def _real_repo(tmp_path):
+    import subprocess
+    env = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t", "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t",
+           "PATH": __import__("os").environ["PATH"], "HOME": str(tmp_path)}
+    repo = tmp_path / "clone"
+    repo.mkdir()
+    for a in (["init", "-q", "-b", "main"], ["commit", "-q", "--allow-empty", "-m", "base"]):
+        subprocess.run(["git", "-C", str(repo), *a], env=env, check=True, capture_output=True)
+    return repo, ar.make_git(repo)
+
+
+def test_a_registered_worktree_whose_git_file_is_gone_is_cleared(tmp_path):
+    repo, git = _real_repo(tmp_path)
+    wt = tmp_path / "review-wt"
+    git("worktree", "add", "--detach", str(wt), "HEAD")
+    (wt / ".git").unlink()                                   # a run killed mid-removal
+    ar.clear_worktree(git, wt)
+    git("worktree", "add", "--detach", str(wt), "HEAD")      # raises if the path is still in the way
+    assert (wt / ".git").exists()
+
+
+def test_an_unregistered_non_empty_directory_is_cleared(tmp_path):
+    repo, git = _real_repo(tmp_path)
+    wt = tmp_path / "review-wt"
+    (wt / "sub").mkdir(parents=True)
+    (wt / "sub" / "left.txt").write_text("x")
+    (wt / "sub").chmod(0o500)                                # a read-only leftover
+    ar.clear_worktree(git, wt)
+    git("worktree", "add", "--detach", str(wt), "HEAD")
+    assert (wt / ".git").exists()
+
+
+def test_clearing_a_path_that_is_not_there_is_fine(tmp_path):
+    repo, git = _real_repo(tmp_path)
+    ar.clear_worktree(git, tmp_path / "never-existed")
