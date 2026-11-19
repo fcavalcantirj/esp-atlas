@@ -25,11 +25,12 @@ class FakeGh:
         self.calls.append(args)
         if args[:2] == ("pr", "view") and "files,changedFiles" in args:
             return json.dumps({"files": [{"path": f} for f in self.files], "changedFiles": self.changed})
-        if args[:2] == ("pr", "list"):
-            assert "--label" in args and args[args.index("--label") + 1] == cc.PASS_LABEL
-            if args[args.index("--state") + 1] == "open":
-                return json.dumps([{"number": n} for n in self.queued])
-            return json.dumps([{"number": n, "mergedAt": t} for n, t in self.merged])
+        assert not (args[:2] == ("pr", "list") and "--label" in args)   # the label search lags: REST only
+        if args[:1] == ("api",) and "/issues?state=open" in args[1]:
+            assert f"labels={cc.PASS_LABEL}" in args[1]
+            return json.dumps([{"number": n, "pull_request": {}} for n in self.queued])
+        if args[:1] == ("api",) and "/pulls?state=closed" in args[1]:
+            return json.dumps([{"number": n, "merged_at": t, "labels": [{"name": cc.PASS_LABEL}]} for n, t in self.merged])
         return ""
 
     def writes(self):
@@ -126,9 +127,9 @@ def test_the_cli_from_comments_is_a_noop_without_a_verdict_and_decides_with_one(
             return json.dumps({"files": [{"path": "jr/x.py"}], "changedFiles": 1})
         if args[:2] == ("pr", "view"):
             return json.dumps({"headRefOid": HEAD})
-        if args[:1] == ("api",):
+        if args[:1] == ("api",) and "/comments" in args[1]:
             return json.dumps(store["comments"])
-        if args[:2] == ("pr", "list"):
+        if args[:1] == ("api",):
             return "[]"
         return ""
     monkeypatch.setattr(cc.demand_canary, "default_gh", gh)
@@ -170,7 +171,8 @@ def test_a_pass_on_a_pr_touching_the_switches_ci_or_the_reviewer_goes_to_a_human
 class Repo:
     """A fake `gh` over a few open PRs: {number: dict(head, verdict, labels, draft, fork, files)}."""
 
-    def __init__(self, prs, merged=()):
+    def __init__(self, prs, merged=(), lag=False, merge_fails=False):
+        self.lag, self.merge_fails = lag, merge_fails
         import sys
         sys.path.insert(0, str(cc.REPO / "jr"))
         import agent_review as ar
@@ -181,13 +183,17 @@ class Repo:
 
     def __call__(self, *args):
         self.calls.append(args)
-        if args[:2] == ("pr", "list") and "--label" not in args:
-            return json.dumps([{"number": n, "isDraft": p.get("draft", False), "isCrossRepository": p.get("fork", False),
-                                "labels": [{"name": x} for x in self._labels(n)]} for n, p in self.prs.items()])
+        assert not (args[:2] == ("pr", "list") and "--label" in args)   # the label search lags: REST only
         if args[:2] == ("pr", "list"):
-            if args[args.index("--state") + 1] == "open":
-                return json.dumps([{"number": n} for n in self.prs if cc.PASS_LABEL in self._labels(n)])
-            return json.dumps([{"number": n, "mergedAt": t} for n, t in self.merged])
+            return json.dumps([{"number": n, "isDraft": p.get("draft", False), "isCrossRepository": p.get("fork", False),
+                                "autoMergeRequest": ({"enabledAt": "x"} if p.get("armed") else None),
+                                "labels": [{"name": x} for x in self._labels(n)]} for n, p in self.prs.items()])
+        if args[:1] == ("api",) and "/issues?state=open" in args[1]:
+            if self.lag:                                             # a read that has not caught up with a write
+                return "[]"
+            return json.dumps([{"number": n, "pull_request": {}} for n in self.prs if cc.PASS_LABEL in self._labels(n)])
+        if args[:1] == ("api",) and "/pulls?state=closed" in args[1]:
+            return json.dumps([{"number": n, "merged_at": t, "labels": [{"name": cc.PASS_LABEL}]} for n, t in self.merged])
         n = int(args[2]) if args[:2] in {("pr", "view"), ("pr", "edit"), ("pr", "merge")} else None
         if args[:2] == ("pr", "view") and "files,changedFiles" in args:
             files = self.prs[n].get("files", ["jr/x.py"])
@@ -201,15 +207,21 @@ class Repo:
             v = self.prs[n].get("verdict")
             body = self.ar.render_comment(json.loads(verdict(v, head=self.prs[n].get("verdict_head", self.prs[n]["head"]))), "subscription") if v else "hi"
             return json.dumps([{"user": {"login": "espatlas-jr"}, "body": body}])
-        if args[:2] == ("pr", "edit"):
+        if args[:2] == ("pr", "edit") and "--add-label" in args:
             self._labels(n).append(args[args.index("--add-label") + 1])
+        if args[:2] == ("pr", "edit") and "--remove-label" in args:
+            self._labels(n).remove(args[args.index("--remove-label") + 1])
+        if args[:2] == ("pr", "merge"):
+            if self.merge_fails:
+                raise RuntimeError("gh pr merge: head moved")
+            self.prs[n]["armed"] = True
         return ""
 
     def merges(self):
         return [int(c[2]) for c in self.calls if c[:2] == ("pr", "merge")]
 
     def labelled(self):
-        return [(int(c[2]), c[c.index("--add-label") + 1]) for c in self.calls if c[:2] == ("pr", "edit")]
+        return [(int(c[2]), c[c.index("--add-label") + 1]) for c in self.calls if c[:2] == ("pr", "edit") and "--add-label" in c]
 
 
 def sweep(gh, autonomy_path, **kw):
@@ -249,7 +261,7 @@ def test_a_block_is_still_labelled_after_the_cap_stopped_the_merges(autonomy):
 
 def test_drafts_forks_queued_merges_and_stale_verdicts_are_left_alone(autonomy):
     gh = Repo({1: dict(head=h("a"), verdict="PASS", draft=True), 2: dict(head=h("b"), verdict="PASS", fork=True),
-               3: dict(head=h("c"), verdict="PASS", labels=[cc.PASS_LABEL]),
+               3: dict(head=h("c"), verdict="PASS", labels=[cc.PASS_LABEL], armed=True),
                4: dict(head=h("d"), verdict="PASS", verdict_head=h("e"))})
     assert sweep(gh, autonomy(True)) == {3: "queued"}
     assert gh.merges() == [] and gh.labelled() == []
@@ -275,6 +287,50 @@ def test_the_sweep_does_nothing_with_the_switch_off_or_in_a_dry_run(autonomy):
     assert sweep(gh, autonomy(True), env={"JR_CODE_AUTOMERGE": "0"}) == {} and gh.calls == []
     out = sweep(gh, autonomy(True), dry_run=True)
     assert out == {1: "dry_run", 2: "block"} and gh.merges() == [] and gh.labelled() == []
+
+
+# --- review BLOCK of #1871 (2026-11-19): the cap must hold whatever a read returns ------------------------------
+
+def test_one_sweep_requests_one_merge_even_when_githubs_reads_lag_behind_its_own_writes(autonomy):
+    gh = Repo({1841: dict(head=h("a"), verdict="PASS"), 1843: dict(head=h("b"), verdict="PASS"),
+               1844: dict(head=h("c"), verdict="PASS")}, lag=True)
+    out = sweep(gh, autonomy(True))
+    assert gh.merges() == [1841] and out == {1841: "merge_requested", 1843: "capped", 1844: "capped"}
+
+
+def test_a_merge_already_queued_uses_the_cap_for_the_whole_sweep_even_on_a_lagging_read(autonomy):
+    gh = Repo({1: dict(head=h("a"), verdict="PASS", labels=[cc.PASS_LABEL], armed=True),
+               2: dict(head=h("b"), verdict="PASS")}, lag=True)
+    assert sweep(gh, autonomy(True)) == {1: "queued", 2: "capped"} and gh.merges() == []
+
+
+def test_the_cap_is_never_read_through_the_label_search(autonomy):
+    gh = FakeGh(merged=[(1799, "2026-11-17T20:30:00Z")])
+    assert run(autonomy(True), gh, verdict()) == "capped"
+    assert not [c for c in gh.calls if c[:2] == ("pr", "list")]
+    urls = [c[1] for c in gh.calls if c[:1] == ("api",)]
+    assert any("/pulls?state=closed" in u for u in urls) and any("/issues?state=open" in u for u in urls)
+    old = FakeGh(merged=[(1700, "2026-11-17T19:59:00Z")])                # merged 61 minutes ago: the hour is free
+    assert run(autonomy(True), old, verdict()) == "merge_requested"
+
+
+def test_a_capped_human_only_pass_still_gets_its_label(autonomy):
+    gh = Repo({1: dict(head=h("a"), verdict="PASS"), 2: dict(head=h("b"), verdict="PASS", files=[".github/x.yml"])})
+    assert sweep(gh, autonomy(True)) == {1: "merge_requested", 2: "human_only"}
+    assert (2, cc.HUMAN_LABEL) in gh.labelled()
+
+
+def test_a_merge_request_that_fails_takes_its_label_back(autonomy):
+    gh = Repo({1: dict(head=h("a"), verdict="PASS")}, merge_fails=True)
+    out = sweep(gh, autonomy(True))
+    assert out[1].startswith("unreadable") and cc.PASS_LABEL not in gh.prs[1]["labels"]
+
+
+def test_an_agent_pass_label_with_no_merge_behind_it_is_dropped_and_the_pr_decided_again(autonomy):
+    gh = Repo({1: dict(head=h("a"), verdict="PASS", labels=[cc.PASS_LABEL])})       # labelled, never armed
+    assert sweep(gh, autonomy(True)) == {1: "merge_requested"} and gh.merges() == [1]
+    stale = Repo({2: dict(head=h("b"), verdict="PASS", verdict_head=h("c"), labels=[cc.PASS_LABEL])})
+    assert sweep(stale, autonomy(True)) == {} and cc.PASS_LABEL not in stale.prs[2]["labels"]
 
 
 def test_the_cli_sweep_prints_every_decision_and_exits_zero(monkeypatch, autonomy, capsys):

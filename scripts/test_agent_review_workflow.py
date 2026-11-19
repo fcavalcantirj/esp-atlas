@@ -152,7 +152,9 @@ def test_a_dispatch_is_a_sweep_and_every_canary_run_ends_with_one(wf, jobs):
     # 2026-11-19: a PASS the hourly cap made wait was never looked at again
     assert "workflow_dispatch" in wf[True]
     job = jobs["code-canary"]
-    assert job["if"].replace("\n", " ").startswith("github.event_name == 'workflow_dispatch' || (")
+    # only from main: a dispatch at another ref would run that ref's switches and canary code
+    assert job["if"].replace("\n", " ").startswith(
+        "(github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || (")
     one = next(s for s in job["steps"] if "--from-comments" in str(s.get("run", "")))
     assert one["if"] == "github.event_name == 'issue_comment'"        # a dispatch has no PR of its own
     sweep = next(s for s in job["steps"] if "--sweep" in str(s.get("run", "")))
