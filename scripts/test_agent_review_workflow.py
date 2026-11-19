@@ -124,6 +124,12 @@ def test_a_push_disarms_any_queued_auto_merge_and_drops_agent_pass(jobs):
     # needs-human describes a verdict (a BLOCK, or a PASS only a person may merge) at the OLD head: after a push
     # nobody was asked anything yet, and the daily line must not count the PR as waiting on a person
     assert "--remove-label needs-human" in run
+    # except on a demand PR, where the label means a quote FAILED and a red quotes job skips the canary that
+    # would set it again (review note on #1880)
+    lines = [ln.strip() for ln in run.splitlines()]
+    i = lines.index('case "$PR_BRANCH" in')
+    assert lines[i + 1] == "jr/research-*) ;;" and lines[i + 2].startswith('*) gh pr edit "$PR_NUMBER"') and "needs-human" in lines[i + 2]
+    assert job["steps"][0]["env"]["PR_BRANCH"] == "${{ github.head_ref }}"
     # the review lane never runs on a push
     assert "github.event.label.name == 'review-fallback'" in jobs["agent-review"]["if"]
 

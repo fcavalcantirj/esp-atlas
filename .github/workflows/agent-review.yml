@@ -138,13 +138,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.head_ref }}   # via env, never pasted into the shell
           REPO: ${{ github.repository }}
         run: |
           gh pr merge "$PR_NUMBER" --repo "$REPO" --disable-auto || true
           gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label agent-pass || true
           # needs-human is about a verdict at the old head (a BLOCK, or a PASS a person must merge). On a new
           # head nobody has been asked anything yet; the canary sets it again if the new verdict says so.
-          gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label needs-human || true
+          # Not on a demand PR: there the demand canary sets it for a quote that FAILED, and when quotes is
+          # still red at the new head the canary is skipped and nothing would set it again.
+          case "$PR_BRANCH" in
+            jr/research-*) ;;
+            *) gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label needs-human || true ;;
+          esac
 
   code-canary:
     # The click, on every marker comment (either lane): PASS at exactly the PR's current head + every
