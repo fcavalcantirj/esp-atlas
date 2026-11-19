@@ -1143,6 +1143,18 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-19T16:00:34.301043+00:00"
     },
+    "um-pros3": {
+      "board": "um-pros3",
+      "expires": "2026-11-26T17:00:32.102851+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-19T17:00:32.102851+00:00"
+    },
     "um-tinys3": {
       "board": "um-tinys3",
       "expires": "2026-11-23T03:00:32.040222+00:00",
