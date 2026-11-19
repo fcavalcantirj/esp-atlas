@@ -4,6 +4,9 @@ on:
   pull_request:
   push:
     branches: [main]
+  # A PR merged by a workflow's own token pushes to main without starting any workflow; the canaries start
+  # this one by dispatch instead (scripts/validate_main.py). The pull-request-only jobs stay off such a run.
+  workflow_dispatch:
 
 jobs:
   schema:
@@ -128,6 +131,170 @@ jobs:
         run: pip install -e apps/core
       - name: Quoted text appears on a cited page (changed records only)
         run: python3 scripts/check_quotes.py
+
+  demand-guard:
+    # A jr/research-<KEY> PR (Jr's demand work) changes exactly what its work item says: the queue
+    # candidate KEY linked to this PR and nothing else in the two demand files, the catalog records added
+    # are exactly its expected_ids with no forbidden sibling anywhere, and the demand files changed only
+    # in chore(demand): commits (scripts/demand_guard.py). The part of a demand PR's review that a human
+    # did by reading the JSON diff (2026-11-17, #1800), as a job. Other branches: not run.
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'jr/research-')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the diff and the commit subjects against the PR's merge base
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Install core (research_work reads the validation receipt)
+        run: pip install -e apps/core
+      - name: The PR changes exactly what its work item says
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: python3 scripts/demand_guard.py
+
+  demand-canary:
+    # The click a person used to make on a demand PR (scripts/demand_canary.py): when every job this one
+    # needs is green, jr/autonomy.json says demand_automerge true AND the repository variable
+    # JR_DEMAND_AUTOMERGE is not 0 (the kill switch), the quotes re-run here has no FAIL and no
+    # INCONCLUSIVE, and no other jr/research-* PR merged today, the PR is marked ready and
+    # `gh pr merge --auto --match-head-commit <head>` is requested: it lands only when every required
+    # check is green at exactly this head. A quote FAIL gets a comment and the label needs-human instead.
+    # The token: the bot's PAT when the secret exists (so the merge triggers main's workflows like a
+    # person's merge does), else the workflow token.
+    # No `vars.` in this `if`: an UNSET variable compared with '0' is false, which silently skipped every canary
+    # (2026-11-19). The script reads JR_DEMAND_AUTOMERGE itself and prints why it is off.
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'jr/research-')
+    needs: [schema, tests, jr-tests, quotes, demand-guard, jr-pr-guard, g2-guard, ledger-guard]
+    concurrency:
+      group: demand-canary   # one at a time, so two runs never both see the daily cap free
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write     # only to start validate on main after a merge (last step)
+    steps:
+      # main's code decides; the PR is only DATA in pr/ (review BLOCK of #1809, 2026-11-19: with the PR's own
+      # checkout, a commit on the branch could rewrite the canary that judges it)
+      - uses: actions/checkout@v4
+        with:
+          # main's TIP, not base.sha: base.sha is main as it was when the PR's head was last synchronized
+          # (measured 2026-11-19: a day old on PRs opened the day before), so "main's code decides" ran
+          # yesterday's canary on them
+          ref: ${{ github.event.repository.default_branch }}
+          path: trusted
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the diff and the switch against the PR's merge base
+          path: pr
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install httpx pyyaml pypdf
+      - name: Install core (the quotes re-check reads frontmatter with esp_atlas_core)
+        run: pip install -e trusted/apps/core
+      - name: Decide and, when every switch and check allows, request the merge at the exact head
+        env:
+          GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
+          JR_DEMAND_AUTOMERGE: ${{ vars.JR_DEMAND_AUTOMERGE }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PR_BRANCH: ${{ github.head_ref }}   # via env, never pasted into the shell (4th review of #1809)
+        run: python3 trusted/scripts/demand_canary.py --repo pr --pr "$PR_NUMBER" --head "$PR_HEAD" --branch "$PR_BRANCH"
+      - name: main gets its CI even when this job's token merged (a workflow-token push starts no workflow)
+        # 2026-11-19: #1799, the first PR the machine merged, left main's new head with zero runs. Dispatch is
+        # the documented exception. A PR whose base predates the script has nothing to run and says so.
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f trusted/scripts/validate_main.py ]; then python3 trusted/scripts/validate_main.py; else echo "validate-main: this PR's base predates the script; skipped"; fi
+
+  receipt-guard:
+    # A jr/tick-* PR: is it mergeable on its evidence receipts alone? Every recipe it adds must carry a PASS
+    # receipt (jr/autoreview, SPEC-jr-review-routing 7) that holds again when the checker is re-run here on
+    # the live upstream (description, README, platformio.ini, release assets); no existing record edited,
+    # nothing deleted, at least one recipe added (scripts/receipt_guard.py). The job only REPORTS (exit 0 either
+    # way); the tick canary recomputes eligibility with main's code and is the only consumer.
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'jr/tick-')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Install core (the guard reads frontmatter and the board catalog)
+        run: pip install -e apps/core
+      - name: Every added recipe's PASS receipt holds on the live upstream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # report only: "not eligible" is information for the canary and the reader, never a red X on a PR that
+        # is simply waiting for a person (2026-11-19: 3 red runs and 3 failure emails on #1828)
+        run: python3 scripts/receipt_guard.py --report-only
+
+  tick-canary:
+    # The click a person used to make on a review-routed tick PR (scripts/tick_canary.py): when every job
+    # it needs is green, jr/autonomy.json says tick_automerge true AND the repository variable
+    # JR_TICK_AUTOMERGE is not 0, the PR carries jr-review, no other review-routed tick PR merged today, and
+    # the receipt guard says eligible, `gh pr merge --auto --match-head-commit <head>` is requested.
+    # No `vars.` here either (see demand-canary): the script reads JR_TICK_AUTOMERGE.
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'jr/tick-')
+    needs: [schema, tests, jr-tests, receipt-guard, jr-pr-guard, g2-guard, ledger-guard]
+    concurrency:
+      group: tick-canary   # one at a time, so two runs never both see the daily cap free
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write     # only to start validate on main after a merge (last step)
+    steps:
+      # main's code decides; the PR is only DATA in pr/ (review BLOCK of #1809, 2026-11-19: with the PR's own
+      # checkout, a commit on the branch could rewrite the canary that judges it)
+      - uses: actions/checkout@v4
+        with:
+          # main's TIP, not base.sha: base.sha is main as it was when the PR's head was last synchronized
+          # (measured 2026-11-19: a day old on PRs opened the day before), so "main's code decides" ran
+          # yesterday's canary on them
+          ref: ${{ github.event.repository.default_branch }}
+          path: trusted
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the diff and the switch against the PR's merge base
+          path: pr
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Install core
+        run: pip install -e trusted/apps/core
+      - name: Decide and, when every switch and receipt allows, request the merge at the exact head
+        env:
+          GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JR_TICK_AUTOMERGE: ${{ vars.JR_TICK_AUTOMERGE }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PR_BRANCH: ${{ github.head_ref }}
+        run: python3 trusted/scripts/tick_canary.py --repo pr --pr "$PR_NUMBER" --head "$PR_HEAD" --branch "$PR_BRANCH"
+      - name: main gets its CI even when this job's token merged (a workflow-token push starts no workflow)
+        # 2026-11-19: #1799, the first PR the machine merged, left main's new head with zero runs. Dispatch is
+        # the documented exception. A PR whose base predates the script has nothing to run and says so.
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f trusted/scripts/validate_main.py ]; then python3 trusted/scripts/validate_main.py; else echo "validate-main: this PR's base predates the script; skipped"; fi
 
   g2-guard:
     runs-on: ubuntu-latest

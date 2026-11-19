@@ -1,7 +1,7 @@
 {
  "version": 1,
  "source": "pam_feed",
- "checked_at": "2026-11-17T11:15:31.248373Z",
+ "checked_at": "2026-11-19T11:15:31.127163Z",
  "feeds": {
   "products": {
    "url": "https://pamfinds.com/api/products.json",
@@ -914,8 +914,10 @@
     ]
    },
    "fingerprint": "e4bf3b30e2f4ee930ce296178887c84aee63d253e51b30f9ddcfc263759f7e5b",
-   "matches": [],
-   "status": "potential_identity_gap"
+   "matches": [
+    "heltec-wifi-lora-32-v4"
+   ],
+   "status": "possible_match"
   },
   {
    "source_id": "lilygo-t-beam-supreme",
