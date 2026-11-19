@@ -115,7 +115,10 @@ def test_every_canary_runs_one_at_a_time(jobs, wf):
 
 def test_a_push_disarms_any_queued_auto_merge_and_drops_agent_pass(jobs):
     job = jobs["disarm-on-push"]
-    assert job["if"] == "github.event_name == 'pull_request' && github.event.action == 'synchronize'"
+    cond = " ".join(job["if"].split())
+    assert cond.startswith("github.event_name == 'pull_request' && github.event.action == 'synchronize'")
+    # Jr's AUTO-routed bookkeeping tick PR keeps its own auto-merge; a review-routed one is disarmed like any PR
+    assert "!(startsWith(github.head_ref, 'jr/tick-') && !contains(github.event.pull_request.labels.*.name, 'jr-review'))" in cond
     run = job["steps"][0]["run"]
     assert '--disable-auto' in run and "--remove-label agent-pass" in run and "${{" not in run
     # the review lane never runs on a push
