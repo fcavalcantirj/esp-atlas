@@ -538,3 +538,23 @@ def test_chores_never_merge_main_into_a_pr_whose_fix_is_in_flight(tmp_path):
     chores.run(gh, store, LATER, slug="o/r")
     chores.run(gh, store, "2026-11-19T14:05:00+00:00", slug="o/r")
     assert not [c for c in gh.calls if c[:3] == ("api", "-X", "PUT")]
+
+
+
+# --- 6th review of #1857 (2026-11-19): one fix at a time per PR, from its live head ------------------------
+
+def test_two_fixes_are_never_out_on_the_same_pr_at_once(tmp_path):
+    store = _store(tmp_path)
+    gh = Gh([pr(7, "DIRTY", labels=["needs-human"], head=H1)], comments={7: [block(H1)]})
+    chores.run(gh, store, NOW, slug="o/r")
+    assert {"conflict:#7", "review-fix:#7"} <= set(_incidents(store))
+    first = store.claim(NOW, allow_pr_fix=True)
+    assert first and store.claim(NOW, allow_pr_fix=True) is None              # the other waits for this one
+
+
+def test_an_open_fix_follows_the_prs_live_head_before_it_is_handed_out(tmp_path):
+    store = _store(tmp_path)
+    chores.run(Gh([pr(7, "DIRTY", head=H1)]), store, NOW, slug="o/r")
+    chores.run(Gh([pr(7, "DIRTY", head=H2)]), store, LATER, slug="o/r")       # a person pushed; still conflicting
+    rec = store.claim(LATER, allow_pr_fix=True)
+    assert rec["context"]["evidence"]["pr_head"] == H2

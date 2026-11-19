@@ -360,6 +360,15 @@ class Store:
         same = sorted((r for r in data["incidents"].values() if r["fingerprint"] == verdict.fingerprint),
                       key=lambda r: r["first_seen"])
         if same and same[-1]["state"] not in ("resolved", "abandoned"):
+            live = same[-1]
+            # an open PR fix not handed out yet follows the PR's live head: the delegate must start from it
+            # (6th review of #1857, 2026-11-19)
+            if is_pr_fix(verdict.check or "") and live["state"] == "open":
+                ev = live["context"].setdefault("evidence", {})
+                new = verdict.evidence or {}
+                if new.get("pr_head") and ev.get("pr_head") != new.get("pr_head"):
+                    ev.update({k: v for k, v in new.items()})
+                    self._save(data)
             return None
         incident_id = base if not same else f"{base}-{len(same) + 1}"
         state = "needs_human" if len(same) >= MAX_PER_FINGERPRINT else "open"
@@ -393,6 +402,10 @@ class Store:
         spent_fix = sum(1 for r in today if is_pr_fix(r))
         spent = len(today) - spent_fix
         waiting = [r for r in waiting if (spent_fix < PR_FIX_DAILY if is_pr_fix(r) else spent < DAILY_DISPATCHES)]
+        # one fix at a time per PR: a second fix would start from a head the first one moves (6th review of #1857)
+        busy = {((r["context"].get("evidence") or {}).get("pr")) for r in data["incidents"].values()
+                if is_pr_fix(r) and r["state"] in ("dispatched", "pushed")}
+        waiting = [r for r in waiting if not (is_pr_fix(r) and (r["context"].get("evidence") or {}).get("pr") in busy)]
         if not waiting:
             return None
         rec = waiting[0]
