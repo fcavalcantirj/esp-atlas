@@ -183,9 +183,11 @@ def canary_retry(gh, slug: str, prs: list, store: ci_watch.Store, now: str, dry_
     per tick, oldest first; only for a lane whose switch in jr/autonomy.json is true. A demand PR behind main
     is merged with main (a new event: main's current guards and canary judge it); otherwise the failed jobs of
     its last run are rerun (the canary behind them follows), or the canary job alone. A tick PR is only ever
-    rerun: jr/review_refresh.py owns its merges with main. Left alone: needs-human, a red REQUIRED check
-    (red_prs' business), checks still running, no run at all, a fork, another base, an AUTO-route tick PR, a
-    PR whose fix the delegate is working on. A refused retry is remembered like a done one.
+    rerun: jr/review_refresh.py owns its merges with main. Left alone: needs-human, a red REQUIRED check on a
+    PR that is not a draft (red_prs' business; it never looks at drafts), checks still running, no run at all, a
+    fork, another base, an AUTO-route tick PR, a PR whose fix the delegate is working on. The day's memory is
+    written BEFORE each call (the tick's GitHub budget can end the run between two calls; review BLOCK of #1874),
+    so a retry that was sent, refused or cut short is never sent twice in a day.
     Returns {"update_branch": [(n, head)], "rerun": [(n, run id)], "failed": [n]}."""
     out = {"update_branch": [], "rerun": [], "failed": []}
     try:
@@ -212,28 +214,30 @@ def canary_retry(gh, slug: str, prs: list, store: ci_watch.Store, now: str, dry_
             continue
         if required is None:
             required = ci_watch.required_checks(gh, slug) or []
-        if _red_required(p, required):
+        if _red_required(p, required) and not p.get("isDraft"):
             continue
-        failed = [c for c in rollup if str(c.get("conclusion") or "").upper() == ci_watch.FAILURE]
-        canary = next((ci_watch._RUN_JOB.search(str(c.get("detailsUrl") or "")) for c in rollup if c.get("name") == lanes[prefix]), None)
-        any_run = next((m for m in (ci_watch._RUN_JOB.search(str(c.get("detailsUrl") or "")) for c in (failed or rollup)) if m), None)
+        # the run that holds this lane's canary: a failure in another workflow's run (the agent review, a
+        # deploy preview) is not what stands between the PR and its canary
+        runs = {id(c): ci_watch._RUN_JOB.search(str(c.get("detailsUrl") or "")) for c in rollup}
+        canary = next((runs[id(c)] for c in rollup if c.get("name") == lanes[prefix] and runs[id(c)]), None)
+        if canary is None:
+            continue
+        failed = [c for c in rollup if str(c.get("conclusion") or "").upper() == ci_watch.FAILURE
+                  and runs[id(c)] and runs[id(c)].group(1) == canary.group(1)]
         if prefix == "jr/research-" and _behind_main(gh, slug, head):
             kind, call = "update_branch", ("api", "-X", "PUT", f"repos/{slug}/pulls/{n}/update-branch", "-f", f"expected_head_sha={head}")
-        elif failed and any_run:
-            kind, call = "rerun", ("run", "rerun", any_run.group(1), "--failed")
-        elif canary:
-            kind, call = "rerun", ("api", "-X", "POST", f"repos/{slug}/actions/jobs/{canary.group(2)}/rerun")
+        elif failed:
+            kind, call = "rerun", ("run", "rerun", canary.group(1), "--failed")
         else:
-            continue
-        seen[str(n)] = day
+            kind, call = "rerun", ("api", "-X", "POST", f"repos/{slug}/actions/jobs/{canary.group(2)}/rerun")
+        if not dry_run:
+            data = store._load()                       # fresh each time: the other chores write this store too
+            data["canary_retry"] = dict(list({**(data.get("canary_retry") or {}), str(n): day}.items())[-300:])
+            store._save(data)
         if dry_run or _ok(gh(*call)):
-            out[kind].append((n, head) if kind == "update_branch" else (n, (any_run if failed and any_run else canary).group(1)))
+            out[kind].append((n, head) if kind == "update_branch" else (n, canary.group(1)))
         else:
             out["failed"].append(n)
-    if not dry_run and (out["update_branch"] or out["rerun"] or out["failed"]):
-        data = store._load()
-        data["canary_retry"] = dict(list(seen.items())[-300:])
-        store._save(data)
     return out
 
 
@@ -355,9 +359,9 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
         reds = red_prs(gh, slug, prs, store, dry_run)
         wanted += reds["verdicts"]
         touched = {n for n, _ in reds["reruns"]} | {n for n, _ in reds["update_branch"]}
-        retries = canary_retry(gh, slug, [p for p in prs if p.get("number") not in touched], store, now, dry_run,
-                               autonomy_path=autonomy_path)
+        rest = [p for p in prs if p.get("number") not in touched]
         if dry_run:
+            retries = canary_retry(gh, slug, rest, store, now, True, autonomy_path=autonomy_path)
             return {"status": "ok", "would": [f"record {v.check}" for v in wanted]
                     + [f"rerun #{n} run {r}" for n, r in reds["reruns"]]
                     + [f"merge main into #{n}" for n, _ in reds["update_branch"]]
@@ -369,6 +373,8 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
             # REST, not `gh pr update-branch` (the runner's gh 2.46 has no such subcommand); expected_head_sha
             # makes GitHub refuse if the PR moved since we looked
             gh("api", "-X", "PUT", f"repos/{slug}/pulls/{n}/update-branch", "-f", f"expected_head_sha={head}")
+        # after the actions red_prs already remembered: a budget that ends here must never cost them
+        retries = canary_retry(gh, slug, rest, store, now, False, autonomy_path=autonomy_path)
         recorded = []
         for v in wanted:
             rec = store.record(v, now)

@@ -139,9 +139,12 @@ tick**, only for a lane whose switch in `jr/autonomy.json` is true:
 - otherwise the failed jobs of its last run are rerun (the canary behind them follows), or the canary job alone;
 - a review-routed tick PR is only ever rerun; `jr/review_refresh.py` owns its merges with main.
 
-Left alone: `needs-human`, a red required check (that is `red_prs`), checks still running, no run at all, a fork,
-another base, an AUTO-route tick PR, a PR whose fix the delegate is working on. A refused retry is remembered
-like a done one. Memory: `canary_retry` in the incident store. No delegate, no model.
+Left alone: `needs-human`, a red required check on a PR that is not a draft (that is `red_prs`, which never
+looks at drafts), checks still running, no run at all, a PR without its lane's canary check, a fork, another
+base, an AUTO-route tick PR, a PR whose fix the delegate is working on. Only failures in the canary's own run
+count. Memory: `canary_retry` in the incident store, written **before** each call, so a retry that was sent,
+refused, or cut short by the tick's call budget is never sent twice in a day; it runs after the actions
+`red_prs` already remembered. No delegate, no model.
 
 ## 2. Known causes — handled in code, no model
 

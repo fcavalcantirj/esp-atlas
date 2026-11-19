@@ -780,5 +780,68 @@ def test_the_chores_run_the_retry_and_report_it(tmp_path):
 
 def test_a_red_required_check_belongs_to_red_prs_not_to_the_retry(tmp_path):
     checks = [check("schema"), check("tests", "FAILURE", job=930), check("jr-tests"), check("demand-canary", "SKIPPED", job=950)]
-    gh = RetryGh([content(1846, "jr/research-pam-c2", checks, draft=True)], behind=3)
+    gh = RetryGh([content(1846, "jr/research-pam-c2", checks)], behind=3)                # not a draft: red_prs has it
     assert retry(gh, _store(tmp_path), tmp_path) == {"update_branch": [], "rerun": [], "failed": []} and gh.acts() == []
+
+
+# --- review BLOCK of #1874: the tick's GitHub budget can end the run between two calls ---------------------------
+
+class Budget(Exception):
+    pass
+
+
+def test_a_retry_cut_short_by_the_call_budget_is_still_remembered_for_the_day(tmp_path):
+    class Limited(RetryGh):
+        def __call__(self, *a):
+            if a[:3] == ("api", "-X", "PUT"):
+                self.calls.append(a)
+                raise Budget("call budget spent")            # the PUT left; nothing after it ran
+            return super().__call__(*a)
+    prs = [content(n, f"jr/research-{n}", GREEN_DEMAND, draft=True) for n in (10, 20)]
+    store = _store(tmp_path)
+    gh = Limited(prs, behind=1)
+    with pytest.raises(Budget):
+        retry(gh, store, tmp_path)
+    assert store._load()["canary_retry"] == {"10": "2026-11-19"}
+    nxt = RetryGh(prs, behind=1)
+    assert [n for n, _ in retry(nxt, store, tmp_path, now=LATER)["update_branch"]] == [20]     # 10 is not sent again
+
+
+def test_the_retry_runs_after_the_reruns_red_prs_already_remembered(tmp_path):
+    prs = [tick_pr(28, [red()]), content(1846, "jr/research-pam-c2", GREEN_DEMAND, draft=True)]
+    gh = RetryGh(prs, behind=3)
+    chores.run(gh, _store(tmp_path), NOW, slug="o/r", autonomy_path=_flags(tmp_path))
+    acts = gh.acts()
+    assert acts.index(("run", "rerun", "111", "--failed")) < acts.index(
+        ("api", "-X", "PUT", "repos/o/r/pulls/1846/update-branch", "-f", f"expected_head_sha={H1}"))
+
+
+def test_the_retry_never_overwrites_what_the_other_chores_wrote_to_the_store(tmp_path):
+    prs = [tick_pr(28, [red()]), content(1846, "jr/research-pam-c2", GREEN_DEMAND, draft=True)]
+    store = _store(tmp_path)
+    chores.run(RetryGh(prs, behind=3), store, NOW, slug="o/r", autonomy_path=_flags(tmp_path))
+    data = store._load()
+    assert data["canary_retry"] == {"1846": "2026-11-19"} and len(data["reruns"]) == 1
+
+
+def test_a_failure_in_another_workflows_run_is_not_what_gets_rerun(tmp_path):
+    checks = [check("agent-review", "FAILURE", run=700, job=701), check("schema"), check("tests"), check("jr-tests"),
+              check("demand-canary", job=950)]
+    gh = RetryGh([content(1846, "jr/research-pam-c2", checks, draft=True)], behind=0)
+    retry(gh, _store(tmp_path), tmp_path)
+    assert gh.acts() == [("api", "-X", "POST", "repos/o/r/actions/jobs/950/rerun")]
+
+
+def test_a_draft_demand_pr_with_a_red_required_check_is_the_retrys_since_red_prs_skips_drafts(tmp_path):
+    checks = [check("schema"), check("tests", "FAILURE", job=930), check("jr-tests"), check("demand-canary", "SKIPPED", job=950)]
+    gh = RetryGh([content(1846, "jr/research-pam-c2", checks, draft=True)], behind=3)
+    assert retry(gh, _store(tmp_path), tmp_path)["update_branch"] == [(1846, H1)]
+    level = RetryGh([content(1846, "jr/research-pam-c2", checks, draft=True)], behind=0)
+    retry(level, _store(tmp_path / "l"), tmp_path)
+    assert level.acts() == [("run", "rerun", "900", "--failed")]
+
+
+def test_a_pr_without_its_lanes_canary_check_is_left_alone(tmp_path):
+    gh = RetryGh([content(1846, "jr/research-pam-c2", [check("schema"), check("tests"), check("jr-tests")], draft=True)], behind=3)
+    assert retry(gh, _store(tmp_path), tmp_path) == {"update_branch": [], "rerun": [], "failed": []}
+
