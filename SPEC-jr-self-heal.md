@@ -102,6 +102,15 @@ BLOCK waiting for a person, stacked PRs retargeted by hand. Now:
   `main` happen once per PR, check and failing test node (never per head: `main` moves hourly, and a key that
   changes every run would loop). A `pr-red:` incident resolves when
   no open PR shows that failure.
+- **Mergeability is read until GitHub has computed it** (2026-11-19, measured: the first listing after `main`
+  moved read UNKNOWN for 17 of 25 PRs; 12 s later 6 were CONFLICTING; #1835/#1836 stayed conflicting 14 h while
+  `review_refresh`'s dry run said `would_refresh`). `chores.list_settled` re-reads a listing with UNKNOWN in it
+  (10 s apart, 3 listings at most); the tick's preflight listing uses it too. A PR still UNKNOWN is not judged.
+- **The labels the machine needs exist:** once a UTC day the chores create any of `agent-pass`, `needs-human`,
+  `review-fallback`, `jr-heal` the repository lacks (all four were missing on 2026-11-19; every
+  `gh pr edit --add-label` would have raised).
+- **`disarm-on-push` leaves Jr's AUTO-routed tick PR alone** (a `jr/tick-*` PR without `jr-review`): its
+  auto-merge is the bot's own and a push to it is the bot's refresh or the chores' merge of `main`.
 - **Dispatch** only through `ci_watch.py claim --pr-fix` (a launcher that checks out `pr_head`, pushes the
   delegate's commits fast-forward to `pr_branch`, opens no PR) and the `pr_fix_dispatch` switch
   (`jr/autonomy.json` + `JR_PR_FIX_DISPATCH`), against its own budget of `PR_FIX_DAILY` (4) a UTC day.

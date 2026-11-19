@@ -154,7 +154,7 @@ def test_a_pass_already_queued_for_auto_merge_counts_against_the_hourly_cap(auto
 
 def test_a_pass_on_a_pr_touching_the_switches_ci_or_the_reviewer_goes_to_a_human(autonomy):
     for files in (["jr/autonomy.json"], ["jr/x.py", ".github/workflows/validate.yml"], ["scripts/demand_canary.py"],
-                  ["jr/agent_review.py"], ["docs/REVIEW-CONTRACT.md"]):
+                  ["jr/agent_review.py"], ["docs/REVIEW-CONTRACT.md"], ["scripts/validate_main.py"]):
         gh = FakeGh(files=files)
         assert run(autonomy(True), gh, verdict()) == "human_only", files
         assert not [c for c in gh.calls if c[:2] == ("pr", "merge")]

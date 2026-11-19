@@ -77,8 +77,8 @@ def test_the_code_canary_runs_on_marker_comments_reads_them_and_respects_the_kil
     job = jobs["code-canary"]
     assert "github.event_name == 'issue_comment'" in job["if"] and "github.event.issue.pull_request" in job["if"]
     assert "contains(github.event.comment.body, '<!-- agent-review verdict -->')" in job["if"]
-    assert "vars.JR_CODE_AUTOMERGE != '0'" in job["if"]
-    assert job["permissions"] == {"contents": "write", "pull-requests": "write"}
+    assert "vars." not in job["if"]                                   # the script enforces the kill variable
+    assert job["permissions"] == {"contents": "write", "pull-requests": "write", "actions": "write"}
     step = next(s for s in job["steps"] if "scripts/code_canary.py" in str(s.get("run", "")))
     assert "--pr ${{ github.event.issue.number }}" in step["run"] and "--from-comments" in step["run"]
     assert step["env"]["JR_CODE_AUTOMERGE"] == "${{ vars.JR_CODE_AUTOMERGE }}"
@@ -115,8 +115,34 @@ def test_every_canary_runs_one_at_a_time(jobs, wf):
 
 def test_a_push_disarms_any_queued_auto_merge_and_drops_agent_pass(jobs):
     job = jobs["disarm-on-push"]
-    assert job["if"] == "github.event_name == 'pull_request' && github.event.action == 'synchronize'"
+    cond = " ".join(job["if"].split())
+    assert cond.startswith("github.event_name == 'pull_request' && github.event.action == 'synchronize'")
+    # Jr's AUTO-routed bookkeeping tick PR keeps its own auto-merge; a review-routed one is disarmed like any PR
+    assert "!(startsWith(github.head_ref, 'jr/tick-') && !contains(github.event.pull_request.labels.*.name, 'jr-review'))" in cond
     run = job["steps"][0]["run"]
     assert '--disable-auto' in run and "--remove-label agent-pass" in run and "${{" not in run
     # the review lane never runs on a push
     assert "github.event.label.name == 'review-fallback'" in jobs["agent-review"]["if"]
+
+
+
+# --- 2026-11-19, first live verdict (#1797): three first-run killers ---------------------------------------
+# (1) every canary was SKIPPED: `vars.JR_X_AUTOMERGE != '0'` is false while the variable is unset (measured on
+#     the code canary and on tick PR #1860; setting the variable to 1 made the same event run). A kill switch
+#     must never be "off unless configured": no job `if` may read `vars.` — the scripts read the variable.
+# (2) once it ran, code-canary crashed on `import yaml`: the job installed nothing.
+
+def test_no_job_if_reads_a_configuration_variable(jobs):
+    import yaml
+    from pathlib import Path
+    root = Path(__file__).resolve().parent.parent / ".github" / "workflows"
+    for wf_path in sorted(root.glob("*.yml")):
+        doc = yaml.safe_load(wf_path.read_text())
+        for name, job in (doc.get("jobs") or {}).items():
+            if name in ("demand-canary", "tick-canary", "code-canary"):
+                assert "vars." not in str(job.get("if", "")), f"{wf_path.name}:{name}"
+
+
+def test_the_code_canary_installs_what_its_imports_need(jobs):
+    runs = " ".join(str(s.get("run", "")) for s in jobs["code-canary"]["steps"])
+    assert "pip install" in runs and "pyyaml" in runs and "httpx" in runs

@@ -3868,7 +3868,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-19T04:00:31.893783+00:00"
+      "timestamp": "2026-11-19T05:00:32.307897+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -17886,6 +17886,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T03:00:32.057965+00:00"
     },
+    "repo-note:0xnura/badusb_payloadbuilder": {
+      "expires": "2026-12-19T05:00:32.307897+00:00",
+      "id": "repo-note:0xnura/badusb_payloadbuilder",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'library'",
+      "repo": "0xnura/badusb_payloadbuilder",
+      "status": "rejected",
+      "timestamp": "2026-11-19T05:00:32.307897+00:00"
+    },
     "repo-note:21cncstudio/project_aura": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
       "id": "repo-note:21cncstudio/project_aura",
@@ -18083,6 +18092,15 @@
       "repo": "arduino/arduino-cli",
       "status": "rejected",
       "timestamp": "2026-11-18T15:00:31.763832+00:00"
+    },
+    "repo-note:arkwnet/m5stickclock": {
+      "expires": "2026-12-19T05:00:32.307897+00:00",
+      "id": "repo-note:arkwnet/m5stickclock",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "arkwnet/m5stickclock",
+      "status": "rejected",
+      "timestamp": "2026-11-19T05:00:32.307897+00:00"
     },
     "repo-note:arn-c0de/ad8232-emg": {
       "expires": "2026-12-18T02:00:31.876893+00:00",
@@ -18290,6 +18308,15 @@
       "repo": "bokunimowakaru/esp",
       "status": "rejected",
       "timestamp": "2026-11-17T04:00:31.831476+00:00"
+    },
+    "repo-note:bokunimowakaru/m5": {
+      "expires": "2026-12-19T05:00:32.307897+00:00",
+      "id": "repo-note:bokunimowakaru/m5",
+      "pr_ref": null,
+      "reason": "stopword_name: 'm5' names a radio, not a firmware",
+      "repo": "bokunimowakaru/m5",
+      "status": "rejected",
+      "timestamp": "2026-11-19T05:00:32.307897+00:00"
     },
     "repo-note:botanicfields/bf-018": {
       "expires": "2026-12-18T05:00:31.893243+00:00",
@@ -18966,6 +18993,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
     },
+    "repo-note:frameworklabs/ranger": {
+      "expires": "2026-12-19T05:00:32.307897+00:00",
+      "id": "repo-note:frameworklabs/ranger",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "frameworklabs/ranger",
+      "status": "rejected",
+      "timestamp": "2026-11-19T05:00:32.307897+00:00"
+    },
     "repo-note:francescopace/espectre": {
       "expires": "2026-12-17T19:00:32.203883+00:00",
       "id": "repo-note:francescopace/espectre",
@@ -19208,6 +19244,15 @@
       "repo": "hshin-git/gyrom5",
       "status": "rejected",
       "timestamp": "2026-11-18T05:00:31.893243+00:00"
+    },
+    "repo-note:hshin-git/m5radiocontrol": {
+      "expires": "2026-12-19T05:00:32.307897+00:00",
+      "id": "repo-note:hshin-git/m5radiocontrol",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "hshin-git/m5radiocontrol",
+      "status": "rejected",
+      "timestamp": "2026-11-19T05:00:32.307897+00:00"
     },
     "repo-note:huskerminion/techo5": {
       "expires": "2026-12-17T11:00:31.753985+00:00",
@@ -20478,6 +20523,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T12:00:31.958773+00:00"
     },
+    "repo-note:prashantkamdar/m5stickcplus.internet_radio": {
+      "expires": "2026-12-19T05:00:32.307897+00:00",
+      "id": "repo-note:prashantkamdar/m5stickcplus.internet_radio",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "prashantkamdar/m5stickcplus.internet_radio",
+      "status": "rejected",
+      "timestamp": "2026-11-19T05:00:32.307897+00:00"
+    },
     "repo-note:project-march/input-device": {
       "expires": "2027-02-15T20:00:31.733970+00:00",
       "id": "repo-note:project-march/input-device",
@@ -21387,6 +21441,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T05:00:31.748945+00:00"
     },
+    "repo-note:tuupola/bm8563": {
+      "expires": "2026-12-19T05:00:32.307897+00:00",
+      "id": "repo-note:tuupola/bm8563",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'driver'",
+      "repo": "tuupola/bm8563",
+      "status": "rejected",
+      "timestamp": "2026-11-19T05:00:32.307897+00:00"
+    },
     "repo-note:twotoz/c5vrx": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
       "id": "repo-note:twotoz/c5vrx",
@@ -21692,6 +21755,24 @@
       "repo": "yokohama-miyazawa/m5hlsplayer",
       "status": "rejected",
       "timestamp": "2026-11-17T05:00:31.748945+00:00"
+    },
+    "repo-note:yonmas/smartmetermonitor_m5stack": {
+      "expires": "2026-12-19T05:00:32.307897+00:00",
+      "id": "repo-note:yonmas/smartmetermonitor_m5stack",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "yonmas/smartmetermonitor_m5stack",
+      "status": "rejected",
+      "timestamp": "2026-11-19T05:00:32.307897+00:00"
+    },
+    "repo-note:yushin-ito/m5clock": {
+      "expires": "2026-12-19T05:00:32.307897+00:00",
+      "id": "repo-note:yushin-ito/m5clock",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "yushin-ito/m5clock",
+      "status": "rejected",
+      "timestamp": "2026-11-19T05:00:32.307897+00:00"
     },
     "repo-note:z4ziggy/m5stickcoscilloscope": {
       "expires": "2026-12-17T05:00:31.748945+00:00",
@@ -22451,6 +22532,15 @@
       "repo_id": 933143001,
       "status": "rejected",
       "timestamp": "2026-11-15T11:00:32.244008+00:00"
+    },
+    "smm3-smartmetermonitor-v3": {
+      "expires": "2027-01-18T05:00:32.307897+00:00",
+      "id": "smm3-smartmetermonitor-v3",
+      "pr_ref": null,
+      "reason": "not_device_firmware: no espressif32 platformio.ini, ESP-IDF project, Arduino sketch or release .bin",
+      "repo": "yonmas/smm3-smartmetermonitor_v3",
+      "status": "rejected",
+      "timestamp": "2026-11-19T05:00:32.307897+00:00"
     },
     "snake-game-cardputer": {
       "expires": "2026-12-14T20:00:55.786187+00:00",
@@ -24425,6 +24515,7 @@
     "0m3gx": "0m3gx",
     "0x1abin/crossmux": "crossmux",
     "0xhalloween/flipper-zero-esp32-adv": "flipper-zero-esp32-adv",
+    "0xnura/badusb_payloadbuilder": "repo-note:0xnura/badusb_payloadbuilder",
     "1technophile/openmqttgateway": "openmqttgateway",
     "21cncstudio/project_aura": "repo-note:21cncstudio/project_aura",
     "26zl/gadgets-tools": "gadgets-tools",
@@ -24565,6 +24656,7 @@
     "arduino/arduino": "repo-note:arduino/arduino",
     "arduino/arduino-cli": "repo-note:arduino/arduino-cli",
     "arendst/tasmota": "tasmota",
+    "arkwnet/m5stickclock": "repo-note:arkwnet/m5stickclock",
     "armel/breakoutatoms3": "breakoutatoms3",
     "armel/dradis": "dradis",
     "armel/hal9000": "hal9000",
@@ -24641,6 +24733,7 @@
     "bmorcelli/m5stick-launcher": "m5stick-launcher",
     "bodmer/tft_espi": "repo-note:bodmer/tft_espi",
     "bokunimowakaru/esp": "repo-note:bokunimowakaru/esp",
+    "bokunimowakaru/m5": "repo-note:bokunimowakaru/m5",
     "bomberman30/advanceos-for-cardputer": "advanceos-for-cardputer",
     "bomberman30/carduboy-arduboy-for-cardputer": "carduboy-arduboy-for-cardputer",
     "botanicfields/bf-018": "repo-note:botanicfields/bf-018",
@@ -24987,6 +25080,7 @@
     "fra-222/opensailingrc-display": "opensailingrc-display",
     "fra-222/opensailingrc-joystick-v2": "opensailingrc-joystick-v2",
     "frameos/frameos": "repo-note:frameos/frameos",
+    "frameworklabs/ranger": "repo-note:frameworklabs/ranger",
     "francescopace/espectre": "repo-note:francescopace/espectre",
     "freecodertea/bdhack": "bdhack",
     "freedomxxjustice/m5stickc-plus-2-ping-pong": "m5stickc-plus-2-ping-pong",
@@ -25119,6 +25213,7 @@
     "hsbsbz/m5stickcplus2-seamonsue": "m5stickcplus2-seamonsue",
     "hsgarcia22/m5-mousejiggler": "m5-mousejiggler",
     "hshin-git/gyrom5": "repo-note:hshin-git/gyrom5",
+    "hshin-git/m5radiocontrol": "repo-note:hshin-git/m5radiocontrol",
     "http:/": "http:/",
     "https:/": "https:/",
     "huskerminion/techo5": "repo-note:huskerminion/techo5",
@@ -26519,6 +26614,7 @@
     "pr3y/bruce": "bruce",
     "pr3y/bruce_old": "bruce-old",
     "pragamichele/m5atoms3_ble_motor_control": "m5atoms3-ble-motor-control",
+    "prashantkamdar/m5stickcplus.internet_radio": "repo-note:prashantkamdar/m5stickcplus.internet_radio",
     "pro1bossssss/flappystick": "flappystick",
     "project-march/input-device": "repo-note:project-march/input-device",
     "prostosergik/m5stack_cardputer_thermalprinter_printputer": "m5stack-cardputer-thermalprinter-printpu",
@@ -26838,6 +26934,7 @@
     "turbulentgoat/cardputer-adv-mp3-player": "cardputer-adv-mp3-player",
     "tutyr2-jpg/bruce-a-c-edition": "bruce-a-c-edition",
     "tuupola/axp192": "repo-note:tuupola/axp192",
+    "tuupola/bm8563": "repo-note:tuupola/bm8563",
     "twotoz/c5vrx": "repo-note:twotoz/c5vrx",
     "twsnmp/twesp32sensor": "twesp32sensor",
     "txp666/electronbot-docs": "repo-note:txp666/electronbot-docs",
@@ -26962,6 +27059,8 @@
     "yo3hjv/ham5dsp": "ham5dsp",
     "yo3hjv/runman1": "runman1",
     "yokohama-miyazawa/m5hlsplayer": "repo-note:yokohama-miyazawa/m5hlsplayer",
+    "yonmas/smartmetermonitor_m5stack": "repo-note:yonmas/smartmetermonitor_m5stack",
+    "yonmas/smm3-smartmetermonitor_v3": "smm3-smartmetermonitor-v3",
     "youeiken/monosuite": "monosuite",
     "youranonelf": "youranonelf",
     "ypy-dj/cardputeradv_tank": "cardputeradv-tank",
@@ -26969,6 +27068,7 @@
     "yuikawa-akira/spherepongwars": "spherepongwars",
     "yuleshow/m5stack-paper-s3-chinese-books": "m5stack-paper-s3-chinese-books",
     "yuleshow/m5tab-macintosh": "m5tab-macintosh",
+    "yushin-ito/m5clock": "repo-note:yushin-ito/m5clock",
     "z3rov0id/radar": "radar",
     "z4b333/sticky-toybox": "sticky-toybox",
     "z4y-d3n/modbus-tcp-auditor-tool": "modbus-tcp-auditor-tool",

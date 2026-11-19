@@ -164,3 +164,15 @@ def test_a_renamed_and_edited_existing_record_is_not_eligible(repo):
     _commit(repo, "feat(jr): rename and edit the seed")
     problems = run(repo, description="Cardputer-Adv tool")[0]
     assert any(p.startswith("E3") for p in problems), problems
+
+
+
+def test_report_only_prints_the_verdict_and_exits_zero_when_not_eligible(repo, monkeypatch, capsys):
+    add_edge(repo, receipt="")                                               # no receipt: E1
+    api, raw = fake_upstream(description="UHF expansion firmware for the M5Stack Cardputer-Adv")
+    real = rg.check
+    monkeypatch.setattr(rg, "check", lambda r, **kw: real(r, **{**kw, "api": api, "raw": raw, "catalog": CATALOG}))
+    args = ["--repo", str(repo), "--base", "main", "--branch", BRANCH]
+    assert rg.main(args) == 1
+    assert rg.main(args + ["--report-only"]) == 0
+    assert "NOT ELIGIBLE" in capsys.readouterr().out

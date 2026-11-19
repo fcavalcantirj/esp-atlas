@@ -120,7 +120,12 @@ jobs:
     # a new head is a new review: any auto-merge a canary queued for the old head is switched off and the
     # agent-pass label removed, so nothing merges a commit no reviewer saw (6th review of #1809, 2026-11-19:
     # GitHub cancels auto-merge only on pushes by users WITHOUT write access)
-    if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
+    # Jr's own AUTO-routed tick PR (bookkeeping, no jr-review label) keeps the auto-merge the bot requested: a
+    # push to it is the bot's own refresh or the chores' merge of main, and disarming it would strand the PR
+    # until the tick aborts on "a Jr tick PR has been open > 3 h".
+    if: >-
+      github.event_name == 'pull_request' && github.event.action == 'synchronize' &&
+      !(startsWith(github.head_ref, 'jr/tick-') && !contains(github.event.pull_request.labels.*.name, 'jr-review'))
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -142,8 +147,7 @@ jobs:
     if: >-
       github.event_name == 'issue_comment' &&
       github.event.issue.pull_request &&
-      contains(github.event.comment.body, '<!-- agent-review verdict -->') &&
-      vars.JR_CODE_AUTOMERGE != '0'
+      contains(github.event.comment.body, '<!-- agent-review verdict -->')
     concurrency:
       group: code-canary   # one at a time, so two runs never both see the hourly cap free
       cancel-in-progress: false
@@ -151,13 +155,24 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write     # only to start validate on main after a merge (last step)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      # code_canary imports demand_canary -> check_quotes -> esp_atlas_core (yaml): without this the job died on
+      # `import yaml` the first time it ever ran (2026-11-19)
+      - run: pip install httpx pyyaml pypdf
       - name: Decide on the newest verdict for the PR's current head and, when allowed, request the merge
         env:
           GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
           JR_CODE_AUTOMERGE: ${{ vars.JR_CODE_AUTOMERGE }}
         run: python3 scripts/code_canary.py --pr ${{ github.event.issue.number }} --from-comments
+      - name: main gets its CI even when this job's token merged (a workflow-token push starts no workflow)
+        # 2026-11-19: #1799, the first PR the machine merged, left main's new head with zero runs. Dispatch is
+        # the documented exception.
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/validate_main.py
