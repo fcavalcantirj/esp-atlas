@@ -298,6 +298,14 @@ SELF_SUFFICIENT_DAYS = 7
 SCOREBOARD_KEEP = 60
 
 
+JR_BRANCHES = (ci_watch.TICK_BRANCH, "jr/research-", ci_watch.HEAL_BRANCH)
+
+
+def _jr_authored(branch) -> bool:
+    """A PR Jr itself opened: a tick, a demand work item, a heal. Everything else is a person's."""
+    return str(branch or "").startswith(JR_BRANCHES)
+
+
 def _machine(login: str | None) -> bool:
     """A merge Jr or a workflow made (a canary's `gh pr merge --auto` shows its token's account)."""
     login = str(login or "")
@@ -306,10 +314,14 @@ def _machine(login: str | None) -> bool:
 
 def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
     """Once a UTC day from DIGEST_HOUR: the owner's audit and the self-sufficiency scoreboard in one line.
-    A day is self-sufficient when nothing merged in the last 24 h was merged by a person, no PR waits on
-    `needs-human`, and no heal incident is stuck (needs_human, stalled, halted). Merges unreadable → not
-    proven → not self-sufficient. The consecutive count is kept in the store; SELF_SUFFICIENT_DAYS in a
-    row is the claim (SPEC-jr-self-heal.md §1d) and nothing less is."""
+    The scoreboard measures JR, not people: a day is self-sufficient when no person had to merge one of Jr's
+    own PRs (`jr/tick-*`, `jr/research-*`, `jr/heal-*`) in the last 24 h, none of Jr's own PRs waits
+    (`needs-human`, or open a day), and no heal incident is stuck (needs_human, stalled, halted). People
+    merging and holding their OWN PRs is ordinary work: counted and shown, never a broken day (2026-11-19:
+    the first line read 0/7 for a person's 18 infrastructure merges and 6 PRs blocked by review; under that
+    rule the count could never reach 7 while anybody worked here). Merges unreadable → not proven → not
+    self-sufficient. The consecutive count is kept in the store; SELF_SUFFICIENT_DAYS in a row is the claim
+    (SPEC-jr-self-heal.md §1d) and nothing less is."""
     when = datetime.fromisoformat(now)
     data = store._load()
     day = when.strftime("%Y-%m-%d")
@@ -318,12 +330,14 @@ def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
     since = (when - timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%SZ")
     merged = ci_watch._json(gh, "pr", "list", "--state", "merged", "--limit", "200", "--search", f"merged:>={since}",
                             "--json", "number,headRefName,mergedBy")
-    waiting = [f"#{p['number']} needs-human {_hours_since(p.get('updatedAt'), now):.0f} h" for p in prs
+    mine = [p for p in prs if _jr_authored(p.get("headRefName"))]
+    theirs = [p for p in prs if not _jr_authored(p.get("headRefName")) and not p.get("isDraft")]
+    waiting = [f"#{p['number']} needs-human {_hours_since(p.get('updatedAt'), now):.0f} h" for p in mine
                if HUMAN_LABEL in _labels(p)]
     # an open, non-draft PR still open a day after it was opened is waiting on someone too, label or not
     # (Nov 18: 25 code PRs waited on one reviewer with no label at all). createdAt, not updatedAt: CI runs and
     # label changes touch updatedAt without anyone deciding anything.
-    idle = sorted((p for p in prs if not p.get("isDraft") and HUMAN_LABEL not in _labels(p)
+    idle = sorted((p for p in mine if not p.get("isDraft") and HUMAN_LABEL not in _labels(p)
                    and _hours_since(p.get("createdAt"), now) >= 24),
                   key=lambda p: str(p.get("createdAt") or ""))
     if idle:
@@ -333,14 +347,18 @@ def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
     if data.get("halted"):
         stuck.append("self-heal halted (run `ci_watch.py ack`)")
     if merged is None:
-        by_jr = by_person = None
+        by_jr = by_person = own = None
         ok = False
     else:
         by_jr = sum(1 for m in merged if _machine((m.get("mergedBy") or {}).get("login")))
-        by_person = len(merged) - by_jr
+        by_hand = [m for m in merged if not _machine((m.get("mergedBy") or {}).get("login"))]
+        by_person = sum(1 for m in by_hand if _jr_authored(m.get("headRefName")))    # a person did Jr's job
+        own = len(by_hand) - by_person                                               # people's own work
         ok = by_person == 0 and not waiting and not stuck
     rows = [r for r in (data.get("scoreboard") or []) if r.get("day") != day]
-    rows.append({"day": day, "by_jr": by_jr, "by_person": by_person, "waiting": len(waiting), "stuck": len(stuck), "ok": ok})
+    blocked = sum(1 for p in theirs if HUMAN_LABEL in _labels(p))
+    rows.append({"day": day, "by_jr": by_jr, "by_person": by_person, "waiting": len(waiting), "stuck": len(stuck),
+                 "ok": ok, "own_merged": own, "own_open": len(theirs)})
     rows = rows[-SCOREBOARD_KEEP:]
     streak = 0
     for r in reversed(rows):
@@ -349,11 +367,14 @@ def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
         streak += 1
     data.update(digest_day=day, scoreboard=rows)
     store._save(data)
-    merges = "merges unreadable" if merged is None else f"merged by Jr {by_jr} · by a person {by_person}"
-    held = ("needs a human: " + ", ".join(waiting + stuck)) if (waiting or stuck) else "nothing waits on a human"
+    merges = ("merges unreadable" if merged is None
+              else f"merged by Jr {by_jr} · Jr's PRs merged by a person {by_person}")
+    held = (("Jr needs a person: " + ", ".join(waiting + stuck)) if (waiting or stuck)
+            else "nothing of Jr's waits on a person")
+    people = f"people's own: {own if own is not None else '?'} merged, {len(theirs)} open ({blocked} blocked by review)"
     verdict = (f"self-sufficient {min(streak, SELF_SUFFICIENT_DAYS)}/{SELF_SUFFICIENT_DAYS} days"
                + (" — SELF-SUFFICIENT" if streak >= SELF_SUFFICIENT_DAYS else ""))
-    return f"🧹 Jr daily {day} (last 24 h): {merges} · {held} · {verdict}"
+    return f"🧹 Jr daily {day} (last 24 h): {merges} · {held} · {people} · {verdict}"
 
 
 def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False,
