@@ -85,7 +85,7 @@ def render_comment(verdict: dict, lane: str) -> str:
         if not v["findings"]:
             lines.append("- (no finding listed: the reviewer could not complete the review; see `checked`)")
     if v["checked"]:
-        lines += ["", "Checked: " + ", ".join(str(c) for c in v["checked"])[:600]]
+        lines += ["", "Checked: " + _defang(", ".join(str(c) for c in v["checked"])[:600])]
     # backticks escaped as \u0060 (valid JSON): no text inside the verdict can close or open a fence
     lines += ["", "```json", json.dumps({**v, "lane": lane}, sort_keys=True).replace("`", "\\u0060"), "```"]
     return "\n".join(lines)

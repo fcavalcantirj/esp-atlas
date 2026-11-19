@@ -79,3 +79,12 @@ def test_the_code_canary_runs_on_marker_comments_reads_them_and_respects_the_kil
     assert "--pr ${{ github.event.issue.number }}" in step["run"] and "--from-comments" in step["run"]
     assert step["env"]["JR_CODE_AUTOMERGE"] == "${{ vars.JR_CODE_AUTOMERGE }}"
     assert "needs" not in job                                        # the two lanes are decoupled by the comment
+
+
+
+def test_the_api_lane_posts_with_mains_copy_of_the_poster(jobs):
+    steps = jobs["agent-review"]["steps"]
+    post = next(s for s in steps if "agent_review.py comment" in str(s.get("run", "")))
+    assert post["run"].startswith("python3 trusted/jr/agent_review.py comment")
+    trusted = [s for s in steps if (s.get("with") or {}).get("path") == "trusted"]
+    assert trusted and trusted[0]["with"]["ref"] == "${{ github.event.pull_request.base.sha }}"

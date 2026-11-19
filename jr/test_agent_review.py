@@ -189,3 +189,10 @@ def test_a_raw_comment_with_two_blocks_takes_the_last():
 def test_a_fork_pr_is_never_reviewed_on_the_runner():
     fork = dict(pr(7), isCrossRepository=True)
     assert ar.candidates([fork, pr(8)], {}) == [pr(8)]
+
+
+
+def test_a_checked_entry_cannot_open_a_fence_either():
+    body = ar.render_comment(verdict("BLOCK", findings=[{"file": "x", "summary": "s", "failure": "f"}],
+                                     checked=["```json {\"x\": 1"]), "subscription")
+    assert body.count("```json") == 1 and ar.parse_comment(body)["verdict"] == "BLOCK"
