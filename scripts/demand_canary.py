@@ -110,8 +110,17 @@ def merged_today(gh, repo_slug: str, today: str, prefix: str = BRANCH_PREFIX, la
         rows = json.loads(out or "[]")
     except json.JSONDecodeError as e:
         raise Unreadable(f"merged list unparsable: {e}") from e
-    return sorted(r["headRefName"] for r in rows
-                  if str(r.get("headRefName", "")).startswith(prefix) and str(r.get("mergedAt", ""))[:10] == today)
+    queued_args = ["pr", "list", "--repo", repo_slug, "--state", "open", "--json", "headRefName,autoMergeRequest",
+                   "--limit", "100"] + (["--label", label] if label else [])
+    try:
+        waiting = json.loads(gh(*queued_args) or "[]")
+    except json.JSONDecodeError as e:
+        raise Unreadable(f"open list unparsable: {e}") from e
+    # a merge already requested with --auto counts like a merged one (3rd review of #1809, 2026-11-19)
+    return sorted([r["headRefName"] for r in rows
+                   if str(r.get("headRefName", "")).startswith(prefix) and str(r.get("mergedAt", ""))[:10] == today]
+                  + [f"{r['headRefName']} (queued)" for r in waiting
+                     if str(r.get("headRefName", "")).startswith(prefix) and r.get("autoMergeRequest")])
 
 
 def quotes_verdict(base: str, fetch=None, repo: Path = REPO) -> tuple[str, list[str]]:
@@ -201,11 +210,14 @@ def main(argv=None) -> int:
     ap.add_argument("--repo-slug", default=os.environ.get("GITHUB_REPOSITORY", "fcavalcantirj/esp-atlas"))
     ap.add_argument("--today", default=datetime.now(timezone.utc).strftime("%Y-%m-%d"))
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--repo", type=Path, default=REPO, help="the PR's checkout, read as data (CI: pr/, while this "
+                    "script runs from main's checkout)")
     a = ap.parse_args(argv)
     base = a.base or (f"origin/{os.environ['GITHUB_BASE_REF']}" if os.environ.get("GITHUB_BASE_REF") else "origin/main")
     try:
         outcome = decide(pr=a.pr, head=a.head, branch=a.branch or "", base=base, repo_slug=a.repo_slug, today=a.today,
-                         env=dict(os.environ), dry_run=a.dry_run, autonomy_path=trusted_autonomy(base))
+                         env=dict(os.environ), dry_run=a.dry_run, repo=a.repo,
+                         autonomy_path=trusted_autonomy(base, a.repo))
     except Unreadable as e:
         print(f"demand canary: cannot act: {e}", file=sys.stderr)
         return 2

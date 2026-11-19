@@ -38,6 +38,13 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}   # review the exact head the verdict names, not the merge ref
+          persist-credentials: false
+      # the verdict is posted by MAIN's copy of the poster, never the reviewed PR's (3rd review of #1809)
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted
+          persist-credentials: false
       - name: Is the fallback reviewer configured?
         id: key
         run: |
@@ -76,7 +83,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
           VERDICT_JSON: ${{ steps.review.outputs.structured_output }}
-        run: python3 jr/agent_review.py comment --pr ${{ github.event.pull_request.number }} --lane api
+        run: python3 trusted/jr/agent_review.py comment --pr ${{ github.event.pull_request.number }} --lane api
 
   code-canary:
     # The click, on every marker comment (either lane): PASS at exactly the PR's current head + every

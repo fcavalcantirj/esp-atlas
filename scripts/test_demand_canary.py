@@ -20,11 +20,13 @@ BRANCH = "jr/research-pam-23266c59174397dbf41b0a7b"
 
 
 class FakeGh:
-    def __init__(self, merged=()):
-        self.calls, self.merged = [], list(merged)
+    def __init__(self, merged=(), queued=()):
+        self.calls, self.merged, self.queued = [], list(merged), list(queued)
 
     def __call__(self, *args):
         self.calls.append(args)
+        if args[:2] == ("pr", "list") and args[args.index("--state") + 1] == "open":
+            return json.dumps([{"headRefName": b, "autoMergeRequest": {"enabledAt": "x"}} for b in self.queued])
         if args[:2] == ("pr", "list"):
             return json.dumps([{"headRefName": b, "mergedAt": f"{d}T10:00:00Z"} for b, d in self.merged])
         return ""
@@ -174,3 +176,9 @@ def test_the_switch_is_read_from_main_never_from_the_prs_tree(tmp_path):
     p = demand_canary.trusted_autonomy("main", tmp_path)
     assert __import__("json").loads(p.read_text()) == {"demand_automerge": False, "tick_automerge": False}
     assert not demand_canary.trusted_autonomy("no-such-ref", tmp_path).exists()
+
+
+
+def test_a_merge_already_queued_today_counts_against_the_daily_cap(autonomy):
+    gh = FakeGh(queued=["jr/research-pam-other"])
+    assert run(autonomy(True), gh, fake_fetch(pages())) == "capped" and gh.writes() == []

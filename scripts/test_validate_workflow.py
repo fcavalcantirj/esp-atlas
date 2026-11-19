@@ -227,3 +227,18 @@ def test_the_tick_canary_needs_the_receipt_guard_and_every_machine_check_and_bot
     assert "--head ${{ github.event.pull_request.head.sha }}" in step["run"]
     assert step["env"]["JR_TICK_AUTOMERGE"] == "${{ vars.JR_TICK_AUTOMERGE }}"
     assert not any("tick-canary" in (j.get("needs") or []) for j in jobs.values())
+
+
+
+# --- 3rd review of #1809 (2026-11-19): a canary decides with MAIN's code; the PR is only data in pr/ --------
+
+def test_both_canaries_run_mains_code_against_the_pr_as_data(jobs):
+    for name, script in (("demand-canary", "demand_canary.py"), ("tick-canary", "tick_canary.py")):
+        checkouts = [s for s in jobs[name]["steps"] if "actions/checkout" in str(s.get("uses", ""))]
+        trusted = [c for c in checkouts if (c.get("with") or {}).get("path") == "trusted"]
+        pr = [c for c in checkouts if (c.get("with") or {}).get("path") == "pr"]
+        assert trusted and trusted[0]["with"]["ref"] == "${{ github.event.pull_request.base.sha }}", name
+        assert pr and len(checkouts) == 2, name
+        assert all(c["with"].get("persist-credentials") is False for c in checkouts), name
+        run = next(s["run"] for s in jobs[name]["steps"] if script in str(s.get("run", "")))
+        assert run.startswith(f"python3 trusted/scripts/{script} --repo pr "), run

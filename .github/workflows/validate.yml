@@ -168,20 +168,29 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      # main's code decides; the PR is only DATA in pr/ (review BLOCK of #1809, 2026-11-19: with the PR's own
+      # checkout, a commit on the branch could rewrite the canary that judges it)
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the diff and the switch against the PR's merge base
+          path: pr
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install httpx pyyaml pypdf
       - name: Install core (the quotes re-check reads frontmatter with esp_atlas_core)
-        run: pip install -e apps/core
+        run: pip install -e trusted/apps/core
       - name: Decide and, when every switch and check allows, request the merge at the exact head
         env:
           GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
           JR_DEMAND_AUTOMERGE: ${{ vars.JR_DEMAND_AUTOMERGE }}
-        run: python3 scripts/demand_canary.py --pr ${{ github.event.pull_request.number }} --head ${{ github.event.pull_request.head.sha }} --branch ${{ github.head_ref }}
+        run: python3 trusted/scripts/demand_canary.py --repo pr --pr ${{ github.event.pull_request.number }} --head ${{ github.event.pull_request.head.sha }} --branch ${{ github.head_ref }}
 
   receipt-guard:
     # A jr/tick-* PR: is it mergeable on its evidence receipts alone? Every recipe it adds must carry a PASS
@@ -218,21 +227,30 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      # main's code decides; the PR is only DATA in pr/ (review BLOCK of #1809, 2026-11-19: with the PR's own
+      # checkout, a commit on the branch could rewrite the canary that judges it)
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the diff and the switch against the PR's merge base
+          path: pr
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install pyyaml
       - name: Install core
-        run: pip install -e apps/core
+        run: pip install -e trusted/apps/core
       - name: Decide and, when every switch and receipt allows, request the merge at the exact head
         env:
           GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JR_TICK_AUTOMERGE: ${{ vars.JR_TICK_AUTOMERGE }}
-        run: python3 scripts/tick_canary.py --pr ${{ github.event.pull_request.number }} --head ${{ github.event.pull_request.head.sha }} --branch ${{ github.head_ref }}
+        run: python3 trusted/scripts/tick_canary.py --repo pr --pr ${{ github.event.pull_request.number }} --head ${{ github.event.pull_request.head.sha }} --branch ${{ github.head_ref }}
 
   g2-guard:
     runs-on: ubuntu-latest

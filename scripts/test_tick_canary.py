@@ -14,8 +14,8 @@ BRANCH = "jr/tick-20261117-1900"
 
 
 class FakeGh:
-    def __init__(self, labels=("jr-review",), merged=()):
-        self.calls, self.labels, self.merged = [], list(labels), list(merged)
+    def __init__(self, labels=("jr-review",), merged=(), queued=()):
+        self.calls, self.labels, self.merged, self.queued = [], list(labels), list(merged), list(queued)
 
     def __call__(self, *args):
         self.calls.append(args)
@@ -23,6 +23,8 @@ class FakeGh:
             return json.dumps({"labels": [{"name": l} for l in self.labels]})
         if args[:2] == ("pr", "list"):
             assert "--label" in args and args[args.index("--label") + 1] == "jr-review"     # the cap counts review-routed merges only
+            if args[args.index("--state") + 1] == "open":
+                return json.dumps([{"headRefName": b, "autoMergeRequest": {"enabledAt": "x"}} for b in self.queued])
             return json.dumps([{"headRefName": b, "mergedAt": f"{d}T10:00:00Z"} for b, d in self.merged])
         return ""
 

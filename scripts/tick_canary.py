@@ -103,11 +103,14 @@ def main(argv=None) -> int:
     ap.add_argument("--repo-slug", default=os.environ.get("GITHUB_REPOSITORY", "fcavalcantirj/esp-atlas"))
     ap.add_argument("--today", default=datetime.now(timezone.utc).strftime("%Y-%m-%d"))
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--repo", type=Path, default=REPO, help="the PR's checkout, read as data (CI: pr/, while this "
+                    "script runs from main's checkout)")
     a = ap.parse_args(argv)
     base = a.base or (f"origin/{os.environ['GITHUB_BASE_REF']}" if os.environ.get("GITHUB_BASE_REF") else "origin/main")
     try:
         outcome = decide(pr=a.pr, head=a.head, branch=a.branch or "", base=base, repo_slug=a.repo_slug, today=a.today,
-                         env=dict(os.environ), dry_run=a.dry_run, autonomy_path=demand_canary.trusted_autonomy(base))
+                         env=dict(os.environ), dry_run=a.dry_run, repo=a.repo,
+                         autonomy_path=demand_canary.trusted_autonomy(base, a.repo))
     except Unreadable as e:
         print(f"tick canary: cannot act: {e}", file=sys.stderr)
         return 2
