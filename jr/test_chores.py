@@ -293,3 +293,123 @@ def test_a_pr_open_a_day_without_any_label_still_waits_on_someone(tmp_path):
            pr(8, draft=True, created="2026-11-01T00:00:00Z")]
     line = chores.run(Gh(prs, merged=merged("espatlas-jr")), _store(tmp_path), NOW, slug="o/r")["digest"]
     assert "2 PR(s) open ≥ 24 h (oldest #5, 48 h)" in line and "self-sufficient 0/7 days" in line   # CI touching #6 changes nothing
+
+
+# --- a red required check on ANY open PR is work, not silence (2026-11-19: tick PR #1828 sat red on `tests`;
+#     ci_watch only declares a tick break when the two NEWEST tick PRs fail alike) ---------------------------
+
+LOG = ("2026-11-18T14:29:28Z FAILED apps/core/tests/test_firmware.py::test_recipes_for_firmware_m5_crystal_is_no_longer_orphaned"
+       " - AssertionError: assert {'m5cardputer__m5-crystal'} == {'m5stick-cplus2__m5-crystal'}\n"
+       "2026-11-18T14:29:28Z E       AssertionError: assert {'m5cardputer__m5-crystal'} == {'m5stick-cplus2__m5-crystal'}\n")
+
+
+def red(name="tests", run=111, job=222, conclusion="FAILURE"):
+    return {"name": name, "conclusion": conclusion, "detailsUrl": f"https://github.com/o/r/actions/runs/{run}/job/{job}"}
+
+
+class RedGh(Gh):
+    def __init__(self, prs, required=("schema", "tests", "jr-tests"), behind=0, **kw):
+        super().__init__(prs, **kw)
+        self.required, self.behind = list(required), behind
+
+    def __call__(self, *a):
+        if a[:1] == ("api",) and "/compare/" in a[1]:
+            self.calls.append(a)
+            return SimpleNamespace(returncode=0, stdout=json.dumps({"ahead_by": self.behind}), stderr="")
+        if a[:2] == ("api", "repos/o/r/branches/main"):
+            self.calls.append(a)
+            return SimpleNamespace(returncode=0, stdout=json.dumps(
+                {"protection": {"required_status_checks": {"contexts": self.required}}}), stderr="")
+        if a[:1] == ("api",) and "/actions/jobs/" in a[1]:
+            self.calls.append(a)
+            return SimpleNamespace(returncode=0, stdout=LOG, stderr="")
+        if a[:2] == ("run", "rerun") or (a[:3] == ("api", "-X", "PUT") and a[3].endswith("/update-branch")):
+            self.calls.append(a)
+            return SimpleNamespace(returncode=0, stdout="", stderr="")
+        return super().__call__(*a)
+
+
+def tick_pr(n, checks, head=H1, labels=("jr-review",)):
+    p = pr(n, branch=f"jr/tick-20261118-07{n % 100:02d}", head=head, labels=labels)
+    p["statusCheckRollup"] = checks
+    return p
+
+
+def test_a_red_required_check_is_rerun_once_first(tmp_path):
+    store, gh = _store(tmp_path), RedGh([tick_pr(28, [red()])])
+    out = chores.run(gh, store, NOW, slug="o/r")
+    assert ("run", "rerun", "111", "--failed") in gh.calls and out["reruns"] == [28]
+    assert _incidents(store) == {}
+    chores.run(gh, store, LATER, slug="o/r")
+    assert [c for c in gh.calls if c[:2] == ("run", "rerun")] == [("run", "rerun", "111", "--failed")]   # once per head
+
+
+def test_a_content_pr_still_red_after_the_rerun_is_a_heal_incident_on_main_keyed_by_the_failing_test(tmp_path):
+    store = _store(tmp_path)
+    chores.run(RedGh([tick_pr(28, [red()])]), store, NOW, slug="o/r")
+    chores.run(RedGh([tick_pr(28, [red()]), tick_pr(35, [red(run=333, job=444)], head=H2)]), store, LATER, slug="o/r")
+    recs = [r for r in store._load()["incidents"].values() if r["context"]["check"].startswith("pr-red:")]
+    assert len(recs) == 1, recs                                  # one broken test across PRs = one break
+    c = recs[0]["context"]
+    assert c["failed"].endswith("test_recipes_for_firmware_m5_crystal_is_no_longer_orphaned") and "AssertionError" in (c["assertion"] or "")
+    assert c["evidence"]["prs"] == [28] and c["evidence"]["check"] == "tests"
+    assert not cw.is_pr_fix(recs[0]) and recs[0]["branch"].startswith("jr/heal-")   # the CI launcher claims it
+
+
+def test_a_code_pr_still_red_after_the_rerun_is_fixed_in_place(tmp_path):
+    p = pr(40, branch="feat/z")
+    p["statusCheckRollup"] = [red("jr-tests")]
+    store = _store(tmp_path)
+    chores.run(RedGh([p]), store, NOW, slug="o/r")
+    chores.run(RedGh([p]), store, LATER, slug="o/r")
+    rec = _incidents(store)["ci-fix:#40"]
+    assert cw.is_pr_fix(rec) and rec["context"]["evidence"]["check"] == "jr-tests"
+
+
+def test_a_non_required_or_infra_red_is_never_a_chore(tmp_path):
+    store, gh = _store(tmp_path), RedGh([tick_pr(28, [red("sources-live"), red("tests", conclusion="CANCELLED")])])
+    chores.run(gh, store, NOW, slug="o/r")
+    chores.run(gh, store, LATER, slug="o/r")
+    assert _incidents(store) == {} and not [c for c in gh.calls if c[:2] == ("run", "rerun")]
+
+
+def test_a_red_pr_behind_main_gets_main_merged_in_once_before_it_becomes_a_job(tmp_path):
+    store = _store(tmp_path)
+    chores.run(RedGh([tick_pr(28, [red()])], behind=3), store, NOW, slug="o/r")            # rerun first
+    gh = RedGh([tick_pr(28, [red()])], behind=3)
+    chores.run(gh, store, LATER, slug="o/r")
+    chores.run(gh, store, "2026-11-19T14:05:00+00:00", slug="o/r")
+    assert [c for c in gh.calls if c[:3] == ("api", "-X", "PUT")] == [
+        ("api", "-X", "PUT", "repos/o/r/pulls/28/update-branch", "-f", f"expected_head_sha={H1}")]   # once per head
+    assert [r for r in _incidents(store) if r.startswith("pr-red:")]          # still red, updated: now a job
+
+
+def test_a_red_content_pr_resolves_its_incident_when_it_turns_green(tmp_path):
+    store = _store(tmp_path)
+    chores.run(RedGh([tick_pr(28, [red()])]), store, NOW, slug="o/r")
+    chores.run(RedGh([tick_pr(28, [red()])]), store, LATER, slug="o/r")
+    rec = next(r for r in store._load()["incidents"].values() if r["context"]["check"].startswith("pr-red:"))
+    chores.run(RedGh([tick_pr(28, [{"name": "tests", "conclusion": "SUCCESS", "detailsUrl": ""}], head=H2)]),
+               store, "2026-11-19T16:05:00+00:00", slug="o/r")
+    assert store.get(rec["id"])["state"] == "resolved"
+
+
+def test_an_unreadable_compare_never_merges_main_into_a_pr(tmp_path):
+    class NoCompare(RedGh):
+        def __call__(self, *a):
+            if a[:1] == ("api",) and "/compare/" in a[1]:
+                return SimpleNamespace(returncode=1, stdout="", stderr="HTTP 502")
+            return super().__call__(*a)
+    store = _store(tmp_path)
+    gh = NoCompare([tick_pr(28, [red()])])
+    chores.run(gh, store, NOW, slug="o/r")
+    chores.run(gh, store, LATER, slug="o/r")
+    assert not [c for c in gh.calls if c[:3] == ("api", "-X", "PUT")]
+
+
+def test_drafts_and_forks_are_never_rerun(tmp_path):
+    a, b = pr(50, draft=True), pr(51, fork=True)
+    a["statusCheckRollup"] = b["statusCheckRollup"] = [red()]
+    gh = RedGh([a, b])
+    chores.run(gh, _store(tmp_path), NOW, slug="o/r")
+    assert not [c for c in gh.calls if c[:2] == ("run", "rerun")]

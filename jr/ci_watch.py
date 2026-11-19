@@ -282,7 +282,8 @@ def evaluate(observations: list[Observation], required: list[str]) -> Verdict:
 # review's BLOCK at the PR's current head). Unlike a CI break, the fix lands on the PR's OWN branch
 # (evidence.pr_branch, a fast-forward of evidence.pr_head), so only a launcher that knows that mode claims
 # them (`claim --pr-fix`), and only while the reviewed switch allows. They have their own daily budget.
-PR_FIX_CHECKS = ("conflict:", "review-fix:")
+PR_FIX_CHECKS = ("conflict:", "review-fix:", "ci-fix:")
+PR_RED_CHECK = "pr-red:"     # a Jr content PR red on a required check: healed on MAIN (the CI launcher), never in place
 PR_FIX_DAILY = 4
 PR_FIX_FLAG, PR_FIX_VARIABLE = "pr_fix_dispatch", "JR_PR_FIX_DISPATCH"
 
@@ -485,6 +486,19 @@ class Store:
         if any(out.values()):
             self._save(data)
         return out
+
+    @_exclusive
+    def resolve_pr_red(self, active_fingerprints: set, now: str) -> list[str]:
+        """Close every live `pr-red:` incident whose failing test no open content PR shows any more."""
+        data, closed = self._load(), []
+        for rec in data["incidents"].values():
+            if (rec["state"] in LIVE and str(rec["context"].get("check") or "").startswith(PR_RED_CHECK)
+                    and rec["fingerprint"] not in active_fingerprints):
+                rec.update(state="resolved", resolved_at=now)
+                closed.append(rec["id"])
+        if closed:
+            self._save(data)
+        return closed
 
     @_exclusive
     def resolve_green(self, green_checks: list[str], now: str) -> list[str]:

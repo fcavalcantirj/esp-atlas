@@ -104,3 +104,23 @@ under the same limits (no `data/**`, no `docs/demand/**`, no test deletion or sk
   review judges your new head; a second BLOCK on the same PR goes to a human.
 - Never close, merge, retitle or relabel the PR; never touch another PR's branch.
 
+## When `INCIDENT.context.check` starts with `pr-red:` (a Jr catalog PR is red; fix MAIN)
+
+A Jr tick or demand PR (`evidence.prs`) is red on the required check `evidence.check` at a head that already
+has `main` merged in and was rerun once, so it is neither a flake nor something `main` already fixed.
+`INCIDENT.context` carries the failing node (`failed`), its assertion and the log excerpt. The PR's catalog
+data is not yours to change: an LLM never writes records. Your branch starts from `main`, like any heal.
+
+1. Reproduce on the PR's head (`gh pr checkout` in a scratch worktree, or `git show <head>:<path>`), run
+   the failing node, quote the RED.
+2. Decide, measured: **(a)** main's code or test is wrong for valid catalog growth (2026-11-19: three tests
+   pinned an exact recipe set with `==`, so every new recipe turned CI red; the fix was `>=`, intent kept)
+   → fix main, with the assertion change named in BODY (`Assertion changed:`); **(b)** the PR's record is
+   really wrong (a guard or schema rule caught a bad value) → change no code; write
+   `docs/incidents/<INCIDENT id>.md` (MEASURED: which record, which rule, why) and commit that alone: the
+   reviewed content canary or a human closes the PR.
+3. Prove it: the failing node passes on the PR's content with your change (run it in the scratch worktree
+   with your files copied in), and the suites of every file you touched pass on main.
+4. After your heal merges, the chores merge `main` into the red PR and its CI reruns; the incident resolves
+   when no open PR shows that failure.
+

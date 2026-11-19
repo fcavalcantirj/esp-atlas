@@ -71,6 +71,15 @@ BLOCK waiting for a person, stacked PRs retargeted by hand. Now:
   labelled `needs-human` whose newest agent verdict for its CURRENT head is BLOCK is a `review-fix:#n`
   incident carrying the findings. Evidence: `pr`, `pr_branch`, `pr_head`. Fingerprint = kind + PR, so the
   same PR failing twice after a fix goes to a human (`MAX_PER_FINGERPRINT`).
+- **A red required check on any open PR** (2026-11-19: tick PR #1828 sat red on `tests` all day; the CI
+  watch only declares a tick break when the two newest tick PRs fail alike), once per head and in order:
+  rerun the failed jobs (a flake clears itself); still red and behind `main` → merge `main` in through
+  `PUT /pulls/<n>/update-branch` with `expected_head_sha` (the fix may already be on `main`); still red and
+  up to date → a Jr tick/demand PR is ONE `pr-red:` incident per failing test (fingerprint = check + node +
+  assertion), healed on `main` by the CI launcher: the delegate fixes main's code or test, never the data,
+  and writes a finding when the record itself is wrong; a code PR is a `ci-fix:#n` PR-fix. Non-required
+  checks (`sources-live`) and cancelled/timed-out runs are never a chore. A `pr-red:` incident resolves when
+  no open PR shows that failure.
 - **Dispatch** only through `ci_watch.py claim --pr-fix` (a launcher that checks out `pr_head`, pushes the
   delegate's commits fast-forward to `pr_branch`, opens no PR) and the `pr_fix_dispatch` switch
   (`jr/autonomy.json` + `JR_PR_FIX_DISPATCH`), against its own budget of `PR_FIX_DAILY` (4) a UTC day.

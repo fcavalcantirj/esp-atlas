@@ -25,9 +25,11 @@ import ci_watch
 import publish
 
 SKIP_PREFIXES = ("jr/tick-", "jr/research-")   # review_refresh and the demand retry own those
+CONTENT_PREFIXES = SKIP_PREFIXES                 # Jr's catalog PRs: a red check on one is healed on MAIN
 HUMAN_LABEL = "needs-human"
 DIGEST_HOUR = 12
-PR_FIELDS = "number,headRefName,headRefOid,mergeStateStatus,isDraft,labels,baseRefName,isCrossRepository,updatedAt,createdAt"
+PR_FIELDS = ("number,headRefName,headRefOid,mergeStateStatus,isDraft,labels,baseRefName,isCrossRepository,updatedAt,"
+             "createdAt,statusCheckRollup")
 
 
 def _labels(pr: dict) -> set:
@@ -37,6 +39,80 @@ def _labels(pr: dict) -> set:
 def _eligible(pr: dict) -> bool:
     return (not pr.get("isDraft") and not pr.get("isCrossRepository") and pr.get("baseRefName") == "main"
             and bool(pr.get("headRefOid")) and not str(pr.get("headRefName") or "").startswith(SKIP_PREFIXES))
+
+
+def _red_required(pr: dict, required: list) -> list[tuple[str, str, str]]:
+    """(check, run id, job id) of every REQUIRED check that FAILED at the PR's head. Cancelled/timed-out
+    runs and non-required checks (sources-live, a cited site blinking) are never a chore."""
+    out = []
+    for c in pr.get("statusCheckRollup") or []:
+        if c.get("name") in required and str(c.get("conclusion") or "").upper() == ci_watch.FAILURE:
+            m = ci_watch._RUN_JOB.search(str(c.get("detailsUrl") or ""))
+            if m:
+                out.append((c["name"], m.group(1), m.group(2)))
+    return out
+
+
+def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> dict:
+    """A red required check on any open PR (2026-11-19: tick PR #1828 sat red; ci_watch only declares a tick
+    break when the two NEWEST tick PRs fail alike). In order, once per head: (1) rerun the failed jobs (a flake
+    clears itself); (2) still red and behind main → merge main into it (the fix may be on main already: a heal
+    PR, any PR); (3) still red, up to date → a Jr content PR is one `pr-red:` heal incident on main per failing
+    test (the delegate fixes main's code or test, never the data; the PRs are evidence), a code PR is a
+    `ci-fix:#n`, fixed in place. Returns {"reruns", "verdicts", "fingerprints", "update_branch"}."""
+    out = {"reruns": [], "verdicts": [], "fingerprints": set(), "update_branch": []}
+    candidates = [p for p in prs if not p.get("isDraft") and not p.get("isCrossRepository")
+                  and p.get("baseRefName") == "main" and p.get("headRefOid")]
+    if not any(p.get("statusCheckRollup") for p in candidates):
+        return out
+    required = ci_watch.required_checks(gh, slug) or []
+    data = store._load() if not dry_run else {}
+    seen = data.get("reruns") or {}
+    updated = data.get("updated_branch") or {}
+    groups: dict = {}
+    for p in candidates:
+        n, head, branch = p["number"], p["headRefOid"], p["headRefName"]
+        for check, run_id, job_id in _red_required(p, required)[:1]:
+            key = f"{n}@{head}"
+            if key not in seen:
+                out["reruns"].append((n, run_id))
+                seen[key] = run_id
+                continue
+            parsed = ci_watch.parse_job_log(ci_watch._job_log(gh, slug, job_id))
+            content = branch.startswith(CONTENT_PREFIXES)
+            fp = (ci_watch.fingerprint(check, parsed) or ci_watch.hashlib.sha256(f"pr-red\n{check}".encode()).hexdigest())
+            if content:
+                out["fingerprints"].add(fp)          # still a live break until the PR is green
+            if updated.get(str(n)) != head and _behind_main(gh, slug, head):
+                out["update_branch"].append((n, head))
+                updated[str(n)] = head
+                continue
+            if content:
+                g = groups.setdefault(fp, {"check": check, "parsed": parsed, "prs": []})
+                g["prs"].append(n)
+            elif _eligible(p):
+                out["verdicts"].append(ci_watch.pr_fix_verdict("ci-fix", n, branch, head, {
+                    "check": check, "failed": parsed.failed, "assertion": parsed.assertion,
+                    "log_excerpt": (parsed.excerpt or "")[-4000:]}))
+    for fp, g in groups.items():
+        parsed = g["parsed"]
+        out["verdicts"].append(ci_watch.Verdict(
+            kind="incident", source="pr", check=f"{ci_watch.PR_RED_CHECK}#{g['prs'][0]}:{g['check']}", fingerprint=fp,
+            failed=parsed.failed, assertion=parsed.assertion, error=parsed.error, log_excerpt=(parsed.excerpt or "")[-4000:],
+            kind_detail="pr-red", evidence={"prs": sorted(g["prs"]), "check": g["check"]}))
+    if not dry_run:
+        data = store._load()
+        data["reruns"] = dict(list(seen.items())[-300:])
+        data["updated_branch"] = updated
+        store._save(data)
+    return out
+
+
+def _behind_main(gh, slug: str, head: str) -> bool:
+    """main has commits the PR head lacks (compare head...main: ahead_by > 0). Unreadable → False: never
+    merge into a PR on a guess."""
+    cmp = ci_watch._json(gh, "api", f"repos/{slug}/compare/{head}...main")
+    return isinstance(cmp, dict) and int(cmp.get("ahead_by") or 0) > 0
 
 
 def _comments(gh, slug: str, number: int) -> list:
@@ -145,16 +221,29 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
         if prs is None:
             return {"status": "unavailable", "why": "gh pr list failed"}
         wanted = plan(gh, slug, prs)
+        reds = red_prs(gh, slug, prs, store, dry_run)
+        wanted += reds["verdicts"]
         if dry_run:
-            return {"status": "ok", "would": [f"record {v.check}" for v in wanted], "digest": None}
+            return {"status": "ok", "would": [f"record {v.check}" for v in wanted]
+                    + [f"rerun #{n} run {r}" for n, r in reds["reruns"]]
+                    + [f"merge main into #{n}" for n, _ in reds["update_branch"]], "digest": None}
+        for _, run_id in reds["reruns"]:
+            gh("run", "rerun", str(run_id), "--failed")
+        for n, head in reds["update_branch"]:
+            # REST, not `gh pr update-branch` (the runner's gh 2.46 has no such subcommand); expected_head_sha
+            # makes GitHub refuse if the PR moved since we looked
+            gh("api", "-X", "PUT", f"repos/{slug}/pulls/{n}/update-branch", "-f", f"expected_head_sha={head}")
         recorded = []
         for v in wanted:
             rec = store.record(v, now)
             if rec:
                 recorded.append(rec["id"])
         progress = store.pr_fix_progress({p["number"]: p.get("headRefOid") for p in prs},
-                                         {v.check for v in wanted}, _closed(gh, store, {p["number"] for p in prs}), now)
-        return {"status": "ok", "recorded": recorded, "resolved": progress["resolved"], "pushed": progress["pushed"],
+                                         {v.check for v in wanted if ci_watch.is_pr_fix(v.check)},
+                                         _closed(gh, store, {p["number"] for p in prs}), now)
+        progress["resolved"] += store.resolve_pr_red(reds["fingerprints"], now)
+        return {"status": "ok", "recorded": recorded, "reruns": [n for n, _ in reds["reruns"]],
+                "updated": [n for n, _ in reds["update_branch"]], "resolved": progress["resolved"], "pushed": progress["pushed"],
                 "stalled": progress["stalled"], "nudges": store.nudges(), "digest": daily(gh, store, prs, now)}
     except Exception as e:      # noqa: BLE001 — the tick must keep running whatever happens here
         return {"status": "unavailable", "why": f"{type(e).__name__}: {e}"[:300]}
