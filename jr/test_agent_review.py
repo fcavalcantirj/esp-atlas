@@ -372,3 +372,37 @@ def test_a_dry_run_refreshes_and_labels_nothing():
     gh = SnapGh([pr(5)])
     run(gh, delegate_answering(DOWN), dry_run=True)
     assert gh.refreshed() == [] and gh.labelled() == []
+
+
+# --- a backup reviewer that answers nothing is noticed (2026-11-19) ------------------------------------------------
+# The API lane died four times on "Credit balance is too low": the job failed, the label was released, no comment.
+# The runner saw an ordinary candidate again and would have asked again; nobody was told anything.
+
+def test_a_pr_the_backup_was_asked_about_that_comes_back_without_a_verdict_is_remembered_and_not_asked_again():
+    gh = SnapGh([pr(5)], snapshot_blob="same", main_blob="same")
+    first = run(gh, delegate_answering(DOWN))
+    assert first["outcome"] == "fallback_requested"
+    assert first["state"]["fallback_prs"][-1] == {"day": "2026-11-18", "pr": 5, "head": HEAD}
+    again = SnapGh([pr(5)], snapshot_blob="same", main_blob="same")            # label gone, no verdict: a candidate again
+    rep = run(again, delegate_answering(DOWN), state=first["state"])
+    assert rep["outcome"] == "fallback_empty" and again.labelled() == []
+    assert rep["state"]["fallback_empty"] == {"day": "2026-11-18", "prs": [5]}
+    assert ar.fallbacks_today(rep["state"], "2026-11-18") == 1                 # no second request, no budget used
+
+
+def test_the_next_pr_not_yet_asked_gets_the_label_instead():
+    gh = SnapGh([pr(5)], snapshot_blob="same", main_blob="same")
+    first = run(gh, delegate_answering(DOWN))
+    two = SnapGh([pr(5), pr(6, head=HEAD2, updated="2026-11-18T02:00:00Z")], snapshot_blob="same", main_blob="same")
+    rep = run(two, delegate_answering(DOWN), state=first["state"])
+    assert rep["outcome"] == "fallback_requested" and rep["pr"] == 6
+    assert [c for c in two.labelled()] == [("pr", "edit", "6", "--repo", "o/r", "--add-label", ar.FALLBACK_LABEL)]
+    assert rep["state"]["fallback_empty"]["prs"] == [5]
+
+
+def test_a_new_head_is_a_new_question_for_the_backup():
+    gh = SnapGh([pr(5)], snapshot_blob="same", main_blob="same")
+    first = run(gh, delegate_answering(DOWN))
+    moved = SnapGh([pr(5, head=HEAD2)], snapshot_blob="same", main_blob="same")
+    rep = run(moved, delegate_answering(DOWN), state=first["state"])
+    assert rep["outcome"] == "fallback_requested" and "fallback_empty" not in rep["state"]
