@@ -315,7 +315,7 @@ def test_real_run_with_a_memory_change_uses_a_worktree_and_ships_the_ledger_only
 
     assert not r.aborted
     assert r.base_sha == "6190d21"
-    assert r.memory == {"expired": 0, "merged": 0, "rejected": 1, "removed": 0}
+    assert r.memory == {"expired": 0, "merged": 0, "rejected": 1, "removed": 0, "catalogued": 0}
     assert memory.load(lp)["by_id"]["gone"]["status"] == "rejected"
     assert reval_calls == []                                   # nothing merged → no purge
     assert r.guard is None                                     # no data written → no guard
@@ -333,7 +333,7 @@ def test_real_run_with_a_memory_change_uses_a_worktree_and_ships_the_ledger_only
 def test_truly_quiet_run_publishes_nothing(wt_dir):
     git, gh = git_ok(wt_dir), gh_ok()
     r = run(git=git, gh=gh, pr_state=lambda ref: "open")
-    assert not r.aborted and r.memory == {"expired": 0, "merged": 0, "rejected": 0, "removed": 0}
+    assert not r.aborted and r.memory == {"expired": 0, "merged": 0, "rejected": 0, "removed": 0, "catalogued": 0}
     assert r.publish is None and "nothing to do" in tick.report.render_line(r)
     calls = norm(git)
     assert all(c[0] not in ("add", "commit", "push", "checkout") for c in calls)
@@ -618,7 +618,7 @@ def test_a_pr_merged_after_the_fetch_is_not_rejected_as_removed(wt_dir):
     lp = wt_dir / "jr" / "proposed_ledger.json"
     ledger.record_proposed("racy", "o/racy", pr_ref="https://github.com/o/r/pull/5", path=lp)
     r = run(git=git_ok(wt_dir), gh=gh_ok(), pr_state=lambda ref: "merged", revalidate=lambda s: {"ok": True})
-    assert r.memory == {"expired": 0, "merged": 1, "rejected": 0, "removed": 0}
+    assert r.memory == {"expired": 0, "merged": 1, "rejected": 0, "removed": 0, "catalogued": 0}
     assert memory.load(lp)["by_id"]["racy"]["status"] == "merged"
 
 
@@ -890,3 +890,33 @@ def test_a_pr_with_an_unreadable_age_is_judged_by_mergeability_alone(tmp_path):
     r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
     assert not r.aborted
     assert [w for w in r.warnings if "would close" in w] == ["would close superseded bookkeeping-only tick PR #787"]
+
+
+
+# --- 2026-11-19: mergeability is read until GitHub has computed it ------------------------------------------
+
+def test_the_preflight_listing_is_read_again_while_any_pr_reads_unknown(monkeypatch):
+    import chores
+    slept = []
+    monkeypatch.setattr(chores, "SLEEP", slept.append)
+    answers = [json.dumps([{"number": 1, "mergeable": "UNKNOWN"}, {"number": 2, "mergeable": "MERGEABLE"}]),
+               json.dumps([{"number": 1, "mergeable": "CONFLICTING"}, {"number": 2, "mergeable": "MERGEABLE"}])]
+    calls = []
+
+    def gh(*a):
+        calls.append(a)
+        return Proc(returncode=0, stdout=answers[min(len(calls), 2) - 1])
+    prs = tick._list_open_prs(gh)
+    assert [p["mergeable"] for p in prs] == ["CONFLICTING", "MERGEABLE"] and len(calls) == 2 and slept == [chores.SETTLE_WAIT]
+
+
+def test_a_failed_re_read_keeps_the_first_listing_and_a_failed_first_read_is_none(monkeypatch):
+    import chores
+    monkeypatch.setattr(chores, "SLEEP", lambda s: None)
+    n = {"i": 0}
+
+    def gh(*a):
+        n["i"] += 1
+        return Proc(returncode=0, stdout=json.dumps([{"number": 1, "mergeable": "UNKNOWN"}])) if n["i"] == 1 else Proc(returncode=1)
+    assert tick._list_open_prs(gh) == [{"number": 1, "mergeable": "UNKNOWN"}]
+    assert tick._list_open_prs(lambda *a: Proc(returncode=1)) is None
