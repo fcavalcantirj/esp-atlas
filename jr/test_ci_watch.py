@@ -460,6 +460,21 @@ def test_the_pause_after_three_fruitless_dispatches_ends_by_itself_on_the_next_u
     assert data["halted"] is False and data["auto_since_ack"] == 1
 
 
+def test_a_pause_written_by_the_older_code_without_its_day_still_ends(tmp_path):
+    # review BLOCK of #1901: main wrote `halted: True` with no `halted_day`; defaulting the missing day to
+    # "today" made the pause last for ever. The runner read 2 of 3 dispatches when this was written.
+    store = cw.Store(tmp_path / "i.json")
+    for n in range(2):
+        log = RED_1200.replace("no_host_file_is_there_to_read", f"case_{n}")
+        store.record(cw.evaluate([red(2, log), red(1, log), green("main", None)], REQUIRED), NOW)
+    data = store._load()
+    data.update(halted=True, auto_since_ack=3)                                    # the older code's pause
+    store._save(data)
+    assert store.claim("2026-11-20T10:00:00+00:00") is not None
+    after = store._load()
+    assert after["halted"] is False and after["auto_since_ack"] == 1
+
+
 def test_a_pause_with_nothing_left_to_claim_still_ends_on_the_next_day(tmp_path):
     store = cw.Store(tmp_path / "i.json")
     for n in range(3):

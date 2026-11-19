@@ -452,7 +452,9 @@ class Store:
         day = _utc_day(now)
         # the pause after MAX_AUTO_WITHOUT_ACK fruitless dispatches lasts until the next UTC day, not until a
         # person runs `ack`: the daily budgets already bound what a day can cost
-        if data.get("halted") and data.get("halted_day", day) != day:
+        # (a pause written by the older code has no `halted_day`: it ends at the first claim under this code,
+        # instead of never — review BLOCK of #1901)
+        if data.get("halted") and data.get("halted_day") != day:
             data.update(auto_since_ack=0, halted=False, halt_nudged=False, halted_day=None)
             self._save(data)
         waiting = sorted((r for r in data["incidents"].values() if r["state"] == "open"
