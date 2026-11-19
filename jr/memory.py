@@ -255,7 +255,7 @@ def _write(firmware_id: str, repo: str, status: str, reason: str | None, ttl_day
         return led
     # A refused write backfills a missing repo_id ONLY from the same repository: a namesake fork's
     # refused decision must never stamp the fork's id on the record that owns the firmware id (2026-11-18).
-    same_repo = bool(existing) and str(existing.get("repo") or "").lower() == str(repo or "").lower()
+    same_repo = bool(existing) and _same_repo(existing.get("repo"), repo)
     if existing and existing.get("status") == "merged" and not incoming_permanent:
         if repo_id is not None and existing.get("repo_id") is None and same_repo:
             existing["repo_id"] = int(repo_id)          # by_repo_id is derived at load time
@@ -350,12 +350,20 @@ def record_review_decision(firmware_id: str, repo: str, reason: str, *, repo_id:
     return led
 
 
+def _same_repo(a, b) -> bool:
+    """Two owner/repo strings name the same repository (case and a trailing .git ignored)."""
+    norm = lambda r: str(r or "").strip().lower().removesuffix(".git").rstrip("/")  # noqa: E731
+    return bool(norm(a)) and norm(a) == norm(b)
+
+
 def _refuse(led: dict, existing: dict, firmware_id: str, repo_key: str, repo_id: int | None,
             path: Path) -> dict:
     """A protected record is never replaced: backfill a missing repo_id, alias a new name (so a
     lookup by it reaches the veto). Saves only when something changed."""
     changed = False
-    if repo_id is not None and existing.get("repo_id") is None:
+    # only from the same repository: a namesake fork's decision never stamps its id on the record that owns the
+    # firmware id (review of #1855, 2026-11-19 — the same rule as _write's)
+    if repo_id is not None and existing.get("repo_id") is None and _same_repo(existing.get("repo"), repo_key):
         existing["repo_id"] = int(repo_id)
         changed = True
     if firmware_id != existing["id"]:
@@ -602,7 +610,7 @@ def reconcile_catalogued(sources: dict[str, str], path: Path | None = None,
         if not fid or not repo:
             continue
         rec = led["by_id"].get(fid)
-        if rec is not None and str(rec.get("repo") or "").lower() == repo:
+        if rec is not None and _same_repo(rec.get("repo"), repo):
             continue
         if rec is not None and (is_permanent_rejection(rec) or rec.get("status") == "proposed"):
             out["kept"].append(fid)
@@ -613,6 +621,11 @@ def reconcile_catalogued(sources: dict[str, str], path: Path | None = None,
             if key not in led["by_id"]:
                 note = {k: v for k, v in rec.items() if k != "repo_id"}
                 note["id"] = key
+                if note.get("status") == "merged":
+                    # a note is never `merged`: reconcile_removed would turn a merged record outside the catalog
+                    # into a permanent "removed from catalog" veto nobody made (review of #1855, 2026-11-19)
+                    note.update(status="rejected", reason=f"namesake of catalogued {fid} (was merged): " + str(rec.get("reason") or ""),
+                                expires=_expiry(now, 365))
                 led["by_id"][key] = note
             led["by_repo"][other] = key
             out["moved"].append(fid)
@@ -640,7 +653,7 @@ def reconcile_removed(catalogued_ids: set[str], path: Path | None = None,
     led = load_ledger(path)
     flipped = []
     for fid, rec in led["by_id"].items():
-        if rec.get("status") == "merged" and fid not in catalogued_ids:
+        if rec.get("status") == "merged" and fid not in catalogued_ids and not fid.startswith(REPO_NOTE_PREFIX):
             rec["status"] = "rejected"
             rec["reason"] = reason
             rec["timestamp"] = _iso(now)

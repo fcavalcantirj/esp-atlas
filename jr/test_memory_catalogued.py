@@ -82,8 +82,9 @@ def test_a_merged_record_of_a_fork_the_catalog_was_pointed_away_from_moves_too(t
     led = json.loads(p.read_text())
     assert out["moved"] == ["sshclient"] and led["by_id"]["sshclient"]["repo"] == "fernandofatech/ssh"
     note = led["by_id"]["repo-note:sub0pt1mal/ssh"]
-    assert note["status"] == "merged" and "repo_id" not in note and led["by_repo"]["sub0pt1mal/ssh"] == "repo-note:sub0pt1mal/ssh"
-    assert memory.lookup(memory.load(p), repo="sub0pt1mal/ssh")["status"] == "merged"     # admission skips it, no fetch
+    assert note["status"] == "rejected" and note.get("expires") and "repo_id" not in note
+    assert led["by_repo"]["sub0pt1mal/ssh"] == "repo-note:sub0pt1mal/ssh"
+    assert memory.is_blocked(memory.load(p), repo="sub0pt1mal/ssh", now=NOW)                 # the fork stays decided
 
 
 def test_the_result_passes_the_ledger_guard_and_a_second_run_changes_nothing(tmp_path):
@@ -148,3 +149,36 @@ def test_the_hourly_tick_reconciles_the_catalog_after_reconcile_removed():
     import tick
     src = inspect.getsource(tick.run_tick)
     assert src.index("memory.reconcile_removed(") < src.index("memory.reconcile_catalogued(") < src.index("counts = {")
+
+
+
+# --- review of #1855 (2026-11-19) ----------------------------------------------------------------------------
+
+def test_the_next_tick_never_turns_a_moved_note_into_a_veto(tmp_path):
+    p = _ledger(tmp_path, MERGED_OTHER)
+    memory.reconcile_catalogued({"sshclient": "fernandofatech/ssh"}, path=p, now=NOW)
+    once = p.read_text()
+    assert memory.reconcile_removed({"sshclient"}, path=p, now=NOW) == []
+    assert memory.reconcile_catalogued({"sshclient": "fernandofatech/ssh"}, path=p, now=NOW)["moved"] == []
+    assert p.read_text() == once                                              # a second tick changes nothing
+
+
+def test_a_forks_review_decision_never_stamps_its_id_on_the_catalogued_record(tmp_path):
+    p = _ledger(tmp_path, {"id": "wled", "repo": "wled/wled", "status": "merged", "timestamp": "2026-11-18T00:00:00+00:00", "pr_ref": None})
+    memory.record_review_decision("wled", "toshihiromakuuchi/wled", "below_floor", repo_id=846066903, path=p, now=NOW)
+    assert "repo_id" not in _by_id(p)["wled"]
+    assert 846066903 not in memory.load(p).get("by_repo_id", {})
+
+
+def test_a_trailing_dot_git_is_the_same_repository(tmp_path):
+    p = _ledger(tmp_path, {"id": "usbarmyknife", "repo": "i-am-shodan/usbarmyknife.git", "status": "expired",
+                           "timestamp": "2026-09-12T00:00:00+00:00", "pr_ref": None})
+    out = memory.reconcile_catalogued({"usbarmyknife": "i-am-shodan/usbarmyknife"}, path=p, now=NOW)
+    assert out == {"added": [], "moved": [], "kept": []}
+
+
+def test_removal_reconciliation_never_vetoes_a_repo_note_even_a_merged_one(tmp_path):
+    note = {"id": "repo-note:o/x", "repo": "o/x", "status": "merged", "timestamp": "2026-11-01T00:00:00+00:00", "pr_ref": None}
+    p = _ledger(tmp_path, note)
+    assert memory.reconcile_removed({"something-else"}, path=p, now=NOW) == []
+    assert _by_id(p)["repo-note:o/x"]["status"] == "merged"
