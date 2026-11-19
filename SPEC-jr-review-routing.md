@@ -342,7 +342,10 @@ decisions that existed only in the PR.
 - every conflicted path is bookkeeping (`review_routing.is_bookkeeping`); a content conflict is left
   for a person;
 - the ledger becomes `memory.merge_pr_ledger(main, merge base, PR head)`: main's, plus every record the PR
-  changed under `carry_decisions`' rules, plus the PR's own proposals; every other bookkeeping file is
+  changed under `carry_decisions`' rules, plus the PR's own proposals; `docs/telemetry/yield.jsonl` is
+  main's rows plus every row the PR has and main lacks, keyed by (tick, stage), main's row on a shared key
+  (`yield_ledger.merge_text`: taking main's file erased the review PR's own tick, i.e. every producing
+  tick, and raised a false `stall:firmware`, incident 0cf1acb95f79, 2026-11-19); every other bookkeeping file is
   main's (a PR's own `jr/board_cooldown.json` entries are dropped and re-derived the next time that board
   fails, as for a superseded bookkeeping PR). `scripts/ledger_guard.py` must be green against main, and every catalog file the PR changed must
   be byte-identical to its head (a silent auto-merge into a reviewed file is refused);
