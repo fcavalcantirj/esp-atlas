@@ -69,8 +69,13 @@ branch.
    **If your harness cannot push or open pull requests**, commit the record and stop here: the
    operator's relay pushes `BRANCH`, opens the draft PR, and runs the `link` command for you.
 6. **Stop.** Leave every change committed on `BRANCH` (a settle too: the relay opens the
-   bookkeeping PR from it). Review and merge are the owner's; the daily runner verifies the deployed
-   result and records the outcome. Never mark anything delivered yourself.
+   bookkeeping PR from it). Review is the machine's: CI checks the schema, the live citations, every
+   quoted span against the page it cites (`quotes`) and that the PR changes exactly what this work item
+   says (`demand-guard`); when all of it is green the canary merges the PR itself (one a day, at its exact
+   head) — or, on a quote the page does not hold, comments the quote and labels the PR `needs-human`, which
+   your next attempt must fix (re-read the page; quote it as written, or omit the claim). The owner can
+   still veto by closing. The daily runner verifies the deployed result and records the outcome. Never
+   mark anything delivered yourself.
 
 ## Rules
 
