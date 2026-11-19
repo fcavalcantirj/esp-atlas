@@ -201,7 +201,7 @@ def test_r6_a_merge_of_main_that_carries_mains_demand_changes_is_not_a_hand_edit
     _merge(repo, "main", f"Merge branch 'main' into {BRANCH}")
     problems, lines = run(repo)
     assert problems == []
-    assert any("R6 demand commits: 1, all chore(demand):" in ln and "1 merge of main not counted" in ln for ln in lines)
+    assert any("R6 demand commits: 1, all chore(demand):" in ln and "1 clean merge of main not counted" in ln for ln in lines)
 
 
 def test_r6_githubs_own_test_merge_of_the_pr_into_a_moved_main_passes(repo):
@@ -218,6 +218,61 @@ def test_r6_a_hand_edit_hidden_in_a_merge_of_main_is_still_caught_by_the_content
     _write(repo, dg.QUEUE, json.dumps(_queue(status="linked", links=[PR], other_status="closed"), indent=1))
     _commit(repo, f"Merge branch 'main' into {BRANCH}")
     assert any(p.startswith("R4") for p in run(repo)[0])
+
+
+def _merge_main_with_an_edit(repo: Path, receipts=None, queue=None, subject=None) -> None:
+    _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "merge", "-q", "--no-ff", "--no-commit", "main")
+    if receipts is not None:
+        _write(repo, dg.RECEIPTS, json.dumps(receipts, indent=1))
+    if queue is not None:
+        _write(repo, dg.QUEUE, json.dumps(queue, indent=1))
+    _commit(repo, subject or f"Merge branch 'main' into {BRANCH}")
+
+
+def test_r6_an_edit_of_this_items_own_receipt_typed_into_a_merge_of_main_is_a_hand_edit(repo):
+    # review BLOCK of #1872: R1-R5 accept any readable receipt in the author phase, so nothing else stops this
+    _main_moves(repo)
+    broken = _receipts(phase="author", pr_url=PR, links=[PR])
+    broken["receipts"][0]["started_on"] = "yesterday"
+    _merge_main_with_an_edit(repo, receipts=broken)
+    assert any(p.startswith("R6") and "Merge branch 'main'" in p for p in run(repo)[0])
+
+
+def test_r6_a_promise_rewritten_inside_a_merge_of_main_is_a_hand_edit(repo):
+    _main_moves(repo)
+    q = _queue(status="linked", links=[PR])
+    text = json.dumps(q).replace("freenove-esp32-wroom", "freenove-esp32-nothing")       # the forbidden sibling
+    assert text != json.dumps(q)
+    _merge_main_with_an_edit(repo, queue=json.loads(text))
+    assert any(p.startswith("R6") for p in run(repo)[0])
+
+
+def test_r6_a_conflict_in_the_demand_files_resolved_by_hand_is_a_hand_edit(repo):
+    _git(repo, "checkout", "-q", "main")
+    _write(repo, dg.RECEIPTS, json.dumps(_receipts(phase="research", other_state="abandoned"), indent=1))
+    _write(repo, dg.QUEUE, json.dumps(_queue(status="linked", links=["https://example.org/other"]), indent=1))
+    _commit(repo, "chore(demand): main rewrites the same lines")
+    _git(repo, "checkout", "-q", BRANCH)
+    p = subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", "merge", "--no-ff", "main"], cwd=repo,
+                       capture_output=True, text=True)
+    assert p.returncode != 0                                              # a real conflict
+    _write(repo, dg.QUEUE, json.dumps(_queue(status="linked", links=[PR]), indent=1))
+    _write(repo, dg.RECEIPTS, json.dumps(_receipts(phase="author", pr_url=PR, links=[PR], other_state="abandoned"), indent=1))
+    _commit(repo, f"Merge branch 'main' into {BRANCH}")
+    assert any(p.startswith("R6") and "Merge branch 'main'" in p for p in run(repo)[0])
+
+
+def test_r6_an_octopus_or_a_merge_onto_an_old_main_commit_with_an_edit_gets_no_exemption(repo):
+    old_main = _git(repo, "rev-parse", "main").strip()
+    _main_moves(repo)
+    _git(repo, "checkout", "-q", "-b", "other", old_main)
+    _write(repo, "unrelated.txt", "x")
+    _commit(repo, "chore: unrelated")
+    _git(repo, "checkout", "-q", BRANCH)
+    _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "merge", "-q", "--no-commit", "main", "other")
+    _write(repo, dg.RECEIPTS, json.dumps(_receipts(phase="author", pr_url=PR, links=[PR]), indent=1) + "\n")
+    _commit(repo, "Merge branches 'main' and 'other'")
+    assert any(p.startswith("R6") and "Merge branches" in p for p in run(repo)[0])
 
 
 def test_r6_a_merge_of_anything_but_main_gets_no_exemption(repo):
