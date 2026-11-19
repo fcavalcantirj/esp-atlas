@@ -116,7 +116,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          # main's TIP, not base.sha (main as it was when the PR's head was last synchronized: a day old on
+          # PRs opened the day before, measured 2026-11-19)
+          ref: ${{ github.event.repository.default_branch }}
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:

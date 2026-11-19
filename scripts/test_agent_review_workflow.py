@@ -97,7 +97,7 @@ def test_the_api_lane_posts_from_a_fresh_job_that_never_ran_the_prs_code(jobs):
     assert any("--remove-label review-fallback" in str(s.get("run", "")) and s.get("if") == "needs.agent-review.outputs.verdict == ''"
                for s in post["steps"])                                       # no verdict: the label is released
     co = [s for s in post["steps"] if "actions/checkout" in str(s.get("uses", ""))]
-    assert len(co) == 1 and co[0]["with"]["ref"] == "${{ github.event.pull_request.base.sha }}"
+    assert len(co) == 1 and co[0]["with"]["ref"] == "${{ github.event.repository.default_branch }}"   # main's tip
     step = next(s for s in post["steps"] if "agent_review.py comment" in str(s.get("run", "")))
     assert step["env"]["VERDICT_JSON"] == "${{ needs.agent-review.outputs.verdict }}"
     assert "${{" not in step["run"]                                        # nothing pasted into the shell
