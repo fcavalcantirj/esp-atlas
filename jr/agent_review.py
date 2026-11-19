@@ -44,6 +44,7 @@ LANES = ("subscription", "api")
 DOWN_PATTERNS = re.compile(r"CLAUDE_CODE_OAUTH_TOKEN|setup-token|usage limit|rate.?limit|too many requests|"
                            r"\b(401|403|429)\b|unauthori[sz]ed|authentication|credit balance|billing", re.I)
 PROMPT_PATH = REPO / "docs" / "ops" / "REVIEW-PROMPT.md"
+CONTRACT_PATH = REPO / "docs" / "REVIEW-CONTRACT.md"     # this script runs from a checkout of main: main's contract
 DEFAULT_STATE = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local" / "state") / "espatlas-jr" / "agent-review.json"
 
 
@@ -182,7 +183,8 @@ def note_fallback(state: dict, day: str, pr: int) -> dict:
 # --- one pass -------------------------------------------------------------------------------------------
 
 def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_run: bool = False,
-             fallback_per_day: int = FALLBACK_PER_DAY, prompt: str | None = None, out=None) -> dict:
+             fallback_per_day: int = FALLBACK_PER_DAY, prompt: str | None = None, out=None,
+             worktree: Path | None = None, review_python: str | None = None, contract: str | None = None) -> dict:
     """One hourly pass: review the oldest unreviewed code PR on the subscription lane; on a DOWN lane,
     hand that PR to the API lane (label) within the daily budget. Returns a small report dict.
     `gh(*args) -> str`, `git(*args) -> str`, `delegate(task, repo_path, env) -> (returncode, delegate_verdict_dict,
@@ -208,13 +210,23 @@ def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_ru
         return {"outcome": "dry_run", "pr": number, "head": head, "state": state}
     task = (prompt if prompt is not None else PROMPT_PATH.read_text(encoding="utf-8"))
     with tempfile.TemporaryDirectory(prefix="agent-review-") as tmp:
-        wt = Path(tmp) / "pr"
+        # a FIXED worktree path (when given) lets the delegate's own code guard find a policy entry for it
+        # instead of running the repo's tests in its own venv and re-running the agent for a "fix round"
+        wt = Path(worktree) if worktree else Path(tmp) / "pr"
         verdict_file = Path(tmp) / "verdict.json"
+        contract_file = Path(tmp) / "REVIEW-CONTRACT.md"
+        contract_file.write_text(contract if contract is not None else CONTRACT_PATH.read_text(encoding="utf-8"),
+                                 encoding="utf-8")
         git("fetch", "origin", f"pull/{number}/head")
+        if worktree:
+            try:
+                git("worktree", "remove", "--force", str(wt))       # a stale one from a killed run
+            except Exception:  # noqa: BLE001 — none there is the normal case
+                pass
         git("worktree", "add", "--detach", str(wt), "FETCH_HEAD")
         try:
             env = {"REPO_SLUG": slug, "PR_NUMBER": str(number), "HEAD": head, "VERDICT_FILE": str(verdict_file)}
-            rc, dv, review_text = delegate(task, str(wt), env)
+            rc, dv, review_text = delegate(task + run_block(verdict_file, contract_file, review_python), str(wt), env)
         finally:
             git("worktree", "remove", "--force", str(wt))
     # the review the agent WROTE is the deliverable: a verdict for this exact head is posted whatever the
@@ -287,12 +299,21 @@ def last_json_object(text: str) -> dict | None:
         i = end
 
 
+def run_block(verdict_file: Path, contract_file: Path, review_python: str | None) -> str:
+    """What this run hands the reviewer, as text: the verdict path is NOT in the process environment, so the
+    PR's own code (the tests the reviewer runs) cannot read it there."""
+    return ("\n\n## This run (runner-supplied)\n\n"
+            f"VERDICT_FILE={verdict_file}\n"
+            f"CONTRACT_FILE={contract_file} (main's copy of docs/REVIEW-CONTRACT.md: read THIS one, not the checkout's)\n"
+            f"REVIEW_PYTHON={review_python or 'python3'} (the interpreter that has pytest and the repo's dependencies)\n")
+
+
 def make_delegate(delegate_path: Path, python: str):
     """The runner's coding delegate, read-only review mode, synchronous. Its stdout's last DelegateVerdict
     line is the lane's answer; the review verdict is what the agent wrote to VERDICT_FILE."""
     def delegate(task: str, repo_path: str, env: dict):
         run_env = {k: v for k, v in os.environ.items() if k not in ("ANTHROPIC_API_KEY", "PYTHONPATH")}
-        run_env.update(env)
+        run_env.update({k: v for k, v in env.items() if k != "VERDICT_FILE"})      # the path travels in the task text
         p = subprocess.run([python, str(delegate_path), "--repo", repo_path, "--task", task, "--no-ship", "--no-merge",
                             "--foreground", "--message", f"agent review #{env.get('PR_NUMBER')} at {env.get('HEAD', '')[:8]}"],
                            capture_output=True, text=True, env=run_env, timeout=3600)
@@ -329,6 +350,9 @@ def main(argv=None) -> int:
     once.add_argument("--state", type=Path, default=DEFAULT_STATE)
     once.add_argument("--fallback-per-day", type=int, default=int(os.environ.get("JR_REVIEW_FALLBACK_PER_DAY", FALLBACK_PER_DAY)))
     once.add_argument("--dry-run", action="store_true")
+    once.add_argument("--worktree", type=Path, default=None,
+                      help="a fixed path for the review worktree (list it in the delegate guard's policy)")
+    once.add_argument("--review-python", default=None, help="the interpreter the reviewer runs the PR's tests with")
     com = sub.add_parser("comment", help="post a verdict comment (the API lane's workflow step)")
     com.add_argument("--pr", type=int, required=True)
     com.add_argument("--slug", default=os.environ.get("GITHUB_REPOSITORY", "fcavalcantirj/esp-atlas"))
@@ -348,7 +372,7 @@ def main(argv=None) -> int:
     state = load_state(args.state)
     rep = run_once(gh=default_gh, git=make_git(args.checkout), delegate=make_delegate(args.delegate, args.python),
                    slug=args.slug, now=datetime.now(timezone.utc), state=state, dry_run=args.dry_run,
-                   fallback_per_day=args.fallback_per_day)
+                   fallback_per_day=args.fallback_per_day, worktree=args.worktree, review_python=args.review_python)
     if not args.dry_run:
         save_state(args.state, rep["state"])
     return 0

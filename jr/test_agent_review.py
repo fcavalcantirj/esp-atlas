@@ -3,6 +3,8 @@ comment as the one source of truth. gh, git and the delegate are fakes."""
 from __future__ import annotations
 
 import json
+import re
+import sys
 from datetime import datetime, timezone
 
 import agent_review as ar
@@ -47,7 +49,9 @@ fake_git.calls = []
 
 def delegate_answering(dv, review=None):
     def delegate(task, repo_path, env):
-        delegate.seen = {"task": task, "repo": repo_path, "env": env}
+        m = re.search(r"^CONTRACT_FILE=(\S+)", task, re.M)
+        delegate.seen = {"task": task, "repo": repo_path, "env": env,
+                         "contract": open(m.group(1)).read() if m else None}
         text = json.dumps(review) if isinstance(review, dict) else review
         return 0, dv, text
     return delegate
@@ -107,7 +111,7 @@ def test_a_pass_on_the_subscription_lane_is_posted_as_the_marker_comment():
     assert rep["outcome"] == "reviewed" and rep["verdict"] == "PASS"
     comment = next(c for c in gh.writes() if c[:2] == ("pr", "comment"))
     assert comment[2] == "5" and comment[-1].startswith(ar.MARKER) and '"lane": "subscription"' in comment[-1]
-    assert delegate.seen["env"]["HEAD"] == HEAD and delegate.seen["env"]["PR_NUMBER"] == "5" and delegate.seen["task"] == "REVIEW TASK"
+    assert delegate.seen["env"]["HEAD"] == HEAD and delegate.seen["env"]["PR_NUMBER"] == "5" and delegate.seen["task"].startswith("REVIEW TASK")
     assert ("fetch", "origin", "pull/5/head") in fake_git.calls and any(c[:2] == ("worktree", "remove") for c in fake_git.calls)
 
 
@@ -231,3 +235,49 @@ def test_no_written_review_falls_back_to_the_lane_state():
     gh = FakeGh([pr(5)])
     rep = run(gh, delegate_answering({"verdict": "BUSY", "reason": "another delegate run is in progress"}, None))
     assert rep["outcome"] == "busy"
+
+
+# --- 2026-11-19, from the first real runs' transcripts -----------------------------------------------------------
+# The reviewer (a) was handed no interpreter with pytest and went hunting through other clones' venvs, (b) read
+# the contract from the PR's own tree (a PR older than the contract has none), (c) worked in a random temp path
+# the delegate's code guard has no policy for, so the guard ran the repo's tests in its own venv, went RED and
+# re-ran the agent for a "fix round" on a read-only review, and (d) had VERDICT_FILE in the environment its own
+# test runs (the PR's code) could read.
+
+def test_the_run_block_hands_the_verdict_path_the_main_contract_and_the_interpreter(tmp_path):
+    gh = FakeGh([pr(5)])
+    delegate = delegate_answering({"verdict": "PASS"}, verdict("PASS"))
+    rep = run(gh, delegate, contract="THE CONTRACT FROM MAIN", review_python="/opt/review/bin/python")
+    assert rep["outcome"] == "reviewed"
+    task = delegate.seen["task"]
+    assert task.startswith("REVIEW TASK") and "## This run" in task
+    vf = re.search(r"^VERDICT_FILE=(\S+)$", task, re.M).group(1)
+    cf = re.search(r"^CONTRACT_FILE=(\S+)", task, re.M).group(1)
+    assert vf == delegate.seen["env"]["VERDICT_FILE"] and "/pr/" not in vf            # outside the checkout
+    assert "REVIEW_PYTHON=/opt/review/bin/python" in task
+    assert delegate.seen["contract"] == "THE CONTRACT FROM MAIN" and cf != vf
+
+
+def test_a_fixed_worktree_path_is_reused_and_cleaned(tmp_path):
+    gh, fixed = FakeGh([pr(5)]), tmp_path / "review-wt"
+    run(gh, delegate_answering({"verdict": "PASS"}, verdict("PASS")), worktree=fixed)
+    adds = [c for c in fake_git.calls if c[:2] == ("worktree", "add")]
+    assert adds == [("worktree", "add", "--detach", str(fixed), "FETCH_HEAD")]
+    removes = [i for i, c in enumerate(fake_git.calls) if c[:3] == ("worktree", "remove", "--force") and c[3] == str(fixed)]
+    assert len(removes) == 2 and removes[0] < fake_git.calls.index(adds[0]) < removes[1]   # stale one first, then ours
+
+
+def test_the_real_delegate_process_never_sees_the_verdict_path_in_its_environment(tmp_path):
+    fake = tmp_path / "fake_delegate.py"
+    fake.write_text(
+        "import json, os, re, sys\n"
+        "task = sys.argv[sys.argv.index('--task') + 1]\n"
+        "assert 'VERDICT_FILE' not in os.environ, 'the verdict path leaked into the environment'\n"
+        "path = re.search(r'^VERDICT_FILE=(\\S+)$', task, re.M).group(1)\n"
+        "open(path, 'w').write(json.dumps({'verdict': 'PASS', 'head': os.environ['HEAD'], 'findings': [], 'checked': ['x']}))\n"
+        "print('working...')\n"
+        "print(json.dumps({'verdict': 'FAIL', 'reason': 'guard RED after fix round'}, indent=2))\n")
+    vf = tmp_path / "verdict.json"
+    delegate = ar.make_delegate(fake, sys.executable)
+    rc, dv, review = delegate(f"TASK\nVERDICT_FILE={vf}\n", str(tmp_path), {"HEAD": HEAD, "PR_NUMBER": "5", "VERDICT_FILE": str(vf)})
+    assert rc == 0 and dv["verdict"] == "FAIL" and json.loads(review)["verdict"] == "PASS"
