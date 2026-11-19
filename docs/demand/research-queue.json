@@ -1574,6 +1574,7 @@
     "verification_kind": "catalog_part",
     "validated_by": "jr-demand-executor (Claude Code delegate) run 2026-11-19/pam-93c3816cefd99e10e97cc0a4",
     "primary_sources": [
+     "https://lilygo.cc/products/t-beam-supreme",
      "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/docs/en/t_beam_supreme/t_beam_supreme_hw.md",
      "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/schematic/T-Beam-S3-Supreme/T-Beam-S3-Core.pdf",
      "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/schematic/T-Beam-S3-Supreme/T-Beam-S3-Supreme-V3.1.pdf",
@@ -1582,7 +1583,7 @@
     "expected_ids": [
      "lilygo-t-beam-supreme"
     ],
-    "notes": "LILYGO's official LoRa-Series hardware doc describes the T-Beam Supreme (T-Beam S3 Supreme): ESP32-S3FN8, 8MB flash, 8MB PSRAM, SX1262 or LR1121 radio, L76K or u-blox M10 GNSS, SH1106 OLED, AXP2101 PMU with an 18650 holder, USB-C. The radio/GNSS options are SKUs of this one board and stay in one record (as the catalogued T-Beam does). Kept distinct: the original ESP32 T-Beam (already catalogued as lilygo-t-beam, unchanged), the T-Beam Supreme 144-148MHz (SX1278, its own LILYGO hardware page), the T-Beam-BPF and the T-Beam-1W (separate LILYGO boards). lilygo.cc product pages answered HTTP 429 throughout the run, so the store page is not cited.",
+    "notes": "LILYGO's product page (T-Beam SUPREME: ESP32-S3FN8, 8MB flash, 8MB PSRAM, QMI8658 IMU; variants L76K or UBLOX GNSS x 433/868/915/920 MHz and L76K 144~148 MHz) and its official LoRa-Series hardware doc (ESP32-S3FN8, SX1262 or LR1121 radio, L76K or u-blox M10 GNSS, SH1106 OLED, AXP2101 PMU with an 18650 holder, USB-C) describe one board. The GNSS and frequency/radio options, including the 144~148 MHz SX1278 build LILYGO documents on its own hardware page, are variants of this one product listing and stay in this one record (as the catalogued T-Beam does with its region SKUs); no per-variant record may appear. Kept distinct: the original ESP32 T-Beam (already catalogued as lilygo-t-beam, unchanged), the T-Beam-BPF and the T-Beam-1W (separate LILYGO boards).",
     "identity_verified": true,
     "term_key": "lilygo t beam supreme"
    }
