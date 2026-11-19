@@ -12,6 +12,9 @@
       green at exactly this head. A BLOCK verdict labels the PR `needs-human` (the reviewer already posted
       the findings) and merges nothing.
 
+`--sweep` gives the same decision to every open PR that has a verdict for its current head: the hourly
+catch-up for a PASS the cap made wait and for a verdict whose canary run never answered.
+
 Every decision is printed; exit 0 always except an unreadable input (2); `--dry-run` never acts.
 """
 from __future__ import annotations
@@ -63,24 +66,31 @@ def read_verdict(text: str | None) -> dict:
 
 
 def merged_last_hour(gh, repo_slug: str, now: datetime) -> list[str]:
+    """What already used this hour's merge: PRs merged in the last 60 minutes that carry agent-pass, and open
+    PRs that carry it (a merge already requested). Both are REST list reads, never the search API: `gh pr
+    list --label` goes through the search index, which lags a label written seconds earlier, so two decisions
+    in one job could both see the cap free (review BLOCK of #1871, 2026-11-19). Every base counts: the
+    per-comment path merges a stacked PR into its base branch too (second review)."""
     since = (now - timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
-    out = gh("pr", "list", "--repo", repo_slug, "--state", "merged", "--label", PASS_LABEL,
-             "--search", f"merged:>={since}", "--json", "number,mergedAt", "--limit", "50")
-    queued = gh("pr", "list", "--repo", repo_slug, "--state", "open", "--label", PASS_LABEL,
-                "--json", "number", "--limit", "50")
+    out = gh("api", f"repos/{repo_slug}/pulls?state=closed&sort=updated&direction=desc&per_page=100")
+    queued = gh("api", f"repos/{repo_slug}/issues?state=open&labels={PASS_LABEL}&per_page=100")
     try:
         rows, waiting = json.loads(out or "[]"), json.loads(queued or "[]")
-    except json.JSONDecodeError as e:
+        if not isinstance(rows, list) or not isinstance(waiting, list):
+            raise TypeError("not a list")
+        names = lambda r: {str(x.get("name")) for x in r.get("labels") or []}  # noqa: E731
+        return ([f"#{r.get('number')}" for r in rows
+                 if str(r.get("merged_at") or "") >= since and PASS_LABEL in names(r)]
+                + [f"#{r.get('number')} (queued)" for r in waiting if "pull_request" in r])
+    except (json.JSONDecodeError, TypeError, AttributeError) as e:
         raise Unreadable(f"merged list unparsable: {e}") from e
-    # an open PR labelled agent-pass is a merge already requested (--auto waits for its checks): it counts
-    # against the cap like a merged one (review BLOCK of #1809, 2026-11-19)
-    return ([f"#{r.get('number')}" for r in rows if str(r.get("mergedAt", "")) >= since]
-            + [f"#{r.get('number')} (queued)" for r in waiting])
 
 
 def decide(*, pr: int, head: str, verdict_json: str | None, repo_slug: str, now: datetime, env: dict,
            autonomy_path: Path = demand_canary.AUTONOMY, gh=demand_canary.default_gh, dry_run: bool = False,
-           out=None) -> str:
+           out=None, cap_used: tuple = ()) -> str:
+    """`cap_used`: merges this very process already requested or saw queued (the sweep passes them), counted
+    on top of what GitHub reports, so one job never requests two merges whatever a read returns."""
     out = out or sys.stdout
     say = lambda s: print(s, file=out)  # noqa: E731
     on, why = demand_canary.switches(autonomy_path, env, flag=FLAG, variable=VARIABLE)
@@ -104,7 +114,7 @@ def decide(*, pr: int, head: str, verdict_json: str | None, repo_slug: str, now:
         if not dry_run:
             gh("pr", "edit", str(pr), "--repo", repo_slug, "--add-label", HUMAN_LABEL)
         return "human_only"
-    done = merged_last_hour(gh, repo_slug, now)
+    done = sorted(set(merged_last_hour(gh, repo_slug, now)) | set(cap_used))
     if len(done) >= HOURLY_CAP:
         say(f"C4 hourly cap: {', '.join(done)} merged in the last hour; this one waits for the next run")
         return "capped"
@@ -113,7 +123,24 @@ def decide(*, pr: int, head: str, verdict_json: str | None, repo_slug: str, now:
         say(f"C5 dry run: would label {PASS_LABEL} and request merge --auto --match-head-commit {head}")
         return "dry_run"
     gh("pr", "edit", str(pr), "--repo", repo_slug, "--add-label", PASS_LABEL)
-    gh("pr", "merge", str(pr), "--repo", repo_slug, "--merge", "--auto", "--match-head-commit", head)
+    try:
+        gh("pr", "merge", str(pr), "--repo", repo_slug, "--merge", "--auto", "--match-head-commit", head)
+    except Exception:
+        # An error does not say the merge did not happen (a 502 or a timeout after GitHub applied it): ask.
+        # Only a PR that is neither merged nor armed loses its label, since the label alone would read as a
+        # merge already requested and hold the hourly cap for every PR.
+        try:
+            state = json.loads(gh("pr", "view", str(pr), "--repo", repo_slug, "--json", "state,autoMergeRequest") or "{}")
+        except Exception:  # noqa: BLE001 — unknown: keep the label (it counts against the cap), surface the error
+            raise
+        if state.get("state") == "MERGED" or state.get("autoMergeRequest"):
+            say(f"C5 #{pr}: the merge call failed but GitHub shows it {'merged' if state.get('state') == 'MERGED' else 'armed'}")
+            return "merge_requested"
+        try:
+            gh("pr", "edit", str(pr), "--repo", repo_slug, "--remove-label", PASS_LABEL)
+        except Exception:  # noqa: BLE001 — the sweep drops a label with no merge behind it
+            pass
+        raise
     say(f"C5 #{pr} labelled {PASS_LABEL}; merge requested at exact head {head}")
     return "merge_requested"
 
@@ -132,9 +159,79 @@ def verdict_from_comments(gh, repo_slug: str, pr: int) -> tuple[str, str | None]
     return head.lower(), (json.dumps({k: v[k] for k in ("verdict", "head", "findings", "checked")}) if v else None)
 
 
+def sweep(*, repo_slug: str, now: datetime, env: dict, autonomy_path: Path = demand_canary.AUTONOMY,
+          gh=demand_canary.default_gh, dry_run: bool = False, out=None) -> dict:
+    """{pr number: outcome} for every open PR that has a verdict for its CURRENT head: the same decision a
+    marker comment gets, for the verdicts nobody acted on (the hourly cap printed "waits for the next run" and
+    there was none; a canary run that crashed answered nothing). Oldest PR first. Left alone: drafts, forks, a
+    PR whose merge is really requested, a verdict for another head. A BLOCK or a human-only PASS that already
+    carries its label costs no write. An agent-pass label with no auto-merge behind it is dropped and the PR
+    decided again. Every merge requested or found queued here counts against the cap for the rest of the
+    sweep. One unreadable PR never stops the others; switches off -> {} and no call."""
+    out = out or sys.stdout
+    on, why = demand_canary.switches(autonomy_path, env, flag=FLAG, variable=VARIABLE)
+    if not on:
+        print(f"sweep: off ({why})", file=out)
+        return {}
+    try:
+        prs = json.loads(gh("pr", "list", "--repo", repo_slug, "--state", "open", "--base", "main", "--limit", "300",
+                            "--json", "number,isDraft,isCrossRepository,labels,autoMergeRequest") or "[]")
+    except json.JSONDecodeError as e:
+        raise Unreadable(f"open PR list unparsable: {e}") from e
+    prs = sorted((p for p in prs if not p.get("isDraft") and not p.get("isCrossRepository")),
+                 key=lambda p: int(p.get("number") or 0))
+    labels = {int(p["number"]): {str(x.get("name")) for x in p.get("labels") or []} for p in prs}
+    used = tuple(f"#{p['number']} (queued)" for p in prs
+                 if PASS_LABEL in labels[int(p["number"])] and p.get("autoMergeRequest"))
+    results = {}
+    # stale labels go first, all of them: one left on a newer PR would cap an older PASS for this sweep
+    for pr in prs:
+        n = int(pr["number"])
+        if PASS_LABEL in labels[n] and not pr.get("autoMergeRequest"):
+            print(f"sweep: #{n} carries {PASS_LABEL} with no merge requested; dropping the label", file=out)
+            try:
+                if not dry_run:
+                    gh("pr", "edit", str(n), "--repo", repo_slug, "--remove-label", PASS_LABEL)
+                labels[n].discard(PASS_LABEL)
+            except Exception as e:  # noqa: BLE001
+                results[n] = f"unreadable: {str(e)[:160]}"
+    for pr in prs:
+        n = int(pr["number"])
+        if n in results:
+            continue
+        try:
+            if PASS_LABEL in labels[n]:
+                results[n] = "queued"                   # merge really requested; it lands when its checks do
+                continue
+            head, vj = verdict_from_comments(gh, repo_slug, n)
+            if vj is None:
+                continue
+            is_pass = json.loads(vj).get("verdict") == "PASS"
+            if not is_pass and HUMAN_LABEL in labels[n]:
+                results[n] = "block_known"
+            elif is_pass and HUMAN_LABEL in labels[n] and human_only_paths(gh, repo_slug, n) != []:
+                results[n] = "human_only_known"
+            else:
+                print(f"sweep: #{n} at {head[:8]}", file=out)
+                try:
+                    results[n] = decide(pr=n, head=head, verdict_json=vj, repo_slug=repo_slug, now=now, env=env,
+                                        autonomy_path=autonomy_path, gh=gh, dry_run=dry_run, out=out, cap_used=used)
+                except Exception:
+                    if is_pass:                         # a decision that died may have merged: the cap is used
+                        used += (f"#{n} (unknown)",)
+                    raise
+                if results[n] == "merge_requested":
+                    used += (f"#{n}",)
+        except Exception as e:  # noqa: BLE001 — Unreadable, a gh failure: this PR waits, the others do not
+            results[n] = f"unreadable: {str(e)[:160]}"
+    return results
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--pr", type=int, required=True)
+    ap.add_argument("--pr", type=int)
+    ap.add_argument("--sweep", action="store_true",
+                    help="decide on every open PR that has a verdict for its current head (the hourly catch-up)")
     ap.add_argument("--head", help="the exact head (default: the PR's current head when --from-comments)")
     ap.add_argument("--author", default="")
     ap.add_argument("--repo-slug", default=os.environ.get("GITHUB_REPOSITORY", "fcavalcantirj/esp-atlas"))
@@ -142,6 +239,19 @@ def main(argv=None) -> int:
                     help="read the newest marker verdict comment for the PR's current head instead of VERDICT_JSON")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args(argv)
+    if a.sweep == (a.pr is not None):
+        ap.error("give exactly one of --pr and --sweep")
+    if a.sweep:
+        try:
+            results = sweep(repo_slug=a.repo_slug, now=datetime.now(timezone.utc), env=dict(os.environ),
+                            autonomy_path=demand_canary.AUTONOMY, gh=demand_canary.default_gh, dry_run=a.dry_run)
+        except Exception as e:  # noqa: BLE001 — a catch-up that cannot read GitHub tries again next hour
+            print(f"sweep: unavailable: {str(e)[:200]}")
+            return 0
+        for n, outcome in results.items():
+            print(f"sweep: #{n} {outcome}")
+        print(f"sweep: {len(results)} PR(s) with a verdict for their head")
+        return 0
     try:
         head, verdict_json = a.head, os.environ.get("VERDICT_JSON")
         if a.from_comments:

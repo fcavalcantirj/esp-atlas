@@ -146,3 +146,28 @@ def test_no_job_if_reads_a_configuration_variable(jobs):
 def test_the_code_canary_installs_what_its_imports_need(jobs):
     runs = " ".join(str(s.get("run", "")) for s in jobs["code-canary"]["steps"])
     assert "pip install" in runs and "pyyaml" in runs and "httpx" in runs
+
+
+def test_a_dispatch_is_a_sweep_and_every_canary_run_ends_with_one(wf, jobs):
+    # 2026-11-19: a PASS the hourly cap made wait was never looked at again
+    assert "workflow_dispatch" in wf[True]
+    job = jobs["code-canary"]
+    # only from main: a dispatch at another ref would run that ref's switches and canary code
+    assert job["if"].replace("\n", " ").startswith(
+        "(github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || (")
+    one = next(s for s in job["steps"] if "--from-comments" in str(s.get("run", "")))
+    assert one["if"] == "github.event_name == 'issue_comment'"        # a dispatch has no PR of its own
+    sweep = next(s for s in job["steps"] if "--sweep" in str(s.get("run", "")))
+    assert sweep["run"].strip() == "python3 scripts/code_canary.py --sweep" and sweep["if"] == "always()"
+    assert sweep["env"] == one["env"]                                   # same token, same kill variable
+    names = [str(s.get("run", "")) for s in job["steps"]]
+    assert names.index(one["run"]) < names.index(sweep["run"]) < len(names) - 1   # then main's CI step, last
+
+
+def test_no_other_job_runs_on_a_dispatch(jobs):
+    for name, job in jobs.items():
+        if name == "code-canary":
+            continue
+        cond = str(job.get("if", "")).replace("\n", " ")
+        assert "github.event_name == 'pull_request'" in cond or "needs.agent-review.result != 'skipped'" in cond, name
+
