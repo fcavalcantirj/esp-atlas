@@ -198,6 +198,9 @@ class Repo:
         if args[:2] == ("pr", "view") and "files,changedFiles" in args:
             files = self.prs[n].get("files", ["jr/x.py"])
             return json.dumps({"files": [{"path": f} for f in files], "changedFiles": len(files)})
+        if args[:2] == ("pr", "view") and "state,autoMergeRequest" in args:
+            return json.dumps({"state": self.prs[n].get("state", "OPEN"),
+                               "autoMergeRequest": {"enabledAt": "x"} if self.prs[n].get("armed") else None})
         if args[:2] == ("pr", "view"):
             if self.prs[n].get("unreadable"):
                 return "not json"
@@ -212,8 +215,10 @@ class Repo:
         if args[:2] == ("pr", "edit") and "--remove-label" in args:
             self._labels(n).remove(args[args.index("--remove-label") + 1])
         if args[:2] == ("pr", "merge"):
+            if self.merge_fails == "after":           # GitHub applied it, the answer got lost
+                self.prs[n]["state"] = "MERGED"
             if self.merge_fails:
-                raise RuntimeError("gh pr merge: head moved")
+                raise RuntimeError("gh pr merge: HTTP 502")
             self.prs[n]["armed"] = True
         return ""
 
@@ -324,6 +329,31 @@ def test_a_merge_request_that_fails_takes_its_label_back(autonomy):
     gh = Repo({1: dict(head=h("a"), verdict="PASS")}, merge_fails=True)
     out = sweep(gh, autonomy(True))
     assert out[1].startswith("unreadable") and cc.PASS_LABEL not in gh.prs[1]["labels"]
+
+
+def test_a_merge_into_a_stacked_base_uses_the_hours_cap_like_any_other(autonomy):
+    # 2nd review of #1871: the per-comment path merges a stacked PR into its base branch; the read must see it
+    gh = FakeGh(merged=[(10, "2026-11-17T20:50:00Z")])
+    assert run(autonomy(True), gh, verdict()) == "capped"
+    url = next(c[1] for c in gh.calls if c[:1] == ("api",) and "/pulls?state=closed" in c[1])
+    assert "base=" not in url
+
+
+def test_a_merge_call_that_fails_after_github_applied_it_keeps_its_label_and_the_cap(autonomy):
+    gh = Repo({1: dict(head=h("a"), verdict="PASS"), 2: dict(head=h("b"), verdict="PASS")}, merge_fails="after", lag=True)
+    out = sweep(gh, autonomy(True))
+    assert out == {1: "merge_requested", 2: "capped"} and cc.PASS_LABEL in gh.prs[1]["labels"]
+
+
+def test_a_decision_that_dies_on_a_pass_uses_the_cap_for_the_rest_of_the_sweep(autonomy):
+    gh = Repo({1: dict(head=h("a"), verdict="PASS"), 2: dict(head=h("b"), verdict="PASS")}, merge_fails=True, lag=True)
+    out = sweep(gh, autonomy(True))
+    assert out[1].startswith("unreadable") and out[2] == "capped" and gh.merges() == [1]
+
+
+def test_a_stale_label_on_a_newer_pr_never_caps_an_older_pass(autonomy):
+    gh = Repo({1: dict(head=h("a"), verdict="PASS"), 2: dict(head=h("b"), verdict="PASS", labels=[cc.PASS_LABEL])})
+    assert sweep(gh, autonomy(True)) == {1: "merge_requested", 2: "capped"} and gh.merges() == [1]
 
 
 def test_an_agent_pass_label_with_no_merge_behind_it_is_dropped_and_the_pr_decided_again(autonomy):

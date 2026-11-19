@@ -69,9 +69,10 @@ def merged_last_hour(gh, repo_slug: str, now: datetime) -> list[str]:
     """What already used this hour's merge: PRs merged in the last 60 minutes that carry agent-pass, and open
     PRs that carry it (a merge already requested). Both are REST list reads, never the search API: `gh pr
     list --label` goes through the search index, which lags a label written seconds earlier, so two decisions
-    in one job could both see the cap free (review BLOCK of #1871, 2026-11-19)."""
+    in one job could both see the cap free (review BLOCK of #1871, 2026-11-19). Every base counts: the
+    per-comment path merges a stacked PR into its base branch too (second review)."""
     since = (now - timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
-    out = gh("api", f"repos/{repo_slug}/pulls?state=closed&base=main&sort=updated&direction=desc&per_page=100")
+    out = gh("api", f"repos/{repo_slug}/pulls?state=closed&sort=updated&direction=desc&per_page=100")
     queued = gh("api", f"repos/{repo_slug}/issues?state=open&labels={PASS_LABEL}&per_page=100")
     try:
         rows, waiting = json.loads(out or "[]"), json.loads(queued or "[]")
@@ -125,7 +126,16 @@ def decide(*, pr: int, head: str, verdict_json: str | None, repo_slug: str, now:
     try:
         gh("pr", "merge", str(pr), "--repo", repo_slug, "--merge", "--auto", "--match-head-commit", head)
     except Exception:
-        # the label alone would read as a merge already requested and hold the hourly cap for every PR
+        # An error does not say the merge did not happen (a 502 or a timeout after GitHub applied it): ask.
+        # Only a PR that is neither merged nor armed loses its label, since the label alone would read as a
+        # merge already requested and hold the hourly cap for every PR.
+        try:
+            state = json.loads(gh("pr", "view", str(pr), "--repo", repo_slug, "--json", "state,autoMergeRequest") or "{}")
+        except Exception:  # noqa: BLE001 — unknown: keep the label (it counts against the cap), surface the error
+            raise
+        if state.get("state") == "MERGED" or state.get("autoMergeRequest"):
+            say(f"C5 #{pr}: the merge call failed but GitHub shows it {'merged' if state.get('state') == 'MERGED' else 'armed'}")
+            return "merge_requested"
         try:
             gh("pr", "edit", str(pr), "--repo", repo_slug, "--remove-label", PASS_LABEL)
         except Exception:  # noqa: BLE001 — the sweep drops a label with no merge behind it
@@ -174,16 +184,25 @@ def sweep(*, repo_slug: str, now: datetime, env: dict, autonomy_path: Path = dem
     used = tuple(f"#{p['number']} (queued)" for p in prs
                  if PASS_LABEL in labels[int(p["number"])] and p.get("autoMergeRequest"))
     results = {}
+    # stale labels go first, all of them: one left on a newer PR would cap an older PASS for this sweep
     for pr in prs:
         n = int(pr["number"])
-        try:
-            if PASS_LABEL in labels[n]:
-                if pr.get("autoMergeRequest"):
-                    results[n] = "queued"               # merge really requested; it lands when its checks do
-                    continue
-                print(f"sweep: #{n} carries {PASS_LABEL} with no merge requested; dropping the label", file=out)
+        if PASS_LABEL in labels[n] and not pr.get("autoMergeRequest"):
+            print(f"sweep: #{n} carries {PASS_LABEL} with no merge requested; dropping the label", file=out)
+            try:
                 if not dry_run:
                     gh("pr", "edit", str(n), "--repo", repo_slug, "--remove-label", PASS_LABEL)
+                labels[n].discard(PASS_LABEL)
+            except Exception as e:  # noqa: BLE001
+                results[n] = f"unreadable: {str(e)[:160]}"
+    for pr in prs:
+        n = int(pr["number"])
+        if n in results:
+            continue
+        try:
+            if PASS_LABEL in labels[n]:
+                results[n] = "queued"                   # merge really requested; it lands when its checks do
+                continue
             head, vj = verdict_from_comments(gh, repo_slug, n)
             if vj is None:
                 continue
@@ -194,8 +213,13 @@ def sweep(*, repo_slug: str, now: datetime, env: dict, autonomy_path: Path = dem
                 results[n] = "human_only_known"
             else:
                 print(f"sweep: #{n} at {head[:8]}", file=out)
-                results[n] = decide(pr=n, head=head, verdict_json=vj, repo_slug=repo_slug, now=now, env=env,
-                                    autonomy_path=autonomy_path, gh=gh, dry_run=dry_run, out=out, cap_used=used)
+                try:
+                    results[n] = decide(pr=n, head=head, verdict_json=vj, repo_slug=repo_slug, now=now, env=env,
+                                        autonomy_path=autonomy_path, gh=gh, dry_run=dry_run, out=out, cap_used=used)
+                except Exception:
+                    if is_pass:                         # a decision that died may have merged: the cap is used
+                        used += (f"#{n} (unknown)",)
+                    raise
                 if results[n] == "merge_requested":
                     used += (f"#{n}",)
         except Exception as e:  # noqa: BLE001 — Unreadable, a gh failure: this PR waits, the others do not
