@@ -15,12 +15,16 @@ from test_ci_watch_stall import STAGES, STALL, Y
 REPO = Path(__file__).resolve().parent.parent
 
 
-def test_the_committed_switch_file_has_every_flag_off():
+def test_the_committed_switch_file_is_the_reviewed_autonomy_state():
+    # owner, 2026-11-19: "make jr do the chores, site self sufficient" — on by reviewed PR. tick_automerge went on
+    # the same day, once the evidence check stopped PASSing a sibling's recipe (rules v4, #1864): one
+    # review-routed tick PR a day, every added recipe re-verified on the live upstream by receipt-guard
     doc = json.loads((REPO / "jr" / "autonomy.json").read_text())
     assert {k: v for k, v in doc.items() if not k.startswith("_")} == {
-        "demand_automerge": False, "tick_automerge": False, "code_automerge": False, "stall_dispatch": False}
-    assert cw.stall_dispatch_allowed(REPO / "jr" / "autonomy.json", {}) is False
-
+        "demand_automerge": True, "tick_automerge": True, "code_automerge": True, "stall_dispatch": True,
+        "pr_fix_dispatch": True}
+    assert cw.stall_dispatch_allowed(REPO / "jr" / "autonomy.json", {}) is True
+    assert cw.stall_dispatch_allowed(REPO / "jr" / "autonomy.json", {"JR_STALL_DISPATCH": "0"}) is False   # the kill
 
 def test_stall_dispatch_needs_the_reviewed_flag_and_no_kill_variable(tmp_path):
     p = tmp_path / "autonomy.json"
