@@ -190,7 +190,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
           JR_DEMAND_AUTOMERGE: ${{ vars.JR_DEMAND_AUTOMERGE }}
-        run: python3 trusted/scripts/demand_canary.py --repo pr --pr ${{ github.event.pull_request.number }} --head ${{ github.event.pull_request.head.sha }} --branch ${{ github.head_ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PR_BRANCH: ${{ github.head_ref }}   # via env, never pasted into the shell (4th review of #1809)
+        run: python3 trusted/scripts/demand_canary.py --repo pr --pr "$PR_NUMBER" --head "$PR_HEAD" --branch "$PR_BRANCH"
 
   receipt-guard:
     # A jr/tick-* PR: is it mergeable on its evidence receipts alone? Every recipe it adds must carry a PASS
@@ -250,7 +253,10 @@ jobs:
           GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JR_TICK_AUTOMERGE: ${{ vars.JR_TICK_AUTOMERGE }}
-        run: python3 trusted/scripts/tick_canary.py --repo pr --pr ${{ github.event.pull_request.number }} --head ${{ github.event.pull_request.head.sha }} --branch ${{ github.head_ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PR_BRANCH: ${{ github.head_ref }}
+        run: python3 trusted/scripts/tick_canary.py --repo pr --pr "$PR_NUMBER" --head "$PR_HEAD" --branch "$PR_BRANCH"
 
   g2-guard:
     runs-on: ubuntu-latest
