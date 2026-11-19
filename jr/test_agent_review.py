@@ -3,6 +3,8 @@ comment as the one source of truth. gh, git and the delegate are fakes."""
 from __future__ import annotations
 
 import json
+
+import pytest
 import re
 import sys
 from datetime import datetime, timezone
@@ -261,10 +263,12 @@ def test_the_run_block_hands_the_verdict_path_the_main_contract_and_the_interpre
 def test_a_fixed_worktree_path_is_reused_and_cleaned(tmp_path):
     gh, fixed = FakeGh([pr(5)]), tmp_path / "review-wt"
     run(gh, delegate_answering({"verdict": "PASS"}, verdict("PASS")), worktree=fixed)
+    fixed = fixed.resolve()
     adds = [c for c in fake_git.calls if c[:2] == ("worktree", "add")]
     assert adds == [("worktree", "add", "--detach", str(fixed), "FETCH_HEAD")]
-    removes = [i for i, c in enumerate(fake_git.calls) if c[:3] == ("worktree", "remove", "--force") and c[3] == str(fixed)]
+    removes = [i for i, c in enumerate(fake_git.calls) if c[:2] == ("worktree", "remove") and c[-1] == str(fixed)]
     assert len(removes) == 2 and removes[0] < fake_git.calls.index(adds[0]) < removes[1]   # stale one first, then ours
+    assert ar._owner_marker(fixed).exists()                                                # the path is marked ours
 
 
 def test_the_real_delegate_process_never_sees_the_verdict_path_in_its_environment(tmp_path):
@@ -283,40 +287,116 @@ def test_the_real_delegate_process_never_sees_the_verdict_path_in_its_environmen
     assert rc == 0 and dv["verdict"] == "FAIL" and json.loads(review)["verdict"] == "PASS"
 
 
-# --- review BLOCK of #1866 (2026-11-19): a leftover at the fixed worktree path must never stall the next pass ----
+# --- reviews of #1866 (2026-11-19): the fixed worktree path is one this tool DELETES -------------------------
+# 1st: a leftover there stalled every pass. 2nd: `--worktree ""` resolved to the working directory and the cleanup
+# wiped the checkout; a run killed during `git worktree add` left a locked entry no remove/prune cleared.
 
 def _real_repo(tmp_path):
     import subprocess
     env = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t", "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t",
            "PATH": __import__("os").environ["PATH"], "HOME": str(tmp_path)}
     repo = tmp_path / "clone"
-    repo.mkdir()
+    repo.mkdir(parents=True)
     for a in (["init", "-q", "-b", "main"], ["commit", "-q", "--allow-empty", "-m", "base"]):
         subprocess.run(["git", "-C", str(repo), *a], env=env, check=True, capture_output=True)
+    (repo / "untracked.txt").write_text("precious")
     return repo, ar.make_git(repo)
 
 
-def test_a_registered_worktree_whose_git_file_is_gone_is_cleared(tmp_path):
-    repo, git = _real_repo(tmp_path)
-    wt = tmp_path / "review-wt"
-    git("worktree", "add", "--detach", str(wt), "HEAD")
-    (wt / ".git").unlink()                                   # a run killed mid-removal
-    ar.clear_worktree(git, wt)
+def _ours(wt):
+    ar._owner_marker(wt).write_text("ours\n")
+    return wt
+
+
+def _add_works(git, wt):
     git("worktree", "add", "--detach", str(wt), "HEAD")      # raises if the path is still in the way
     assert (wt / ".git").exists()
 
 
-def test_an_unregistered_non_empty_directory_is_cleared(tmp_path):
+def test_a_registered_worktree_whose_git_file_is_gone_is_cleared(tmp_path):
     repo, git = _real_repo(tmp_path)
-    wt = tmp_path / "review-wt"
-    (wt / "sub").mkdir(parents=True)
-    (wt / "sub" / "left.txt").write_text("x")
-    (wt / "sub").chmod(0o500)                                # a read-only leftover
-    ar.clear_worktree(git, wt)
+    wt = _ours(tmp_path / "review-wt")
     git("worktree", "add", "--detach", str(wt), "HEAD")
-    assert (wt / ".git").exists()
+    (wt / ".git").unlink()                                   # a run killed mid-removal
+    ar.clear_worktree(git, wt)
+    _add_works(git, wt)
+
+
+def test_a_locked_half_created_worktree_is_cleared(tmp_path):
+    repo, git = _real_repo(tmp_path)
+    wt = _ours(tmp_path / "review-wt")
+    git("worktree", "add", "--detach", str(wt), "HEAD")
+    git("worktree", "lock", str(wt))                          # what a SIGKILL during `worktree add` leaves
+    import shutil
+    shutil.rmtree(wt)
+    ar.clear_worktree(git, wt)
+    _add_works(git, wt)
+
+
+def test_a_leftover_directory_with_read_only_and_mode_000_parts_or_a_plain_file_is_cleared(tmp_path):
+    repo, git = _real_repo(tmp_path)
+    wt = _ours(tmp_path / "review-wt")
+    (wt / "ro").mkdir(parents=True)
+    (wt / "ro" / "left.txt").write_text("x")
+    (wt / "ro").chmod(0o500)
+    (wt / "dark").mkdir()
+    (wt / "dark" / "y").write_text("y")
+    (wt / "dark").chmod(0o000)
+    ar.clear_worktree(git, wt)
+    _add_works(git, wt)
+    ar.clear_worktree(git, wt)
+    wt.write_text("a plain file")
+    ar.clear_worktree(git, wt)
+    assert not wt.exists()
 
 
 def test_clearing_a_path_that_is_not_there_is_fine(tmp_path):
     repo, git = _real_repo(tmp_path)
     ar.clear_worktree(git, tmp_path / "never-existed")
+
+
+def test_a_directory_that_is_not_ours_is_never_deleted(tmp_path):
+    repo, git = _real_repo(tmp_path)
+    other = tmp_path / "someone-elses"
+    other.mkdir()
+    (other / "keep.txt").write_text("keep")
+    with pytest.raises(ValueError):
+        ar.clear_worktree(git, other)
+    assert (other / "keep.txt").read_text() == "keep"
+
+
+@pytest.mark.parametrize("bad", ["", " ", ".", "review-wt", "CHECKOUT", "CHECKOUT/sub", "PARENT", "HOME", "/", "/tmp"])
+def test_a_worktree_path_that_is_not_a_dedicated_absolute_directory_is_refused(tmp_path, monkeypatch, bad):
+    repo, git = _real_repo(tmp_path / "deep" / "er")
+    monkeypatch.chdir(repo)
+    value = {"CHECKOUT": str(repo), "CHECKOUT/sub": str(repo / "sub"), "PARENT": str(repo.parent),
+             "HOME": str(__import__("pathlib").Path.home())}.get(bad, bad)
+    with pytest.raises(ValueError):
+        ar.own_worktree(value, repo)
+
+
+def test_an_empty_worktree_argument_stops_the_pass_before_anything_is_deleted(tmp_path, monkeypatch):
+    repo, git = _real_repo(tmp_path)
+    monkeypatch.chdir(repo)
+    gh = FakeGh([pr(5)])
+    with pytest.raises(ValueError):
+        ar.run_once(gh=gh, git=fake_git, delegate=delegate_answering({"verdict": "PASS"}, verdict("PASS")), slug="o/r",
+                    now=NOW, state={}, prompt="T", contract="C", worktree=__import__("pathlib").Path(""), checkout=repo)
+    assert (repo / "untracked.txt").read_text() == "precious" and (repo / ".git").is_dir()
+
+
+def test_a_git_main_tree_is_refused_as_a_worktree_path(tmp_path):
+    repo, _ = _real_repo(tmp_path / "a")
+    other, _ = _real_repo(tmp_path / "b")
+    with pytest.raises(ValueError):
+        ar.own_worktree(str(other), repo)
+
+
+def test_a_relative_path_is_refused_even_where_it_would_resolve_somewhere_harmless(tmp_path, monkeypatch):
+    repo, _ = _real_repo(tmp_path / "a")
+    neutral = tmp_path / "x" / "y" / "z"
+    neutral.mkdir(parents=True)
+    monkeypatch.chdir(neutral)                                # "review-wt" would resolve outside every guarded place
+    with pytest.raises(ValueError, match="absolute"):
+        ar.own_worktree("review-wt", repo)
+    assert ar.own_worktree(str(neutral / "review-wt"), repo) == (neutral / "review-wt").resolve()
