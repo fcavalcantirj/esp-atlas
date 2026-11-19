@@ -845,3 +845,25 @@ def test_a_pr_without_its_lanes_canary_check_is_left_alone(tmp_path):
     gh = RetryGh([content(1846, "jr/research-pam-c2", [check("schema"), check("tests"), check("jr-tests")], draft=True)], behind=3)
     assert retry(gh, _store(tmp_path), tmp_path) == {"update_branch": [], "rerun": [], "failed": []}
 
+
+# --- 2nd review of #1874 (notes): the memory trim and a failure that is not in the canary's way ------------------
+
+def test_the_days_memory_keeps_every_pr_of_today_whatever_its_number_and_drops_older_days(tmp_path):
+    store = _store(tmp_path)
+    data = store._load()
+    data["canary_retry"] = {**{str(n): "2026-11-19" for n in range(2000, 2400)}, "1846": "2026-11-19", "7": "2026-11-18"}
+    store._save(data)
+    gh = RetryGh([content(1846, "jr/research-pam-c2", GREEN_DEMAND, draft=True),
+                  content(1900, "jr/research-other", GREEN_DEMAND, draft=True)], behind=3)
+    assert [n for n, _ in retry(gh, store, tmp_path)["update_branch"]] == [1900]          # 1846 already had today's
+    kept = store._load()["canary_retry"]
+    assert kept["1846"] == "2026-11-19" and kept["1900"] == "2026-11-19" and "7" not in kept and len(kept) == 402
+
+
+def test_a_failure_beside_a_canary_that_ran_reruns_the_canary_not_the_failed_job(tmp_path):
+    checks = [check("schema"), check("tests"), check("jr-tests"), check("sources-live", "FAILURE", job=970),
+              check("demand-canary", "SUCCESS", job=950)]
+    gh = RetryGh([content(1846, "jr/research-pam-c2", checks, draft=True)], behind=0)
+    retry(gh, _store(tmp_path), tmp_path)
+    assert gh.acts() == [("api", "-X", "POST", "repos/o/r/actions/jobs/950/rerun")]
+

@@ -222,17 +222,25 @@ def canary_retry(gh, slug: str, prs: list, store: ci_watch.Store, now: str, dry_
         canary = next((runs[id(c)] for c in rollup if c.get("name") == lanes[prefix] and runs[id(c)]), None)
         if canary is None:
             continue
+        canary_skipped = any(c.get("name") == lanes[prefix] and str(c.get("conclusion") or "").upper() == "SKIPPED"
+                             for c in rollup)
         failed = [c for c in rollup if str(c.get("conclusion") or "").upper() == ci_watch.FAILURE
                   and runs[id(c)] and runs[id(c)].group(1) == canary.group(1)]
         if prefix == "jr/research-" and _behind_main(gh, slug, head):
             kind, call = "update_branch", ("api", "-X", "PUT", f"repos/{slug}/pulls/{n}/update-branch", "-f", f"expected_head_sha={head}")
-        elif failed:
+        elif failed and canary_skipped:
+            # a job the canary needs failed, so the canary never ran: rerunning the failed jobs runs it too.
+            # When the canary DID run, a failure beside it (sources-live, a cited site blinking) is not in its
+            # way, and `--failed` would rerun that job every day and never the canary (2nd review of #1874).
             kind, call = "rerun", ("run", "rerun", canary.group(1), "--failed")
         else:
             kind, call = "rerun", ("api", "-X", "POST", f"repos/{slug}/actions/jobs/{canary.group(2)}/rerun")
         if not dry_run:
             data = store._load()                       # fresh each time: the other chores write this store too
-            data["canary_retry"] = dict(list({**(data.get("canary_retry") or {}), str(n): day}.items())[-300:])
+            # only today's entries are kept: the store is saved with sorted keys, so trimming by position
+            # dropped the LOWEST PR number, and a stuck old PR was retried every tick (2nd review of #1874)
+            today = {k: v for k, v in (data.get("canary_retry") or {}).items() if v == day}
+            data["canary_retry"] = {**today, str(n): day}
             store._save(data)
         if dry_run or _ok(gh(*call)):
             out[kind].append((n, head) if kind == "update_branch" else (n, canary.group(1)))

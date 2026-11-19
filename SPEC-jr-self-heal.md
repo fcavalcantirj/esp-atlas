@@ -136,7 +136,8 @@ tick**, only for a lane whose switch in `jr/autonomy.json` is true:
 
 - a demand PR behind main is merged with main (`PUT …/update-branch` at the exact head): a new event, so main's
   current guards and canary judge it;
-- otherwise the failed jobs of its last run are rerun (the canary behind them follows), or the canary job alone;
+- otherwise, when the canary was skipped because a job it needs failed, the failed jobs of that run are rerun
+  (the canary follows); when the canary did run, the canary job alone is rerun, whatever failed beside it;
 - a review-routed tick PR is only ever rerun; `jr/review_refresh.py` owns its merges with main.
 
 Left alone: `needs-human`, a red required check on a PR that is not a draft (that is `red_prs`, which never
