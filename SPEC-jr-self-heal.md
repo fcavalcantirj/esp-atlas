@@ -58,6 +58,26 @@ either fixes the stage at the cause or writes the finding to `docs/incidents/<id
 outside the code. The incident resolves when the lane produces again over the yield window
 (`Store.resolve_producing`). Nothing here may fill inventory: an LLM solves code problems, never records.
 
+### 1c. A tick that keeps aborting is a break too (2026-11-18)
+
+Measured: four hourly ticks in a row (Nov 18, 18Z → 21Z) aborted on the same pending-PR gap (a stale
+ledger record under a reused firmware id) and nothing reacted but a Telegram line. An aborted tick writes
+no yield rows, so §1b cannot see it, and CI was green. Every hourly tick now hands its outcome to
+`jr/ci_watch.abort_watch` after its worktree and lock are released: the abort reason, the degraded reason
+(an incomplete pending-PR inventory no longer aborts; it skips the firmware stages, `SPEC-jr-review-routing.md`
+§6, and counts here like an abort), or nothing when it completed. Its kind is the reason's head (`pending-pr-inventory-incomplete`, `typeerror`, `guard-red`,
+`terminated-by-sigterm`), and the fingerprint is sha256 of the kind: a tick stuck on the same check is one
+break even when the detail changes each hour (another firmware in the gap, other files in a red guard). The
+**second consecutive** abort of one kind is an incident: `check` = `abort:<kind>`, `evidence` = the latest
+full reason, the streak count, first and last seen. It enters the
+SAME store, `claim`, daily budget, `ack` halt and `jr-heal` review route as a red check (it is not gated
+by `stall_dispatch`). Aborts the delegate cannot fix never open one and never break a streak: GitHub
+unreadable or rate-limited (`gh …`, `GitHub rate limit low`), the tick lock, the call budget, branch
+protection, and a tick PR open too long (that one already says it needs a human). A completed tick ends
+the streak and resolves every live abort incident (`Store.resolve_aborts`). The delegate's prompt
+(`docs/ops/HEAL-PROMPT.md`, "When `check` starts with `abort:`") fixes the code that raised the abort; it
+never closes or merges a Jr PR to make the abort go away.
+
 ### 1d. The chores on open PRs (2026-11-18)
 
 Owner, Nov 18: "make jr automatically do chores. site must be self sufficient." Measured that night: 31 open

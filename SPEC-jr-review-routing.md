@@ -144,9 +144,14 @@ main was forgotten the same way.
   branch and `mergedAt` are re-checked client-side. An open PR wins over an older veto.
 - **Merged → nothing held**: the firmware is catalogued on main and the ledger reconciles it.
 - **Unreadable → the tick aborts** before the worktree (fail closed, like every preflight query).
-- **Incomplete → the tick aborts too**, naming the gap: an index that may miss a hold is as blind
-  as an unreadable one, so no content stage runs and nothing is published (no admit, topics,
-  boardmap, recipe or popularity write). Incomplete means any of: the open list returned
+- **Incomplete → the tick is degraded** (2026-11-18; it aborted until then), naming the gap: an index
+  that may miss a hold is as blind as an unreadable one for anything that touches firmware, so no
+  stage runs unless it is declared `firmware_free` (today only board backfill, which writes
+  `data/boards` and never reads a hold), and nothing is copied out of open PRs (no open-PR hydration,
+  no decision carry: their committed content is what failed to verify). No admit, topics, boardmap,
+  recipe or popularity write happens. Reconciliation from main, telemetry and the backfill still run
+  and publish. Measured cost of the old rule: one firmware's gap in #1839 stopped every lane for four
+  hours. The degraded reason goes to the abort watch (`SPEC-jr-self-heal.md` §1c). Incomplete means any of: the open list returned
   `OPEN_PR_LIMIT` PRs, the closed list returned `CLOSED_PR_LIMIT` PRs (both may be cut), or a held
   tick PR's file list cannot be shown whole. `gh pr list --json files` carries at most the first
   100 files of a PR, so both lists also ask for `changedFiles`; a tick PR whose `files` count is

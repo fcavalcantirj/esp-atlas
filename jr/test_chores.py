@@ -267,10 +267,10 @@ def test_the_hourly_main_wires_the_default_chores_runner():
     assert "chores_runner=default_chores_runner" in inspect.getsource(tick.main)
 
 
-def test_the_switch_file_ships_pr_fix_dispatch_off():
+def test_the_switch_file_ships_pr_fix_dispatch_on_by_reviewed_pr():
     from pathlib import Path
     doc = json.loads((Path(__file__).resolve().parent / "autonomy.json").read_text())
-    assert doc["pr_fix_dispatch"] is False
+    assert doc["pr_fix_dispatch"] is True
 
 
 def test_a_merged_ci_heal_pr_resets_the_ack_brake_too(tmp_path):

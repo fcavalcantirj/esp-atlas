@@ -217,9 +217,13 @@ def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_ru
             rc, dv, review_text = delegate(task, str(wt), env)
         finally:
             git("worktree", "remove", "--force", str(wt))
-    lane = lane_state(dv)
+    # the review the agent WROTE is the deliverable: a verdict for this exact head is posted whatever the
+    # delegate's own code guard said about the read-only tree (2026-11-19, first real run: the guard went RED
+    # because the PR's tests could not import the core package in the delegate's venv, and the review was lost)
+    written = read_verdict(review_text)
+    lane = "ok" if written is not None else lane_state(dv)
     if lane == "ok":
-        v = read_verdict(review_text)
+        v = written
         if v is None:
             say(f"agent-review: #{number}: the delegate finished but wrote no readable verdict; nothing posted")
             return {"outcome": "no_verdict", "pr": number, "head": head, "state": state}
@@ -265,6 +269,24 @@ def make_git(checkout: Path):
     return git
 
 
+def last_json_object(text: str) -> dict | None:
+    """The last complete JSON object in `text`, single-line or pretty-printed over many lines (the delegate
+    prints its final DelegateVerdict with indent=2)."""
+    dec, found, i = json.JSONDecoder(), None, 0
+    while True:
+        i = text.find("{", i)
+        if i < 0:
+            return found
+        try:
+            obj, end = dec.raw_decode(text, i)
+        except json.JSONDecodeError:
+            i += 1
+            continue
+        if isinstance(obj, dict):
+            found = obj
+        i = end
+
+
 def make_delegate(delegate_path: Path, python: str):
     """The runner's coding delegate, read-only review mode, synchronous. Its stdout's last DelegateVerdict
     line is the lane's answer; the review verdict is what the agent wrote to VERDICT_FILE."""
@@ -274,15 +296,7 @@ def make_delegate(delegate_path: Path, python: str):
         p = subprocess.run([python, str(delegate_path), "--repo", repo_path, "--task", task, "--no-ship", "--no-merge",
                             "--foreground", "--message", f"agent review #{env.get('PR_NUMBER')} at {env.get('HEAD', '')[:8]}"],
                            capture_output=True, text=True, env=run_env, timeout=3600)
-        dv = None
-        for line in reversed((p.stdout or "").splitlines()):
-            line = line.strip()
-            if line.startswith("{"):
-                try:
-                    dv = json.loads(line)
-                    break
-                except json.JSONDecodeError:
-                    continue
+        dv = last_json_object(p.stdout or "")
         vf = Path(env["VERDICT_FILE"])
         review = vf.read_text(encoding="utf-8") if vf.is_file() else None
         return p.returncode, dv, review
