@@ -85,6 +85,7 @@ jobs:
           CLAUDE_CODE_SUBPROCESS_ENV_SCRUB: "1"   # the PR's tests never see a credential (5th review of #1809)
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          show_full_output: true   # THROWAWAY SPIKE: read the hidden error; this branch is never merged
           # the job's own read-only token: no id-token exchange for a write-scoped app token (5th review of #1809)
           github_token: ${{ github.token }}
           prompt: |
