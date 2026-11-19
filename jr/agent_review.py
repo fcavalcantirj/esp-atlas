@@ -6,7 +6,7 @@ The independent exact-head review of a code PR (docs/REVIEW-CONTRACT.md) is run 
 - **Primary lane** = the runner's coding delegate on the Claude subscription (the same binary and token the
   demand executor and the CI heal use). An hourly job on the runner calls `python3 jr/agent_review.py once
   --delegate <path> --checkout <dir> ...`: it lists the open code PRs that have no verdict for their current
-  head, checks out the oldest one's head in a throwaway worktree, runs the delegate with
+  head, checks out the next one's head (see `candidates`) in a throwaway worktree, runs the delegate with
   `docs/ops/REVIEW-PROMPT.md` as the task (read-only: --no-ship --no-merge), reads the structured verdict the
   agent wrote to VERDICT_FILE, and posts it as ONE PR comment that starts with MARKER. The code canary
   (scripts/code_canary.py) reads that comment.
@@ -132,7 +132,9 @@ def verdict_for_head(comments: list[dict], head: str) -> dict | None:
 
 def candidates(prs: list[dict], comments_by_pr: dict) -> list[dict]:
     """Open, non-draft code PRs (not Jr's tick/research/heal branches) with no verdict for their current
-    head and no fallback review pending, oldest update first."""
+    head and no fallback review pending. A PR that already has a trusted verdict for an EARLIER head comes
+    first (its head moved: a fix is waiting to be judged, and it is the PR closest to merging), then the
+    rest; inside each group, oldest update first."""
     out = []
     for pr in prs:
         branch = str(pr.get("headRefName") or "")
@@ -146,7 +148,10 @@ def candidates(prs: list[dict], comments_by_pr: dict) -> list[dict]:
         if verdict_for_head(comments_by_pr.get(pr["number"], []), pr["headRefOid"]):
             continue
         out.append(pr)
-    out.sort(key=lambda p: (str(p.get("updatedAt") or ""), p["number"]))
+    def never_reviewed(p) -> bool:
+        return not any(_author(c) in TRUSTED_AUTHORS and parse_comment((c or {}).get("body", ""))
+                       for c in comments_by_pr.get(p["number"], []))
+    out.sort(key=lambda p: (never_reviewed(p), str(p.get("updatedAt") or ""), p["number"]))
     return out
 
 
@@ -185,7 +190,7 @@ def note_fallback(state: dict, day: str, pr: int) -> dict:
 def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_run: bool = False,
              fallback_per_day: int = FALLBACK_PER_DAY, prompt: str | None = None, out=None,
              review_python: str | None = None, contract: str | None = None) -> dict:
-    """One hourly pass: review the oldest unreviewed code PR on the subscription lane; on a DOWN lane,
+    """One hourly pass: review the next unreviewed code PR (`candidates` order) on the subscription lane; on a DOWN lane,
     hand that PR to the API lane (label) within the daily budget. Returns a small report dict.
     `gh(*args) -> str`, `git(*args) -> str`, `delegate(task, repo_path, env) -> (returncode, delegate_verdict_dict,
     review_verdict_text_or_None)`."""

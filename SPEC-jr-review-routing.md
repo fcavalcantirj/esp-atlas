@@ -301,7 +301,8 @@ rule "subscription and api as fallback":**
 
 - **Subscription lane (primary).** `jr/agent_review.py once`, an hourly job on the runner, calls the same
   coding delegate the demand executor and the CI heal use (Claude subscription, no API key, read-only:
-  `--no-ship --no-merge`) on the oldest open code PR whose current head has no verdict, in a detached
+  `--no-ship --no-merge`) on the next open code PR whose current head has no verdict (a PR already reviewed at an earlier head
+  first, then the oldest update), in a detached
   worktree at that head, with `docs/ops/REVIEW-PROMPT.md` as the task. The agent writes the structured
   verdict `{verdict: PASS|BLOCK, head, findings, checked}` to a file outside the repo; the runner posts it as
   ONE PR comment beginning with `<!-- agent-review verdict -->` (lane `subscription`). Not for `jr/tick-*`,
