@@ -1316,7 +1316,7 @@
       "repo": "konsumer/cardbuddy",
       "repo_id": 1460931781,
       "status": "proposed",
-      "timestamp": "2026-11-20T13:00:31.599297+00:00"
+      "timestamp": "2026-11-20T14:00:32.540500+00:00"
     },
     "cardcaliper": {
       "expires": "2026-12-05T20:00:59.980852+00:00",
@@ -3933,7 +3933,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-20T13:00:31.599297+00:00"
+      "timestamp": "2026-11-20T14:00:32.540500+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4089,7 +4089,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-20T13:00:31.599297+00:00"
+      "timestamp": "2026-11-20T14:00:32.540500+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -12924,11 +12924,12 @@
       "timestamp": "2026-10-23T20:01:00.044967+00:00"
     },
     "lx-shell": {
+      "expired_at": "2026-11-20T14:00:32.540500+00:00",
       "expires": "2026-11-20T13:00:59.612446+00:00",
       "id": "lx-shell",
       "pr_ref": null,
       "repo": "ppyne/lx_shell",
-      "status": "seen",
+      "status": "expired",
       "timestamp": "2026-10-21T13:00:59.612446+00:00"
     },
     "m5-amiibolink": {
@@ -17319,7 +17320,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-20T13:00:31.599297+00:00"
+      "timestamp": "2026-11-20T14:00:32.540500+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -23894,11 +23895,12 @@
       "timestamp": "2026-09-12T11:00:47.292793+00:00"
     },
     "synthcard": {
+      "expired_at": "2026-11-20T14:00:32.540500+00:00",
       "expires": "2026-11-20T13:00:59.612446+00:00",
       "id": "synthcard",
       "pr_ref": null,
       "repo": "meister5/synthcard",
-      "status": "seen",
+      "status": "expired",
       "timestamp": "2026-10-21T13:00:59.612446+00:00"
     },
     "sysx": {
@@ -25214,7 +25216,7 @@
       "pr_ref": "#1895",
       "repo": "designer2k2/xmas-tree",
       "status": "proposed",
-      "timestamp": "2026-11-20T13:00:31.599297+00:00"
+      "timestamp": "2026-11-20T14:00:32.540500+00:00"
     },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
