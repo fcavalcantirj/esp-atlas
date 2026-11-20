@@ -688,14 +688,13 @@
       "timestamp": "2026-11-08T21:00:55.166276+00:00"
     },
     "aurora-player": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2026-11-27T12:00:31.870191+00:00",
       "id": "aurora-player",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "unizersion/aurora-player.git",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "awesome-brucescript": {
       "expires": "2027-01-03T20:00:59.893271+00:00",
@@ -1310,6 +1309,15 @@
       "repo_id": 1458383268,
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
+    "cardbuddy": {
+      "evidence_url": "https://github.com/konsumer/cardbuddy",
+      "id": "cardbuddy",
+      "pr_ref": null,
+      "repo": "konsumer/cardbuddy",
+      "repo_id": 1460931781,
+      "status": "proposed",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "cardcaliper": {
       "expires": "2026-12-05T20:00:59.980852+00:00",
@@ -3926,7 +3934,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-20T11:00:31.816337+00:00"
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4082,7 +4090,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-20T11:00:31.816337+00:00"
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -5678,14 +5686,13 @@
       "timestamp": "2026-11-14T22:00:55.399488+00:00"
     },
     "launcher-1897200000000000023": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2027-02-18T12:00:31.870191+00:00",
       "id": "launcher-1897200000000000023",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (gkdesing); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000000023",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-1897200000000000024": {
       "expires": "2026-11-23T11:00:31.939782+00:00",
@@ -5868,14 +5875,13 @@
       "timestamp": "2026-11-13T22:00:55.476104+00:00"
     },
     "launcher-1897200000000000126": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2027-02-18T12:00:31.870191+00:00",
       "id": "launcher-1897200000000000126",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (sacriphanius); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000000126",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-1897200000000000128": {
       "expires": "2026-11-22T05:00:32.367472+00:00",
@@ -6130,14 +6136,13 @@
       "timestamp": "2026-11-14T22:00:55.399488+00:00"
     },
     "launcher-1897200000000000291": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2026-11-27T12:00:31.870191+00:00",
       "id": "launcher-1897200000000000291",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'polytopes visualizer user:andjiang'",
       "repo": "launcher:1897200000000000291",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-1897200000000000300": {
       "expires": "2026-11-23T22:00:32.290880+00:00",
@@ -6437,14 +6442,13 @@
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
     },
     "launcher-1897200000000000518": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2026-11-27T12:00:31.870191+00:00",
       "id": "launcher-1897200000000000518",
       "pr_ref": null,
       "reason": "no_source_repo: no searchable name tokens or owner",
       "repo": "launcher:1897200000000000518",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-1897200000000000523": {
       "expires": "2026-11-23T00:00:31.813641+00:00",
@@ -7275,14 +7279,13 @@
       "timestamp": "2026-11-16T00:00:31.813641+00:00"
     },
     "launcher-1897200000000001155": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2027-02-18T12:00:31.870191+00:00",
       "id": "launcher-1897200000000001155",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (legoatdu49); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001155",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-1897200000000001165": {
       "expires": "2026-11-22T14:00:31.673907+00:00",
@@ -8185,14 +8188,13 @@
       "timestamp": "2026-11-16T17:00:31.804978+00:00"
     },
     "launcher-1897200000000001737": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2026-11-27T12:00:31.870191+00:00",
       "id": "launcher-1897200000000001737",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'polytopes visualizer user:andjiang'",
       "repo": "launcher:1897200000000001737",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-1897200000000001741": {
       "expires": "2026-11-23T04:00:31.943499+00:00",
@@ -8591,14 +8593,13 @@
       "timestamp": "2026-11-15T21:00:31.486348+00:00"
     },
     "launcher-1897200000000002035": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2026-11-27T12:00:31.870191+00:00",
       "id": "launcher-1897200000000002035",
       "pr_ref": null,
       "reason": "no_source_repo: no searchable name tokens or owner",
       "repo": "launcher:1897200000000002035",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-1897200000000002040": {
       "expires": "2026-11-22T10:00:35.647124+00:00",
@@ -9087,14 +9088,13 @@
       "timestamp": "2026-11-14T21:00:55.045531+00:00"
     },
     "launcher-1897200000000002468": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2026-11-27T12:00:31.870191+00:00",
       "id": "launcher-1897200000000002468",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'wip speedcube timer user:atsomgawaxi'",
       "repo": "launcher:1897200000000002468",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-1897200000000002470": {
       "expires": "2026-11-23T04:00:31.943499+00:00",
@@ -9205,14 +9205,13 @@
       "timestamp": "2026-11-15T11:00:32.244008+00:00"
     },
     "launcher-1897200000000002584": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2027-02-18T12:00:31.870191+00:00",
       "id": "launcher-1897200000000002584",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (legoatdu49); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002584",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-1897200000000002585": {
       "expires": "2026-12-15T00:00:55.378741+00:00",
@@ -9611,14 +9610,13 @@
       "timestamp": "2026-11-16T14:00:31.914738+00:00"
     },
     "launcher-1897200000000002904": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2027-02-18T12:00:31.870191+00:00",
       "id": "launcher-1897200000000002904",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (legoatdu49); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002904",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-1897200000000002905": {
       "expires": "2026-11-22T13:00:31.808604+00:00",
@@ -10644,14 +10642,13 @@
       "timestamp": "2026-11-16T21:00:32.122497+00:00"
     },
     "launcher-2106759842569265153": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2027-02-18T12:00:31.870191+00:00",
       "id": "launcher-2106759842569265153",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (cric-10); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2106759842569265153",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-2106786405184577538": {
       "expires": "2026-11-24T01:00:31.817229+00:00",
@@ -10825,14 +10822,13 @@
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-2111813107178622978": {
-      "expired_at": "2026-11-19T22:00:32.559107+00:00",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2026-11-27T12:00:31.870191+00:00",
       "id": "launcher-2111813107178622978",
       "pr_ref": null,
       "reason": "no_source_repo: no searchable name tokens or owner",
       "repo": "launcher:2111813107178622978",
-      "status": "expired",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-2111839568899952642": {
       "expires": "2026-11-23T18:00:31.810746+00:00",
@@ -16023,6 +16019,16 @@
       "status": "rejected",
       "timestamp": "2026-11-15T04:00:34.403128+00:00"
     },
+    "meta-tv-ir": {
+      "expires": "2026-12-20T12:00:31.870191+00:00",
+      "id": "meta-tv-ir",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "katiuxa/meta-tv-ir",
+      "repo_id": 1464581545,
+      "status": "rejected",
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
+    },
     "metronome": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
       "id": "metronome",
@@ -17311,7 +17317,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-20T11:00:31.816337+00:00"
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -25204,7 +25210,7 @@
       "pr_ref": "#1895",
       "repo": "designer2k2/xmas-tree",
       "status": "proposed",
-      "timestamp": "2026-11-20T11:00:31.816337+00:00"
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
@@ -26224,6 +26230,7 @@
     "kashif-baig/elecrow-all-in-one-starter-kit-for-arduino": "repo-note:kashif-baig/elecrow-all-in-one-starter-kit-for-arduino",
     "kataigp/m5cardputer_dht11_sensor": "m5cardputer-dht11-sensor",
     "kataigp/m5cardputer_hcsr04_sensor": "m5cardputer-hcsr04-sensor",
+    "katiuxa/meta-tv-ir": "meta-tv-ir",
     "kenfilms/magicfocus": "magicfocus",
     "keralots/bambuhelper": "repo-note:keralots/bambuhelper",
     "keralots/smalloled-pcmonitor": "repo-note:keralots/smalloled-pcmonitor",
@@ -26266,6 +26273,7 @@
     "kodediy/kodeos": "repo-note:kodediy/kodeos",
     "kodiwxbiznes-glitch/basanos-esp32-s3": "repo-note:kodiwxbiznes-glitch/basanos-esp32-s3",
     "konradmohr/pbashos": "pbashos",
+    "konsumer/cardbuddy": "cardbuddy",
     "konsumer/cardputer-examples": "cardputer-examples",
     "konsumer/msc-poc": "repo-note:konsumer/msc-poc",
     "konsumer/weathergrrl": "weathergrrl",
