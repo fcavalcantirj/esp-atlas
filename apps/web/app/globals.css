@@ -2914,3 +2914,45 @@ html { scroll-behavior: smooth; }
   text-align: center;
   letter-spacing: 0.02em;
 }
+
+/* Analytics consent banner (EEA / UK / CH only, components/ConsentBanner.tsx). Fixed at the bottom, never over
+   the header; the page stays usable behind it. */
+.consent-banner {
+  position: fixed;
+  inset: auto 1rem 1rem 1rem;
+  z-index: 50;
+  max-width: 44rem;
+  margin-inline: auto;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md, 10px);
+  box-shadow: 0 8px 28px color-mix(in srgb, var(--fg) 18%, transparent);
+  font-size: var(--t-sm);
+}
+
+.consent-banner p {
+  margin: 0;
+  flex: 1 1 22rem;
+}
+
+.consent-banner-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}

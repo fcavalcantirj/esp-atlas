@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Providers from "@/app/providers";
+import ConsentBanner from "@/components/ConsentBanner";
 import { analyticsBootScript } from "@/lib/analytics-boot";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
@@ -71,6 +72,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <SiteHeader />
           {children}
           <SiteFooter />
+          {GA_ID && <ConsentBanner />}
         </Providers>
       </body>
       {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
