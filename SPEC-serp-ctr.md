@@ -62,7 +62,7 @@ date is worse than none. The only exact source is each record's last commit, whi
 sitemap is produced: the sitemap renders at request time in a serverless function with no repository, and
 Vercel's build clone is shallow (`git clone --depth=10`, per Vercel's build documentation), so a record not
 touched in the last ten commits has no date there. `sources[].verified` is not a modification date (removed in
-fb9f90f9 for that reason). Unshallowing the clone on every build would add a network dependency to deploys for
+60ea19af for that reason). Unshallowing the clone on every build would add a network dependency to deploys for
 a ~330-URL site Google already recrawls within days (URL inspection, 2026-11-18: `/parts/m5stick-s3` crawled
 11-17, `/firmware/bruce` 11-18). Revisit only if crawl lag on changed pages is measured as a problem.
 
