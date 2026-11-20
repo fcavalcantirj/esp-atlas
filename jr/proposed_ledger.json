@@ -1315,7 +1315,7 @@
       "pr_ref": "#1930",
       "repo": "konsumer/cardbuddy",
       "status": "proposed",
-      "timestamp": "2026-11-20T21:00:31.786869+00:00"
+      "timestamp": "2026-11-20T22:00:31.624593+00:00"
     },
     "cardcaliper": {
       "expires": "2026-12-05T20:00:59.980852+00:00",
@@ -3932,7 +3932,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-20T21:00:31.786869+00:00"
+      "timestamp": "2026-11-20T22:00:31.624593+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4088,7 +4088,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-20T21:00:31.786869+00:00"
+      "timestamp": "2026-11-20T22:00:31.624593+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -5649,12 +5649,13 @@
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
     "launcher-1897200000000000010": {
+      "expired_at": "2026-11-20T22:00:31.624593+00:00",
       "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000000010",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'atomxiaozhi user:peien'",
       "repo": "launcher:1897200000000000010",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000000011": {
@@ -6900,12 +6901,13 @@
       "timestamp": "2026-11-16T03:00:32.040222+00:00"
     },
     "launcher-1897200000000000938": {
+      "expired_at": "2026-11-20T22:00:31.624593+00:00",
       "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000000938",
       "pr_ref": null,
       "reason": "no_source_repo: 29 matches for 'userdemo user:m5stack'",
       "repo": "launcher:1897200000000000938",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000000940": {
@@ -7305,12 +7307,13 @@
       "timestamp": "2026-11-16T05:00:31.772256+00:00"
     },
     "launcher-1897200000000001167": {
+      "expired_at": "2026-11-20T22:00:31.624593+00:00",
       "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000001167",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'blynkuniversal user:peien'",
       "repo": "launcher:1897200000000001167",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000001171": {
@@ -7539,12 +7542,13 @@
       "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "launcher-1897200000000001281": {
+      "expired_at": "2026-11-20T22:00:31.624593+00:00",
       "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000001281",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'atomu stt user:m5stack'",
       "repo": "launcher:1897200000000001281",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000001289": {
@@ -7764,12 +7768,13 @@
       "timestamp": "2026-11-15T11:00:32.244008+00:00"
     },
     "launcher-1897200000000001435": {
+      "expired_at": "2026-11-20T22:00:31.624593+00:00",
       "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000001435",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'tasmotafirmware user:peien'",
       "repo": "launcher:1897200000000001435",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000001445": {
@@ -8052,12 +8057,13 @@
       "timestamp": "2026-11-16T15:00:33.094076+00:00"
     },
     "launcher-1897200000000001652": {
+      "expired_at": "2026-11-20T22:00:31.624593+00:00",
       "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000001652",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'spiffsfile management system user:peien'",
       "repo": "launcher:1897200000000001652",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000001653": {
@@ -8637,12 +8643,13 @@
       "timestamp": "2026-11-15T22:00:31.751655+00:00"
     },
     "launcher-1897200000000002066": {
+      "expired_at": "2026-11-20T22:00:31.624593+00:00",
       "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000002066",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'afternoon paralysis user:jrdntnnr'",
       "repo": "launcher:1897200000000002066",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000002078": {
@@ -9042,12 +9049,13 @@
       "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "launcher-1897200000000002434": {
+      "expired_at": "2026-11-20T22:00:31.624593+00:00",
       "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000002434",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002434",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000002447": {
@@ -9564,12 +9572,13 @@
       "timestamp": "2026-11-16T00:00:31.813641+00:00"
     },
     "launcher-1897200000000002873": {
+      "expired_at": "2026-11-20T22:00:31.624593+00:00",
       "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000002873",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002873",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000002881": {
@@ -9987,12 +9996,13 @@
       "timestamp": "2026-11-14T17:00:55.342931+00:00"
     },
     "launcher-1897200000000003208": {
+      "expired_at": "2026-11-20T22:00:31.624593+00:00",
       "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000003208",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'printer emqx user:fancyoung'",
       "repo": "launcher:1897200000000003208",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000003216": {
@@ -17320,7 +17330,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-20T21:00:31.786869+00:00"
+      "timestamp": "2026-11-20T22:00:31.624593+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -25216,7 +25226,7 @@
       "pr_ref": "#1895",
       "repo": "designer2k2/xmas-tree",
       "status": "proposed",
-      "timestamp": "2026-11-20T21:00:31.786869+00:00"
+      "timestamp": "2026-11-20T22:00:31.624593+00:00"
     },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
