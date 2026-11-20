@@ -25,11 +25,14 @@ firmware's own words: its name, id and maintainer; the **ids and names of the bo
 category, capabilities, chip families and distribution; its summary. A board counts with its id, its name and
 its maker ("m5stack meshcore"). So "meshcore cardputer adv" finds MeshCore builds that have a recipe for the
 Cardputer-Adv, and "cardputer" alone lists everything with a Cardputer recipe. Names, ids and tags match
-whatever the spacing ("t deck", "tdeck", "T-Deck"); in a summary a query word must lie inside one word.
+whatever the spacing ("t deck", "tdeck", "T-Deck"); in a summary a query word must lie inside one word. A
+query word of one or two characters must be a whole word of the record ("ir" is the infrared tag, not part of
+"Pirate"; "s2", "c6", "v2"). A query holding something no record can be found by ("!!!", non-Latin script)
+matches nothing; a query of filler words only is no query.
 
 Order with `q` and no explicit `sort`: **relevance** (`sort=relevance`): a word found in the name outranks one
-found in the id or maintainer, then a board, then a tag, then the summary; an exact or leading name match first;
-ties in the popularity order. `relevance` without `q` is the default order.
+found in the id or maintainer, then a board, then a tag, then the summary; a hit at the start of a word counts
+double one in the middle of a word; an exact or leading name match first; ties in the popularity order. `relevance` without `q` is the default order.
 
 ## 2. Filters
 
@@ -45,7 +48,8 @@ All optional, all combinable with `q` and with each other (AND):
 
 An unknown value matches nothing (an empty list, never a 422); a `q` longer than 120 characters is a 422. A
 searched or filtered response carries `total` (matches before `limit`/`offset`) and `catalog_total` (the whole
-catalog). The bare `GET /firmware` is byte-identical to before and runs on its old code path.
+catalog). The bare `GET /firmware` runs on its old code path and returns the same body as before: no
+`catalog_total` key.
 
 `GET /firmware/facets` returns the boards (id, name), chip families, categories and capability tags that
 exist in the catalog, each with its firmware count, most used first, plus `catalog_total`. Facets describe the
@@ -68,8 +72,13 @@ SEO: bare `/firmware` stays the indexable canonical; with nothing set its list, 
 are what they were (only the control above the list changed). Any
 `q`, filter or non-default `sort` renders `noindex, follow` with `canonical → /firmware`.
 
-Tracking (GA4): `firmware_search` once per searched or filtered list shown, with `has_q`, the number of
-filters, the order and the result count. Never the words typed. The "Order by" select replaces the row of
+Controls: a filter picked with a pointer submits at once; one changed from the keyboard waits for the Search
+button, so stepping through a select never reloads the page (WCAG 3.2.2). Going Back resets the controls to
+the state the URL shows.
+
+Tracking (GA4): `firmware_search` once per searched or filtered list shown, with `has_query`, `filters` (how
+many), `sort` and `result_count`; not sent when the list could not be loaded. Never the words typed (the page
+URL carries `q`, like the site search: the stream's query-parameter redaction covers it). The "Order by" select replaces the row of
 sort links, so `firmware_sort` is no longer sent; an order change on a searched list shows in
 `firmware_search.sort`.
 

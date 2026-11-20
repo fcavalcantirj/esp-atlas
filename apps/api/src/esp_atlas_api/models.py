@@ -475,8 +475,12 @@ class FirmwareRecord(BaseModel):
 class FirmwareListResponse(BaseModel):
     results: list[FirmwareRecord]
     total: int
-    # SPEC-firmware-search.md §2: present only on a searched/filtered list (the bare list is unchanged)
-    catalog_total: Optional[int] = None
+
+
+class FirmwareSearchResponse(FirmwareListResponse):
+    """SPEC-firmware-search.md §2: a searched or filtered list. The bare list stays FirmwareListResponse, so
+    its body is what it was."""
+    catalog_total: int
 
 
 class FacetOption(BaseModel):

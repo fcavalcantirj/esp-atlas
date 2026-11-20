@@ -38,6 +38,25 @@ def query_tokens(q) -> list:
     return [w for w in words if w and w not in NOISE][:MAX_TOKENS]
 
 
+def unmatchable(q) -> bool:
+    """True when the query holds something that is not filler and that no record can be found by: a piece
+    that folds to nothing ("!!!", "小智"). Such a query matches nothing, instead of silently listing the whole
+    catalog as if it had been searched."""
+    return any(not fold(piece) and piece.lower() not in NOISE for piece in str(q or "").split())
+
+
+def _words(*texts) -> list:
+    """The folded words of some texts, plus each text folded whole ("T-Deck" -> t, deck, tdeck)."""
+    out = []
+    for text in texts:
+        plain = unicodedata.normalize("NFKD", str(text or "")).encode("ascii", "ignore").decode().lower()
+        out.extend(w for w in re.split(r"[^a-z0-9]+", plain) if w)
+        whole = fold(text)
+        if whole:
+            out.append(whole)
+    return out
+
+
 def board_names() -> dict:
     """{board id: display name} for every board record, read from the data files. (The API reads the same two
     columns from its index instead: parsing 120 board files per request is the slow way.)"""
@@ -81,32 +100,48 @@ def _boards_of(recipes) -> dict:
 
 
 def _fields(record, its_recipes, names, brands) -> dict:
-    """The folded words of one firmware, by field. Names, ids and tags are folded whole, so "t deck" and
-    "tdeck" both find "T-Deck"; the summary is folded word by word, so a query word never matches across two
-    words of a sentence."""
+    """The words of one firmware, by field. Every name, id and tag gives its own words and itself folded
+    whole, so "t deck" and "tdeck" both find "T-Deck"; a summary gives only its words, so a query word never
+    matches across two words of a sentence."""
     boards = [r["board"] for r in its_recipes]
+    summary = _words(record.get("summary"))[:-1] if fold(record.get("summary")) else []
     return {
-        "name": fold(record.get("name")),
-        "ident": fold(record.get("id")) + " " + fold(record.get("maintainer")),
-        "boards": " ".join(f"{fold(b)} {fold(names.get(b))} {fold(brands.get(b))}" for b in boards),
-        "tags": " ".join(fold(x) for x in [record.get("category"), *(record.get("capabilities") or []),
-                                           *(record.get("socs") or []), *(record.get("distribution") or [])]),
-        "summary": " ".join(fold(w) for w in str(record.get("summary") or "").split()),
+        "name": _words(record.get("name")),
+        "ident": _words(record.get("id"), record.get("maintainer")),
+        "boards": _words(*[x for b in boards for x in (b, names.get(b), brands.get(b))]),
+        "tags": _words(record.get("category"), *(record.get("capabilities") or []), *(record.get("socs") or []),
+                       *(record.get("distribution") or [])),
+        "summary": summary,
     }
 
 
+SHORT = 3            # a query word shorter than this must be a whole word of the record ("ir", "s2", "c6", "v2")
+MID_WORD = 0.5       # a hit in the middle of a word counts half of one at a word's start
+
+
+def _hit(token, words) -> float:
+    """How well a query word is found in a field: 1 at the start of a word (a whole word, for a short query
+    word), MID_WORD inside one, 0 not at all. So "ir" finds the infrared tag and not "Pirate"."""
+    if len(token) < SHORT:
+        return 1.0 if token in words else 0.0
+    if any(w.startswith(token) for w in words):
+        return 1.0
+    return MID_WORD if any(token in w for w in words) else 0.0
+
+
 def _score(fields, tokens, whole):
-    """None when a word is found nowhere; else the sum of each word's best field weight, plus a bonus when the
-    whole query is the name or starts it."""
+    """None when a word is found nowhere; else the sum of each word's best (field weight x hit), plus a bonus
+    when the whole query is the name or starts it."""
     total = 0
     for token in tokens:
-        weight = next((w for field, w in WEIGHTS if token in fields[field]), None)
-        if weight is None:
+        best = max(weight * _hit(token, fields[field]) for field, weight in WEIGHTS)
+        if not best:
             return None
-        total += weight
-    if whole and fields["name"] == whole:
+        total += best
+    name = fields["name"][-1] if fields["name"] else ""          # the name folded whole
+    if whole and name == whole:
         total += 1000
-    elif whole and fields["name"].startswith(whole):
+    elif whole and name.startswith(whole):
         total += 200
     return total
 
@@ -117,6 +152,8 @@ def search_firmware(records, recipes, names, *, brands=None, q=None, board=None,
     there are query words and no other `sort` was asked for, else by `sort_by_mode`. An unknown filter value
     matches nothing. `names` is {board id: name}; `brands` ({board id: brand}) adds the maker of each board
     to the words a firmware is found by ("m5stack meshcore")."""
+    if unmatchable(q):
+        return []
     by_fw = _boards_of(recipes)
     brands = brands or {}
     tokens = query_tokens(q)

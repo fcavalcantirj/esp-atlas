@@ -60,7 +60,7 @@ export default async function FirmwareIndexPage({ searchParams }: PageProps<"/fi
           ? filteredLead(firmware.length, catalogTotal)
           : firmwareLeadCopy(sort === "relevance" ? "popularity" : sort, firmware.length)}
       </p>
-      {(ok || facets) && <FirmwareFilters key={apiQueryString(query)} query={query} facets={facets} results={firmware.length} />}
+      {(ok || facets) && <FirmwareFilters key={apiQueryString(query)} query={query} facets={facets} results={ok ? firmware.length : null} />}
       {firmware.length > 0 && (
         <>
           <p className="firmware-metric-note">★ Stars · ⑂ Forks. Counts cover the linked GitHub repository, including shared repositories. Recipe evidence determines board compatibility.</p>

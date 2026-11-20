@@ -102,6 +102,27 @@ def test_a_query_word_never_matches_across_two_words_of_a_summary():
     assert ids(q="kawaii") == ["stack-chan"]      # a whole word of a summary is still found
 
 
+def test_a_short_query_word_must_be_a_whole_word_of_the_record():
+    assert ids(q="s3") == ["meshtastic", "ghostesp", "meshcore"]      # the esp32-s3 tag, not "plus3" or "ms3x"
+    assert ids(q="ps") == [] and ids(q="es") == []                    # inside "gps" / "esp32": not a word
+    assert ids(q="c6") == ["ghostesp"]
+    assert ids(q="t") == []                                           # no record has the word "t"
+
+
+def test_a_hit_at_the_start_of_a_word_outranks_one_in_the_middle():
+    fw = [dict(FW[3], id="zz-mid", name="Supercore", popularity={"stars": 9000, "forks": 1}),
+          dict(FW[3], id="zz-start", name="Core Runner", popularity={"stars": 1, "forks": 1})]
+    assert [r["id"] for r in fs.search_firmware(fw, [], {}, q="core")] == ["zz-start", "zz-mid"]
+
+
+def test_a_query_no_record_can_be_found_by_matches_nothing():
+    for q in ("!!!", "小智", "ß", "ghost esp 小智", "?? firmware"):
+        assert fs.unmatchable(q) and ids(q=q) == [], q
+    for q in ("", "   ", "firmware", "the firmware for", "ghost-esp!!", "c++"):
+        assert not fs.unmatchable(q), q
+    assert ids(q="firmware for") == ids()                             # filler only: no query at all
+
+
 def _write(root, kind, ident, text):
     path = root / kind / ident / ("firmware.md" if kind == "firmware" else "recipe.md")
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -113,6 +134,7 @@ def test_the_catalog_is_parsed_once_per_state_of_the_files(tmp_path, monkeypatch
     from esp_atlas_core import firmware as core_firmware, frontmatter
     monkeypatch.setattr(frontmatter, "DATA_DIR", tmp_path)
     monkeypatch.setitem(fs._CATALOG, "signature", None)
+    monkeypatch.setitem(fs._CATALOG, "value", None)       # both restored afterwards: no fixture leaks out
     _write(tmp_path, "firmware", "alpha", "---\nid: alpha\ntype: firmware\nname: Alpha\n---\n")
     recipe = _write(tmp_path, "recipes", "b__alpha", "---\nid: b__alpha\ntype: recipe\nboard: b\nfirmware: alpha\n---\n")
     parses = []
@@ -146,3 +168,7 @@ def test_the_real_catalog_answers_the_queries_people_type():
     on_cardputer = {r["firmware"] for r in recipes if r["board"] == "m5cardputer"}
     assert {r["id"] for r in fs.search_firmware(fw, recipes, boards, board="m5cardputer")} == on_cardputer
     assert len(fs.search_firmware(fw, recipes, boards)) == len(fw)
+    infrared = {r["id"] for r in fw if "ir" in (r.get("capabilities") or [])}
+    found = fs.search_firmware(fw, recipes, boards, q="ir")
+    assert infrared and infrared <= {r["id"] for r in found} and len(found) < len(fw) // 4
+    assert {r["id"] for r in found[:len(infrared)]} & infrared        # the tagged ones are not buried

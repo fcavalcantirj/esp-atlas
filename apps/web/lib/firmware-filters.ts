@@ -47,7 +47,8 @@ function token(raw: Raw): string {
 /** Normalizes Next's `searchParams` to the page's query. Unknown or malformed values become "nothing set",
  * so a hand-edited URL can never produce a state the form cannot show. */
 export function parseFirmwareQuery(params: RawParams): FirmwareQuery {
-  const q = one(params.q).replace(/\s+/g, " ").slice(0, MAX_QUERY);
+  // Cut by code point, never through a surrogate pair: half an emoji makes encodeURIComponent throw.
+  const q = Array.from(one(params.q).replace(/\s+/g, " ")).filter((c) => !/^[\uD800-\uDFFF]$/.test(c)).slice(0, MAX_QUERY).join("").trim();
   const rawSort = one(params.sort);
   const sort = rawSort === RELEVANCE_SORT ? (q ? RELEVANCE_SORT : "") : rawSort && resolveSort(rawSort) === rawSort ? rawSort : "";
   return {
@@ -161,5 +162,5 @@ export function firmwareListRobots(query: FirmwareQuery, apiOk: boolean): Robots
 
 /** `firmware_search` event params: never the words themselves, only whether there were any. */
 export function firmwareSearchParams(query: FirmwareQuery, results: number): Record<string, string | number | boolean> {
-  return { has_q: Boolean(query.q), filters: filterCount(query), sort: effectiveSort(query), results };
+  return { has_query: Boolean(query.q), filters: filterCount(query), sort: effectiveSort(query), result_count: results };
 }

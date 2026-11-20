@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 import httpx
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
@@ -61,6 +61,7 @@ from esp_atlas_api.models import (
     FacetsResponse,
     FirmwareFacetsResponse,
     FirmwareListResponse,
+    FirmwareSearchResponse,
     FirmwareRecord,
     HealthResponse,
     PartDetail,
@@ -457,16 +458,16 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
     def brand_page(slug: str, db_path=Depends(get_db_path)):
         return core_brand_page(slug, db_path=db_path)
 
-    @app.get("/firmware", response_model=FirmwareListResponse)
+    @app.get("/firmware", response_model=Union[FirmwareSearchResponse, FirmwareListResponse])
     def list_firmware(
         sort: Optional[str] = None,
         limit: Optional[int] = Query(None, ge=1, le=100),
         offset: int = Query(0, ge=0),
         q: Optional[str] = Query(None, max_length=120),
         board: Optional[str] = Query(None, max_length=80),
-        soc: Optional[str] = Query(None, max_length=40),
-        category: Optional[str] = Query(None, max_length=40),
-        capability: Optional[str] = Query(None, max_length=40),
+        soc: Optional[str] = Query(None, max_length=80),
+        category: Optional[str] = Query(None, max_length=80),
+        capability: Optional[str] = Query(None, max_length=80),
         tested: bool = False,
         db_path=Depends(get_db_path),
     ):
@@ -490,7 +491,7 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
             observed_firmware(firmware), recipes, names, brands=brands, q=q, board=board, soc=soc,
             category=category, capability=capability, tested=tested, sort=sort)
         sliced = ordered[offset : offset + limit] if limit is not None else ordered[offset:]
-        return FirmwareListResponse(
+        return FirmwareSearchResponse(
             results=[_with_readme_en(r) for r in sliced], total=len(ordered), catalog_total=len(firmware))
 
     @app.get("/firmware/facets", response_model=FirmwareFacetsResponse)

@@ -23,6 +23,16 @@ test("a query is trimmed, collapsed and capped; filter values must look like ids
   assert.equal(filterCount(q), 4);
 });
 
+test("a query cut at the limit never ends in half an emoji, and every state still encodes", () => {
+  const cut = parseFirmwareQuery({ q: "a".repeat(119) + "\u{1F600}" + "tail" });
+  assert.equal(Array.from(cut.q).length, 120);
+  assert.equal(cut.q.endsWith("\u{1F600}"), true);
+  assert.doesNotThrow(() => apiQueryString(cut));
+  const lone = parseFirmwareQuery({ q: "bruce \uD83D" });                 // a lone surrogate in the URL
+  assert.equal(lone.q, "bruce");
+  assert.doesNotThrow(() => firmwareHref(lone));
+});
+
 test("a search with no explicit order is by relevance; an explicit order wins; relevance needs words", () => {
   assert.equal(effectiveSort(parseFirmwareQuery({ q: "bruce" })), RELEVANCE_SORT);
   assert.equal(effectiveSort(parseFirmwareQuery({ q: "bruce", sort: "name" })), "name");
@@ -70,6 +80,6 @@ test("the count line, the empty state and the labels read like a person wrote th
 
 test("the tracking event never carries the words searched for", () => {
   const params = firmwareSearchParams(parseFirmwareQuery({ q: "secret thing", board: "m5cardputer" }), 3);
-  assert.deepEqual(params, { has_q: true, filters: 1, sort: "relevance", results: 3 });
+  assert.deepEqual(params, { has_query: true, filters: 1, sort: "relevance", result_count: 3 });
   assert.equal(JSON.stringify(params).includes("secret"), false);
 });

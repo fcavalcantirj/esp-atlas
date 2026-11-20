@@ -285,7 +285,7 @@ def _ids(r):
 def test_the_bare_list_is_exactly_what_it_was(client):
     bare = client.get("/firmware").json()
     assert bare["total"] == len(bare["results"]) == len(core_list_firmware())
-    assert bare.get("catalog_total") is None                      # only a searched list carries it
+    assert set(bare) == {"results", "total"}                      # the same body as before: no new key
     assert _ids(client.get("/firmware", params={"sort": "popularity"})) == [r["id"] for r in bare["results"]]
 
 
@@ -326,6 +326,14 @@ def test_an_explicit_sort_wins_over_relevance_and_paging_slices_after_ordering(c
 
 def test_an_over_long_query_is_refused_not_scanned(client):
     assert client.get("/firmware", params={"q": "x" * 121}).status_code == 422
+    for name in ("board", "soc", "category", "capability"):        # the page lets 80 characters through
+        assert client.get("/firmware", params={name: "x" * 80}).json()["total"] == 0, name
+
+
+def test_a_query_no_record_can_be_found_by_is_an_empty_list(client):
+    for q in ("!!!", "小智"):
+        body = client.get("/firmware", params={"q": q}).json()
+        assert body["total"] == 0 and body["results"] == [] and body["catalog_total"] > 0, q
 
 
 def test_facets_list_every_option_with_counts_and_board_names(client):
