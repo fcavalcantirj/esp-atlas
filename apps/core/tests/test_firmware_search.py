@@ -104,9 +104,11 @@ def test_a_query_word_never_matches_across_two_words_of_a_summary():
 
 def test_a_short_query_word_must_be_a_whole_word_of_the_record():
     assert ids(q="s3") == ["meshtastic", "ghostesp", "meshcore"]      # the esp32-s3 tag, not "plus3" or "ms3x"
-    assert ids(q="ps") == [] and ids(q="es") == []                    # inside "gps" / "esp32": not a word
+    assert ids(q="ps") == [] and ids(q="hc") == []                    # inside "gps" / "meshcore": never mid-word
     assert ids(q="c6") == ["ghostesp"]
-    assert ids(q="t") == []                                           # no record has the word "t"
+    assert ids(q="m5") == ["ghostesp", "meshcore", "stack-chan"]      # two characters may start a word: M5Stack
+    assert ids(q="m5 meshcore") == ["meshcore"]
+    assert ids(q="t") == [] and ids(q="m") == []                      # one character: a whole word only
 
 
 def test_a_hit_at_the_start_of_a_word_outranks_one_in_the_middle():
@@ -116,11 +118,13 @@ def test_a_hit_at_the_start_of_a_word_outranks_one_in_the_middle():
 
 
 def test_a_query_no_record_can_be_found_by_matches_nothing():
-    for q in ("!!!", "小智", "ß", "ghost esp 小智", "?? firmware"):
+    for q in ("!!!", "小智", "ß", "ghost esp 小智", "?? firmware", "& firmware"):
         assert fs.unmatchable(q) and ids(q=q) == [], q
-    for q in ("", "   ", "firmware", "the firmware for", "ghost-esp!!", "c++"):
+    for q in ("", "   ", "firmware", "the firmware for", "the-firmware", "ghost-esp!!", "c++", "wifi & ble"):
         assert not fs.unmatchable(q), q
     assert ids(q="firmware for") == ids()                             # filler only: no query at all
+    assert ids(q="mesh & lora") == ids(q="mesh lora") == ["meshtastic", "meshcore"]      # punctuation between words
+    assert ids(q="meshcore - cardputer + adv") == ["meshcore"]
 
 
 def _write(root, kind, ident, text):
@@ -168,6 +172,12 @@ def test_the_real_catalog_answers_the_queries_people_type():
     on_cardputer = {r["firmware"] for r in recipes if r["board"] == "m5cardputer"}
     assert {r["id"] for r in fs.search_firmware(fw, recipes, boards, board="m5cardputer")} == on_cardputer
     assert len(fs.search_firmware(fw, recipes, boards)) == len(fw)
+    lost = [r["name"] for r in fw if r["id"] not in {x["id"] for x in fs.search_firmware(fw, recipes, boards, q=r["name"])}]
+    assert lost == []                                                 # every firmware is found by its own name
+    on_m5 = {r["firmware"] for r in recipes if r["board"].startswith("m5")}
+    m5 = {r["id"] for r in fs.search_firmware(fw, recipes, boards, q="m5")}
+    assert len(m5) > 100 and on_m5 <= m5
+    assert fs.search_firmware(fw, recipes, boards, q="m5 nemo")[0]["id"] == "m5stick-nemo"
     infrared = {r["id"] for r in fw if "ir" in (r.get("capabilities") or [])}
     found = fs.search_firmware(fw, recipes, boards, q="ir")
     assert infrared and infrared <= {r["id"] for r in found} and len(found) < len(fw) // 4

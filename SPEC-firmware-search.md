@@ -26,9 +26,10 @@ category, capabilities, chip families and distribution; its summary. A board cou
 its maker ("m5stack meshcore"). So "meshcore cardputer adv" finds MeshCore builds that have a recipe for the
 Cardputer-Adv, and "cardputer" alone lists everything with a Cardputer recipe. Names, ids and tags match
 whatever the spacing ("t deck", "tdeck", "T-Deck"); in a summary a query word must lie inside one word. A
-query word of one or two characters must be a whole word of the record ("ir" is the infrared tag, not part of
-"Pirate"; "s2", "c6", "v2"). A query holding something no record can be found by ("!!!", non-Latin script)
-matches nothing; a query of filler words only is no query.
+two-character query word must be a whole word or start one ("m5" finds M5Stick; "ir" is the infrared tag, not
+part of "Pirate"); a one-character word must be a whole word. Punctuation between words is ignored
+("wifi & ble"). A query no record can be found by (non-Latin script, or nothing but punctuation) matches
+nothing; a query of filler words only is no query. Every firmware is found by its own name.
 
 Order with `q` and no explicit `sort`: **relevance** (`sort=relevance`): a word found in the name outranks one
 found in the id or maintainer, then a board, then a tag, then the summary; a hit at the start of a word counts

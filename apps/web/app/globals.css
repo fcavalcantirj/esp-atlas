@@ -1358,6 +1358,28 @@ input[type="checkbox"]:checked::after {
   white-space: nowrap;
 }
 
+/* A card's GitHub counts and their "GitHub repo · as of …" scope: one line when there is room, wrapping
+   between the two when there is not. The scope used to be a forced second line inside the counts, which on a
+   wide card left it hanging under the stars with "Recipes for N boards" stranded beside a two-line block.
+   The text itself is never clipped or hidden (SPEC-firmware-popularity.md §2). */
+.part-card-meta .popularity-glance {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.4rem;
+  white-space: normal;
+}
+
+.part-card-meta .popularity-glance-metric,
+.part-card-meta .popularity-glance-scope {
+  white-space: nowrap;
+}
+
+.part-card-meta .popularity-glance-scope {
+  display: inline;
+  margin-left: 0.3rem;
+}
+
 /* SPEC-firmware-search.md §3: the /firmware search + filter form. Reuses .field / .label-row / .form-grid. */
 .firmware-filters {
   display: grid;

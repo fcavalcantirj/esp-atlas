@@ -94,8 +94,8 @@ export default function FirmwareFilters({ query, facets, results }: { query: Fir
         </label>
       </div>
       <div className="firmware-filters-row">
-        <label className="firmware-filters-check">
-          <input type="checkbox" name="tested" value="1" defaultChecked={query.tested} onChange={submit} {...pointer} />
+        <label className="firmware-filters-check" {...pointer}>
+          <input type="checkbox" name="tested" value="1" defaultChecked={query.tested} onChange={submit} />
           <span>Tested on real hardware</span>
         </label>
         <button type="submit" className="btn btn--primary btn--sm">Search</button>

@@ -39,10 +39,14 @@ def query_tokens(q) -> list:
 
 
 def unmatchable(q) -> bool:
-    """True when the query holds something that is not filler and that no record can be found by: a piece
-    that folds to nothing ("!!!", "小智"). Such a query matches nothing, instead of silently listing the whole
-    catalog as if it had been searched."""
-    return any(not fold(piece) and piece.lower() not in NOISE for piece in str(q or "").split())
+    """True when the query asks for something no record can be found by, so it matches nothing instead of
+    silently listing the whole catalog as if it had been searched: a piece with letters or digits that folds
+    to nothing ("小智", "ß"), or a query left with no word at all that is not just filler ("!!!"). Punctuation
+    standing between words ("wifi & ble", "marauder - cardputer") is simply ignored."""
+    pieces = str(q or "").split()
+    if any(not fold(piece) and any(ch.isalnum() for ch in piece) for piece in pieces):
+        return True
+    return not query_tokens(q) and any(not fold(piece) for piece in pieces)
 
 
 def _words(*texts) -> list:
@@ -115,18 +119,22 @@ def _fields(record, its_recipes, names, brands) -> dict:
     }
 
 
-SHORT = 3            # a query word shorter than this must be a whole word of the record ("ir", "s2", "c6", "v2")
-MID_WORD = 0.5       # a hit in the middle of a word counts half of one at a word's start
+SHORT = 3            # a query word shorter than this is never looked for inside a word ("ir", "s2", "c6", "m5")
+PARTIAL = 0.5        # a short word that only starts a word, or a longer one found mid-word, counts half
 
 
 def _hit(token, words) -> float:
-    """How well a query word is found in a field: 1 at the start of a word (a whole word, for a short query
-    word), MID_WORD inside one, 0 not at all. So "ir" finds the infrared tag and not "Pirate"."""
-    if len(token) < SHORT:
-        return 1.0 if token in words else 0.0
-    if any(w.startswith(token) for w in words):
+    """How well a query word is found in a field: 1, PARTIAL or 0.
+    - three characters or more: 1 at the start of a word, PARTIAL in the middle of one;
+    - two characters: 1 as a whole word, PARTIAL at the start of one ("m5" finds M5Stick), never mid-word
+      ("ir" is the infrared tag, not part of "Pirate");
+    - one character: a whole word only."""
+    if token in words:
         return 1.0
-    return MID_WORD if any(token in w for w in words) else 0.0
+    starts = any(w.startswith(token) for w in words)
+    if len(token) < SHORT:
+        return PARTIAL if starts and len(token) == 2 else 0.0
+    return 1.0 if starts else PARTIAL if any(token in w for w in words) else 0.0
 
 
 def _score(fields, tokens, whole):
