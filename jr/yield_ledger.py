@@ -50,10 +50,13 @@ def rows_for_tick(stages: list[dict], split: dict, now: datetime, calls: int | N
 def read_rows(path: Path) -> list[dict]:
     """Every well-formed row, in file order; a corrupt line is skipped, never fatal."""
     p = Path(path)
-    if not p.is_file():
-        return []
+    return parse_rows(p.read_text(encoding="utf-8")) if p.is_file() else []
+
+
+def parse_rows(text: str) -> list[dict]:
+    """Every well-formed row of a yield.jsonl text, in order; a corrupt line is skipped."""
     rows = []
-    for line in p.read_text(encoding="utf-8").splitlines():
+    for line in (text or "").splitlines():
         line = line.strip()
         if not line:
             continue
@@ -75,9 +78,22 @@ def append_rows(path: Path, rows: list[dict]) -> list[dict]:
     kept.sort(key=lambda r: (r["tick"], r["stage"]))
     p.parent.mkdir(parents=True, exist_ok=True)
     tmp = p.with_name(p.name + ".tmp")
-    tmp.write_text("".join(json.dumps(r, sort_keys=True, ensure_ascii=False) + "\n" for r in kept), encoding="utf-8")
+    tmp.write_text(_render(kept), encoding="utf-8")
     tmp.replace(p)
     return kept
+
+
+def merge_text(main: str, pr: str) -> str:
+    """The yield.jsonl a PR refreshed against main carries (jr/review_refresh.py): main's rows plus every
+    PR row main lacks — the PR's own tick — keyed by (tick, stage), main's row on a shared key, sorted.
+    Taking main's file alone erased the producing ticks' rows (incident 0cf1acb95f79, 2026-11-19)."""
+    rows = {(r["tick"], r["stage"]): r for r in parse_rows(pr)}
+    rows.update({(r["tick"], r["stage"]): r for r in parse_rows(main)})
+    return _render([rows[k] for k in sorted(rows)])
+
+
+def _render(rows: list[dict]) -> str:
+    return "".join(json.dumps(r, sort_keys=True, ensure_ascii=False) + "\n" for r in rows)
 
 
 def lane_yield(rows: list[dict], now: datetime, window_ticks: int) -> dict:

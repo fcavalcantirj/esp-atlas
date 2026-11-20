@@ -192,6 +192,34 @@ that's a coverage hole to close, not a silent gap.
     `STALL_AFTER` = 3 consecutive ticks, the tick sends one Telegram nudge, and then at most one per
     UTC day. A shrinking or empty backlog clears it. An unreadable state file is a nudge, never
     silence, and a dry run counts nothing.
+  - **Admission names boards with the catalog's own vocabulary (2026-11-17).** The scorer's board
+    evidence is, in order: `jr/device_map.py` (the precise M5Stack sibling rules), the launcher
+    category, a submission's resolved hint, then `jr/board_names.boards_named_in` over the repo's own
+    words — name, description, GitHub topics (author-declared, on the repo page) and README title, not
+    the README body (a support matrix names many boards; widening is Track B's job). The vocabulary is
+    data/boards itself: every board's id, brand + name, aka, and its bare name only when it carries a
+    digit ("T-Display-S3", "StickC-Plus2"); whole-word matches, separators optional anywhere in a term
+    that carries the brand, but only at the catalog's own word breaks in a brandless one ("E-Paper S3"
+    never names the PaperS3, "a tiny S3" never the TinyS3: the #1797 review), and a name that starts
+    with a chip only as the catalog spells it, hyphens included ("ESP32-Ethernet-Kit", never "any ESP32
+    Ethernet kit"); URLs, library and SDK references are not prose; the specific board beats the
+    general one it contains. **What follows a name decides (2026-11-20, the third #1797 review).**
+    Vendors sell siblings named as a catalogued name plus a word ("T-Beam Supreme", an ESP32-S3;
+    "T-Embed CC1101"; "T-Display S3 Long"), and that word is an open set, so no list of suffixes is
+    ever complete. A name therefore counts only when followed by the end of its text, punctuation, or a
+    word of the closed list `board_names.FOLLOW_OK` (function words, "board", "firmware", "support");
+    any other word makes it an unknown sibling and names nothing. Each text is read on its own (the end
+    of a description is never read as followed by a topic), and a GitHub topic names a board only when
+    the whole topic is one of the board's terms ("m5stickc", "lilygo-tdisplay-s3"; "t-beam-supreme" is
+    not the T-Beam). The rule fails closed: a missed board is a smaller catalog, a wrong board a false
+    claim; the build-file path below is the one that recovers the misses. Exactly one board is
+    evidence; several is `ambiguous_board`, a skip, never a guess; none is `no_board_evidence`. The SOC
+    cross-check, the device-build evidence gate and the evidence checker still run after it. Why:
+    `device_map` covered 14 of 118 boards, all M5Stack; 92 of the 130 topic rejects on main were
+    `no_board_evidence`, 14 of them naming a catalogued Heltec, LilyGO or StickC board in their own
+    description or topics under this rule (`jr/fixtures/board_names/no_board_evidence_2026-11-17.json`;
+    the first version counted 16: one was two texts glued together, one is a known miss, both noted in
+    the fixture).
   - **A build-file board for every candidate (2026-11-17), not only submissions.** When the prose names
     no catalogued board (`no_board_evidence`), admit and the topics path run the device-build evidence
     gate first and take the board from the targets it already read: `device_evidence.check` returns

@@ -2,7 +2,7 @@
 
 Status: the task text `jr/agent_review.py` hands the runner's coding delegate for one code pull request
 (docs/REVIEW-CONTRACT.md is the contract; this is how you carry it out). The API lane's workflow
-(`.github/workflows/agent-review.yml`) gives `anthropics/claude-code-action` the same contract with its own
+(`.github/workflows/agent-review.yml`) gives `claude -p` the same contract with its own
 inline prompt (no "This run" block: that lane writes no verdict file).
 
 ## Inputs (environment)
@@ -21,6 +21,10 @@ inline prompt (no "This run" block: that lane writes no verdict file).
    --repo $REPO_SLUG`) and the PR body (`gh pr view $PR_NUMBER --repo $REPO_SLUG --json title,body`).
 2. Match every `[TEST]` and `[REAL]` claim; run only the test files the diff adds or changes
    (`PYTHONPATH=apps/core/src <REVIEW_PYTHON> -m pytest <files> -q`; do not look for another interpreter).
+   A changed test file under `apps/web/` (TypeScript) is READ, not run: this machine has no Node setup for it,
+   and the required check `tests` runs the whole web suite at the PR's head before anything can merge. Check
+   that the test tests what the claim says and look at `gh pr checks $PR_NUMBER --repo $REPO_SLUG`: `tests`
+   failed at this head is a finding; pending is not, and "could not run it" is never a finding for these files.
 3. Write the verdict to `VERDICT_FILE`:
 
 ```json

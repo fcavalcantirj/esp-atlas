@@ -310,7 +310,9 @@ rule "subscription and api as fallback":**
 - **API lane (fallback).** Only when the delegate's own answer says the lane is DOWN (no
   `CLAUDE_CODE_OAUTH_TOKEN`, usage limit, 401/403/429), the runner labels that PR `review-fallback` — at most
   `FALLBACK_PER_DAY` (3) a UTC day, counted in the runner's state — and `.github/workflows/agent-review.yml`
-  (trigger: that label) runs `anthropics/claude-code-action@v1` with `ANTHROPIC_API_KEY`, tools limited to
+  (trigger: that label) runs the Claude Code CLI directly (`claude -p`, an exact version; never
+  `anthropics/claude-code-action`, which Anthropic bills as Claude Code, a product the plan's monthly API
+  credit does not pay for: 2026-11-20) with `ANTHROPIC_API_KEY`, tools limited to
   `gh pr diff`, `gh pr view`, reading the checkout and running the touched test files, then posts the same
   comment (lane `api`) and removes the label. BUSY (the delegate's lock is held) is not down: the PR waits an
   hour. Without the secret the fallback job says so and the PR waits for the subscription lane.
@@ -321,6 +323,14 @@ rule "subscription and api as fallback":**
   --auto --match-head-commit <head>`, landing only when every required check is green there. A BLOCK labels
   the PR `needs-human` with the findings already in the comment; the author's next push is a new review;
   nobody waits.
+- **An armed merge that cannot land never holds the hour (2026-11-20).** A merge requested with `--auto`
+  counts as the hour's merge for as long as the PR stays open, and GitHub never merges a PR that conflicts
+  with its base. #1851 (PASS, armed 03:14Z, conflicting) held the cap for every other reviewed PR until a
+  person disarmed it at 07:55Z. So: C4b, a PR whose `mergeable` is `CONFLICTING` is never armed (GitHub
+  computes that lazily, so `UNKNOWN` is asked again, three reads); and the hourly sweep takes back (auto-merge
+  off, label dropped) an armed merge that conflicts or that was armed more than an hour ago and is still open.
+  The one taken back for its age is decided again by the next sweep, not the same one, so it cannot take the
+  hour it just gave back. A merge that could not be taken back still counts.
 
 This is the one place an LLM sits in the loop, and it decides nothing the catalog shows: a wrong PASS is
 caught by the same after-the-fact audit as a wrong human approval, and the switch turns it off in one
@@ -342,7 +352,10 @@ decisions that existed only in the PR.
 - every conflicted path is bookkeeping (`review_routing.is_bookkeeping`); a content conflict is left
   for a person;
 - the ledger becomes `memory.merge_pr_ledger(main, merge base, PR head)`: main's, plus every record the PR
-  changed under `carry_decisions`' rules, plus the PR's own proposals; every other bookkeeping file is
+  changed under `carry_decisions`' rules, plus the PR's own proposals; `docs/telemetry/yield.jsonl` is
+  main's rows plus every row the PR has and main lacks, keyed by (tick, stage), main's row on a shared key
+  (`yield_ledger.merge_text`: taking main's file erased the review PR's own tick, i.e. every producing
+  tick, and raised a false `stall:firmware`, incident 0cf1acb95f79, 2026-11-19); every other bookkeeping file is
   main's (a PR's own `jr/board_cooldown.json` entries are dropped and re-derived the next time that board
   fails, as for a superseded bookkeeping PR). `scripts/ledger_guard.py` must be green against main, and every catalog file the PR changed must
   be byte-identical to its head (a silent auto-merge into a reviewed file is refused);

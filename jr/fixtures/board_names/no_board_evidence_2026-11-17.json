@@ -1,0 +1,1520 @@
+{
+ "_about": "The 92 repos jr/proposed_ledger.json on main held as `repo-note:` rejected `no_board_evidence: no catalogued device named` on 2026-11-17 (topics stage, Nov 16-17), with the repo metadata read from the GitHub API that day (read-only). `expected` = the catalogued boards jr/board_names names from repo name + description + topics, hand-reviewed; [] = none, two ids = ambiguous.",
+ "read_on": "2026-11-17",
+ "cases": [
+  {
+   "repo": "21cncstudio/project_aura",
+   "stars": 797,
+   "language": "C",
+   "topics": [
+    "3d-printing",
+    "adafruit",
+    "air-quality",
+    "arduino",
+    "diy",
+    "esp32",
+    "esp32-s3",
+    "home-assistant"
+   ],
+   "description": "ESP32‑S3 air‑quality station with LVGL UI, MQTT, Home Assistant",
+   "expected": []
+  },
+  {
+   "repo": "adonno/tagreader",
+   "stars": 1628,
+   "language": "Shell",
+   "topics": [
+    "esphome",
+    "tag-reader"
+   ],
+   "description": "Simple to build/use NFC tag reader, specially created for Home Assistant",
+   "expected": []
+  },
+  {
+   "repo": "agittins/bermuda",
+   "stars": 2151,
+   "language": "Python",
+   "topics": [
+    "ble",
+    "bluetooth-beacons",
+    "bluetooth-low-energy",
+    "bluetooth-proxy",
+    "esphome",
+    "hacs-integration",
+    "homeassistant-custom-component",
+    "triangulation"
+   ],
+   "description": "Bermuda Bluetooth/BLE Triangulation / Trilateration for HomeAssistant",
+   "expected": []
+  },
+  {
+   "repo": "aknabi/smalltalkje",
+   "stars": 35,
+   "language": "C",
+   "topics": [
+    "embedded-software",
+    "esp-idf",
+    "esp32",
+    "little-smalltalk",
+    "m5stickc",
+    "smalltalk"
+   ],
+   "description": "An embedded Little Smalltalk for ESP32 with SSD1306 OLED and M5StickC support (and stilll runs on Macs, Linux)... After a 4 year break start",
+   "expected": [
+    "m5stick-c"
+   ]
+  },
+  {
+   "repo": "alaltitov/waveshare-esp32-p4-86-panel-eth-2ro",
+   "stars": 117,
+   "language": null,
+   "topics": [
+    "display",
+    "esp32-p4",
+    "esphome",
+    "esphomeyaml",
+    "firmware",
+    "homeassistant",
+    "iot",
+    "lvgl"
+   ],
+   "description": "Waveshare-ESP32-P4-86-Panel-ETH-2RO firmware",
+   "expected": []
+  },
+  {
+   "repo": "awehttam/binkterm-php",
+   "stars": 44,
+   "language": "PHP",
+   "topics": [
+    "bbs",
+    "binkp",
+    "binktermphp",
+    "fidonet",
+    "mesh",
+    "meshcore",
+    "php"
+   ],
+   "description": "A full-featured open-source BBS: mobile web & telnet/SSH access, FidoNet echomail/netmail, file areas, DOS/C64/web door games, local & MRC c",
+   "expected": []
+  },
+  {
+   "repo": "b1scuitdev/e07xesp32c5",
+   "stars": 36,
+   "language": null,
+   "topics": [
+    "cc1101",
+    "easyeda",
+    "esp32",
+    "esp32-c5",
+    "flipperzero",
+    "open-hardware",
+    "pcb",
+    "rf"
+   ],
+   "description": "E07xESP32C5 is a Sub-GHz & ESP32-C5 module for Flipper Zero. It includes an EBYTE E07-433M20S (PA+LNA), microSD slot, UART pads for GPS, 5V ",
+   "expected": []
+  },
+  {
+   "repo": "batear-io/batear",
+   "stars": 440,
+   "language": "C",
+   "topics": [
+    "acoustic",
+    "anti-war",
+    "drone",
+    "drone-detection",
+    "esp32",
+    "heltec",
+    "home-assistant",
+    "lilygo"
+   ],
+   "description": "● batear — Ultra-low-cost, off-grid acoustic drone detector. Edge computing. Protect your airspace with a microphone.",
+   "expected": []
+  },
+  {
+   "repo": "blackymas/nspanel_ha_blueprint",
+   "stars": 1965,
+   "language": "C++",
+   "topics": [
+    "blueprint",
+    "esphome",
+    "home-assistant",
+    "homeassistant",
+    "nextion",
+    "nextion-display",
+    "nspanel",
+    "nspanel-pro"
+   ],
+   "description": "This allows you to configure your complete NSPanel via Blueprint with UI and without changing anything in the code",
+   "expected": []
+  },
+  {
+   "repo": "cheerlights/cheerlights-esp32",
+   "stars": 1,
+   "language": "C++",
+   "topics": [
+    "arduino",
+    "ble",
+    "cheerlights",
+    "esp32",
+    "iot",
+    "mqtt",
+    "nimble",
+    "platformio"
+   ],
+   "description": "Firmware that makes an ESP32 board with LEDs, or a LilyGO T-Display, show the CheerLights color, over Wi-Fi or Bluetooth.",
+   "expected": [
+    "lilygo-t-display"
+   ]
+  },
+  {
+   "repo": "copych/esp32_sd_sampler",
+   "stars": 82,
+   "language": "C++",
+   "topics": [
+    "arduino",
+    "audio",
+    "esp32-p4",
+    "esp32-s3",
+    "esp32p4",
+    "esp32s3",
+    "music",
+    "sampler"
+   ],
+   "description": "ESP32-S3 / ESP32-P4 based sampler handles gigabytes of PCM WAV files, up to 19 stereo voices polyphony, CD quality",
+   "expected": []
+  },
+  {
+   "repo": "cryptspeak/m5uploader",
+   "stars": 7,
+   "language": "Python",
+   "topics": [
+    "cardputer",
+    "esptool",
+    "m5burner",
+    "m5stack"
+   ],
+   "description": "Minimal, security-conscious M5Burner replacement. Not affiliated with M5Stack",
+   "expected": [],
+   "note": "2026-11-20: was ['m5cardputer'], read from the END of the description ('... Not affiliated with M5Stack') glued to the FIRST topic ('cardputer'). Neither text names the board: the description names the vendor, the topic is a digitless bare name."
+  },
+  {
+   "repo": "cyberman54/esp32-paxcounter",
+   "stars": 2126,
+   "language": "C++",
+   "topics": [
+    "arduino",
+    "bme680",
+    "dcf77",
+    "esp32",
+    "gps",
+    "gps-tracker",
+    "helium-network",
+    "heltec"
+   ],
+   "description": "Wifi & BLE driven passenger flow metering with cheap ESP32 boards",
+   "expected": []
+  },
+  {
+   "repo": "datasith/ai_demos_esp32",
+   "stars": 65,
+   "language": "C++",
+   "topics": [
+    "arduino",
+    "arduino-esp32",
+    "esp32"
+   ],
+   "description": "Example code for using ESP32 Development Boards with various electronic and mechanical components.",
+   "expected": []
+  },
+  {
+   "repo": "dekiengine/deki-editor",
+   "stars": 7,
+   "language": "C++",
+   "topics": [
+    "2d",
+    "cpp",
+    "deki",
+    "deki-editor",
+    "deki-engine",
+    "embedded",
+    "embedded-graphics",
+    "esp32"
+   ],
+   "description": "The visual editor of Deki, a modular C++ engine made first for embedded devices, that builds anything and runs on the desktop too: scenes, i",
+   "expected": []
+  },
+  {
+   "repo": "dvucinozd/pajoniiir",
+   "stars": 81,
+   "language": "C",
+   "topics": [
+    "ddj-flx4",
+    "esp-idf",
+    "esp32-p4",
+    "hercules",
+    "lvlg",
+    "pioneer",
+    "traktor-kontrol"
+   ],
+   "description": "Standalone dual-deck DJ system using a Pioneer, Traktor and Hercules DJ controllers, powered by ESP32-P4 Guiton JC4880P443C-I-W-Y , JC1060P4",
+   "expected": []
+  },
+  {
+   "repo": "emenstanougat/esp32-bluejammer",
+   "stars": 8933,
+   "language": null,
+   "topics": [
+    "bluetooth",
+    "bt",
+    "coding",
+    "cybersecurity",
+    "diy",
+    "electronics",
+    "esp32",
+    "flashing"
+   ],
+   "description": "The ESP32-BlueJammer (Bluetooth jammer, BLE jammer, WiFi jammer, RC jammer) disrupts 2.4GHz communications. Using an ESP32 and nRF24 modules",
+   "expected": []
+  },
+  {
+   "repo": "esp-cpp/espp",
+   "stars": 128,
+   "language": "C++",
+   "topics": [
+    "cpp",
+    "esp-idf",
+    "esp32",
+    "esp32-p4",
+    "esp32-s3"
+   ],
+   "description": "C++ components for ESP",
+   "expected": []
+  },
+  {
+   "repo": "esp-rs/std-training",
+   "stars": 767,
+   "language": "Rust",
+   "topics": [
+    "esp32",
+    "esp32-c3",
+    "rust-embedded",
+    "rustlang",
+    "training"
+   ],
+   "description": "Embedded Rust on Espressif training material.",
+   "expected": []
+  },
+  {
+   "repo": "evil-project-team/esp32-c5-j4ck3d",
+   "stars": 73,
+   "language": "C",
+   "topics": [
+    "esp32-c5",
+    "wifi-security"
+   ],
+   "description": "An advanced WiFi scanning and packet sniffing toolkit for the ESP32-C5, featuring a cyberpunk-inspired web interface.",
+   "expected": []
+  },
+  {
+   "repo": "expresslrs/expresslrs",
+   "stars": 5497,
+   "language": "C",
+   "topics": [
+    "drone",
+    "esp32",
+    "esp8266",
+    "fpv",
+    "lora",
+    "lr1121",
+    "quadcopter",
+    "rc"
+   ],
+   "description": "High Performance Open Source Radio Control Link",
+   "expected": []
+  },
+  {
+   "repo": "ffenix113/zigbee_home",
+   "stars": 673,
+   "language": "Go",
+   "topics": [
+    "esphome",
+    "home-assistant",
+    "nrf52",
+    "nrf52840",
+    "nrf52840-dongle",
+    "nrf53",
+    "nrf5340",
+    "nrf54l"
+   ],
+   "description": "Project to provide functionality similar to ESPHome but for Zigbee instead of WiFi for nRF52, nRF53 & nRF54L",
+   "expected": []
+  },
+  {
+   "repo": "filippocappa/netstalker",
+   "stars": 7,
+   "language": "JavaScript",
+   "topics": [
+    "cardputer",
+    "dashboard",
+    "esp32",
+    "heatmap",
+    "javascript",
+    "m5stack",
+    "mapbox",
+    "visualization"
+   ],
+   "description": "Wardriving visualization: interactive map and stats dashboard for Wi-Fi access point data captured with ESP32 / M5Stack.",
+   "expected": []
+  },
+  {
+   "repo": "fluddel94/mvg_abfahrtsdisplay_e290",
+   "stars": 47,
+   "language": "C++",
+   "topics": [
+    "arduino",
+    "arduino-ide",
+    "e-ink",
+    "e-ink-display",
+    "esp32",
+    "esp32-s3",
+    "heltec",
+    "munich"
+   ],
+   "description": "E-Ink-Abfahrtsdisplay für MVG/MVV-Haltestellen (Heltec Vision Master E290)",
+   "expected": []
+  },
+  {
+   "repo": "frameos/frameos",
+   "stars": 461,
+   "language": "TypeScript",
+   "topics": [
+    "framebuffer",
+    "hdmi",
+    "inky",
+    "inkyimpression",
+    "pimoroni",
+    "raspberry-pi",
+    "waveshare",
+    "waveshare-epaper"
+   ],
+   "description": "Operating system for single function smart frames",
+   "expected": []
+  },
+  {
+   "repo": "galusperes/hometiles",
+   "stars": 275,
+   "language": "C",
+   "topics": [
+    "dashboard",
+    "esp32",
+    "esp32-p4",
+    "esp32-s3",
+    "guition",
+    "home-assistant",
+    "home-automation",
+    "lvgl"
+   ],
+   "description": "Touch dashboards for Home Assistant on ESP32-P4 and ESP32-S3 displays. Lights, climate, sensors, energy, weather and more, set up in your br",
+   "expected": []
+  },
+  {
+   "repo": "heltecautomation/cubecell-arduino",
+   "stars": 277,
+   "language": "C",
+   "topics": [
+    "arduino",
+    "cubecell",
+    "heltec",
+    "lora-node",
+    "lorawan"
+   ],
+   "description": "Heltec CubeCell Series (based on ASR6501, ASR6502 chip) Arduino support.",
+   "expected": []
+  },
+  {
+   "repo": "highcodeh/tentacleos",
+   "stars": 512,
+   "language": "C",
+   "topics": [
+    "badusb",
+    "ble",
+    "bluetooth",
+    "esp-idf",
+    "esp32-c5",
+    "esp32-s3",
+    "espressif",
+    "firmware"
+   ],
+   "description": "Firmware High Boy",
+   "expected": []
+  },
+  {
+   "repo": "hn/bsh-home-appliances",
+   "stars": 628,
+   "language": "C++",
+   "topics": [
+    "bosch",
+    "bsh",
+    "d-bus",
+    "esp8266",
+    "esphome",
+    "esphome-component",
+    "home-assistant",
+    "home-connect"
+   ],
+   "description": "BSH Bosch Siemens home appliances reverse engineering: D-Bus, washing machine, dryer electronics",
+   "expected": []
+  },
+  {
+   "repo": "huskerminion/techo5",
+   "stars": 733,
+   "language": "Go",
+   "topics": [
+    "alexa-alternative",
+    "alpine-linux",
+    "checkers",
+    "cronos",
+    "echo-show",
+    "echo-show-5",
+    "esphome",
+    "firmware"
+   ],
+   "description": "Open firmware for the Echo Show 5, 1st and 2nd gen: Alpine Linux instead of Android, no Alexa. A local Home Assistant voice satellite with i",
+   "expected": []
+  },
+  {
+   "repo": "hybridgroup/go-haystack",
+   "stars": 1543,
+   "language": "Go",
+   "topics": [
+    "airtag",
+    "bluetooth",
+    "esp32-c3",
+    "esp32-s3",
+    "find-my",
+    "findmy",
+    "golang",
+    "linux"
+   ],
+   "description": "Track personal Bluetooth devices via Apple's \"Find My\" network using OpenHaystack and Macless-Haystack with tools written in Go/TinyGo. No A",
+   "expected": []
+  },
+  {
+   "repo": "iho77/loratomqtt",
+   "stars": 29,
+   "language": "C",
+   "topics": [
+    "esp32-arduino",
+    "heltec",
+    "lora",
+    "mqtt"
+   ],
+   "description": "LoRa to MQTT gateway",
+   "expected": []
+  },
+  {
+   "repo": "jaqvil/t-displ_js8_mon",
+   "stars": 1,
+   "language": "C++",
+   "topics": [
+    "js8",
+    "js8call",
+    "t-display"
+   ],
+   "description": "View of JS8 messages heard by your JS8Call application on a small Lilygo (TTGO) T-Display V1.1 unit",
+   "expected": []
+  },
+  {
+   "repo": "jason2866/esp32tool",
+   "stars": 42,
+   "language": "JavaScript",
+   "topics": [
+    "backup",
+    "esp32",
+    "esp32-c2",
+    "esp32-c3",
+    "esp32-c5",
+    "esp32-c6",
+    "esp32-h2",
+    "esp32-p4"
+   ],
+   "description": "The esp32 swiss army knife for reading, writing and backup anything blazing fast",
+   "expected": []
+  },
+  {
+   "repo": "jhiggason/lorawirelesstracker",
+   "stars": 59,
+   "language": "C++",
+   "topics": [
+    "arduino",
+    "esp32",
+    "gnss",
+    "heltec",
+    "lora",
+    "makerfocus",
+    "oled"
+   ],
+   "description": "Heltec Wireless Tracker (MakerFocus) ESP32/Oled/GNSS/Lora SKU: ZC-193-915",
+   "expected": [
+    "heltec-wireless-tracker"
+   ]
+  },
+  {
+   "repo": "joengenduvel/espwv32",
+   "stars": 25,
+   "language": "HTML",
+   "topics": [
+    "arduino",
+    "esp32",
+    "esp32-arduino",
+    "m5stack",
+    "m5stickc"
+   ],
+   "description": "A password vault designed to work offline",
+   "expected": [
+    "m5stick-c"
+   ]
+  },
+  {
+   "repo": "john30/ebusd-esp32",
+   "stars": 62,
+   "language": null,
+   "topics": [
+    "adapter",
+    "ebus",
+    "ebusd",
+    "esp32-c3",
+    "esp32-c5",
+    "esp32-c6",
+    "micro-ebusd",
+    "shield"
+   ],
+   "description": "Firmware for ESP32-C6, ESP32-C5, and ESP32-C3 allowing eBUS communication for ebusd (https://github.com/john30/ebusd) and including micro-eb",
+   "expected": []
+  },
+  {
+   "repo": "jonastollenaere/sparrow-3d",
+   "stars": 38,
+   "language": "C++",
+   "topics": [
+    "3d-nesting",
+    "3d-packing",
+    "3d-printing",
+    "cutting-and-packing",
+    "heuristics",
+    "irregular-packing",
+    "meshcore",
+    "nesting"
+   ],
+   "description": "A 3D adaptation of the state-of-the-art sparrow nesting algorithm",
+   "expected": []
+  },
+  {
+   "repo": "jonnybergdahl/homeassistant_um_smartusbhub_integration",
+   "stars": 0,
+   "language": "Python",
+   "topics": [
+    "developer-experience",
+    "developer-tool",
+    "developer-tools",
+    "development-tools",
+    "home-assistant",
+    "unexpected-maker",
+    "usb-hub"
+   ],
+   "description": "A Home Assistant custom integration for the Unexpected Maker Smart USB Hub.",
+   "expected": []
+  },
+  {
+   "repo": "joplayxyz/bruceapp",
+   "stars": 10,
+   "language": "HTML",
+   "topics": [
+    "bruce",
+    "cardputer",
+    "esp32",
+    "esp32-s3",
+    "iot",
+    "lilygo",
+    "m5stack-cardputer",
+    "m5stack-stickc"
+   ],
+   "description": "A webapp built for Bruce firmware",
+   "expected": [
+    "m5cardputer",
+    "m5stick-c"
+   ]
+  },
+  {
+   "repo": "joukos/papertty",
+   "stars": 1049,
+   "language": "Python",
+   "topics": [
+    "e-ink",
+    "python",
+    "raspberry-pi",
+    "terminal",
+    "vnc",
+    "waveshare"
+   ],
+   "description": "PaperTTY - Python module to render a TTY or VNC on e-ink",
+   "expected": []
+  },
+  {
+   "repo": "keralots/bambuhelper",
+   "stars": 521,
+   "language": "C",
+   "topics": [
+    "3d-printer",
+    "3d-printing",
+    "arduino",
+    "bambu-lab",
+    "bambulab",
+    "bambulabs",
+    "esp32",
+    "esp32-c3"
+   ],
+   "description": "ESP32 desk monitor for Bambu Lab printers. Real-time MQTT dashboard on a color TFT - temps, progress, fans, AMS, HMS errors. LAN or Cloud, d",
+   "expected": []
+  },
+  {
+   "repo": "keralots/smalloled-pcmonitor",
+   "stars": 268,
+   "language": "C++",
+   "topics": [
+    "3d-printing",
+    "animation",
+    "arduino",
+    "clock",
+    "diy",
+    "esp32",
+    "esp32-c3",
+    "hardware-monitor"
+   ],
+   "description": "ESP32-C3 + OLED desk monitor: live CPU/GPU/RAM/disk stats from a Windows/Linux companion app, and 12 animated retro clock styles when the PC",
+   "expected": []
+  },
+  {
+   "repo": "kmx415/meshpoint",
+   "stars": 331,
+   "language": "Python",
+   "topics": [
+    "helium",
+    "helium-hotspot",
+    "helium-mining",
+    "hotspot",
+    "iot-gateway",
+    "lora",
+    "lora-gateway",
+    "mesh"
+   ],
+   "description": "Open-source LoRa base station for Meshtastic/MeshCore. Raspberry Pi + SX1302/SX1303 concentrator: passive multi-channel capture, local dashb",
+   "expected": []
+  },
+  {
+   "repo": "koosoli/esphomedesigner",
+   "stars": 1162,
+   "language": "JavaScript",
+   "topics": [
+    "custom-component",
+    "dashboard",
+    "editor",
+    "eink",
+    "esp32",
+    "esphome",
+    "esphome-lvgl-designer",
+    "hacs"
+   ],
+   "description": "A visual drag-and-drop editor for ESPHome displays (E-Ink, OLED, LCD, Touch), running as a Home Assistant integration or a standalone web ap",
+   "expected": []
+  },
+  {
+   "repo": "landonr/homething",
+   "stars": 550,
+   "language": "C++",
+   "topics": [
+    "esp32",
+    "esphome",
+    "home-assistant",
+    "home-automation",
+    "lilygo",
+    "m5stack",
+    "m5stickc",
+    "m5stickcplus"
+   ],
+   "description": "Wifi Smart Home Remotes that run on ESPHome",
+   "expected": [
+    "m5stick-c",
+    "m5stick-cplus"
+   ]
+  },
+  {
+   "repo": "louishitchcock/fpvgatec5mk",
+   "stars": 25,
+   "language": "C++",
+   "topics": [
+    "5ghz",
+    "drone-racing",
+    "esp-idf",
+    "esp32",
+    "esp32-c5",
+    "fpv",
+    "fpv-racing",
+    "lap-timer"
+   ],
+   "description": "Multi-pilot FPV lap timer receiver on one ESP32-C5: 8 pilots at ~1 kHz each, native RotorHazard nodes over USB, browser lap timer. No RX5808",
+   "expected": []
+  },
+  {
+   "repo": "lovyan03/esp32_screenshotreceiver",
+   "stars": 146,
+   "language": "C++",
+   "topics": [
+    "esp32",
+    "lovyangfx",
+    "m5stick",
+    "m5stickc",
+    "odroid-go"
+   ],
+   "description": "ESP32 ScreenShotReceiver. Send jpegs from your Windows PC to the ESP32 receiver.",
+   "expected": [
+    "m5stick-c"
+   ]
+  },
+  {
+   "repo": "m-abozaid/esp32-c3-adblock",
+   "stars": 3597,
+   "language": "C++",
+   "topics": [
+    "adblocker",
+    "arduino",
+    "dns",
+    "dns-sinkhole",
+    "esp32",
+    "esp32-c3",
+    "iot",
+    "pi-hole"
+   ],
+   "description": "Pi-hole-class DNS ad-blocker on a $2 ESP32-C3 (no PSRAM): 537k domains as 40-bit FNV-1a hashes in flash, binary-searched. UDP DNS sinkhole +",
+   "expected": []
+  },
+  {
+   "repo": "m0nka/mchf",
+   "stars": 91,
+   "language": "C",
+   "topics": [
+    "amateur-radio",
+    "ham-radio",
+    "homebrew",
+    "meshcore",
+    "meshtastic",
+    "sdr"
+   ],
+   "description": "mcHF SDR transceiver",
+   "expected": []
+  },
+  {
+   "repo": "makepkg/securegen",
+   "stars": 101,
+   "language": "C",
+   "topics": [
+    "2fa",
+    "aes-256",
+    "air-gapped",
+    "arduino",
+    "authentication",
+    "ble",
+    "bluetooth-le",
+    "embedded"
+   ],
+   "description": "🔐 Hardware TOTP Authenticator & Password Manager | 8-layer security | AES-256 | BLE Keyboard | Offline | ESP32 T-Display | T-Display S3",
+   "expected": [
+    "lilygo-t-display-s3"
+   ]
+  },
+  {
+   "repo": "makerspet/oomwoo",
+   "stars": 13127,
+   "language": "Python",
+   "topics": [
+    "3d-printing",
+    "arduino",
+    "diy-electronics",
+    "diy-project",
+    "esp32",
+    "esp32-arduino",
+    "home-assistant",
+    "lidar"
+   ],
+   "description": "Open-source vacuum robot cleaner",
+   "expected": []
+  },
+  {
+   "repo": "marekwo/mc-webui",
+   "stars": 68,
+   "language": "Python",
+   "topics": [
+    "bootstrap5",
+    "chat-application",
+    "cli-wrapper",
+    "docker",
+    "flask",
+    "heltec",
+    "linux",
+    "lora"
+   ],
+   "description": "Meshcore web client",
+   "expected": []
+  },
+  {
+   "repo": "marlinfirmware/marlin",
+   "stars": 17668,
+   "language": "C++",
+   "topics": [
+    "3d-printing",
+    "arduino",
+    "atmel",
+    "avr",
+    "esp32",
+    "firmware",
+    "hacktoberfest",
+    "reprap"
+   ],
+   "description": "Marlin is a firmware for RepRap 3D printers optimized for both 8 and 32 bit microcontrollers.  Marlin supports all common platforms.   Many ",
+   "expected": []
+  },
+  {
+   "repo": "marspre/wristmorse",
+   "stars": 46,
+   "language": "C++",
+   "topics": [
+    "arduino",
+    "bluetooth-keyboard",
+    "esp32",
+    "m5stickc",
+    "morse",
+    "morse-code",
+    "morse-code-audio",
+    "morsecode"
+   ],
+   "description": "Morse Code Keyer, Bluetooth morse Keyboard, Touch paddle, morse trainer and wireless morse transmitter",
+   "expected": [
+    "m5stick-c"
+   ]
+  },
+  {
+   "repo": "maxgramser/homeassistant_espscreen",
+   "stars": 1213,
+   "language": "Python",
+   "topics": [
+    "cyd",
+    "esp32",
+    "esp32-2432s028r",
+    "esp32-p4",
+    "esp32-s3",
+    "esphome",
+    "guition",
+    "hass-addon"
+   ],
+   "description": "Tessera: beautiful, easy touch screens for Home Assistant on affordable ESP32 panels, 2.8 to 10.1 inch (CYD, Guition, Waveshare). Drag-and-d",
+   "expected": []
+  },
+  {
+   "repo": "mcorts/jaleometro",
+   "stars": 27,
+   "language": "C++",
+   "topics": [
+    "arduino",
+    "heltec",
+    "lorawan",
+    "ttn",
+    "ttn-device"
+   ],
+   "description": "Sensor remoto y autónomo de ruido ambiental ",
+   "expected": []
+  },
+  {
+   "repo": "mcorts/meteoestacionlora",
+   "stars": 22,
+   "language": "C++",
+   "topics": [
+    "arduino",
+    "cubecell",
+    "dht22",
+    "estacion-meteorologica",
+    "heltec",
+    "lorawan",
+    "meteorologia",
+    "weather-station"
+   ],
+   "description": "Estación metereológica DIY con comunicaciones LoRaWAN TTN",
+   "expected": []
+  },
+  {
+   "repo": "meshmapper/meshmapper_flutter_app",
+   "stars": 40,
+   "language": "Dart",
+   "topics": [
+    "ble",
+    "bluetooth",
+    "coverage-mapping",
+    "dart",
+    "flutter",
+    "mesh-network",
+    "meshcore",
+    "wardriving"
+   ],
+   "description": "Cross-platform wardriving app for MeshCore mesh devices",
+   "expected": []
+  },
+  {
+   "repo": "muellera/esp32-c5-its",
+   "stars": 21,
+   "language": "C",
+   "topics": [
+    "802-11p",
+    "car2x",
+    "esp32-c5",
+    "its-g5",
+    "platformio",
+    "v2x"
+   ],
+   "description": "ESP32-C5 Logger for Intelligent Transport Systems (ITS) G5 / IEEE 802.11p / V2X / Car2X messages at 5.9GHz.",
+   "expected": []
+  },
+  {
+   "repo": "mx3353672833-debug/moto-gps-waveshare",
+   "stars": 607,
+   "language": "C++",
+   "topics": [
+    "esp32-s3",
+    "ios",
+    "lvgl",
+    "motorcycle-navigation",
+    "noncommercial",
+    "source-available",
+    "waveshare"
+   ],
+   "description": "MOTO GPS · Waveshare ESP32-S3 1.75C 圆屏导航 + iPhone App | Author: Maler X | Noncommercial, attribution required | Experimental",
+   "expected": []
+  },
+  {
+   "repo": "nochkin/esp_test",
+   "stars": 4,
+   "language": "C++",
+   "topics": [
+    "esp-arduino",
+    "esp32",
+    "esp32-arduino",
+    "esp32-s3",
+    "esp32c3",
+    "esp32c6",
+    "esp8266",
+    "fastled"
+   ],
+   "description": "Simple test code to verify basic functionality of various Espressif-based modules",
+   "expected": []
+  },
+  {
+   "repo": "nodemcu/nodemcu-firmware",
+   "stars": 7960,
+   "language": "C",
+   "topics": [
+    "esp32",
+    "esp8266",
+    "esp8285",
+    "espressif",
+    "firmware",
+    "lua",
+    "nodemcu",
+    "spiffs"
+   ],
+   "description": "Lua based interactive firmware for ESP8266, ESP8285 and ESP32",
+   "expected": []
+  },
+  {
+   "repo": "omreps/esp32dash",
+   "stars": 10,
+   "language": "HTML",
+   "topics": [
+    "arduino-esp32",
+    "dashboard",
+    "embedded",
+    "esp32",
+    "firmware",
+    "web-server",
+    "wifi"
+   ],
+   "description": "Wiring (C++): Small esp32dash.ino enables your ESP32 show HTML dashboard online",
+   "expected": []
+  },
+  {
+   "repo": "opensurface/sonosesp",
+   "stars": 73,
+   "language": "C",
+   "topics": [
+    "arduino",
+    "diy",
+    "embedded",
+    "esp32",
+    "esp32-p4",
+    "freertos",
+    "guition",
+    "home-automation"
+   ],
+   "description": "Touchscreen Sonos controller for ESP32-P4 — album art, synced lyrics, multi-room, weather and a StandBy clock. Flash it from your browser.",
+   "expected": []
+  },
+  {
+   "repo": "paciente8159/ucnc",
+   "stars": 462,
+   "language": "C",
+   "topics": [
+    "arduino",
+    "avr",
+    "cnc",
+    "esp32",
+    "esp32-c3",
+    "esp32-s3",
+    "esp8266",
+    "grbl"
+   ],
+   "description": "µCNC - Universal CNC firmware for microcontrollers",
+   "expected": []
+  },
+  {
+   "repo": "platformio/platformio-core",
+   "stars": 9609,
+   "language": "Python",
+   "topics": [
+    "arduino",
+    "arm",
+    "avr",
+    "build-system",
+    "cmsis",
+    "debugging",
+    "embedded",
+    "esp32"
+   ],
+   "description": "Your Gateway to Embedded Software Development Excellence :alien:",
+   "expected": []
+  },
+  {
+   "repo": "quadule/knobby",
+   "stars": 218,
+   "language": "C",
+   "topics": [
+    "3d-printing",
+    "arduino",
+    "esp32",
+    "esp32-s3",
+    "lilygo",
+    "lilygo-tdisplay-s3",
+    "music",
+    "playlists"
+   ],
+   "description": "A little Spotify remote to remind you that there's a lot of music out there.",
+   "expected": [
+    "lilygo-t-display-s3"
+   ]
+  },
+  {
+   "repo": "roblatour/esp32timeserver",
+   "stars": 88,
+   "language": "G-code",
+   "topics": [
+    "esp32",
+    "esp32-p4",
+    "esp32-s31",
+    "esp32p4",
+    "esp32p4-eth",
+    "ntp",
+    "ptp",
+    "timeserver"
+   ],
+   "description": "ESP32 NTP Stratum1 Time Server",
+   "expected": []
+  },
+  {
+   "repo": "s60sc/esp32-cam_mjpeg2sd",
+   "stars": 1790,
+   "language": "C++",
+   "topics": [
+    "arduino-esp32",
+    "avi",
+    "camera",
+    "esp32",
+    "esp32-cam",
+    "esp32s3",
+    "fpv",
+    "freenove"
+   ],
+   "description": "ESP32 Camera motion capture application to record JPEGs to SD card as AVI files and stream to browser as MJPEG. If a microphone is installed",
+   "expected": []
+  },
+  {
+   "repo": "silvainobsolete395/ant-card",
+   "stars": 1,
+   "language": null,
+   "topics": [
+    "antdesign",
+    "axios",
+    "beautiful",
+    "cac",
+    "camera",
+    "card",
+    "cardinal",
+    "cardputer"
+   ],
+   "description": "🎨 Create stunning online cards with customizable templates, real-time editing, and PDF export, all enhanced by AI for effortless design.",
+   "expected": []
+  },
+  {
+   "repo": "smarthomehub/smartir",
+   "stars": 2866,
+   "language": "Python",
+   "topics": [
+    "broadlink",
+    "chuangmiir",
+    "esphome",
+    "homeassistant",
+    "iot",
+    "lookin",
+    "smarthome"
+   ],
+   "description": "Home Assistant integration to manage climate systems, TVs, fans and lights using IR/RF controllers. Compatible with Broadlink, Xiaomi, MQTT,",
+   "expected": []
+  },
+  {
+   "repo": "smh17/m5stackwifisniffer",
+   "stars": 35,
+   "language": "C++",
+   "topics": [
+    "esp32",
+    "hacking",
+    "m5stack",
+    "m5stickc",
+    "network-analysis",
+    "wifi-security"
+   ],
+   "description": "M5Stack WiFi packet sniffer for network analysis ",
+   "expected": [
+    "m5stick-c"
+   ]
+  },
+  {
+   "repo": "spuder/openspool",
+   "stars": 792,
+   "language": "C++",
+   "topics": [
+    "3dprinter",
+    "bambulab",
+    "esp32",
+    "esphome",
+    "klipper",
+    "nfc",
+    "nfc-card-reader",
+    "octoprint"
+   ],
+   "description": "RFID for 3d printer filament",
+   "expected": []
+  },
+  {
+   "repo": "ssaprus/whisperos",
+   "stars": 92,
+   "language": null,
+   "topics": [
+    "mesh",
+    "mesh-networks",
+    "meshcore",
+    "meshtastic"
+   ],
+   "description": "WhisperOS is a user-friendly operating system designed for small, portable radio devices (like Heltec LoRa boards) that allow you to communi",
+   "expected": []
+  },
+  {
+   "repo": "sukesh-ak/um-esp32-s3-samples",
+   "stars": 4,
+   "language": "C++",
+   "topics": [
+    "adafruit-feather-wing",
+    "arduino",
+    "esp-idf",
+    "esp32",
+    "esp32-s3",
+    "lovyangfx",
+    "unexpected-maker"
+   ],
+   "description": "ESP32-S3 development boards from Unexpected Maker",
+   "expected": []
+  },
+  {
+   "repo": "tasmota/install",
+   "stars": 147,
+   "language": "HTML",
+   "topics": [
+    "esp32",
+    "esp32-c5",
+    "esp32-c61",
+    "esp32-p4",
+    "esp32c2",
+    "esp32c3",
+    "esp32c6",
+    "esp32s2"
+   ],
+   "description": "Tasmota Web Installer and firmware repository",
+   "expected": []
+  },
+  {
+   "repo": "thatblend/espressway32",
+   "stars": 1,
+   "language": "C++",
+   "topics": [
+    "arduino",
+    "esp32",
+    "esp32-arduino",
+    "esp32-s3",
+    "liligo",
+    "t-display",
+    "t-display-s3",
+    "ttgo"
+   ],
+   "description": "A simple 3D racing game for the LILIGO T-DISPLAY S3.",
+   "expected": [
+    "lilygo-t-display-s3"
+   ]
+  },
+  {
+   "repo": "tiffanyytu/module1_ces",
+   "stars": 0,
+   "language": "C++",
+   "topics": [
+    "arduino",
+    "creative-coding",
+    "esp32",
+    "generative-art-toolkit",
+    "installation-art",
+    "physical-computing",
+    "t-display",
+    "tft-espi"
+   ],
+   "description": "Generative art for the LILYGO T-Display visualizing transitions between solid, liquid, and gas through an evolving particle system.",
+   "expected": [],
+   "note": "2026-11-20: was ['lilygo-t-display'] ('... for the LilyGO T-Display visualizing transitions ...'). The repo does target that board; the name is followed by a word outside FOLLOW_OK, which the rule cannot tell from a sibling suffix ('T-Display Long'), so it names nothing. A known miss of the fail-closed rule (0 stars)."
+  },
+  {
+   "repo": "tinygo-org/tinygo",
+   "stars": 17919,
+   "language": "Go",
+   "topics": [
+    "adafruit",
+    "arduino",
+    "arm",
+    "avr",
+    "esp32",
+    "gpio",
+    "i2c",
+    "llvm"
+   ],
+   "description": "Go compiler for small places. Microcontrollers, WebAssembly (WASM/WASI), and command-line tools. Based on LLVM.",
+   "expected": []
+  },
+  {
+   "repo": "tjhorner/upsy-desky",
+   "stars": 840,
+   "language": "Shell",
+   "topics": [
+    "esphome",
+    "hardware",
+    "home-assistant",
+    "home-automation",
+    "kicad",
+    "open-hardware",
+    "pcb",
+    "standing-desk"
+   ],
+   "description": "Make your standing desk smarter",
+   "expected": []
+  },
+  {
+   "repo": "touchgadget/usbkwa",
+   "stars": 52,
+   "language": "C",
+   "topics": [
+    "arduino",
+    "arduino-esp32",
+    "esp32-s2",
+    "esp32-s3",
+    "keyboard",
+    "touch-screen",
+    "usb-keyboard",
+    "wifi"
+   ],
+   "description": "Touch Screen USB Keyboard with ESP32 S2 and ESP32 S3 and Arduino",
+   "expected": []
+  },
+  {
+   "repo": "twotoz/c5vrx",
+   "stars": 548,
+   "language": "C",
+   "topics": [
+    "analog-video",
+    "bitscrambler",
+    "cvbs",
+    "dsp",
+    "esp-idf",
+    "esp32-c5",
+    "fpv",
+    "parlio"
+   ],
+   "description": "Ultra-minimal, zero-CPU 5.8 GHz analog FPV video receiver using ESP32-C5 Wi-Fi 6 PHY MODEM_DIAG, BitScrambler WBFM demodulation & resistor D",
+   "expected": []
+  },
+  {
+   "repo": "vnovikov-f028/twin-void",
+   "stars": 1,
+   "language": "C++",
+   "topics": [
+    "co-op-game",
+    "esp-now",
+    "esp32",
+    "esp32-s3",
+    "game",
+    "liligo",
+    "space-shooter",
+    "t-display"
+   ],
+   "description": "Co-op space shooter for two LilyGo T-Display boards (ESP32, ESP-NOW)",
+   "expected": [
+    "lilygo-t-display"
+   ]
+  },
+  {
+   "repo": "wadadawadada/blackbox_node",
+   "stars": 176,
+   "language": "JavaScript",
+   "topics": [
+    "ai",
+    "atak",
+    "bitcoin-transaction",
+    "cashu",
+    "civtak",
+    "ecash",
+    "emergency-communications",
+    "lilygo"
+   ],
+   "description": "Off-grid mesh node with local AI TAK integration and Bitcoin Cashu payments built on Meshtastic",
+   "expected": []
+  },
+  {
+   "repo": "warwick320/nova-x",
+   "stars": 382,
+   "language": "Assembly",
+   "topics": [
+    "5g",
+    "deauthentication",
+    "deauthentication-attack",
+    "deauther",
+    "deauther-5g",
+    "display",
+    "esp32-c5",
+    "novax"
+   ],
+   "description": "nova-x pentesting tool",
+   "expected": []
+  },
+  {
+   "repo": "waveshareteam/e-paper",
+   "stars": 1756,
+   "language": "C",
+   "topics": [
+    "arduino",
+    "c",
+    "epaper",
+    "epd",
+    "python",
+    "raspberrypi-jetsonnano",
+    "stm32",
+    "waveshare"
+   ],
+   "description": "",
+   "expected": []
+  },
+  {
+   "repo": "waveshareteam/roarm_m2",
+   "stars": 40,
+   "language": "C",
+   "topics": [
+    "arduino",
+    "arduino-esp32",
+    "arm",
+    "esp32",
+    "open-source",
+    "robotics"
+   ],
+   "description": "Based On ESP32, 3+1DOF, High-torque Serial Bus Servo, RoArm-M2 Desktop Robotic Arm Kit",
+   "expected": []
+  },
+  {
+   "repo": "waveshareteam/wavego_pro",
+   "stars": 26,
+   "language": "Jupyter Notebook",
+   "topics": [
+    "12-dof",
+    "arduino",
+    "arduino-esp32",
+    "dog",
+    "esp32",
+    "open-source",
+    "opencv",
+    "raspberry-pi"
+   ],
+   "description": "WAVEGO, 12-DOF Bionic Dog-Like Robot, Open Source for ESP32 and Raspberry Pi, Facial Recognition, Color Tracking, Motion Detection",
+   "expected": []
+  },
+  {
+   "repo": "xlyric/lilygo-t5-4.7-meteo-and-domoticz-",
+   "stars": 43,
+   "language": "C",
+   "topics": [
+    "arduino-ide",
+    "domoticz",
+    "e-paper",
+    "e-paperdisplay",
+    "ed047",
+    "epd47",
+    "lilygo",
+    "meteo"
+   ],
+   "description": "an E-paper domoticz console with Lilygo-T5 ",
+   "expected": []
+  },
+  {
+   "repo": "yeraze/meshmonitor",
+   "stars": 731,
+   "language": "TypeScript",
+   "topics": [
+    "meshcore",
+    "meshtastic",
+    "mqtt"
+   ],
+   "description": "Web tool for monitoring Mesh Node Deployment over TCP/HTTP",
+   "expected": []
+  },
+  {
+   "repo": "z4ziggy/m5stickcoscilloscope",
+   "stars": 27,
+   "language": "C++",
+   "topics": [
+    "esp32",
+    "m5stickc",
+    "oscilloscope"
+   ],
+   "description": "M5StickC ESP32 Oscilloscope",
+   "expected": [
+    "m5stick-c"
+   ]
+  }
+ ]
+}

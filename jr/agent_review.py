@@ -10,7 +10,8 @@ The independent exact-head review of a code PR (docs/REVIEW-CONTRACT.md) is run 
   `docs/ops/REVIEW-PROMPT.md` as the task (read-only: --no-ship --no-merge), reads the structured verdict the
   agent wrote to VERDICT_FILE, and posts it as ONE PR comment that starts with MARKER. The code canary
   (scripts/code_canary.py) reads that comment.
-- **Fallback lane** = GitHub Actions with `anthropics/claude-code-action` and the API key — used ONLY when the
+- **Fallback lane** = GitHub Actions running `claude -p` with the API key (never `anthropics/claude-code-action`:
+  it is billed as Claude Code, which the plan's API credit does not cover) — used ONLY when the
   primary lane says it is DOWN (no subscription token, usage limit, auth failure): the runner then labels the
   PR `review-fallback`, which triggers the Actions review for that PR alone, at most FALLBACK_PER_DAY a UTC day.
   BUSY (another delegate run holds the lock) is not down: the PR simply waits for the next hour.
@@ -178,10 +179,24 @@ def fallbacks_today(state: dict, day: str) -> int:
     return int((state.get("fallback") or {}).get(day) or 0)
 
 
-def note_fallback(state: dict, day: str, pr: int) -> dict:
+def note_fallback(state: dict, day: str, pr: int, head: str = "") -> dict:
     fb = state.setdefault("fallback", {})
     fb[day] = int(fb.get(day) or 0) + 1
-    state.setdefault("fallback_prs", []).append({"day": day, "pr": pr})
+    state["fallback_prs"] = (state.get("fallback_prs") or [])[-200:] + [{"day": day, "pr": pr, "head": head}]
+    return state
+
+
+def asked_backup(state: dict, pr: int, head: str) -> bool:
+    """The backup reviewer was already asked about this PR at this exact head."""
+    return any(f.get("pr") == pr and f.get("head") == head for f in state.get("fallback_prs") or [])
+
+
+def note_empty(state: dict, day: str, pr: int) -> dict:
+    """A PR the backup reviewer was asked about is a candidate again with no verdict: the backup produced
+    nothing (2026-11-19: "Credit balance is too low", four times, and nobody was told)."""
+    prev = state.get("fallback_empty") or {}
+    prs = sorted(set((prev.get("prs") if prev.get("day") == day else []) or []) | {pr})
+    state["fallback_empty"] = {"day": day, "prs": prs}
     return state
 
 
@@ -268,6 +283,17 @@ def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_ru
         say("agent-review: the delegate is busy (another run holds the lock); next hour")
         return {"outcome": "busy", "pr": number, "head": head, "state": state}
     if lane == "down":
+        # A candidate we already sent to the backup at this head came back with no verdict (its label is gone,
+        # or it would not be a candidate): say so, remember it for the tick's warning, and never ask the backup
+        # twice for the same head. The next candidate not yet asked gets the label instead.
+        if asked_backup(state, number, head):
+            state = note_empty(state, day, number)
+            fresh = next((p for p in todo if not asked_backup(state, p["number"], p["headRefOid"])), None)
+            say(f"agent-review: subscription lane DOWN and the backup reviewer returned NO verdict for #{number} "
+                f"at {head[:8]}; it is not asked again for this head")
+            if fresh is None:
+                return {"outcome": "fallback_empty", "pr": number, "head": head, "state": state}
+            number, head = fresh["number"], fresh["headRefOid"]
         used = fallbacks_today(state, day)
         if used >= fallback_per_day:
             say(f"agent-review: subscription lane DOWN ({(dv or {}).get('reason', '')[:120]}); fallback budget "
@@ -288,7 +314,7 @@ def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_ru
                     f"workflow: merged main into it; it gets {FALLBACK_LABEL} on a later pass")
                 return {"outcome": "fallback_refresh", "pr": number, "head": head, "state": state}
         gh("pr", "edit", str(number), "--repo", slug, "--add-label", FALLBACK_LABEL)
-        state = note_fallback(state, day, number)
+        state = note_fallback(state, day, number, head)
         say(f"agent-review: subscription lane DOWN ({(dv or {}).get('reason', '')[:120]}); #{number} labelled "
             f"{FALLBACK_LABEL} (API lane, {used + 1}/{fallback_per_day} today)")
         return {"outcome": "fallback_requested", "pr": number, "head": head, "state": state}

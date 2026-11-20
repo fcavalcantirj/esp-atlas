@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Providers from "@/app/providers";
+import ConsentBanner from "@/components/ConsentBanner";
+import { analyticsBootScript } from "@/lib/analytics-boot";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { FONT_SCALE_KEY, GA_ID, OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
@@ -55,9 +57,7 @@ export const viewport: Viewport = {
 const fontScaleScript = `try{var s=localStorage.getItem(${JSON.stringify(
   FONT_SCALE_KEY,
 )});if(s)document.documentElement.style.setProperty("--font-scale",s)}catch(e){}`;
-const analyticsQueueScript = GA_ID
-  ? `window.__ESP_ATLAS_GA_ID=${JSON.stringify(GA_ID)};window.dataLayer=window.dataLayer||[];try{if(localStorage.getItem("esp-atlas:analytics-disabled")==="1")window["ga-disable-${GA_ID}"]=true}catch(e){}`
-  : "";
+const analyticsQueueScript = GA_ID ? analyticsBootScript(GA_ID) : "";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -72,6 +72,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <SiteHeader />
           {children}
           <SiteFooter />
+          {GA_ID && <ConsentBanner />}
         </Providers>
       </body>
       {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
