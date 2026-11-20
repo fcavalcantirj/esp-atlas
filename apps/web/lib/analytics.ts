@@ -6,6 +6,7 @@
 import { sendGAEvent } from "@next/third-parties/google";
 import { GA_DEBUG } from "@/lib/site";
 import { trackedEventParams, type EventParams } from "./analytics-params";
+import { OPT_OUT_KEY } from "./analytics-boot";
 export type { EventParams } from "./analytics-params";
 
 export type EventName =
@@ -45,6 +46,7 @@ export type EventName =
   | "shelf_see_all"
   // /firmware browse surface (SPEC-firmware-ordering.md / SPEC-firmware-popularity.md).
   | "firmware_sort"
+  | "firmware_search"
   | "reveal_more"
   // Flash Wizard (SPEC-wizard P2b): panel opened, rail decided, consent, connect click.
   | "flash_open"
@@ -115,7 +117,7 @@ export function track(name: EventName, params: EventParams = {}): void {
     return;
   }
   try {
-    if (window.localStorage.getItem("esp-atlas:analytics-disabled") === "1") return;
+    if (window.localStorage.getItem(OPT_OUT_KEY) === "1") return;
   } catch {
     // Storage can be unavailable; the build-time switch still controls collection.
   }

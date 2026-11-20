@@ -249,6 +249,25 @@ def canary_retry(gh, slug: str, prs: list, store: ci_watch.Store, now: str, dry_
     return out
 
 
+GAVE_UP = ("Jr's fix agent has tried this PR {n} times and it is still not mergeable ({kind}). Jr stops here and "
+           "does not try again for {days} days. Nobody is waited on: the author decides what happens next.")
+
+
+def _give_up_on_pr(gh, rec: dict) -> None:
+    """The third time the same PR needs the same kind of fix, Jr says so on the PR once and moves on. A PR Jr
+    opened itself (a heal) is closed with that comment; a person's PR stays open for its author."""
+    ev = rec["context"].get("evidence") or {}
+    n, branch = ev.get("pr"), str(ev.get("pr_branch") or "")
+    if not n:
+        return
+    text = GAVE_UP.format(n=ci_watch.MAX_PER_FINGERPRINT, kind=rec["context"].get("kind_detail") or "fix",
+                          days=ci_watch.ABANDON_DAYS)
+    if branch.startswith(ci_watch.HEAL_BRANCH):
+        gh("pr", "close", str(n), "--comment", text)
+    else:
+        gh("pr", "comment", str(n), "--body", text)
+
+
 # --- Jr's own tick PRs never wait for a person ----------------------------------------------------------------
 # A review-routed tick PR merges by itself when scripts/receipt_guard.py can vouch for every recipe it adds
 # (the tick canary, one a day). One the guard cannot vouch for used to sit open until a person read it
@@ -414,7 +433,7 @@ def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
                    key=lambda p: str(p.get("createdAt") or ""))
     stuck = [f"{r['id']} {r['state']}" for r in data["incidents"].values() if r["state"] in ("needs_human", "stalled")]
     if data.get("halted"):
-        stuck.append("self-heal halted (run `ci_watch.py ack`)")
+        stuck.append("self-heal paused until 00:00 UTC")
     if merged is None:
         by_jr = by_person = own = None
         ok = False
@@ -485,6 +504,8 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
             rec = store.record(v, now)
             if rec:
                 recorded.append(rec["id"])
+                if rec["state"] == "abandoned" and ci_watch.is_pr_fix(rec):
+                    _give_up_on_pr(gh, rec)
         progress = store.pr_fix_progress({p["number"]: p.get("headRefOid") for p in prs},
                                          {v.check for v in wanted if ci_watch.is_pr_fix(v.check)},
                                          _closed(gh, store, {p["number"] for p in prs}), now)
