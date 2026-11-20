@@ -20,6 +20,13 @@ independent of the author: it never edits the branch, it only reads, runs and re
 
 - The test files the diff adds or changes: `PYTHONPATH=apps/core/src python3 -m pytest <those files> -q`.
   Failing tests are blocking. (The full suites run in CI; the reviewer does not repeat them.)
+- **A test file the reviewer's machine cannot run** (the web app's TypeScript tests under `apps/web/`: they
+  need Node and the app's installed dependencies, which neither review lane has) is read, not run. The
+  required check `tests` runs the whole web suite (`npm test`) at the PR's head, and no PR merges before
+  that check is green at exactly the reviewed head. So the reviewer checks that the test exists and tests
+  what the claim says, and looks at `gh pr checks <n> --repo <slug>`: `tests` **failed** at this head is a
+  blocking finding; pending or not yet run is not, and "I could not run it" is never a finding for these
+  files (2026-11-19: #1840, #1843 and #1851 were blocked on nothing else).
 - Nothing that writes: no commits, no pushes, no merges, no label changes, no deletions. No network beyond
   `gh pr view`, `gh pr diff`, `gh pr comment`.
 
@@ -48,7 +55,8 @@ One structured answer, nothing else decides:
 - `BLOCK`: at least one blocking finding, each with its file, line, one-sentence summary and the concrete
   failure scenario. The reviewer posts the findings as one PR comment so the author can act.
 - Unsure is `BLOCK` with the doubt written down. A reviewer that cannot read the diff or run the tests
-  answers `BLOCK` with that reason; it never guesses `PASS`.
+  answers `BLOCK` with that reason; it never guesses `PASS`. (A test file its machine cannot run is covered
+  by the rule in "What the reviewer runs", not by this one.)
 
 ## What happens with the verdict
 
@@ -60,8 +68,9 @@ next push starts a new review. A person audits merged PRs after the fact and hol
 ## Who runs it (owner, 2026-11-18: "subscription and api as fallback")
 
 - **Primary: the runner's coding delegate on the Claude subscription** (`jr/agent_review.py once`, hourly on
-  the runner, `docs/ops/REVIEW-PROMPT.md` as the task). It reviews the oldest open code PR without a verdict
-  for its current head, in a detached worktree at that head, read-only, and posts the verdict as ONE comment
+  the runner, `docs/ops/REVIEW-PROMPT.md` as the task). It reviews the next open code PR without a verdict
+  for its current head (first one that was reviewed before and has a new head, a fix waiting to be judged;
+  then the oldest update), in a detached worktree at that head, read-only, and posts the verdict as ONE comment
   that begins with the marker `<!-- agent-review verdict -->` (lane `subscription`).
 - **Fallback: GitHub Actions with the API key**, only when the primary lane reports it is DOWN (no
   subscription token, usage limit, auth failure). The runner then labels that PR `review-fallback`, at most

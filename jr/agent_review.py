@@ -6,7 +6,7 @@ The independent exact-head review of a code PR (docs/REVIEW-CONTRACT.md) is run 
 - **Primary lane** = the runner's coding delegate on the Claude subscription (the same binary and token the
   demand executor and the CI heal use). An hourly job on the runner calls `python3 jr/agent_review.py once
   --delegate <path> --checkout <dir> ...`: it lists the open code PRs that have no verdict for their current
-  head, checks out the oldest one's head in a throwaway worktree, runs the delegate with
+  head, checks out the next one's head (see `candidates`) in a throwaway worktree, runs the delegate with
   `docs/ops/REVIEW-PROMPT.md` as the task (read-only: --no-ship --no-merge), reads the structured verdict the
   agent wrote to VERDICT_FILE, and posts it as ONE PR comment that starts with MARKER. The code canary
   (scripts/code_canary.py) reads that comment.
@@ -132,7 +132,9 @@ def verdict_for_head(comments: list[dict], head: str) -> dict | None:
 
 def candidates(prs: list[dict], comments_by_pr: dict) -> list[dict]:
     """Open, non-draft code PRs (not Jr's tick/research/heal branches) with no verdict for their current
-    head and no fallback review pending, oldest update first."""
+    head and no fallback review pending. A PR that already has a trusted verdict for an EARLIER head comes
+    first (its head moved: a fix is waiting to be judged, and it is the PR closest to merging), then the
+    rest; inside each group, oldest update first."""
     out = []
     for pr in prs:
         branch = str(pr.get("headRefName") or "")
@@ -146,7 +148,10 @@ def candidates(prs: list[dict], comments_by_pr: dict) -> list[dict]:
         if verdict_for_head(comments_by_pr.get(pr["number"], []), pr["headRefOid"]):
             continue
         out.append(pr)
-    out.sort(key=lambda p: (str(p.get("updatedAt") or ""), p["number"]))
+    def never_reviewed(p) -> bool:
+        return not any(_author(c) in TRUSTED_AUTHORS and parse_comment((c or {}).get("body", ""))
+                       for c in comments_by_pr.get(p["number"], []))
+    out.sort(key=lambda p: (never_reviewed(p), str(p.get("updatedAt") or ""), p["number"]))
     return out
 
 
@@ -180,12 +185,31 @@ def note_fallback(state: dict, day: str, pr: int) -> dict:
     return state
 
 
+WORKFLOW_REL = ".github/workflows/agent-review.yml"
+
+
+def snapshot_is_stale(gh, slug: str, number: int) -> bool | None:
+    """True when the PR's merge snapshot carries another review workflow than main does. A pull_request event
+    (the fallback label) runs the workflow FROM that snapshot, and GitHub rebuilds snapshots hours late
+    (2026-11-19: #1876's was six hours old, so its fallback review ran without a fix merged a minute before
+    and posted "BLOCK: the reviewer could not read the diff"). None when either blob cannot be read."""
+    try:
+        merge = json.loads(gh("api", f"repos/{slug}/pulls/{number}") or "{}").get("merge_commit_sha")
+        if not merge:
+            return None
+        blobs = [json.loads(gh("api", f"repos/{slug}/contents/{WORKFLOW_REL}?ref={ref}") or "{}").get("sha")
+                 for ref in (merge, "main")]
+        return None if not all(blobs) else blobs[0] != blobs[1]
+    except Exception:  # noqa: BLE001 — unreadable: the caller labels as before
+        return None
+
+
 # --- one pass -------------------------------------------------------------------------------------------
 
 def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_run: bool = False,
              fallback_per_day: int = FALLBACK_PER_DAY, prompt: str | None = None, out=None,
              review_python: str | None = None, contract: str | None = None) -> dict:
-    """One hourly pass: review the oldest unreviewed code PR on the subscription lane; on a DOWN lane,
+    """One hourly pass: review the next unreviewed code PR (`candidates` order) on the subscription lane; on a DOWN lane,
     hand that PR to the API lane (label) within the daily budget. Returns a small report dict.
     `gh(*args) -> str`, `git(*args) -> str`, `delegate(task, repo_path, env) -> (returncode, delegate_verdict_dict,
     review_verdict_text_or_None)`."""
@@ -249,6 +273,20 @@ def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_ru
             say(f"agent-review: subscription lane DOWN ({(dv or {}).get('reason', '')[:120]}); fallback budget "
                 f"{used}/{fallback_per_day} spent today; #{number} waits")
             return {"outcome": "fallback_capped", "pr": number, "head": head, "state": state}
+        # the label runs the workflow from the PR's merge snapshot: bring a stale one up to main first (a new
+        # head, labelled on a later pass), at most once per PR per day; a refusal or an unreadable snapshot
+        # is labelled as before
+        refreshed = state.setdefault("fallback_refreshed", {})
+        if refreshed.get(str(number)) != day and snapshot_is_stale(gh, slug, number):
+            try:
+                gh("api", "-X", "PUT", f"repos/{slug}/pulls/{number}/update-branch", "-f", f"expected_head_sha={head}")
+            except Exception as e:  # noqa: BLE001 — a conflict, a moved head: label what is there
+                say(f"agent-review: #{number}: stale snapshot, refresh refused ({str(e)[:100]}); labelling anyway")
+            else:
+                state["fallback_refreshed"] = {**{k: v for k, v in refreshed.items() if v == day}, str(number): day}
+                say(f"agent-review: subscription lane DOWN; #{number}'s merge snapshot carries an older review "
+                    f"workflow: merged main into it; it gets {FALLBACK_LABEL} on a later pass")
+                return {"outcome": "fallback_refresh", "pr": number, "head": head, "state": state}
         gh("pr", "edit", str(number), "--repo", slug, "--add-label", FALLBACK_LABEL)
         state = note_fallback(state, day, number)
         say(f"agent-review: subscription lane DOWN ({(dv or {}).get('reason', '')[:120]}); #{number} labelled "

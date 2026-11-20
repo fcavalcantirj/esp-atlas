@@ -121,8 +121,12 @@ BLOCK waiting for a person, stacked PRs retargeted by hand. Now:
   (one fix + one recurrence, then a human). A merged CI-heal PR (`jr/heal-*`) resets the brake.
 - **Heal PRs are code**: the agent review covers `jr/heal-*` too; only tick and demand PRs have their own
   canaries.
-- **The owner's audit**: once a UTC day from 12Z one Telegram line names what still needs a human
-  (`needs-human` PRs with age, `needs_human`/stalled incidents, a halted heal). Nothing waits → no line.
+- **The owner's audit and the scoreboard**: once a UTC day from 12Z one Telegram line. The scoreboard
+  measures **Jr, not people** (2026-11-19): a day is self-sufficient when no person merged one of Jr's own
+  PRs (`jr/tick-*`, `jr/research-*`, `jr/heal-*`) in the last 24 h, none of Jr's own PRs waits (`needs-human`,
+  or open a day), and no incident is stuck (`needs_human`, stalled, a halted heal). People merging and holding
+  their own PRs is ordinary work: the line shows it ("people's own: N merged, M open (K blocked by review)"),
+  and it never breaks a day. Seven such days in a row is the claim "self-sufficient", and nothing less is.
 
 ### 1e. A canary that said "not now" is asked again (2026-11-19)
 
@@ -136,7 +140,8 @@ tick**, only for a lane whose switch in `jr/autonomy.json` is true:
 
 - a demand PR behind main is merged with main (`PUT …/update-branch` at the exact head): a new event, so main's
   current guards and canary judge it;
-- otherwise the failed jobs of its last run are rerun (the canary behind them follows), or the canary job alone;
+- otherwise, when the canary was skipped because a job it needs failed, the failed jobs of that run are rerun
+  (the canary follows); when the canary did run, the canary job alone is rerun, whatever failed beside it;
 - a review-routed tick PR is only ever rerun; `jr/review_refresh.py` owns its merges with main.
 
 Left alone: `needs-human`, a red required check on a PR that is not a draft (that is `red_prs`, which never
@@ -145,6 +150,18 @@ base, an AUTO-route tick PR, a PR whose fix the delegate is working on. Only fai
 count. Memory: `canary_retry` in the incident store, written **before** each call, so a retry that was sent,
 refused, or cut short by the tick's call budget is never sent twice in a day; it runs after the actions
 `red_prs` already remembered. No delegate, no model.
+
+### 1f. Jr's own tick PRs never wait for a person (2026-11-19)
+
+A review-routed tick PR merges by itself when `scripts/receipt_guard.py` vouches for every recipe it adds (the
+tick canary, one a day). One the guard cannot vouch for used to sit open until a person read it (four of them,
+25 to 38 hours old, on Nov 19). `jr/chores.py expire_tick_prs`, every tick: a `jr/tick-*` PR labelled
+`jr-review`, open 72 h (`EXPIRE_HOURS`), is checked by the same guard once more (branch fetched, live
+upstream); when it still cannot vouch for it, Jr closes the PR with the guard's reasons, at most two a tick,
+oldest first. Closed unmerged is the existing 30-day veto (`jr/pending_prs.py`), so the same unverifiable
+thing is not proposed every hour. An eligible PR is never closed (it waits for the canary's daily slot); an
+unreadable git or upstream closes nothing. The daily line shows Jr's open PRs as "Jr's own queue" and does not
+count them as waiting on a person; only `needs-human` on one of Jr's PRs, or a stuck incident, does.
 
 ## 2. Known causes — handled in code, no model
 
@@ -199,18 +216,22 @@ row with the incident that taught it.
 
 ## 5. No loop: limits, timeouts and the owner's nudge
 
+**Jr never parks work on a person (owner, 2026-11-19).** Each limit below used to end in "needs a human".
+Each now ends by itself: a pause runs out, a stalled job gets one more try, and what fails twice is given
+up with one line to the owner. The daily budgets bound the cost; nothing waits for anyone.
+
 Owner, 2026-11-12: "make sure we won't loop … timeouts and how many times it can be called without a
 human intervention, telegram nudge to me". Every limit is enforced in `jr/ci_watch.py`, not by a
 prompt:
 
 | Limit | Value | When reached |
 |---|---|---|
-| Dispatches per break (fingerprint) | 2: the first time, and one recurrence after its fix merged | the 3rd occurrence is recorded `needs_human`, never dispatched, and stays human-only for good |
-| Dispatches without a human | 3 since the last `python3 jr/ci_watch.py ack` on the runner | `claim` halts the lane; nothing is dispatched until a human acks |
+| Dispatches per break (fingerprint) | 2: the first time, and one recurrence after its fix merged | the 3rd occurrence is recorded `abandoned` (given up): never dispatched, one Telegram line, and for a PR one comment (Jr's own heal PR is closed). The break is not recorded again for 7 days (`ABANDON_DAYS`); after that it counts afresh |
+| Dispatches without a merged fix | 3 (`MAX_AUTO_WITHOUT_ACK`) | `claim` pauses the lane until the next UTC day, then resumes by itself; a merged heal PR or `python3 jr/ci_watch.py ack` resumes it at once |
 | A stall incident (§1b) while `jr/autonomy.json` has `stall_dispatch: false`, or the runner variable `JR_STALL_DISPATCH=0` | `claim` never hands it out (it stays `open`, visible in `show` and the nudge); CI incidents are unaffected. The flag turns on by a reviewed PR; the variable is the instant kill (2026-11-18) |
 | Dispatches per UTC day | 2, all breaks together (the CLI clock is UTC; a timestamp with any offset is counted on its UTC day) | the next day |
 | Same incident seen again while live | 0 new records | nothing: one record per break, whatever the number of red ticks |
-| Time from dispatch to a heal PR | 4 h (`STALL_HOURS`) | `stalled`, never retried automatically |
+| Time from dispatch to a heal PR | 4 h (`STALL_HOURS`) | `stalled`; opened once more 24 h later (`RETRY_AFTER_HOURS`); a second stall is `abandoned` |
 | Delegate run | the operator's wall-clock cap (`MAX_WALL_SECONDS` of the delegate) | the run ends; no PR, so the 4 h stall rule applies |
 | The tick itself | the runner's tick `timeout`; every GitHub read in the watch fails open | the tick goes on; the report says `ci_watch unavailable` |
 | A blind watch | 3 consecutive `unavailable` ticks (`BLIND_AFTER`) | one "CI watch blind" nudge, then at most one per UTC day until a tick reads CI again |

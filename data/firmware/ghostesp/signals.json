@@ -1,7 +1,7 @@
 {
  "calls": 7,
  "errors": 0,
- "fetched": "2026-11-11",
+ "fetched": "2026-11-18",
  "notes": [],
  "ref": "Development-deki",
  "repo": "GhostESP-Revival/GhostESP",
@@ -10,6 +10,7 @@
    "lilygo-t-deck",
    "lilygo-t-dongle-s3",
    "m5cardputer",
+   "m5cardputer-adv",
    "m5stack-cores3-se",
    "xiao-esp32s3",
    "xiao-esp32s3-sense"
@@ -32,8 +33,12 @@
    "AwokMini",
    "AwokMini.zip",
    "Banshee C5",
+   "Banshee Lite C5",
+   "Banshee Lite S3",
    "Banshee S3",
    "Banshee_C5.zip",
+   "Banshee_Lite_C5.zip",
+   "Banshee_Lite_S3.zip",
    "Banshee_S3.zip",
    "CYD2432S028R",
    "CYD2432S028R.zip",
@@ -47,7 +52,6 @@
    "CYDDualUSB.zip",
    "CYDMicroUSB",
    "CYDMicroUSB.zip",
-   "Cardputer ADV",
    "CardputerADV.zip",
    "CrowPanel 4.2-inch E-paper",
    "CrowPanel 5.79-inch E-paper",
@@ -87,6 +91,8 @@
    "GhostLink_P1_Peer.zip",
    "Heltec V3",
    "HeltecV3.zip",
+   "Hosyond E32R35T",
+   "Hosyond_E32R35T.zip",
    "JC3248W535EN",
    "JC3248W535EN_LCD",
    "JC3248W535EN_LCD.zip",
@@ -125,6 +131,8 @@
    "TDisplayS3-Touch",
    "TDongleC5",
    "TEmbedC1101",
+   "Waveshare C5 3.5",
+   "Waveshare_C5_35.zip",
    "Waveshare_LCD",
    "Waveshare_LCD.zip",
    "XIAO ESP32S3 Wio-SX1262",
@@ -137,12 +145,14 @@
    "XIAO_S3_WIO_SX1262.zip",
    "configs/sdkconfig.ACE_C5",
    "configs/sdkconfig.ACE_S3",
+   "configs/sdkconfig.Banshee_lite_s3",
    "configs/sdkconfig.CYD2432S028R",
    "configs/sdkconfig.CYD2USB",
    "configs/sdkconfig.CYD2USB2.4Inch",
    "configs/sdkconfig.CYD2USB2.4Inch_C_Varient",
    "configs/sdkconfig.CYDDualUSB",
    "configs/sdkconfig.CYDMicroUSB",
+   "configs/sdkconfig.Hosyond_E32R35T_3.5inch_88.9mm",
    "configs/sdkconfig.JC3248W535EN",
    "configs/sdkconfig.JCMK_DevBoardPro",
    "configs/sdkconfig.MarauderV8",
@@ -153,8 +163,10 @@
    "configs/sdkconfig.TDongleC5",
    "configs/sdkconfig.TDongleS3",
    "configs/sdkconfig.TEmbedC1101",
+   "configs/sdkconfig.WaveshareC5_35",
    "configs/sdkconfig.atoms3r",
    "configs/sdkconfig.awokmini",
+   "configs/sdkconfig.banshee_lite_c5",
    "configs/sdkconfig.cardputer",
    "configs/sdkconfig.cardputeradv",
    "configs/sdkconfig.crowpanel_1p28_rotary",
@@ -240,7 +252,7 @@
    "line": null,
    "rank": 3,
    "soc": null,
-   "token": "esp32-generic",
+   "token": "Hosyond E32R35T",
    "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
   },
   {
@@ -252,6 +264,39 @@
    "rank": 3,
    "soc": null,
    "token": "esp32",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.Hosyond_E32R35T_3.5inch_88.9mm",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Hosyond_E32R35T.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-generic",
    "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
   },
   {
@@ -2121,6 +2166,83 @@
    "line": null,
    "rank": 3,
    "soc": null,
+   "token": "Banshee Lite C5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.banshee_lite_c5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Banshee_Lite_C5.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Banshee Lite S3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.Banshee_lite_s3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Banshee_Lite_S3.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "somethingsomething2",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
    "token": "Banshee S3",
    "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
   },
@@ -2144,17 +2266,6 @@
    "rank": 3,
    "soc": null,
    "token": "Banshee_S3.zip",
-   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
-  },
-  {
-   "extra": {
-    "workflow": ".github/workflows/compile_all.yml"
-   },
-   "kind": "ci",
-   "line": null,
-   "rank": 3,
-   "soc": null,
-   "token": "somethingsomething2",
    "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
   },
   {
@@ -2540,6 +2651,39 @@
    "rank": 3,
    "soc": null,
    "token": "MarauderPancake.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Waveshare C5 3.5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.WaveshareC5_35",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Waveshare_C5_35.zip",
    "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
   },
   {

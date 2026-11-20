@@ -145,10 +145,9 @@ def test_a_pr_with_no_quoted_text_still_merges_on_the_other_checks(autonomy, tmp
 
 
 def test_the_shipped_autonomy_file_is_the_reviewed_state():
-    # turned on by a reviewed PR (owner, 2026-11-19); tick_automerge stays off until the evidence check stops
-    # PASSing wrong recipes
+    # every lane turned on by a reviewed PR (owner, 2026-11-19); the tick lane after evidence rules v4 (#1864)
     doc = json.loads((Path(__file__).resolve().parent.parent / "jr" / "autonomy.json").read_text())
-    assert doc["demand_automerge"] is True and doc["code_automerge"] is True and doc["tick_automerge"] is False
+    assert doc["demand_automerge"] is True and doc["code_automerge"] is True and doc["tick_automerge"] is True
 
 
 

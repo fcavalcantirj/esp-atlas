@@ -843,6 +843,29 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-19T06:00:32.213183+00:00"
     },
+    "m5stack-core": {
+      "board": "m5stack-core",
+      "expires": "2026-11-26T08:00:32.756472+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "images": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-19T08:00:32.756472+00:00"
+    },
     "m5stack-core-aws": {
       "board": "m5stack-core-aws",
       "expires": "2026-11-26T06:00:32.213183+00:00",
@@ -865,6 +888,190 @@
       },
       "reason": "doc-unreachable",
       "timestamp": "2026-11-19T06:00:32.213183+00:00"
+    },
+    "m5stack-core2": {
+      "board": "m5stack-core2",
+      "expires": "2026-11-26T08:00:32.756472+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-19T08:00:32.756472+00:00"
+    },
+    "m5stack-cores3": {
+      "board": "m5stack-cores3",
+      "expires": "2026-11-26T09:00:33.766355+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
+    },
+    "m5stack-cores3-se": {
+      "board": "m5stack-cores3-se",
+      "expires": "2026-11-26T09:00:33.766355+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "images": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
+    },
+    "m5stack-fire": {
+      "board": "m5stack-fire",
+      "expires": "2026-11-26T10:00:34.922574+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "images": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-19T10:00:34.922574+00:00"
+    },
+    "m5stamp-c3": {
+      "board": "m5stamp-c3",
+      "expires": "2026-11-26T10:00:34.922574+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-19T10:00:34.922574+00:00"
+    },
+    "m5stamp-s3": {
+      "board": "m5stamp-s3",
+      "expires": "2026-11-26T11:00:35.342145+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
+    },
+    "m5stick-c": {
+      "board": "m5stick-c",
+      "expires": "2026-11-26T11:00:35.342145+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "images": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
+    },
+    "m5stick-cplus": {
+      "board": "m5stick-cplus",
+      "expires": "2026-11-26T12:00:33.449912+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "images": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-19T12:00:33.449912+00:00"
+    },
+    "m5stick-cplus2": {
+      "board": "m5stick-cplus2",
+      "expires": "2026-11-26T12:00:33.449912+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-19T12:00:33.449912+00:00"
+    },
+    "m5stick-s3": {
+      "board": "m5stick-s3",
+      "expires": "2026-11-26T13:00:31.983678+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
+    },
+    "sparkfun-esp32-thing": {
+      "board": "sparkfun-esp32-thing",
+      "expires": "2026-11-26T15:00:33.556715+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-19T15:00:33.556715+00:00"
     },
     "sparkfun-iot-redboard-esp32": {
       "board": "sparkfun-iot-redboard-esp32",
@@ -914,7 +1121,7 @@
     },
     "um-feathers3": {
       "board": "um-feathers3",
-      "expires": "2026-11-19T06:00:55.520793+00:00",
+      "expires": "2026-11-26T16:00:34.301043+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -922,11 +1129,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-12T06:00:55.520793+00:00"
+      "timestamp": "2026-11-19T16:00:34.301043+00:00"
     },
     "um-nanos3": {
       "board": "um-nanos3",
-      "expires": "2026-11-19T06:00:55.520793+00:00",
+      "expires": "2026-11-26T16:00:34.301043+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -934,11 +1141,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-12T06:00:55.520793+00:00"
+      "timestamp": "2026-11-19T16:00:34.301043+00:00"
     },
     "um-pros3": {
       "board": "um-pros3",
-      "expires": "2026-11-19T06:00:55.520793+00:00",
+      "expires": "2026-11-26T17:00:32.102851+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -946,7 +1153,7 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-12T06:00:55.520793+00:00"
+      "timestamp": "2026-11-19T17:00:32.102851+00:00"
     },
     "um-tinys3": {
       "board": "um-tinys3",
@@ -994,6 +1201,39 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-16T04:00:31.943499+00:00"
     },
+    "xiao-esp32c3": {
+      "board": "xiao-esp32c3",
+      "expires": "2026-11-26T13:00:31.983678+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
+    },
+    "xiao-esp32c5": {
+      "board": "xiao-esp32c5",
+      "expires": "2026-11-26T14:00:32.325670+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
+    },
     "xiao-esp32c6": {
       "board": "xiao-esp32c6",
       "expires": "2026-11-23T02:00:31.729728+00:00",
@@ -1006,6 +1246,39 @@
       },
       "reason": "nothing-groundable",
       "timestamp": "2026-11-16T02:00:31.729728+00:00"
+    },
+    "xiao-esp32s3": {
+      "board": "xiao-esp32s3",
+      "expires": "2026-11-26T15:00:33.556715+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-19T15:00:33.556715+00:00"
+    },
+    "xiao-esp32s3-sense": {
+      "board": "xiao-esp32s3-sense",
+      "expires": "2026-11-26T14:00:32.325670+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
     }
   }
 }

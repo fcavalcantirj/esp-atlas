@@ -97,7 +97,7 @@ def test_the_api_lane_posts_from_a_fresh_job_that_never_ran_the_prs_code(jobs):
     assert any("--remove-label review-fallback" in str(s.get("run", "")) and s.get("if") == "needs.agent-review.outputs.verdict == ''"
                for s in post["steps"])                                       # no verdict: the label is released
     co = [s for s in post["steps"] if "actions/checkout" in str(s.get("uses", ""))]
-    assert len(co) == 1 and co[0]["with"]["ref"] == "${{ github.event.pull_request.base.sha }}"
+    assert len(co) == 1 and co[0]["with"]["ref"] == "${{ github.event.repository.default_branch }}"   # main's tip
     step = next(s for s in post["steps"] if "agent_review.py comment" in str(s.get("run", "")))
     assert step["env"]["VERDICT_JSON"] == "${{ needs.agent-review.outputs.verdict }}"
     assert "${{" not in step["run"]                                        # nothing pasted into the shell
@@ -121,6 +121,15 @@ def test_a_push_disarms_any_queued_auto_merge_and_drops_agent_pass(jobs):
     assert "!(startsWith(github.head_ref, 'jr/tick-') && !contains(github.event.pull_request.labels.*.name, 'jr-review'))" in cond
     run = job["steps"][0]["run"]
     assert '--disable-auto' in run and "--remove-label agent-pass" in run and "${{" not in run
+    # needs-human describes a verdict (a BLOCK, or a PASS only a person may merge) at the OLD head: after a push
+    # nobody was asked anything yet, and the daily line must not count the PR as waiting on a person
+    assert "--remove-label needs-human" in run
+    # except on a demand PR, where the label means a quote FAILED and a red quotes job skips the canary that
+    # would set it again (review note on #1880)
+    lines = [ln.strip() for ln in run.splitlines()]
+    i = lines.index('case "$PR_BRANCH" in')
+    assert lines[i + 1] == "jr/research-*) ;;" and lines[i + 2].startswith('*) gh pr edit "$PR_NUMBER"') and "needs-human" in lines[i + 2]
+    assert job["steps"][0]["env"]["PR_BRANCH"] == "${{ github.head_ref }}"
     # the review lane never runs on a push
     assert "github.event.label.name == 'review-fallback'" in jobs["agent-review"]["if"]
 
@@ -170,4 +179,37 @@ def test_no_other_job_runs_on_a_dispatch(jobs):
             continue
         cond = str(job.get("if", "")).replace("\n", " ")
         assert "github.event_name == 'pull_request'" in cond or "needs.agent-review.result != 'skipped'" in cond, name
+
+
+def test_the_api_lane_proves_its_shell_sandbox_starts_before_it_reviews(jobs):
+    # 2026-11-19: the lane's first run posted "BLOCK: sandbox failed to initialize, socat not installed" on #1876
+    steps = jobs["agent-review"]["steps"]
+    i = next(n for n, s in enumerate(steps) if "bubblewrap" in str(s.get("run", "")))
+    review = next(n for n, s in enumerate(steps) if str(s.get("uses", "")).startswith("anthropics/claude-code-action@"))
+    assert i < review and steps[i]["if"] == steps[review]["if"]
+    lines = [ln.strip() for ln in steps[i]["run"].splitlines() if ln.strip() and not ln.strip().startswith("#")]
+    assert any("apt-get install" in ln and "socat bubblewrap" in ln and "Acquire::Retries=3" in ln for ln in lines)
+    assert "for attempt in 1 2 3; do" in lines                    # the mirror blinked on the first live run
+    # the two proofs end the step and nothing swallows their exit code: a sandbox that cannot start fails the job
+    assert lines[-2:] == ["command -v socat", "bwrap --ro-bind / / --unshare-net true"]
+    assert not steps[i].get("continue-on-error")
+    assert steps[review]["env"]["CLAUDE_CODE_SUBPROCESS_ENV_SCRUB"] == "1"     # the reason the sandbox is required
+
+
+def test_a_test_file_the_reviewer_cannot_run_is_read_and_left_to_the_required_check(jobs):
+    # 2026-11-19: #1840, #1843 and #1851 were BLOCKed on "the reviewer could not run the test file" alone:
+    # TypeScript tests under apps/web, which neither review lane can run and CI's required `tests` check does
+    contract = (REPO / "docs" / "REVIEW-CONTRACT.md").read_text()
+    prompt = (REPO / "docs" / "ops" / "REVIEW-PROMPT.md").read_text()
+    step = _review_step(jobs)
+    for text in (contract, prompt, step["with"]["prompt"]):
+        flat = " ".join(text.split())
+        assert "apps/web/" in flat and "gh pr checks" in flat
+        assert "READ, not run" in flat or "is read, not run" in flat
+    assert '"I could not run it" is never a finding' in " ".join(contract.split())
+    allowed = re.search(r'--allowedTools "([^"]+)"', step["with"]["claude_args"]).group(1)
+    assert "Bash(gh pr checks:*)" in allowed
+    # the web suite really is inside the required check the rule leans on
+    validate = yaml.safe_load((REPO / ".github" / "workflows" / "validate.yml").read_text())
+    assert any(str(s.get("run", "")).strip() == "npm test" for s in validate["jobs"]["tests"]["steps"])
 

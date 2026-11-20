@@ -233,6 +233,10 @@ the mapping mistake it is checking for. The rules, each one tested on the real c
   followed by a library or SDK word ("M5Cardputer Arduino library", "… SDK", "… component") is a
   software reference, not the device (rules v3, 2026-11-16: an ADV-only README's library link had
   PASSed the original Cardputer in tick #1747, and the gate's reverse-sibling step wrote that edge).
+  A parenthetical attached directly to the sibling's name that adds nothing with a conjunction
+  ("Cardputer-ADV (Cardputer v1.1)") glosses the sibling; it is not a mention of the original (rules v4,
+  2026-11-19: m5-crystal builds only `[env:cardputer-adv]` and v3 PASSed `m5cardputer` on that gloss in
+  tick #1828). "(and the original Cardputer)" / "(also Cardputer v1.1)" still add it.
 - **sibling:** the source names a more specific sibling of the claimed board (Cardputer **ADV**
   for `m5cardputer`, Stick**C Plus2** for a StickC, a product built on a carrier module) and never
   the claimed board on its own → `FAIL`.
@@ -297,7 +301,8 @@ rule "subscription and api as fallback":**
 
 - **Subscription lane (primary).** `jr/agent_review.py once`, an hourly job on the runner, calls the same
   coding delegate the demand executor and the CI heal use (Claude subscription, no API key, read-only:
-  `--no-ship --no-merge`) on the oldest open code PR whose current head has no verdict, in a detached
+  `--no-ship --no-merge`) on the next open code PR whose current head has no verdict (a PR already reviewed at an earlier head
+  first, then the oldest update), in a detached
   worktree at that head, with `docs/ops/REVIEW-PROMPT.md` as the task. The agent writes the structured
   verdict `{verdict: PASS|BLOCK, head, findings, checked}` to a file outside the repo; the runner posts it as
   ONE PR comment beginning with `<!-- agent-review verdict -->` (lane `subscription`). Not for `jr/tick-*`,

@@ -90,6 +90,20 @@ def test_candidates_are_open_non_draft_code_prs_without_a_verdict_for_their_head
     assert [p["number"] for p in ar.candidates(prs, comments)] == [10, 12, 5]       # a heal PR is code too
 
 
+def test_a_pr_reviewed_before_whose_head_moved_is_reviewed_before_the_ones_never_looked_at():
+    # 2026-11-19: #1797 was BLOCKed, Jr's delegate pushed the fix at 06:20Z, and four hours later it was still
+    # unreviewed: its push made it the most recently updated PR, so "oldest update first" put it behind the
+    # whole backlog. The PR closest to merging waited longest.
+    fixed = pr(1797, head=HEAD2, updated="2026-11-18T09:00:00Z")                # newest update: the fix push
+    older_fix = pr(1840, head=HEAD2, updated="2026-11-18T08:00:00Z")
+    prs = [pr(1842, updated="2026-11-18T01:00:00Z"), fixed, pr(1843, updated="2026-11-18T02:00:00Z"), older_fix]
+    old_block = {"user": BOT, "body": ar.render_comment(verdict("BLOCK", head=HEAD, findings=[{"file": "x.py", "line": 1, "summary": "s", "failure": "f"}]), "subscription")}
+    forged = {"user": {"login": "mallory"}, "body": ar.render_comment(verdict("BLOCK", head=HEAD), "subscription")}
+    note = {"user": BOT, "body": "Relay note: only the merge was pushed."}       # trusted author, not a verdict
+    comments = {1797: [old_block], 1840: [old_block], 1843: [forged], 1842: [note]}   # neither earns a place
+    assert [p["number"] for p in ar.candidates(prs, comments)] == [1840, 1797, 1842, 1843]
+
+
 def test_lane_state_reads_the_delegates_own_answer():
     assert ar.lane_state({"verdict": "BUSY", "reason": "another delegate run is in progress"}) == "busy"
     assert ar.lane_state({"verdict": "FAIL", "reason": "no CLAUDE_CODE_OAUTH_TOKEN (env stripped and claude.env missing) — cannot start"}) == "down"
@@ -286,3 +300,75 @@ def test_the_review_worktree_is_always_a_throwaway_directory_and_nothing_else_is
     import inspect
     assert "rmtree" not in inspect.getsource(ar) and "--worktree" not in inspect.getsource(ar)
 
+
+
+# --- the fallback lane only gets a PR whose merge snapshot carries main's review workflow (2026-11-19) -----------
+# A pull_request event runs the workflow from the PR's merge snapshot. Measured: #1876's snapshot was built on a
+# main from six hours earlier, so the label ran the review job WITHOUT the sandbox fix merged a minute before and
+# posted "BLOCK: the reviewer could not read the diff". Other open PRs: snapshots 4-7 h old, base.sha a day old.
+
+DOWN = {"verdict": "FAIL", "reason": "HTTP 429 usage limit reached"}
+
+
+class SnapGh(FakeGh):
+    """A FakeGh that also answers the snapshot questions: the PR's merge commit and the workflow blob at a ref."""
+
+    def __init__(self, prs, snapshot_blob="old", main_blob="new", update_ok=True, readable=True):
+        super().__init__(prs)
+        self.snapshot_blob, self.main_blob, self.update_ok, self.readable = snapshot_blob, main_blob, update_ok, readable
+
+    def __call__(self, *args):
+        if args[:3] == ("api", "-X", "PUT") and args[3].endswith("/update-branch"):
+            self.calls.append(args)
+            if not self.update_ok:
+                raise RuntimeError("HTTP 422: merge conflict")
+            return ""
+        if args[:1] == ("api",) and "/pulls/" in args[-1]:
+            self.calls.append(args)
+            return json.dumps({"merge_commit_sha": "c" * 40}) if self.readable else "not json"
+        if args[:1] == ("api",) and "/contents/.github/workflows/agent-review.yml" in args[1]:
+            self.calls.append(args)
+            return json.dumps({"sha": self.snapshot_blob if "ref=" + "c" * 40 in args[1] else self.main_blob})
+        return super().__call__(*args)
+
+    def labelled(self):
+        return [c for c in self.calls if c[:2] == ("pr", "edit") and ar.FALLBACK_LABEL in c]
+
+    def refreshed(self):
+        return [c for c in self.calls if c[:1] == ("api",) and c[-1].startswith("expected_head_sha=")]
+
+
+def test_a_stale_snapshot_is_refreshed_with_main_instead_of_labelled_and_costs_no_fallback_budget():
+    gh = SnapGh([pr(5)])
+    rep = run(gh, delegate_answering(DOWN))
+    assert rep["outcome"] == "fallback_refresh" and gh.labelled() == []
+    assert gh.refreshed() == [("api", "-X", "PUT", "repos/o/r/pulls/5/update-branch", "-f", f"expected_head_sha={HEAD}")]
+    assert ar.fallbacks_today(rep["state"], "2026-11-18") == 0
+
+
+def test_a_current_snapshot_is_labelled_as_before():
+    gh = SnapGh([pr(5)], snapshot_blob="same", main_blob="same")
+    rep = run(gh, delegate_answering(DOWN))
+    assert rep["outcome"] == "fallback_requested" and len(gh.labelled()) == 1 and gh.refreshed() == []
+
+
+def test_a_pr_is_refreshed_for_the_fallback_at_most_once_a_day_then_labelled_whatever_the_snapshot_says():
+    gh = SnapGh([pr(5)])
+    first = run(gh, delegate_answering(DOWN))
+    assert first["outcome"] == "fallback_refresh"
+    again = SnapGh([pr(5, head=HEAD2)])                           # the refresh made a new head; snapshot still reads old
+    rep = run(again, delegate_answering(DOWN), state=first["state"])
+    assert rep["outcome"] == "fallback_requested" and again.refreshed() == [] and len(again.labelled()) == 1
+
+
+def test_a_refresh_github_refuses_or_an_unreadable_snapshot_falls_back_to_the_label():
+    conflict = SnapGh([pr(5)], update_ok=False)
+    assert run(conflict, delegate_answering(DOWN))["outcome"] == "fallback_requested" and len(conflict.labelled()) == 1
+    blind = SnapGh([pr(5)], readable=False)
+    assert run(blind, delegate_answering(DOWN))["outcome"] == "fallback_requested" and blind.refreshed() == []
+
+
+def test_a_dry_run_refreshes_and_labels_nothing():
+    gh = SnapGh([pr(5)])
+    run(gh, delegate_answering(DOWN), dry_run=True)
+    assert gh.refreshed() == [] and gh.labelled() == []

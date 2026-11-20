@@ -237,7 +237,8 @@ def test_both_canaries_run_mains_code_against_the_pr_as_data(jobs):
         checkouts = [s for s in jobs[name]["steps"] if "actions/checkout" in str(s.get("uses", ""))]
         trusted = [c for c in checkouts if (c.get("with") or {}).get("path") == "trusted"]
         pr = [c for c in checkouts if (c.get("with") or {}).get("path") == "pr"]
-        assert trusted and trusted[0]["with"]["ref"] == "${{ github.event.pull_request.base.sha }}", name
+        # main's tip: base.sha is main at the PR's last head sync, a day old on older PRs (2026-11-19)
+        assert trusted and trusted[0]["with"]["ref"] == "${{ github.event.repository.default_branch }}", name
         assert pr and len(checkouts) == 2, name
         assert all(c["with"].get("persist-credentials") is False for c in checkouts), name
         run = next(s["run"] for s in jobs[name]["steps"] if script in str(s.get("run", "")))

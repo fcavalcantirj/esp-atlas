@@ -227,6 +227,21 @@ export function firmwareIndexGraph(firmware: Firmware[]) {
  * list is named for recipes and each item states its own tier (same words as the
  * flash panel), so an unverified pairing never reads as "runs on". Recipes whose
  * board record is missing are left out. */
+// Google's SoftwareApplication applicationCategory takes its own application types; the catalog's category
+// (multi, pentest, mesh, …) is not one of them, so it is mapped here and kept verbatim as
+// applicationSubCategory. An unknown or absent category is a utility, the honest default for firmware.
+const APPLICATION_CATEGORY: Record<string, string> = {
+  pentest: "SecurityApplication",
+  badusb: "SecurityApplication",
+  mesh: "CommunicationApplication",
+  home: "HomeApplication",
+  display: "MultimediaApplication",
+};
+
+export function applicationCategoryFor(category: string | null | undefined): string {
+  return (category && APPLICATION_CATEGORY[category]) || "UtilitiesApplication";
+}
+
 export function firmwareGraph(firmware: Firmware, recipes: Recipe[], parts: PartRecord[]) {
   const url = `${SITE_URL}/firmware/${encodeURIComponent(firmware.id)}`;
   const boardById = new Map(parts.map((p) => [p.id, p]));
@@ -247,7 +262,8 @@ export function firmwareGraph(firmware: Firmware, recipes: Recipe[], parts: Part
         sameAs: firmware.url,
         description: firmwareMetaDescription(firmware),
         image: `${url}/opengraph-image`,
-        applicationCategory: firmware.category,
+        applicationCategory: applicationCategoryFor(firmware.category),
+        ...(firmware.category ? { applicationSubCategory: firmware.category } : {}),
         operatingSystem: "ESP32",
         offers: { "@type": "Offer", price: 0, priceCurrency: "USD" },
         ...(firmware.license ? { license: firmware.license } : {}),
