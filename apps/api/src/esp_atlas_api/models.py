@@ -477,6 +477,26 @@ class FirmwareListResponse(BaseModel):
     total: int
 
 
+class FirmwareSearchResponse(FirmwareListResponse):
+    """SPEC-firmware-search.md §2: a searched or filtered list. The bare list stays FirmwareListResponse, so
+    its body is what it was."""
+    catalog_total: int
+
+
+class FacetOption(BaseModel):
+    id: str
+    count: int
+    name: Optional[str] = None
+
+
+class FirmwareFacetsResponse(BaseModel):
+    boards: list[FacetOption]
+    socs: list[FacetOption]
+    categories: list[FacetOption]
+    capabilities: list[FacetOption]
+    catalog_total: int
+
+
 class RecipeFlash(BaseModel):
     method: Optional[str] = None
     manifest_url: Optional[str] = None

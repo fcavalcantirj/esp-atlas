@@ -649,7 +649,7 @@
     },
     {
       "id": "ambiguous_bare_stickc_plus_no2",
-      "failure_mode": "deliberately-ambiguous bare device name — \"M5StickC Plus\" (no \"2\") is NOT catalogued (only m5stick-cplus2 exists); device_map.py's documented design refuses to guess, must stay a skip",
+      "failure_mode": "bare \"M5StickC Plus\" (no \"2\") followed by more words (\"M5Stick C Plus colour-ring resistor calculator\"): device_map.py refuses to guess between the Plus and the Plus2 (its documented design), and jr/board_names counts a catalogued name only when it is followed by the end, punctuation or a plain word of FOLLOW_OK: the word after a name is an open set of sibling suffixes (\"Plus2\", \"Supreme\", \"CC1101\"), so an unknown word names nothing. Must stay a skip (as on main).",
       "entry": {
         "name": "M5StickC Plus Resistor Calculator",
         "description": "A very simple M5Stick C Plus colour-ring resistor calculator",

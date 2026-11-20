@@ -29,18 +29,18 @@ function boot(search: string, stored: Record<string, string> = {}) {
 test("?internal=1 marks this browser internal and every later hit carries internal=1", () => {
   const { store, dataLayer, ctx } = boot("?internal=1");
   assert.equal(store.get(INTERNAL_KEY), "1");
-  assert.deepEqual(dataLayer, [["set", { internal: "1" }]]);
+  assert.deepEqual(dataLayer, [["config", GA, { internal: "1" }]]);
   assert.equal(ctx.__ESP_ATLAS_GA_ID, GA);
 });
 
 test("the flag persists across visits without the query and ?internal=0 clears it", () => {
-  assert.deepEqual(boot("", { [INTERNAL_KEY]: "1" }).dataLayer, [["set", { internal: "1" }]]);
+  assert.deepEqual(boot("", { [INTERNAL_KEY]: "1" }).dataLayer, [["config", GA, { internal: "1" }]]);
   const cleared = boot("?utm_source=x&internal=0", { [INTERNAL_KEY]: "1" });
   assert.equal(cleared.store.has(INTERNAL_KEY), false);
   assert.deepEqual(cleared.dataLayer, []);
 });
 
-test("visitors are untouched: no flag, no set command; lookalike params do nothing", () => {
+test("visitors are untouched: no flag, no config command; lookalike params do nothing", () => {
   assert.deepEqual(boot("").dataLayer, []);
   assert.deepEqual(boot("?internal=yes").dataLayer, []);
   assert.deepEqual(boot("?notinternal=1").dataLayer, []);

@@ -310,7 +310,9 @@ rule "subscription and api as fallback":**
 - **API lane (fallback).** Only when the delegate's own answer says the lane is DOWN (no
   `CLAUDE_CODE_OAUTH_TOKEN`, usage limit, 401/403/429), the runner labels that PR `review-fallback` — at most
   `FALLBACK_PER_DAY` (3) a UTC day, counted in the runner's state — and `.github/workflows/agent-review.yml`
-  (trigger: that label) runs `anthropics/claude-code-action@v1` with `ANTHROPIC_API_KEY`, tools limited to
+  (trigger: that label) runs the Claude Code CLI directly (`claude -p`, an exact version; never
+  `anthropics/claude-code-action`, which Anthropic bills as Claude Code, a product the plan's monthly API
+  credit does not pay for: 2026-11-20) with `ANTHROPIC_API_KEY`, tools limited to
   `gh pr diff`, `gh pr view`, reading the checkout and running the touched test files, then posts the same
   comment (lane `api`) and removes the label. BUSY (the delegate's lock is held) is not down: the PR waits an
   hour. Without the secret the fallback job says so and the PR waits for the subscription lane.

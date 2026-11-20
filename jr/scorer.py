@@ -31,6 +31,7 @@ if str(_JR_DIR) not in sys.path:
 import tools  # noqa: E402
 from capability_map import capabilities_from_text  # noqa: E402
 from device_map import device_from_category, device_from_text  # noqa: E402
+import board_names  # noqa: E402
 
 FIRMWARE_CATEGORY_ENUM = ("pentest", "mesh", "badusb", "display", "home", "multi")
 
@@ -359,6 +360,21 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
         # (jr/board_alias over the submitter's "Boards:" line or the repo's own build files —
         # jr/stage_admit): the last fallback, never a free-text guess.
         board = board_hint
+    if not board:
+        # The catalog's own vocabulary (jr/board_names: id, brand + name, aka, digit-bearing name of
+        # every board in data/boards) over the repo's own words: name, description, GitHub topics
+        # (author-declared, on the repo page) and README title. Not the README body: a support
+        # matrix names many boards, and widening is Track B's job. Exactly one board or nothing —
+        # several is ambiguous, recorded as such, never guessed. 2026-11-17: device_map covered 14
+        # of 118 boards, all M5Stack; Heltec / LilyGO / Espressif-devkit firmware never got in.
+        # Each text on its own (the end of one is never read as followed by the next), topics whole.
+        named = sorted({b for i, text in enumerate((name, repo_meta.get("description"), repo_meta.get("readme_title")))
+                        for b in board_names.boards_named_in(
+                            text, root=Path(tools.REPO), topics=(repo_meta.get("topics") or []) if i == 0 else ())})
+        if len(named) == 1:
+            board = named[0]
+        elif named:
+            return {"decision": "skip", "reason": f"ambiguous_board: names {', '.join(named)}"}
     if not board:
         return {"decision": "skip", "reason": "no_board_evidence: no catalogued device named"}
 

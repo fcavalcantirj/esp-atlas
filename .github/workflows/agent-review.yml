@@ -5,9 +5,11 @@ name: agent-review
 #   - PRIMARY: the runner's coding delegate on the Claude subscription, `jr/agent_review.py once` (hourly on
 #     the runner, not in this file). It posts the verdict as ONE comment starting with the marker
 #     `<!-- agent-review verdict -->`.
-#   - FALLBACK (this file's `agent-review` job): `anthropics/claude-code-action@v1` with the repository secret
-#     ANTHROPIC_API_KEY, run ONLY for a PR the runner labelled `review-fallback` because its lane was down
-#     (no subscription token, usage limit, auth failure), at most a few a day. It posts the same comment.
+#   - FALLBACK (this file's `agent-review` job): the Claude Code CLI run directly (`claude -p`) with the
+#     repository secret ANTHROPIC_API_KEY, ONLY for a PR the runner labelled `review-fallback` because its
+#     lane was down (no subscription token, usage limit, auth failure), at most a few a day. It posts the
+#     same comment. NEVER through `anthropics/claude-code-action`: Anthropic bills the Action as Claude Code,
+#     which the plan's monthly API credit does not pay for (see the review step).
 # The `code-canary` job runs on every marker comment, whichever lane wrote it: PASS at exactly the PR's
 # current head + every required check green + both switches on + at most one agent merge an hour ->
 # `gh pr merge --auto --match-head-commit <head>`; BLOCK -> label needs-human. Nobody waits for anyone.
@@ -77,17 +79,33 @@ jobs:
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
           command -v socat
           bwrap --ro-bind / / --unshare-net true
+      - uses: actions/setup-node@v4
+        if: steps.key.outputs.configured == 'true'
+        with:
+          node-version: "22"
+      - name: Install the Claude Code CLI the reviewer runs on (an exact version)
+        if: steps.key.outputs.configured == 'true'
+        run: npm install -g @anthropic-ai/claude-code@2.1.329
       - name: Review the exact head against docs/REVIEW-CONTRACT.md
+        # `claude -p` run DIRECTLY, never `anthropics/claude-code-action`. Billing, not taste (2026-11-20): the
+        # account's money is the plan's monthly API credit, which covers "Claude API, Claude Managed Agents, the
+        # Claude Agent SDK, and playground" and NOT Claude Code
+        # (https://platform.claude.com/docs/en/about-claude/api-credits-for-subscribers). Anthropic's help article
+        # 17154008: "API credits cover `claude -p` and the Claude Agent SDK when you run them yourself with an API
+        # key from your linked Claude Console organization, because that usage is billed as Agent SDK usage" and
+        # "Runs started by the Claude Code GitHub Action ... count as Claude Code usage, so API credits don't cover
+        # them, even with `-p`". Measured: through the Action every review was refused in under a second with
+        # `billing_error` "Credit balance is too low" (Nov 19 and 20) while $199.95 of credit sat unused and a
+        # plain API call with the same key answered 200.
         if: steps.key.outputs.configured == 'true'
         id: review
-        uses: anthropics/claude-code-action@v1
+        timeout-minutes: 25
         env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CLAUDE_CODE_SUBPROCESS_ENV_SCRUB: "1"   # the PR's tests never see a credential (5th review of #1809)
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          # the job's own read-only token: no id-token exchange for a write-scoped app token (5th review of #1809)
-          github_token: ${{ github.token }}
-          prompt: |
+          # the job's own read-only token, for the reviewer's `gh pr diff/view/checks` (5th review of #1809)
+          GH_TOKEN: ${{ github.token }}
+          PROMPT: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
             HEAD: ${{ github.event.pull_request.head.sha }}
@@ -102,10 +120,45 @@ jobs:
             "could not run it". Answer with the structured
             verdict whose `head` is exactly HEAD. Never comment, edit, commit, push, merge or label anything:
             the workflow posts your verdict.
-          claude_args: |
-            --max-turns 40
-            --allowedTools "Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr checks:*),Bash(python3 -m pytest:*),Bash(PYTHONPATH=apps/core/src python3 -m pytest:*),Read,Grep,Glob"
-            --json-schema '{"type":"object","required":["verdict","head","findings","checked"],"properties":{"verdict":{"type":"string","enum":["PASS","BLOCK"]},"head":{"type":"string"},"findings":{"type":"array","items":{"type":"object","required":["file","summary","failure"],"properties":{"file":{"type":"string"},"line":{"type":"integer"},"summary":{"type":"string"},"failure":{"type":"string"}}}},"checked":{"type":"array","items":{"type":"string"}}}}'
+        run: |
+          # the result lands in a fresh directory whose path no child process is told
+          out="$(mktemp -d)/review-result.json"
+          set +e
+          claude -p "$PROMPT" \
+            --model claude-opus-5-5 \
+            --max-turns 40 \
+            --allowedTools "Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr checks:*),Bash(python3 -m pytest:*),Bash(PYTHONPATH=apps/core/src python3 -m pytest:*),Read,Grep,Glob" \
+            --json-schema '{"type":"object","required":["verdict","head","findings","checked"],"properties":{"verdict":{"type":"string","enum":["PASS","BLOCK"]},"head":{"type":"string"},"findings":{"type":"array","items":{"type":"object","required":["file","summary","failure"],"properties":{"file":{"type":"string"},"line":{"type":"integer"},"summary":{"type":"string"},"failure":{"type":"string"}}}},"checked":{"type":"array","items":{"type":"string"}}}}' \
+            --output-format json < /dev/null > "$out" 2> "$out.stderr"
+          echo "claude exit code: $?"
+          set -e
+          tail -c 1500 "$out.stderr" || true
+          # The verdict leaves as the step output `structured_output`, one line of JSON, written LAST and ALWAYS
+          # (empty when there is none), so nothing written to the output file earlier can stand in for it. What
+          # the run cost and why it failed are printed, so a refusal is readable without a second run.
+          python3 - "$out" <<'PY'
+          import json
+          import os
+          import sys
+
+          result = {}
+          try:
+              data = json.loads(open(sys.argv[1], encoding="utf-8").read())
+              if isinstance(data, list):
+                  data = next((m for m in reversed(data) if isinstance(m, dict) and m.get("type") == "result"), {})
+              result = data if isinstance(data, dict) else {}
+          except (OSError, ValueError) as exc:
+              print("review result unreadable:", exc.__class__.__name__)
+          keys = ("subtype", "is_error", "terminal_reason", "api_error_status", "num_turns", "duration_ms", "total_cost_usd")
+          print("review result:", json.dumps({k: result[k] for k in keys if k in result}))
+          if result.get("is_error"):
+              print("review error text:", str(result.get("result") or "")[:300])
+          verdict = result.get("structured_output")
+          line = json.dumps(verdict, separators=(",", ":")) if isinstance(verdict, dict) and not result.get("is_error") else ""
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+              fh.write("structured_output=" + line + "\n")
+          sys.exit(0 if line else 1)
+          PY
 
   agent-review-post:
     # posts the API lane's verdict with MAIN's code in a fresh job: no file the reviewed PR wrote or ran is here.
