@@ -326,6 +326,21 @@ def expire_tick_prs(gh, prs: list, now: str, dry_run: bool, guard=None, fetch=No
     return out
 
 
+def review_lane_warning(now: str, state_path: Path | None = None) -> str | None:
+    """One line for the tick when the backup reviewer was asked today and answered nothing (the runner's
+    reviewer keeps that in its own state file on the same machine). Silence used to be the only sign."""
+    try:
+        state = agent_review.load_state(state_path or agent_review.DEFAULT_STATE)
+    except Exception:  # noqa: BLE001
+        return None
+    empty = state.get("fallback_empty") or {}
+    if empty.get("day") != ci_watch._utc_day(now) or not empty.get("prs"):
+        return None
+    prs = ", ".join(f"#{n}" for n in empty["prs"][:5])
+    return (f"the backup reviewer was asked and gave NO verdict today ({prs}): the subscription lane is down "
+            "and the API lane is not answering (check the API account's credit and the agent-review runs)")
+
+
 def _behind_main(gh, slug: str, head: str) -> bool:
     """main has commits the PR head lacks (compare head...main: ahead_by > 0). Unreadable → False: never
     merge into a PR on a guess."""
@@ -495,7 +510,9 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
                                          {v.check for v in wanted if ci_watch.is_pr_fix(v.check)},
                                          _closed(gh, store, {p["number"] for p in prs}), now)
         progress["resolved"] += store.resolve_pr_red(reds["fingerprints"], now)
+        lane = review_lane_warning(now)
         return {"status": "ok", "recorded": recorded, "labels_created": ensure_labels(gh, store, now),
+                "warnings": [lane] if lane else [],
                 "reruns": [n for n, _ in reds["reruns"]],
                 "canary_retries": [n for n, _ in retries["update_branch"] + retries["rerun"]],
                 "canary_retry_failed": retries["failed"],

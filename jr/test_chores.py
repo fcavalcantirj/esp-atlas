@@ -1058,3 +1058,33 @@ def test_jrs_queued_tick_prs_are_shown_but_are_not_waiting_on_a_person(tmp_path)
     line = _day(_store(tmp_path), Gh(prs, merged=merged_jr("espatlas-jr")), 19)
     assert "self-sufficient 1/7 days" in line and "nothing of Jr's waits on a person" in line
     assert "Jr's own queue: 2 open (oldest #1827, 74 h)" in line
+
+
+# --- the tick says so when the backup reviewer answers nothing (2026-11-19) ---------------------------------------
+
+def test_a_backup_reviewer_that_gave_no_verdict_today_is_a_warning_in_the_chores_output(tmp_path):
+    state = tmp_path / "agent-review.json"
+    state.write_text(json.dumps({"fallback_empty": {"day": "2026-11-19", "prs": [1840, 1843]}}))
+    line = chores.review_lane_warning(NOW, state)
+    assert "#1840, #1843" in line and "NO verdict today" in line and "credit" in line
+    assert chores.review_lane_warning("2026-11-20T12:05:00+00:00", state) is None       # yesterday's is not today's
+    assert chores.review_lane_warning(NOW, tmp_path / "missing.json") is None
+    state.write_text("not json")
+    assert chores.review_lane_warning(NOW, state) is None
+
+
+def test_the_chores_carry_that_warning(tmp_path, monkeypatch):
+    monkeypatch.setattr(chores, "review_lane_warning", lambda now, state_path=None: "the backup reviewer … NO verdict today")
+    out = chores.run(Gh([]), _store(tmp_path), NOW, slug="o/r")
+    assert out["warnings"] == ["the backup reviewer … NO verdict today"]
+    monkeypatch.setattr(chores, "review_lane_warning", lambda now, state_path=None: None)
+    assert chores.run(Gh([]), _store(tmp_path / "b"), NOW, slug="o/r")["warnings"] == []
+
+
+def test_the_tick_line_carries_the_chores_warnings(tmp_path):
+    from test_tick import git_ok, gh_ok, run
+
+    def chores_runner(gh, now, dry_run):
+        return {"status": "ok", "recorded": [], "warnings": ["the backup reviewer was asked and gave NO verdict today (#1840)"]}
+    r = run(git=git_ok(tmp_path), gh=gh_ok(rate="120"), chores_runner=chores_runner, notifier=lambda m: None)
+    assert any("backup reviewer was asked and gave NO verdict" in w for w in r.warnings)
