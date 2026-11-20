@@ -53,6 +53,15 @@ def test_a_board_is_named_by_its_id_its_brand_and_name_an_aka_or_a_digit_bearing
     "Pro S3 board",                                                                 # not the UM ProS3
     "dual core 2.4 GHz",                                                            # not the M5Stack Core2
     "M5Stack AtomS3R camera demo",                                                  # the S3R is a sibling, not the AtomS3
+    # #1797 second review: a name made only of chip and module words is the module, not a board;
+    # a catalogued name followed by a variant word is that variant, an uncatalogued sibling
+    "Camera web streamer for the ESP32-WROVER module with PSRAM",                   # not the Freenove board
+    "ESP32-WROVER-E board with PSRAM",
+    "esp32 wrover kit audio",
+    "E-paper clock for the M5Stack Core Ink",                                       # the CoreInk, not the Core
+    "Spotify remote for the LilyGO T-Display S3 Pro",                               # nor the T-Display (general)
+    "LilyGO T-Display-S3-Pro firmware",
+    "Heltec Wireless Tracker v2 logger",
     "",
 ])
 def test_a_board_is_never_named_by_a_substring_an_english_word_a_chip_or_a_library_reference(text):
@@ -97,3 +106,14 @@ def test_replay_the_92_rejected_repos_of_2026_11_17():
         hits_floor += bool(got) and case["stars"] >= 25
     assert (hits_all, hits_floor) == (16, 10)
     assert named(" ".join(c["description"] or "" for c in FIXTURE["cases"] if c["repo"] == "esp-rs/std-training")) == []
+
+
+def test_a_module_word_or_a_variant_word_only_refuses_what_it_touches():
+    """#1797 second review: the brand keeps a module-named board ("Freenove ESP32-WROVER"); a word
+    after the name that is not a variant word ("with", "GNSS", "remote") leaves the board named."""
+    assert named("Freenove ESP32-WROVER kit camera") == ["freenove-esp32-wrover"]
+    assert named("freenove_esp32_wrover build") == ["freenove-esp32-wrover"]
+    assert named("M5Stack Core with a LoRa module") == ["m5stack-core"]
+    assert named("M5Stack Core basic clock") == ["m5stack-core"]
+    assert named("LilyGO T-Display S3 Spotify remote") == ["lilygo-t-display-s3"]
+    assert named("LilyGO T-Display S3 AMOLED demo") == ["lilygo-t-display-s3-amoled"]   # a catalogued variant

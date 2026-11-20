@@ -820,3 +820,17 @@ def test_score_entry_never_authors_a_board_from_a_generic_phrase(description, to
     entry = {"name": "T5 Weather", "description": None, "category": None, "github": "https://github.com/x/t5-weather", "download": 0}
     res = score_entry(entry, _plain_repo_meta("x/t5-weather", description, topics=topics), set(), set())
     assert res["decision"] == "skip" and res["reason"].startswith("no_board_evidence"), res
+
+
+@pytest.mark.parametrize("name, description, topics", [
+    ("wrover-cam", "Camera web streamer for the ESP32-WROVER module with PSRAM", ["esp32", "camera"]),
+    ("coreink-clock", "E-paper clock for the M5Stack Core Ink", ["m5stack", "epaper"]),
+    ("tdisplay-pro-remote", "Spotify remote for the LilyGO T-Display S3 Pro", ["lilygo", "esp32s3"]),
+], ids=["wrover-module", "core-ink-sibling", "t-display-s3-pro-sibling"])
+def test_score_entry_never_authors_a_module_or_an_uncatalogued_sibling_as_a_catalogued_board(name, description, topics):
+    """#1797 second review: "ESP32-WROVER" (a generic Espressif module, the Freenove board's catalog
+    name) was authored as freenove-esp32-wrover; "M5Stack Core Ink" as m5stack-core and "LilyGO
+    T-Display S3 Pro" as lilygo-t-display-s3 — uncatalogued siblings, same chip each time."""
+    entry = {"name": name, "description": None, "category": None, "github": f"https://github.com/x/{name}", "download": 0}
+    res = score_entry(entry, _plain_repo_meta(f"x/{name}", description, topics=topics), set(), set())
+    assert res["decision"] == "skip" and res["reason"].startswith("no_board_evidence"), res

@@ -23,8 +23,15 @@ itself (board_alias.atlas_boards: id, name, aka, brand, soc), deterministic, no 
     review: an uncatalogued LilyGO e-paper firmware was authored as m5stack-papers3, same esp32-s3).
   - Chip-only terms (`esp32s3`) and generic words (board_alias._GENERIC) never name a board; terms
     shorter than MIN_TERM alphanumerics never count.
+  - A term made only of chip and module words ("ESP32-WROVER", the Freenove board's catalog name) names
+    the Espressif module, which many boards carry: it never counts without the brand (#1797 second
+    review: a WROVER camera streamer was authored as freenove-esp32-wrover, same esp32).
   - Specific beats general: a match whose span lies inside another board's match is dropped ("T-Display
     S3" names the T-Display-S3, not also the T-Display).
+  - A match followed by a variant word (VARIANT: "Pro", "Ink", "AMOLED", "v2", a chip suffix) names
+    that variant, a sibling, not the board: when the sibling is uncatalogued nothing is named, and
+    the general board it contains stays dropped ("M5Stack Core Ink" is the CoreInk, "LilyGO T-Display
+    S3 Pro" neither the S3 nor the T-Display; #1797 second review, same chip both times).
   - URLs, library/SDK references and #includes are not prose (autoreview._prose), so "M5Cardputer Arduino
     library" is a dependency, not a device.
 
@@ -42,6 +49,9 @@ import board_alias
 
 MIN_TERM = 5          # alphanumerics; "s3", "d32" alone never name a board
 _SEP = r"[-_ ]?"
+# Words that, right after a board's name, make it a different product of the same line.
+VARIANT = re.compile(_SEP + r"(?:pro|plus|max|mini|lite|ultra|ink|amoled|touch|v\d+|s2|s3|c3|c5|c6|h2|p4)\d*"
+                     r"(?![a-z0-9])")
 
 
 def _parts(term: str) -> list[str]:
@@ -50,8 +60,9 @@ def _parts(term: str) -> list[str]:
 
 def _qualifies(parts: list[str]) -> bool:
     compact = "".join(parts)
+    beyond_module = "".join(p for p in parts if p not in board_alias._GENERIC)
     return (len(compact) >= MIN_TERM and not board_alias.chip_only(compact)
-            and compact not in board_alias._GENERIC)
+            and bool(beyond_module) and not board_alias.chip_only(beyond_module))
 
 
 def _pattern(parts: list[str], branded: bool) -> re.Pattern:
@@ -106,6 +117,6 @@ def boards_named_in(text: str | None, root: Path | None = None) -> list[str]:
     named = set()
     for s, e, bid in spans:
         inside = any(bid != o and os_ <= s and e <= oe and (oe - os_) > (e - s) for os_, oe, o in spans)
-        if not inside:
+        if not inside and not VARIANT.match(low, e):
             named.add(bid)
     return sorted(named)
