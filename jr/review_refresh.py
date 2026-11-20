@@ -107,7 +107,7 @@ def refresh(pr: dict, *, git, gh, now: datetime, dry_run: bool = False) -> dict:
                 g("checkout", "origin/main", "--", path)
                 if path == yield_ledger.RELPATH:      # main's rows + the PR's own: its tick's row is the lane's yield
                     yield_ledger.append_rows(wt / path, yield_ledger.rows_missing(
-                        yield_ledger.parse_rows(_show(git, f"origin/main:{path}")),
+                        yield_ledger.read_rows(wt / path),
                         yield_ledger.parse_rows(_show(git, f"{head}:{path}"))))
             g("add", "--", path)
         if merged is not None and _ledger_guard().check(main_doc, merged):
