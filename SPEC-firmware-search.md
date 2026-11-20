@@ -22,8 +22,10 @@ board … understand how people would search … input to search, and filters, o
 `GET /firmware?q=…`. Case, accents, spaces and punctuation are ignored ("ghost esp" finds GhostESP). Filler words
 are dropped (`firmware`, `for`, `flash`, `flasher`, `install`, …). Every remaining word must be found in the
 firmware's own words: its name, id and maintainer; the **ids and names of the boards it has a recipe for**; its
-category, capabilities, chip families and distribution; its summary. So "meshcore cardputer adv" finds MeshCore
-builds that have a recipe for the Cardputer-Adv, and "cardputer" alone lists everything with a Cardputer recipe.
+category, capabilities, chip families and distribution; its summary. A board counts with its id, its name and
+its maker ("m5stack meshcore"). So "meshcore cardputer adv" finds MeshCore builds that have a recipe for the
+Cardputer-Adv, and "cardputer" alone lists everything with a Cardputer recipe. Names, ids and tags match
+whatever the spacing ("t deck", "tdeck", "T-Deck"); in a summary a query word must lie inside one word.
 
 Order with `q` and no explicit `sort`: **relevance** (`sort=relevance`): a word found in the name outranks one
 found in the id or maintainer, then a board, then a tag, then the summary; an exact or leading name match first;
@@ -41,10 +43,19 @@ All optional, all combinable with `q` and with each other (AND):
 | `capability=<tag>` | the tag is in its `capabilities` |
 | `tested=1` | it has at least one `known-good` recipe (with `board`: a `known-good` recipe for that board) |
 
-An unknown value matches nothing (an empty list, never a 422). The response carries `total` (matches before
-`limit`/`offset`), `catalog_total` (the whole catalog) and `facets`: the boards, chip families, categories and
-capability tags that exist in the catalog with their firmware counts, for the filter controls. Facets describe
-the whole catalog, so a control never loses its own options.
+An unknown value matches nothing (an empty list, never a 422); a `q` longer than 120 characters is a 422. A
+searched or filtered response carries `total` (matches before `limit`/`offset`) and `catalog_total` (the whole
+catalog). The bare `GET /firmware` is byte-identical to before and runs on its old code path.
+
+`GET /firmware/facets` returns the boards (id, name), chip families, categories and capability tags that
+exist in the catalog, each with its firmware count, most used first, plus `catalog_total`. Facets describe the
+whole catalog, so a control never loses its own options.
+
+**Speed.** Parsing the firmware and recipe files costs over a second per request (measured on the live API,
+2026-11-19: `/api/firmware` uncached 1.6 to 2.6 s against 0.33 s for `/api/health`). A search therefore reads
+them through `firmware_search.catalog()`, which parses once per state of the files (keyed on every file's
+path, size and modification time) and takes board names and makers from the index. Measured locally: first
+search 1.9 s, the following ones 16 to 25 ms.
 
 ## 3. Page
 
@@ -53,11 +64,14 @@ sort select, a submit button, and a "clear" link when anything is set. It works 
 changing a select submits the form. Every state is a shareable URL. The count line says "N of 170". No match:
 an empty state that names the query and offers to clear it.
 
-SEO: bare `/firmware` stays the indexable canonical and is byte-identical to before when nothing is set. Any
+SEO: bare `/firmware` stays the indexable canonical; with nothing set its list, metadata and structured data
+are what they were (only the control above the list changed). Any
 `q`, filter or non-default `sort` renders `noindex, follow` with `canonical → /firmware`.
 
-Tracking (GA4, no free text of the query beyond what `search_submit` already sends elsewhere):
-`firmware_search` (`has_q`, `filters` count, `results`), on submit.
+Tracking (GA4): `firmware_search` once per searched or filtered list shown, with `has_q`, the number of
+filters, the order and the result count. Never the words typed. The "Order by" select replaces the row of
+sort links, so `firmware_sort` is no longer sent; an order change on a searched list shows in
+`firmware_search.sort`.
 
 ## 4. Oracle
 
@@ -69,4 +83,4 @@ the page's pure helpers (`apps/web/lib/firmware-filters.test.ts`). Real-catalog 
 ## 5. Acceptance
 
 On production after deploy: the queries of §0 return what a person would expect, each filter narrows the list,
-the URL round-trips, and the bare page is unchanged.
+the URL round-trips, and the bare page lists what it listed before.

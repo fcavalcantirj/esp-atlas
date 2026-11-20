@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { track } from "@/lib/analytics";
 import {
   MAX_QUERY, effectiveSort, firmwareSearchParams, isFiltered, optionLabel, socLabel, sortChoices,
@@ -10,27 +10,32 @@ import {
 
 // SPEC-firmware-search.md §3: a plain GET form, so every state is a URL and the page works with JavaScript
 // off (the API filters and orders; this only navigates). "use client" adds three conveniences: a filter
-// submits as soon as it changes, empty fields are left out of the URL, and the submit is counted in GA4
-// (never the words typed).
+// submits as soon as it changes, empty fields are left out of the URL, and each searched or filtered list
+// that is shown is counted in GA4 with its result count (never the words typed).
 export default function FirmwareFilters({ query, facets, results }: { query: FirmwareQuery; facets: FirmwareFacets | null; results: number }) {
   const form = useRef<HTMLFormElement>(null);
   const submit = () => form.current?.requestSubmit();
+  const searched = isFiltered(query);
+  // The page keys this component by the query, so it mounts once per searched list shown.
+  useEffect(() => {
+    if (searched) track("firmware_search", firmwareSearchParams(query, results));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     const fields = Array.from(event.currentTarget.elements) as (HTMLInputElement | HTMLSelectElement)[];
     const empty = fields.filter((f) => f.name && (f.type === "checkbox" ? !(f as HTMLInputElement).checked : !f.value.trim()));
     empty.forEach((f) => (f.disabled = true));            // an unset field does not belong in the URL
     setTimeout(() => empty.forEach((f) => (f.disabled = false)), 0);
-    track("firmware_search", firmwareSearchParams(query, results));
   }
 
   const sort = effectiveSort(query);
   return (
     <form ref={form} className="firmware-filters" role="search" method="get" action="/firmware" onSubmit={handleSubmit}>
       <label className="field firmware-filters-q">
-        <span className="label-row">Search firmware</span>
+        <span className="label-row">Search by name, board or feature</span>
         <input type="search" name="q" defaultValue={query.q} maxLength={MAX_QUERY} autoComplete="off"
-          placeholder="a name, a board, a feature — e.g. marauder, cardputer, lora" />
+          placeholder="e.g. marauder, cardputer, lora" />
       </label>
       <div className="form-grid">
         {facets && (
@@ -81,7 +86,7 @@ export default function FirmwareFilters({ query, facets, results }: { query: Fir
           <span>Tested on real hardware</span>
         </label>
         <button type="submit" className="btn btn--primary btn--sm">Search</button>
-        {(isFiltered(query) || query.sort !== "") && <Link href="/firmware" className="firmware-filters-clear">Clear all</Link>}
+        {(searched || query.sort !== "") && <Link href="/firmware" className="firmware-filters-clear">Clear all</Link>}
       </div>
     </form>
   );

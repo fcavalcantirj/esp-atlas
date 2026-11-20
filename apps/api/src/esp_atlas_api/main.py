@@ -96,6 +96,17 @@ def _with_readme_en(record: dict) -> dict:
     return {**record, "readme_en": path.read_text(encoding="utf-8")}
 
 
+def _board_words(db_path):
+    """({board id: name}, {board id: brand}) from the index: the two columns the firmware search needs of a
+    board, without parsing 120 board files per request."""
+    conn = dbmod.connect(db_path)
+    try:
+        rows = conn.execute("SELECT id, name, vendor_or_brand FROM parts WHERE type = 'board'").fetchall()
+    finally:
+        conn.close()
+    return {r["id"]: r["name"] for r in rows}, {r["id"]: r["vendor_or_brand"] for r in rows}
+
+
 async def _fetch_following_allowlisted_redirects(client, url, headers):
     """GET `url`, following redirects only while each hop stays on the allowlist.
 
@@ -457,6 +468,7 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
         category: Optional[str] = Query(None, max_length=40),
         capability: Optional[str] = Query(None, max_length=40),
         tested: bool = False,
+        db_path=Depends(get_db_path),
     ):
         """SPEC-firmware-ordering.md §2/§3 and SPEC-firmware-search.md. The one place firmware is filtered
         and ordered: `q` (a forgiving word search over the firmware's own words and the boards it has recipes
@@ -465,27 +477,29 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
         no `sort`. An unrecognized `sort` clamps to popularity and an unknown filter value matches nothing,
         rather than 422ing. `limit` unset returns everything; slicing always happens after ordering. `total`
         counts the matches, `catalog_total` the whole catalog, `facets` the filter options with counts."""
-        records = [_with_readme_en(r) for r in observed_firmware(core_list_firmware())]
-        filtered = bool(q or board or soc or category or capability or tested)
-        if not filtered:
+        if not (q or board or soc or category or capability or tested):
+            # the bare list, exactly as before SPEC-firmware-search.md
+            records = [_with_readme_en(r) for r in observed_firmware(core_list_firmware())]
             ordered = core_sort_by_mode(records, sort or "popularity")
             sliced = ordered[offset : offset + limit] if limit is not None else ordered[offset:]
             return FirmwareListResponse(results=sliced, total=len(ordered))
-        recipes, names = core_list_recipes(), core_firmware_search.board_names()
+        # a search: the catalog parsed once per data state (catalog()), board names and makers from the index
+        firmware, recipes = core_firmware_search.catalog()
+        names, brands = _board_words(db_path)
         ordered = core_firmware_search.search_firmware(
-            records, recipes, names, q=q, board=board, soc=soc, category=category, capability=capability,
-            tested=tested, sort=sort)
+            observed_firmware(firmware), recipes, names, brands=brands, q=q, board=board, soc=soc,
+            category=category, capability=capability, tested=tested, sort=sort)
         sliced = ordered[offset : offset + limit] if limit is not None else ordered[offset:]
-        return FirmwareListResponse(results=sliced, total=len(ordered), catalog_total=len(records))
+        return FirmwareListResponse(
+            results=[_with_readme_en(r) for r in sliced], total=len(ordered), catalog_total=len(firmware))
 
     @app.get("/firmware/facets", response_model=FirmwareFacetsResponse)
-    def firmware_facets():
+    def firmware_facets(db_path=Depends(get_db_path)):
         """SPEC-firmware-search.md §2: the options of the firmware filter controls (boards with their names,
         chip families, categories, capability tags), each with its firmware count, over the whole catalog."""
-        records = core_list_firmware()
-        return FirmwareFacetsResponse(
-            **core_firmware_search.facets(records, core_list_recipes(), core_firmware_search.board_names()),
-            catalog_total=len(records))
+        firmware, recipes = core_firmware_search.catalog()
+        names, _ = _board_words(db_path)
+        return FirmwareFacetsResponse(**core_firmware_search.facets(firmware, recipes, names), catalog_total=len(firmware))
 
     @app.get("/firmware/{firmware_id}", response_model=FirmwareRecord)
     def get_firmware(firmware_id: str):

@@ -89,6 +89,51 @@ def test_facets_describe_the_whole_catalog_with_counts():
     assert {"id": "mesh", "count": 2} in f["categories"] and {"id": "lora", "count": 2} in f["capabilities"]
 
 
+def test_the_maker_of_a_board_is_one_of_the_words_when_brands_are_given():
+    brands = {"m5cardputer-adv": "Acme Devices", "m5stack-core2": "Acme Devices"}
+    assert ids(q="acme") == []                                                    # no board id or name says Acme
+    got = [r["id"] for r in fs.search_firmware(FW, RECIPES, BOARDS, brands=brands, q="acme")]
+    assert got == ["meshcore", "stack-chan"]
+    assert [r["id"] for r in fs.search_firmware(FW, RECIPES, BOARDS, brands=brands, q="acme meshcore")] == ["meshcore"]
+
+
+def test_a_query_word_never_matches_across_two_words_of_a_summary():
+    assert ids(q="gridmesh") == []                # "Off-grid mesh messaging": two words, not one
+    assert ids(q="kawaii") == ["stack-chan"]      # a whole word of a summary is still found
+
+
+def _write(root, kind, ident, text):
+    path = root / kind / ident / ("firmware.md" if kind == "firmware" else "recipe.md")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+    return path
+
+
+def test_the_catalog_is_parsed_once_per_state_of_the_files(tmp_path, monkeypatch):
+    from esp_atlas_core import firmware as core_firmware, frontmatter
+    monkeypatch.setattr(frontmatter, "DATA_DIR", tmp_path)
+    monkeypatch.setitem(fs._CATALOG, "signature", None)
+    _write(tmp_path, "firmware", "alpha", "---\nid: alpha\ntype: firmware\nname: Alpha\n---\n")
+    recipe = _write(tmp_path, "recipes", "b__alpha", "---\nid: b__alpha\ntype: recipe\nboard: b\nfirmware: alpha\n---\n")
+    parses = []
+    real = core_firmware.parse_frontmatter
+    monkeypatch.setattr(core_firmware, "parse_frontmatter", lambda p: (parses.append(p), real(p))[1])
+
+    firmware, recipes = fs.catalog()
+    assert [(f["id"], f["boards"]) for f in firmware] == [("alpha", 1)] and [r["board"] for r in recipes] == ["b"]
+    first = len(parses)
+    assert first == 2                             # one firmware file, one recipe file: each parsed once
+    again, _ = fs.catalog()
+    assert len(parses) == first and again == firmware and again is not firmware      # no parse; a fresh list
+
+    _write(tmp_path, "firmware", "beta", "---\nid: beta\ntype: firmware\nname: Beta\n---\n")       # added
+    assert [f["id"] for f in fs.catalog()[0]] == ["alpha", "beta"]
+    recipe.write_text("---\nid: b__alpha\ntype: recipe\nboard: c\nfirmware: alpha\n---\n\nmoved\n", encoding="utf-8")   # edited
+    assert [r["board"] for r in fs.catalog()[1]] == ["c"]
+    recipe.unlink()                                                                                    # removed
+    assert fs.catalog()[1] == [] and [f["boards"] for f in fs.catalog()[0]] == [0, 0]
+
+
 # --- the real catalog (SPEC §4) ------------------------------------------------------------------------
 
 def test_the_real_catalog_answers_the_queries_people_type():

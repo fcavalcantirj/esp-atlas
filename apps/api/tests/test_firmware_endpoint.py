@@ -342,3 +342,23 @@ def test_facets_list_every_option_with_counts_and_board_names(client):
 def test_facets_is_not_mistaken_for_a_firmware_id(client):
     assert "boards" in client.get("/firmware/facets").json()
     assert client.get("/firmware/definitely-not-a-firmware").status_code == 404
+
+
+def test_a_board_maker_is_a_search_word_and_board_names_come_from_the_index(client):
+    from esp_atlas_core.firmware import list_recipes
+    on_m5 = {r["firmware"] for r in list_recipes() if r["board"].startswith("m5")}
+    got = set(_ids(client.get("/firmware", params={"q": "m5stack meshcore"})))
+    assert got and got <= on_m5
+    names = {o["id"]: o["name"] for o in client.get("/firmware/facets").json()["boards"]}
+    assert names["m5cardputer"] == client.get("/parts/m5cardputer").json()["name"]
+
+
+def test_a_search_does_not_parse_the_catalog_again(client, monkeypatch):
+    from esp_atlas_core import firmware as core_firmware
+    client.get("/firmware", params={"q": "bruce"})                    # warm
+    parses = []
+    real = core_firmware.parse_frontmatter
+    monkeypatch.setattr(core_firmware, "parse_frontmatter", lambda p: (parses.append(p), real(p))[1])
+    assert client.get("/firmware", params={"q": "marauder", "board": "m5cardputer"}).status_code == 200
+    assert client.get("/firmware/facets").status_code == 200
+    assert parses == []
