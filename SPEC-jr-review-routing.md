@@ -323,6 +323,14 @@ rule "subscription and api as fallback":**
   --auto --match-head-commit <head>`, landing only when every required check is green there. A BLOCK labels
   the PR `needs-human` with the findings already in the comment; the author's next push is a new review;
   nobody waits.
+- **An armed merge that cannot land never holds the hour (2026-11-20).** A merge requested with `--auto`
+  counts as the hour's merge for as long as the PR stays open, and GitHub never merges a PR that conflicts
+  with its base. #1851 (PASS, armed 03:14Z, conflicting) held the cap for every other reviewed PR until a
+  person disarmed it at 07:55Z. So: C4b, a PR whose `mergeable` is `CONFLICTING` is never armed (GitHub
+  computes that lazily, so `UNKNOWN` is asked again, three reads); and the hourly sweep takes back (auto-merge
+  off, label dropped) an armed merge that conflicts or that was armed more than an hour ago and is still open.
+  The one taken back for its age is decided again by the next sweep, not the same one, so it cannot take the
+  hour it just gave back. A merge that could not be taken back still counts.
 
 This is the one place an LLM sits in the loop, and it decides nothing the catalog shows: a wrong PASS is
 caught by the same after-the-fact audit as a wrong human approval, and the switch turns it off in one
