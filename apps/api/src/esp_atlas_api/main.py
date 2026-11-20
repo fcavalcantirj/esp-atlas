@@ -35,6 +35,7 @@ from esp_atlas_core.firmware import list_recipes as core_list_recipes
 from esp_atlas_core.firmware import recipes_for_board as core_recipes_for_board
 from esp_atlas_core.firmware import recipes_for_firmware as core_recipes_for_firmware
 from esp_atlas_core.firmware import sort_by_mode as core_sort_by_mode
+from esp_atlas_core import firmware_search as core_firmware_search
 from esp_atlas_core.index_build import build_index
 from esp_atlas_core.paths import DATA_DIR
 from esp_atlas_core.run_guide import run_guide as core_run_guide
@@ -58,6 +59,7 @@ from esp_atlas_api.models import (
     IntentResponse,
     ExamplesResponse,
     FacetsResponse,
+    FirmwareFacetsResponse,
     FirmwareListResponse,
     FirmwareRecord,
     HealthResponse,
@@ -446,21 +448,44 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
 
     @app.get("/firmware", response_model=FirmwareListResponse)
     def list_firmware(
-        sort: str = "popularity",
+        sort: Optional[str] = None,
         limit: Optional[int] = Query(None, ge=1, le=100),
         offset: int = Query(0, ge=0),
+        q: Optional[str] = Query(None, max_length=120),
+        board: Optional[str] = Query(None, max_length=80),
+        soc: Optional[str] = Query(None, max_length=40),
+        category: Optional[str] = Query(None, max_length=40),
+        capability: Optional[str] = Query(None, max_length=40),
+        tested: bool = False,
     ):
-        """SPEC-firmware-ordering.md §2/§3. Default order is popularity (D1),
-        every mode ranked via the single shared `sort_by_mode` comparator so
-        `/firmware` can never diverge from `/examples`. An unrecognized `sort`
-        clamps to popularity rather than 422ing (sort_by_mode's own rule).
-        `limit` unset preserves the old behavior of returning everything, just
-        in the new default order; slicing always happens after sort."""
+        """SPEC-firmware-ordering.md §2/§3 and SPEC-firmware-search.md. The one place firmware is filtered
+        and ordered: `q` (a forgiving word search over the firmware's own words and the boards it has recipes
+        for) and the filters narrow, AND-combined; the order is `sort` (the single shared `sort_by_mode`
+        comparator, so `/firmware` can never diverge from `/examples`), or relevance when there is a `q` and
+        no `sort`. An unrecognized `sort` clamps to popularity and an unknown filter value matches nothing,
+        rather than 422ing. `limit` unset returns everything; slicing always happens after ordering. `total`
+        counts the matches, `catalog_total` the whole catalog, `facets` the filter options with counts."""
         records = [_with_readme_en(r) for r in observed_firmware(core_list_firmware())]
-        records = core_sort_by_mode(records, sort)
-        total = len(records)
-        sliced = records[offset : offset + limit] if limit is not None else records[offset:]
-        return FirmwareListResponse(results=sliced, total=total)
+        filtered = bool(q or board or soc or category or capability or tested)
+        if not filtered:
+            ordered = core_sort_by_mode(records, sort or "popularity")
+            sliced = ordered[offset : offset + limit] if limit is not None else ordered[offset:]
+            return FirmwareListResponse(results=sliced, total=len(ordered))
+        recipes, names = core_list_recipes(), core_firmware_search.board_names()
+        ordered = core_firmware_search.search_firmware(
+            records, recipes, names, q=q, board=board, soc=soc, category=category, capability=capability,
+            tested=tested, sort=sort)
+        sliced = ordered[offset : offset + limit] if limit is not None else ordered[offset:]
+        return FirmwareListResponse(results=sliced, total=len(ordered), catalog_total=len(records))
+
+    @app.get("/firmware/facets", response_model=FirmwareFacetsResponse)
+    def firmware_facets():
+        """SPEC-firmware-search.md §2: the options of the firmware filter controls (boards with their names,
+        chip families, categories, capability tags), each with its firmware count, over the whole catalog."""
+        records = core_list_firmware()
+        return FirmwareFacetsResponse(
+            **core_firmware_search.facets(records, core_list_recipes(), core_firmware_search.board_names()),
+            catalog_total=len(records))
 
     @app.get("/firmware/{firmware_id}", response_model=FirmwareRecord)
     def get_firmware(firmware_id: str):

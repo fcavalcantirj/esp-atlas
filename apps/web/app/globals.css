@@ -1406,6 +1406,54 @@ a.firmware-sort-option:focus-visible {
   text-decoration-thickness: 1px;
 }
 
+/* SPEC-firmware-search.md §3: the /firmware search + filter form. Reuses .field / .label-row / .form-grid. */
+.firmware-filters {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+  padding: 0.9rem 1rem 1rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.firmware-filters-q input {
+  width: 100%;
+}
+
+.firmware-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1.1rem;
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+}
+
+.firmware-filters-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 24px;
+  margin-right: auto;
+  cursor: pointer;
+}
+
+.firmware-filters-clear {
+  color: var(--muted);
+}
+
+.firmware-filters-clear:hover,
+.firmware-filters-clear:focus-visible {
+  color: var(--accent);
+}
+
+.firmware-empty {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px dashed var(--border-strong);
+  color: var(--muted);
+}
+
 /* SPEC-firmware-popularity.md §5: the "Showing N of M" + Show more affordance
    under a ranked, capped list. */
 .reveal-footer {

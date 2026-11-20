@@ -475,6 +475,22 @@ class FirmwareRecord(BaseModel):
 class FirmwareListResponse(BaseModel):
     results: list[FirmwareRecord]
     total: int
+    # SPEC-firmware-search.md §2: present only on a searched/filtered list (the bare list is unchanged)
+    catalog_total: Optional[int] = None
+
+
+class FacetOption(BaseModel):
+    id: str
+    count: int
+    name: Optional[str] = None
+
+
+class FirmwareFacetsResponse(BaseModel):
+    boards: list[FacetOption]
+    socs: list[FacetOption]
+    categories: list[FacetOption]
+    capabilities: list[FacetOption]
+    catalog_total: int
 
 
 class RecipeFlash(BaseModel):
