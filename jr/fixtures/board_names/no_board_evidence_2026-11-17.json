@@ -195,9 +195,8 @@
     "m5stack"
    ],
    "description": "Minimal, security-conscious M5Burner replacement. Not affiliated with M5Stack",
-   "expected": [
-    "m5cardputer"
-   ]
+   "expected": [],
+   "note": "2026-11-20: was ['m5cardputer'], read from the END of the description ('... Not affiliated with M5Stack') glued to the FIRST topic ('cardputer'). Neither text names the board: the description names the vendor, the topic is a digitless bare name."
   },
   {
    "repo": "cyberman54/esp32-paxcounter",
@@ -1301,9 +1300,8 @@
     "tft-espi"
    ],
    "description": "Generative art for the LILYGO T-Display visualizing transitions between solid, liquid, and gas through an evolving particle system.",
-   "expected": [
-    "lilygo-t-display"
-   ]
+   "expected": [],
+   "note": "2026-11-20: was ['lilygo-t-display'] ('... for the LilyGO T-Display visualizing transitions ...'). The repo does target that board; the name is followed by a word outside FOLLOW_OK, which the rule cannot tell from a sibling suffix ('T-Display Long'), so it names nothing. A known miss of the fail-closed rule (0 stars)."
   },
   {
    "repo": "tinygo-org/tinygo",

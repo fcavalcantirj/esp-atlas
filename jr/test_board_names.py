@@ -14,21 +14,21 @@ REPO = Path(__file__).resolve().parent.parent
 FIXTURE = json.loads((REPO / "jr" / "fixtures" / "board_names" / "no_board_evidence_2026-11-17.json").read_text())
 
 
-def named(text):
-    return board_names.boards_named_in(text, REPO)
+def named(text, topics=()):
+    return board_names.boards_named_in(text, REPO, topics=topics)
 
 
 @pytest.mark.parametrize("text, expected", [
-    ("Heltec Wireless Tracker GNSS logger", ["heltec-wireless-tracker"]),          # brand + name
+    ("GNSS logger for the Heltec Wireless Tracker", ["heltec-wireless-tracker"]),  # brand + name
     ("heltec-wireless-tracker firmware", ["heltec-wireless-tracker"]),              # the catalog id
-    ("LilyGO T-Display S3 Spotify remote", ["lilygo-t-display-s3"]),
-    ("lilygo-tdisplay-s3 music", ["lilygo-t-display-s3"]),                          # separators optional
-    ("T-Display S3 remote", ["lilygo-t-display-s3"]),                               # digit-bearing bare name
+    ("Spotify remote for the LilyGO T-Display S3.", ["lilygo-t-display-s3"]),
+    ("music on a lilygo-tdisplay-s3", ["lilygo-t-display-s3"]),                     # separators optional
+    ("A remote on the T-Display S3 (ESP32-S3)", ["lilygo-t-display-s3"]),           # digit-bearing bare name
     ("An embedded Little Smalltalk for ESP32 with SSD1306 OLED and M5StickC support", ["m5stick-c"]),
     ("ESP32-S3-DevKitC-1 based sampler", ["esp32-s3-devkitc-1"]),
-    ("Inkplate 6 dashboard", ["soldered-inkplate-6"]),
+    ("Dashboard for the Inkplate 6", ["soldered-inkplate-6"]),
     ("M5Stack Fire port", ["m5stack-fire"]),
-    ("Adafruit MagTag weather", ["adafruit-magtag"]),
+    ("Weather on the Adafruit MagTag", ["adafruit-magtag"]),
     ("adafruit_magtag29_esp32s2 build", ["adafruit-magtag"]),                       # an aka (toolchain id)
 ])
 def test_a_board_is_named_by_its_id_its_brand_and_name_an_aka_or_a_digit_bearing_name(text, expected):
@@ -62,6 +62,17 @@ def test_a_board_is_named_by_its_id_its_brand_and_name_an_aka_or_a_digit_bearing
     "Spotify remote for the LilyGO T-Display S3 Pro",                               # nor the T-Display (general)
     "LilyGO T-Display-S3-Pro firmware",
     "Heltec Wireless Tracker v2 logger",
+    # #1797 third review: the word after a name is an open set, so an unknown word is a sibling until proven
+    # otherwise. Each of these is a real product that is NOT the catalogued board the name starts with.
+    "Mesh node for the LilyGO T-Beam Supreme",                                      # an ESP32-S3 board; T-Beam is ESP32
+    "Sub-GHz scanner firmware for the LilyGO T-Embed CC1101",
+    "Dashboard for the LilyGO T-Display S3 Long",
+    "lilygo t-beam supreme mesh node",                                              # lower case gives no hint either
+    "LilyGO T-Display-S3-Long firmware",
+    # ... and a chip-first catalog name is an English phrase unless it is spelled as the catalog spells it
+    "Modbus gateway for any ESP32 Ethernet kit like the WT32-ETH01",
+    "an ESP32 Ethernet kit.",
+    "ESP32 S3 DevKitC 1 sampler",
     "",
 ])
 def test_a_board_is_never_named_by_a_substring_an_english_word_a_chip_or_a_library_reference(text):
@@ -69,23 +80,50 @@ def test_a_board_is_never_named_by_a_substring_an_english_word_a_chip_or_a_libra
 
 
 def test_a_bare_digitless_name_needs_its_brand_or_a_known_vendor_prefix():
-    assert named("LilyGO T-Deck chat") == ["lilygo-t-deck"]
-    assert named("TTGO T-Beam tracker") == ["lilygo-t-beam"]
-    assert named("M5 StickC thing") == ["m5stick-c"]
+    assert named("Chat for the LilyGO T-Deck") == ["lilygo-t-deck"]
+    assert named("A tracker on the TTGO T-Beam.") == ["lilygo-t-beam"]
+    assert named("A thing for the M5 StickC") == ["m5stick-c"]
 
 
 def test_a_brandless_coined_name_matches_only_as_the_catalog_spells_it_but_its_brand_frees_the_separators():
-    assert named("PaperS3 clock") == ["m5stack-papers3"]
-    assert named("TinyS3 synth") == ["um-tinys3"]
-    assert named("M5Stack Paper S3 clock") == ["m5stack-papers3"]                   # brand + name
-    assert named("Unexpected Maker Tiny S3 synth") == ["um-tinys3"]
-    assert named("T-Display S3 remote") == ["lilygo-t-display-s3"]                 # the catalog's own word break
+    assert named("A clock on the PaperS3") == ["m5stack-papers3"]
+    assert named("A synth for the TinyS3.") == ["um-tinys3"]
+    assert named("A clock on the M5Stack Paper S3") == ["m5stack-papers3"]          # brand + name
+    assert named("A synth for the Unexpected Maker Tiny S3") == ["um-tinys3"]
+    assert named("A remote on the T-Display S3") == ["lilygo-t-display-s3"]        # the catalog's own word break
 
 
 def test_the_specific_board_wins_over_the_general_one_it_contains():
-    assert named("T-Display S3 remote") == ["lilygo-t-display-s3"]                 # not also lilygo-t-display
-    assert named("StickC Plus2 scope") == ["m5stick-cplus2"]                        # not also m5stick-c / cplus
+    assert named("A remote on the T-Display S3") == ["lilygo-t-display-s3"]        # not also lilygo-t-display
+    assert named("A scope for the StickC Plus2") == ["m5stick-cplus2"]              # not also m5stick-c / cplus
     assert named("lilygo-t-display-s3-amoled demo") == ["lilygo-t-display-s3-amoled"]
+
+
+@pytest.mark.parametrize("after", ["", ".", ", with GPS", " (ESP32)", "; then", ": notes", "!", " / T-Deck", "'s screen",
+                                   " and a GPS", " with LoRa", " for hikers", " board", " boards", " firmware",
+                                   " support", " based tracker", " port", " demo", " build", " running MicroPython"])
+def test_a_name_counts_when_what_follows_is_the_end_punctuation_or_a_plain_word(after):
+    assert "lilygo-t-beam" in named("Tracker for the LilyGO T-Beam" + after)
+
+
+@pytest.mark.parametrize("after", [" Supreme", " supreme", "-Supreme", "_supreme", " S3", " v1.2", " 1.1", " CC1101", " Long",
+                                   " Meshtastic", " GPS", " tracker", " mesh", " Pro", " Plus", " AXP2101", " edition"])
+def test_any_other_word_right_after_a_name_makes_it_an_unknown_sibling(after):
+    assert named("Tracker for the LilyGO T-Beam" + after) == []
+
+
+def test_a_topic_names_a_board_only_when_the_whole_topic_is_the_boards_name():
+    """Topics are labels the author typed one by one: a whole topic is a name with nothing after it."""
+    assert named("", topics=["esp32", "m5stickc", "odroid-go"]) == ["m5stick-c"]
+    assert named("", topics=["lilygo-tdisplay-s3", "music", "playlists"]) == ["lilygo-t-display-s3"]
+    assert named("", topics=["t-display-s3"]) == ["lilygo-t-display-s3"]            # a digit-bearing bare name
+    assert named("", topics=["m5stack-cardputer", "m5stack-stickc"]) == ["m5cardputer", "m5stick-c"]
+    assert named("", topics=["esp32-ethernet-kit"]) == ["esp32-ethernet-kit"]
+    # a sibling's topic carries its suffix; a digitless bare name needs its brand; a chip is no board
+    assert named("", topics=["t-beam-supreme", "lilygo-t-beam-supreme", "tbeam-supreme-mesh", "t-embed-cc1101"]) == []
+    assert named("", topics=["t-deck", "fire", "wireless-tracker", "esp32-s3", "esp32s3", "lilygo", "m5stack"]) == []
+    assert named("", topics=["lilygo-t-deck"]) == ["lilygo-t-deck"]
+    assert named("A clock.", topics=None) == []
 
 
 def test_two_different_boards_are_both_named_and_the_caller_decides():
@@ -93,27 +131,32 @@ def test_two_different_boards_are_both_named_and_the_caller_decides():
 
 
 def test_replay_the_92_rejected_repos_of_2026_11_17():
-    """What the scorer missed with 14 of 118 boards in its vocabulary: 16 of 92 repos (10 above the
+    """What the scorer missed with 14 of 118 boards in its vocabulary: 14 of 92 repos (10 above the
     star floor) name a catalogued board in their own name, description or topics; none of the other
-    76 is named a board it does not say (the fixture's `expected` is hand-reviewed)."""
+    78 is named a board it does not say (the fixture's `expected` is hand-reviewed). Two hits of the
+    first version are gone, each with a `note` in the fixture: one was the end of a description glued to
+    a topic (never a hit), one is a real miss of the fail-closed rule (the name is followed by an
+    ordinary word the rule cannot tell from a sibling's suffix)."""
     hits_all, hits_floor = 0, 0
     for case in FIXTURE["cases"]:
-        text = " ".join([case["repo"].split("/")[1].replace("-", " ").replace("_", " "),
-                         case["description"] or "", " ".join(case["topics"])])
-        got = named(text)
+        got = sorted(set(named(case["repo"].split("/")[1])) | set(named(case["description"], case["topics"])))
         assert got == case["expected"], (case["repo"], got, case["expected"])
         hits_all += bool(got)
         hits_floor += bool(got) and case["stars"] >= 25
-    assert (hits_all, hits_floor) == (16, 10)
+    assert (hits_all, hits_floor) == (14, 10)
     assert named(" ".join(c["description"] or "" for c in FIXTURE["cases"] if c["repo"] == "esp-rs/std-training")) == []
 
 
 def test_a_module_word_or_a_variant_word_only_refuses_what_it_touches():
     """#1797 second review: the brand keeps a module-named board ("Freenove ESP32-WROVER"); a word
     after the name that is not a variant word ("with", "GNSS", "remote") leaves the board named."""
-    assert named("Freenove ESP32-WROVER kit camera") == ["freenove-esp32-wrover"]
+    assert named("Camera kit for the Freenove ESP32-WROVER") == ["freenove-esp32-wrover"]
     assert named("freenove_esp32_wrover build") == ["freenove-esp32-wrover"]
     assert named("M5Stack Core with a LoRa module") == ["m5stack-core"]
-    assert named("M5Stack Core basic clock") == ["m5stack-core"]
-    assert named("LilyGO T-Display S3 Spotify remote") == ["lilygo-t-display-s3"]
+    assert named("A basic clock for the M5Stack Core.") == ["m5stack-core"]
+    assert named("Spotify remote for the LilyGO T-Display S3") == ["lilygo-t-display-s3"]
     assert named("LilyGO T-Display S3 AMOLED demo") == ["lilygo-t-display-s3-amoled"]   # a catalogued variant
+    assert named("LilyGO T-Display S3 Spotify remote") == []                            # unknown word: fail closed
+    assert named("Espressif ESP32 Ethernet Kit gateway.") == []                         # "gateway": fail closed
+    assert named("Gateway for the Espressif ESP32 Ethernet Kit.") == ["esp32-ethernet-kit"]   # the brand frees the spelling
+    assert named("Gateway for the ESP32-Ethernet-Kit") == ["esp32-ethernet-kit"]

@@ -781,9 +781,34 @@ def _plain_repo_meta(full_name, description, topics=None, stars=60):
 def test_score_entry_admits_a_heltec_board_named_in_the_description():
     entry = {"name": "LoRa Wireless Tracker", "description": None, "category": None,
              "github": "https://github.com/jh/lorawirelesstracker", "download": 0}
-    res = score_entry(entry, _plain_repo_meta("jh/lorawirelesstracker", "Heltec Wireless Tracker ESP32/Oled/GNSS/Lora"), set(), set())
+    res = score_entry(entry, _plain_repo_meta("jh/lorawirelesstracker", "Heltec Wireless Tracker (Makerfocus) ESP32/Oled/GNSS/Lora"), set(), set())
     assert res["decision"] == "authored", res
     assert res["record"]["board"] == "heltec-wireless-tracker" and res["record"]["chip"] == "esp32-s3"
+
+
+@pytest.mark.parametrize("name, description, topics", [
+    # #1797 third review, the reviewer's own inputs: each is a real product that is not the catalogued board
+    ("tbeam-supreme-mesh", "Mesh node for the LilyGO T-Beam Supreme", ["lilygo", "lora"]),          # ESP32-S3, not the ESP32 T-Beam
+    ("subghz-scan", "Sub-GHz scanner firmware for the LilyGO T-Embed CC1101", ["lilygo"]),
+    ("long-dash", "Dashboard for the LilyGO T-Display S3 Long", ["lilygo"]),
+    ("ethkit", "Modbus gateway for any ESP32 Ethernet kit like the WT32-ETH01", ["esp32", "ethernet"]),
+    ("supreme", "lilygo t-beam supreme tracker", ["t-beam-supreme", "lilygo-t-beam-supreme"]),      # topics carry the suffix too
+])
+def test_score_entry_never_authors_a_catalogued_board_for_an_uncatalogued_sibling_or_an_english_phrase(name, description, topics):
+    entry = {"name": name, "description": None, "category": None, "github": f"https://github.com/x/{name}", "download": 0}
+    res = score_entry(entry, _plain_repo_meta(f"x/{name}", description, topics=topics), set(), set())
+    assert res["decision"] == "skip" and "no_board_evidence" in res["reason"], res
+
+
+def test_score_entry_reads_each_text_on_its_own_never_the_end_of_one_glued_to_the_next():
+    """cryptspeak/m5uploader: "... Not affiliated with M5Stack" + topic "cardputer" is not the M5Stack Cardputer."""
+    entry = {"name": "uploader", "description": None, "category": None, "github": "https://github.com/c/uploader", "download": 0}
+    meta = _plain_repo_meta("c/uploader", "Minimal M5Burner replacement. Not affiliated with M5Stack",
+                            topics=["cardputer", "esptool", "m5burner"])
+    assert score_entry(entry, meta, set(), set())["decision"] == "skip"
+    meta = _plain_repo_meta("c/uploader", "Minimal M5Burner replacement.", topics=["m5stack-cardputer", "esptool"])
+    res = score_entry(entry, meta, set(), set())
+    assert res["decision"] == "authored" and res["record"]["board"] == "m5cardputer", res
 
 
 def test_score_entry_reads_the_repo_s_github_topics_as_the_author_s_own_words():

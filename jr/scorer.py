@@ -367,9 +367,10 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
         # matrix names many boards, and widening is Track B's job. Exactly one board or nothing —
         # several is ambiguous, recorded as such, never guessed. 2026-11-17: device_map covered 14
         # of 118 boards, all M5Stack; Heltec / LilyGO / Espressif-devkit firmware never got in.
-        named = board_names.boards_named_in(" ".join(str(t) for t in (
-            name, repo_meta.get("description"), " ".join(repo_meta.get("topics") or []),
-            repo_meta.get("readme_title")) if t), root=Path(tools.REPO))
+        # Each text on its own (the end of one is never read as followed by the next), topics whole.
+        named = sorted({b for i, text in enumerate((name, repo_meta.get("description"), repo_meta.get("readme_title")))
+                        for b in board_names.boards_named_in(
+                            text, root=Path(tools.REPO), topics=(repo_meta.get("topics") or []) if i == 0 else ())})
         if len(named) == 1:
             board = named[0]
         elif named:
