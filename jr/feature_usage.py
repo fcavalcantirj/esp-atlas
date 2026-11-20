@@ -8,8 +8,9 @@ For every feature in `jr/features.json` it counts, over the completed 28-day win
   - used: distinct users who fired one of its action events (user-initiated events only);
   - use rate = used / reached, events per user who used it.
 Maintainers are left out with `customEvent:internal != "1"` (apps/web `?internal=1`); while that dimension
-is not registered in GA4 the query fails, the report retries without it and says so on its own line —
-never silently. Crawlers rarely fire custom action events, so "used" is the bot-resistant number; "reached"
+is not registered in GA4 a filtered probe fails where the unfiltered one answers, so the whole report runs
+without it and says so on its own line — never silently. The probe decides once: one failed call later is
+that feature's row ("unavailable"), never a switch of basis. Crawlers rarely fire custom action events, so "used" is the bot-resistant number; "reached"
 counts every page view and is printed as such.
 
 A feature with fewer than `low_use_acting_users` users who used it in each of the last `low_use_windows`
@@ -73,10 +74,22 @@ def _with_internal(expr: dict, exclude_internal: bool) -> dict:
     return {"andGroup": {"expressions": [expr, NOT_INTERNAL]}} if exclude_internal else expr
 
 
-def _request(property_id: str, wins: list, expr: dict, metrics: list) -> dict:
-    return {"property": property_id,
-            "dateRanges": [{"startDate": s, "endDate": e, "name": f"w{i}"} for i, (s, e) in enumerate(wins)],
-            "dimensions": [], "metrics": [{"name": m} for m in metrics], "dimensionFilter": expr}
+def _request(property_id: str, wins: list, expr: dict | None, metrics: list) -> dict:
+    req = {"property": property_id,
+           "dateRanges": [{"startDate": s, "endDate": e, "name": f"w{i}"} for i, (s, e) in enumerate(wins)],
+           "dimensions": [], "metrics": [{"name": m} for m in metrics]}
+    if expr is not None:
+        req["dimensionFilter"] = expr
+    return req
+
+
+def _internal_filter_works(ex, property_id: str, wins: list) -> bool:
+    """Decided once per report, measured: False only when a probe filtered on `internal` fails AND the same
+    probe without the filter succeeds (the dimension is not registered). A GA4 that answers neither keeps
+    the filter on: no cause is named that was not observed, and every row still shares one basis."""
+    if ex("GOOGLE_ANALYTICS_RUN_REPORT", _request(property_id, wins, NOT_INTERNAL, ["totalUsers"])) is not None:
+        return True
+    return ex("GOOGLE_ANALYTICS_RUN_REPORT", _request(property_id, wins, None, ["totalUsers"])) is None
 
 
 def _by_window(resp: dict | None, n: int) -> list[list[float]] | None:
@@ -114,15 +127,11 @@ def build(ex, property_id: str, end: str, features_doc: dict | None = None) -> R
     """The report for the four windows ending at `end`. `ex(slug, args)` is telemetry._ex (None on failure)."""
     doc = features_doc or load_features()
     wins = windows(end)
-    rep = Report(end=end)
+    rep = Report(end=end, internal_excluded=_internal_filter_works(ex, property_id, wins))
 
-    def run(expr: dict, metrics: list):
-        if rep.internal_excluded:
-            got = _by_window(ex("GOOGLE_ANALYTICS_RUN_REPORT", _request(property_id, wins, _with_internal(expr, True), metrics)), len(wins))
-            if got is not None:
-                return got
-            rep.internal_excluded = False         # the dimension is not registered yet: say so, retry without it
-        return _by_window(ex("GOOGLE_ANALYTICS_RUN_REPORT", _request(property_id, wins, expr, metrics)), len(wins))
+    def run(expr: dict, metrics: list):           # a failed call is that feature's row only, never a new basis
+        req = _request(property_id, wins, _with_internal(expr, rep.internal_excluded), metrics)
+        return _by_window(ex("GOOGLE_ANALYTICS_RUN_REPORT", req), len(wins))
 
     threshold = int(doc.get("low_use_acting_users", 5))
     n_low = int(doc.get("low_use_windows", WINDOWS))

@@ -26,7 +26,7 @@ def fake_ga(answers, internal_registered=True):
 
     def ex(slug, args):
         calls.append(args)
-        flt = json.dumps(args["dimensionFilter"])
+        flt = json.dumps(args.get("dimensionFilter"))
         if "customEvent:internal" in flt and not internal_registered:
             return None                                  # GA4 rejects an unregistered dimension
         if '"page_view"' in flt:
@@ -85,7 +85,7 @@ def test_the_digest_lines_read_like_answers():
 
 def test_a_failed_call_marks_that_feature_unavailable_and_keeps_the_rest():
     def ex(slug, args):
-        return None if "flash_open" in json.dumps(args["dimensionFilter"]) else fake_ga(ANSWERS)(slug, args)
+        return None if "flash_open" in json.dumps(args.get("dimensionFilter")) else fake_ga(ANSWERS)(slug, args)
     rep = fu.build(ex, "properties/1", END, DOC)
     assert rep.unavailable == ["flash"] and [r.name for r in rep.rows] == ["atlas"]
     assert "  • flash — unavailable (GA4 call failed)" in fu.lines(rep)
@@ -106,3 +106,32 @@ def test_a_malformed_map_fails_closed(tmp_path):
         p.write_text(json.dumps(bad))
         with pytest.raises(ValueError):
             fu.load_features(p)
+
+
+def test_one_transient_failure_does_not_flip_the_basis_or_blame_the_dimension():
+    """Review of #1842: one failed filtered call (a GA4 quota/429) flipped every later row to unfiltered and the
+    header blamed an unregistered `internal` dimension. The filter is decided once; a failed call is just that
+    feature's row."""
+    calls = []
+
+    def ex(slug, args):
+        calls.append(args)
+        return None if "flash_open" in json.dumps(args.get("dimensionFilter")) else fake_ga(ANSWERS)(slug, args)
+    rep = fu.build(ex, "properties/1", END, DOC)
+    assert rep.internal_excluded is True and rep.unavailable == ["flash"]
+    assert all("customEvent:internal" in json.dumps(c.get("dimensionFilter")) for c in calls)
+    text = "\n".join(fu.lines(rep))
+    assert "maintainers excluded" in text and "NOT excluded" not in text
+
+
+def test_the_dimension_is_blamed_only_when_the_same_probe_succeeds_without_it():
+    ex = fake_ga(ANSWERS, internal_registered=False)
+    rep = fu.build(ex, "properties/1", END, DOC)
+    assert rep.internal_excluded is False
+    assert not any("customEvent:internal" in json.dumps(c.get("dimensionFilter")) for c in ex.calls[2:])
+
+    def down(slug, args):                                # GA4 answers nothing at all: no cause is named
+        return None
+    rep = fu.build(down, "properties/1", END, DOC)
+    assert rep.internal_excluded is True and rep.rows == [] and rep.unavailable == ["atlas", "flash"]
+    assert "NOT excluded" not in "\n".join(fu.lines(rep))
