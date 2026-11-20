@@ -110,6 +110,16 @@ Define now even if v1 renders-all, so pagination is a drop-in later:
 - No change to sitemap, canonicals, or JSON-LD required. (Optional nicety: the firmware
   index `ItemList` JSON-LD could carry `position` in popularity order.)
 
+
+### §5 home amendment (2026-11-18): the home shelf renders only revealed cards
+
+v1 rendered every home card server-side for crawlability and hid the overflow. Measured on a production build:
+the hidden overflow was 128 KiB of the 229 KiB home HTML and about 1,900 of its 2,330 elements, and the home was
+the slowest page on Lighthouse mobile. Every firmware is already crawlable from `/firmware` (which keeps the
+render-all-then-reveal behaviour) and from the sitemap, so the home now renders only the revealed cards; "Show
+more" renders the next `PAGE_SIZE` from the data the page already holds (no refetch), and focus moves to the
+first new card as before.
+
 ## 6. Oracle & tests (backend-TDD FIRST, then UI — per house rule)
 1. **Comparator oracle (pure, deterministic):** golden test over a fixture set with
    known stars/forks incl. ties and a null-stars record → asserts exact ordering
