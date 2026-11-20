@@ -1,7 +1,7 @@
 {
  "version": 1,
  "source": "pam_feed",
- "checked_at": "2026-11-19T11:15:31.127163Z",
+ "checked_at": "2026-11-20T11:15:31.091318Z",
  "feeds": {
   "products": {
    "url": "https://pamfinds.com/api/products.json",
@@ -999,8 +999,10 @@
     ]
    },
    "fingerprint": "2665070be54d411ea0f30ecbdbe6e863a71cffa1ecc9fcfbdc1630517fa4a170",
-   "matches": [],
-   "status": "potential_identity_gap"
+   "matches": [
+    "lilygo-t-beam-supreme"
+   ],
+   "status": "possible_match"
   },
   {
    "source_id": "lilygo-t-deck",
