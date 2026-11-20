@@ -63,12 +63,11 @@ def test_a_board_is_named_by_its_id_its_brand_and_name_an_aka_or_a_digit_bearing
     "LilyGO T-Display-S3-Pro firmware",
     "Heltec Wireless Tracker v2 logger",
     # #1797 third review: the word after a name is an open set, so an unknown word is a sibling until proven
-    # otherwise. Each of these is a real product that is NOT the catalogued board the name starts with.
-    "Mesh node for the LilyGO T-Beam Supreme",                                      # an ESP32-S3 board; T-Beam is ESP32
-    "Sub-GHz scanner firmware for the LilyGO T-Embed CC1101",
-    "Dashboard for the LilyGO T-Display S3 Long",
-    "lilygo t-beam supreme mesh node",                                              # lower case gives no hint either
-    "LilyGO T-Display-S3-Long firmware",
+    # otherwise. ("Quasar" is invented on purpose: a real sibling may be catalogued tomorrow, as the T-Beam
+    # Supreme was on 2026-11-20 while this was in review; the real ones are in the test below.)
+    "Mesh node for the LilyGO T-Beam Quasar",
+    "lilygo t-beam quasar mesh node",                                               # lower case gives no hint either
+    "LilyGO T-Display-S3-Quasar firmware",
     # ... and a chip-first catalog name is an English phrase unless it is spelled as the catalog spells it
     "Modbus gateway for any ESP32 Ethernet kit like the WT32-ETH01",
     "an ESP32 Ethernet kit.",
@@ -106,10 +105,29 @@ def test_a_name_counts_when_what_follows_is_the_end_punctuation_or_a_plain_word(
     assert "lilygo-t-beam" in named("Tracker for the LilyGO T-Beam" + after)
 
 
-@pytest.mark.parametrize("after", [" Supreme", " supreme", "-Supreme", "_supreme", " S3", " v1.2", " 1.1", " CC1101", " Long",
-                                   " Meshtastic", " GPS", " tracker", " mesh", " Pro", " Plus", " AXP2101", " edition"])
-def test_any_other_word_right_after_a_name_makes_it_an_unknown_sibling(after):
-    assert named("Tracker for the LilyGO T-Beam" + after) == []
+@pytest.mark.parametrize("after", [" Quasar", " quasar", "-Quasar", "_quasar", " Q7", " v9.9", " 9.9", " ZX81", " Longer",
+                                   " Meshtastic", " GPS", " tracker", " mesh", " Pro", " Plus", " AXP2101", " edition",
+                                   " Supreme", "-Supreme", " S3"])
+def test_any_other_word_right_after_a_name_never_names_that_board(after):
+    """An unknown word names nothing; a sibling that IS catalogued names itself, never the base board."""
+    got = named("Tracker for the LilyGO T-Beam" + after)
+    assert "lilygo-t-beam" not in got
+    if "quasar" in after.lower() or after in (" Q7", " v9.9", " 9.9", " ZX81", " Longer", " tracker", " mesh", " edition"):
+        assert got == []
+
+
+@pytest.mark.parametrize("text, base, sibling", [
+    ("Mesh node for the LilyGO T-Beam Supreme", "lilygo-t-beam", "lilygo-t-beam-supreme"),     # ESP32-S3; the T-Beam is ESP32
+    ("lilygo t-beam supreme.", "lilygo-t-beam", "lilygo-t-beam-supreme"),
+    ("Sub-GHz scanner firmware for the LilyGO T-Embed CC1101", "lilygo-t-embed", "lilygo-t-embed-cc1101"),
+    ("Dashboard for the LilyGO T-Display S3 Long", "lilygo-t-display-s3", "lilygo-t-display-s3-long"),
+    ("LilyGO T-Display-S3-Long firmware", "lilygo-t-display-s3", "lilygo-t-display-s3-long"),
+])
+def test_a_real_sibling_never_names_the_base_board_and_names_itself_once_it_is_catalogued(text, base, sibling):
+    import board_alias
+    got = named(text)
+    assert base not in got and "lilygo-t-display" not in got
+    assert got == ([sibling] if sibling in board_alias.atlas_boards(REPO) else [])
 
 
 def test_a_topic_names_a_board_only_when_the_whole_topic_is_the_boards_name():
@@ -120,7 +138,8 @@ def test_a_topic_names_a_board_only_when_the_whole_topic_is_the_boards_name():
     assert named("", topics=["m5stack-cardputer", "m5stack-stickc"]) == ["m5cardputer", "m5stick-c"]
     assert named("", topics=["esp32-ethernet-kit"]) == ["esp32-ethernet-kit"]
     # a sibling's topic carries its suffix; a digitless bare name needs its brand; a chip is no board
-    assert named("", topics=["t-beam-supreme", "lilygo-t-beam-supreme", "tbeam-supreme-mesh", "t-embed-cc1101"]) == []
+    assert named("", topics=["t-beam-quasar", "lilygo-t-beam-quasar", "tbeam-quasar-mesh", "t-embed-zx81"]) == []
+    assert "lilygo-t-beam" not in named("", topics=["t-beam-supreme", "lilygo-t-beam-supreme", "tbeam-supreme-mesh"])
     assert named("", topics=["t-deck", "fire", "wireless-tracker", "esp32-s3", "esp32s3", "lilygo", "m5stack"]) == []
     assert named("", topics=["lilygo-t-deck"]) == ["lilygo-t-deck"]
     assert named("A clock.", topics=None) == []
