@@ -29,7 +29,7 @@ whatever the spacing ("t deck", "tdeck", "T-Deck"); in a summary a query word mu
 two-character query word must be a whole word or start one ("m5" finds M5Stick; "ir" is the infrared tag, not
 part of "Pirate"); a one-character word must be a whole word. Punctuation between words is ignored
 ("wifi & ble"). A query no record can be found by (non-Latin script, or nothing but punctuation) matches
-nothing; a query of filler words only is no query. Every firmware is found by its own name.
+nothing; a query of filler words only, with or without punctuation, is no query. Every firmware is found by its own name.
 
 Order with `q` and no explicit `sort`: **relevance** (`sort=relevance`): a word found in the name outranks one
 found in the id or maintainer, then a board, then a tag, then the summary; a hit at the start of a word counts

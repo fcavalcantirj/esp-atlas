@@ -1370,14 +1370,17 @@ input[type="checkbox"]:checked::after {
   white-space: normal;
 }
 
-.part-card-meta .popularity-glance-metric,
-.part-card-meta .popularity-glance-scope {
+.part-card-meta .popularity-glance-metric {
   white-space: nowrap;
 }
 
+/* The scope moves whole to the next line when the row is full and wraps inside itself only when that line
+   is too narrow too (a small phone at the largest text size): it is never cut off. */
 .part-card-meta .popularity-glance-scope {
   display: inline;
-  margin-left: 0.3rem;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* SPEC-firmware-search.md §3: the /firmware search + filter form. Reuses .field / .label-row / .form-grid. */

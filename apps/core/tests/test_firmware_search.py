@@ -118,10 +118,12 @@ def test_a_hit_at_the_start_of_a_word_outranks_one_in_the_middle():
 
 
 def test_a_query_no_record_can_be_found_by_matches_nothing():
-    for q in ("!!!", "小智", "ß", "ghost esp 小智", "?? firmware", "& firmware"):
+    for q in ("!!!", "? & !", "小智", "ß", "ghost esp 小智"):
         assert fs.unmatchable(q) and ids(q=q) == [], q
-    for q in ("", "   ", "firmware", "the firmware for", "the-firmware", "ghost-esp!!", "c++", "wifi & ble"):
+    for q in ("", "   ", "firmware", "the firmware for", "the-firmware", "ghost-esp!!", "c++", "wifi & ble",
+              "firmware & flasher", "?? firmware"):
         assert not fs.unmatchable(q), q
+    assert ids(q="firmware & flasher") == ids()                       # filler and punctuation: no query
     assert ids(q="firmware for") == ids()                             # filler only: no query at all
     assert ids(q="mesh & lora") == ids(q="mesh lora") == ["meshtastic", "meshcore"]      # punctuation between words
     assert ids(q="meshcore - cardputer + adv") == ["meshcore"]

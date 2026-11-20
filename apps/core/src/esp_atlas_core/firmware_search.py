@@ -41,12 +41,12 @@ def query_tokens(q) -> list:
 def unmatchable(q) -> bool:
     """True when the query asks for something no record can be found by, so it matches nothing instead of
     silently listing the whole catalog as if it had been searched: a piece with letters or digits that folds
-    to nothing ("小智", "ß"), or a query left with no word at all that is not just filler ("!!!"). Punctuation
-    standing between words ("wifi & ble", "marauder - cardputer") is simply ignored."""
+    to nothing ("小智", "ß"), or a query that is nothing but punctuation ("!!!"). Punctuation standing beside
+    words is simply ignored ("wifi & ble", "marauder - cardputer", "firmware & flasher")."""
     pieces = str(q or "").split()
     if any(not fold(piece) and any(ch.isalnum() for ch in piece) for piece in pieces):
         return True
-    return not query_tokens(q) and any(not fold(piece) for piece in pieces)
+    return bool(pieces) and not any(fold(piece) for piece in pieces)
 
 
 def _words(*texts) -> list:
