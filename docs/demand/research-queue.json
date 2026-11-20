@@ -1730,10 +1730,12 @@
   "pam-d84f4d6b45b0b9386a8c999b": {
    "term": "SparkFun Thing Plus - ESP32-S3",
    "source": "pam_feed",
-   "status": "validated",
+   "status": "linked",
    "first_seen": "2026-11-20",
    "history": [],
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1935"
+   ],
    "snapshot": "docs/demand/pam-leads.json",
    "feed": {
     "checked_at": "2026-11-20T11:15:31.091318Z",
