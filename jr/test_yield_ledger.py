@@ -69,3 +69,15 @@ def test_dead_and_stalled_lanes_from_the_measured_shape():
     short = yl.lane_yield(ledger(23), NOW, 24)
     assert yl.dead_lanes(short, 24) == [] and yl.stalled_lanes(short, 24) == []
     assert yl.summary(y) == "yield backfill 0/72u firmware 24/72u topics 0/48u (24 ticks)"
+
+
+def test_merging_two_copies_keeps_every_row_once_and_mains_row_on_a_shared_key():
+    main = (json.dumps({"tick": "2026-11-18T08:00Z", "stage": "admit", "produced": 0}) + "\n"
+            + json.dumps({"tick": "2026-11-18T05:00Z", "stage": "admit", "produced": 0, "src": "main"}) + "\n")
+    pr = (json.dumps({"tick": "2026-11-18T05:00Z", "stage": "admit", "produced": 0, "src": "pr"}) + "\n"
+          + "not json\n" + json.dumps({"tick": "2026-11-18T06:00Z", "stage": "boardmap", "produced": 1}) + "\n")
+    rows = [json.loads(line) for line in yl.merge_text(main, pr).splitlines()]
+    assert [(r["tick"], r["stage"]) for r in rows] == [("2026-11-18T05:00Z", "admit"), ("2026-11-18T06:00Z", "boardmap"),
+                                                       ("2026-11-18T08:00Z", "admit")]
+    assert rows[0]["src"] == "main" and rows[1]["produced"] == 1
+    assert yl.merge_text(yl.merge_text(main, pr), pr) == yl.merge_text(main, pr)
