@@ -10,7 +10,8 @@ The independent exact-head review of a code PR (docs/REVIEW-CONTRACT.md) is run 
   `docs/ops/REVIEW-PROMPT.md` as the task (read-only: --no-ship --no-merge), reads the structured verdict the
   agent wrote to VERDICT_FILE, and posts it as ONE PR comment that starts with MARKER. The code canary
   (scripts/code_canary.py) reads that comment.
-- **Fallback lane** = GitHub Actions with `anthropics/claude-code-action` and the API key — used ONLY when the
+- **Fallback lane** = GitHub Actions running `claude -p` with the API key (never `anthropics/claude-code-action`:
+  it is billed as Claude Code, which the plan's API credit does not cover) — used ONLY when the
   primary lane says it is DOWN (no subscription token, usage limit, auth failure): the runner then labels the
   PR `review-fallback`, which triggers the Actions review for that PR alone, at most FALLBACK_PER_DAY a UTC day.
   BUSY (another delegate run holds the lock) is not down: the PR simply waits for the next hour.
