@@ -11,6 +11,7 @@ socs:
 - esp32-c3
 - esp32-c5
 - esp32-c6
+- esp32-p4
 - esp32-s2
 - esp32-s3
 distribution:
@@ -62,6 +63,9 @@ sources:
 - field: summary
   url: https://github.com/wled/WLED
   verified: '2026-10-06'
+- field: socs
+  url: https://github.com/wled/WLED/blob/main/platformio.ini#L602
+  verified: '2026-11-21'
 summary: "WLED is a fast, feature\u2011rich firmware for ESP32 microcontrollers that\
   \ controls addressable LEDs\u2014from simple strips to large 2D matrices and HUB75\
   \ panels\u2014offering hundreds of built\u2011in effects, segment control, and extensive\
