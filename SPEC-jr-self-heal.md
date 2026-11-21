@@ -126,7 +126,13 @@ BLOCK waiting for a person, stacked PRs retargeted by hand. Now:
   PRs (`jr/tick-*`, `jr/research-*`, `jr/heal-*`) in the last 24 h, none of Jr's own PRs waits (`needs-human`,
   or open a day), and no incident is stuck (`needs_human`, stalled, a halted heal). People merging and holding
   their own PRs is ordinary work: the line shows it ("people's own: N merged, M open (K blocked by review)"),
-  and it never breaks a day. Seven such days in a row is the claim "self-sufficient", and nothing less is.
+  and it never breaks a day. **And the catalog grew** (2026-11-21): the day's row in
+  `docs/telemetry/data-trend.jsonl` is larger than the newest row before it, counting firmware, recipes,
+  boards and filled board fields (`chores.catalog_growth`). Nov 20 had 36 merges by Jr, none by a person and
+  nothing waiting, yet every one was bookkeeping and every lane yielded 0 for 24 ticks; by merges alone it was a
+  good day. No trend row for the day, or an unreadable file, proves nothing, so the day is not self-sufficient.
+  The line says "catalog +N (yesterday→today)" or "catalog did not grow". Seven such days in a row is the claim
+  "self-sufficient", and nothing less is.
 
 ### 1e. A canary that said "not now" is asked again (2026-11-19)
 
