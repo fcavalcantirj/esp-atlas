@@ -4,11 +4,20 @@ import { Suspense } from "react";
 import FirmwareReadme from "@/components/firmware/FirmwareReadme";
 import FirmwareDetailView from "@/components/firmware/FirmwareDetailView";
 import type { Firmware } from "@/lib/api";
-import { fetchAllParts, fetchFirmware, fetchRecipesForFirmware } from "@/lib/api-server";
+import { dataOrThrow, fetchAllPartsResult, fetchFirmware, fetchRecipesForFirmware } from "@/lib/api-server";
 import { detailRobots } from "@/lib/detail-robots";
 import { firmwareMetaDescription, firmwareMetaTitle } from "@/lib/format";
 import { fetchReadme, type RepoReadme } from "@/lib/readme";
 import { SITE_NAME } from "@/lib/site";
+
+// Render each detail page on its first visit, then serve it from the cache (ISR) instead of rendering
+// every request (2026-11-18: these routes were dynamic, `cache-control: private, no-store`, x-vercel-cache
+// MISS on every hit). No path is pre-rendered at build (an empty list): the catalog API is not reachable
+// during a Vercel build, and a cold first render is the same as today's every render. The data fetches keep
+// their own revalidate and `catalog`/`popularity` tags, so POST /api/revalidate still purges these pages.
+export function generateStaticParams() {
+  return [];
+}
 
 // Firmware hub: the project's own identity (GET /firmware/<id>) plus the
 // reverse view — every board a recipe targets it for, grouped by trust tier,
@@ -52,11 +61,13 @@ export default async function FirmwarePage({ params }: PageProps<"/firmware/[id]
   // The upstream README is optional. Start its bounded fetch now, but stream
   // the firmware identity and cited board recipes as soon as their APIs answer.
   const readmePromise = fetchReadme(firmware.url);
-  const [recipesResult, parts] = await Promise.all([
+  const [recipesResult, partsResult] = await Promise.all([
     fetchRecipesForFirmware(id),
-    fetchAllParts(),
+    fetchAllPartsResult(),
   ]);
-  const recipes = recipesResult.status === "ok" ? recipesResult.data.results : [];
+  // A failed fetch throws rather than render no boards: the ISR cache would keep that page (dataOrThrow).
+  const recipes = dataOrThrow(recipesResult, `Recipes API for ${id}`).results;
+  const parts = dataOrThrow(partsResult, "Parts API").results;
   return (
     <FirmwareDetailView
       firmware={firmware}

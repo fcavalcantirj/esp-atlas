@@ -97,6 +97,15 @@ async function serverFetch<T>(path: string): Promise<ServerFetchResult<T>> {
   }
 }
 
+/** For the ISR detail pages (generateStaticParams): whatever they render is cached and served until
+ * the next revalidation, so a degraded render (a section missing, an "API did not answer" shell) must
+ * throw instead. A thrown render is never stored: Next keeps serving the last good page and retries on
+ * the next request (Next docs, Incremental Static Regeneration, "Handling uncaught exceptions"). */
+export function dataOrThrow<T>(result: ServerFetchResult<T>, what: string): T {
+  if (result.status === "ok") return result.data;
+  throw new Error(`${what} unavailable: ${result.status === "error" ? result.message : "not found"}`);
+}
+
 export function fetchPartDetail(id: string): Promise<ServerFetchResult<PartDetail>> {
   return serverFetch<PartDetail>(`/parts/${encodeURIComponent(id)}`);
 }
