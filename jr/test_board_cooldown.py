@@ -189,3 +189,26 @@ def test_mapped_board_whose_doc_failed_stays_cooled(tmp_path, monkeypatch):
     res = _tick(tmp_path, T0 + dt.timedelta(hours=1))
     assert calls == ["m5x"]
     assert "cooling 1" in res.summary
+
+
+def test_legacy_record_without_url_is_retried_once_then_waits(tmp_path, monkeypatch):
+    """A record written before `url` existed cannot say whether a URL was tried: a board whose
+    resolver yields one is retried once, then re-cooled with the URL and waits out its cooldown."""
+    import board_doc_resolvers
+    from test_stage_backfill import _mk_brand_boards
+    _mk_brand_boards(tmp_path, "m5stack", ["m5x"])
+    monkeypatch.setitem(board_doc_resolvers.M5STACK_DOC_PATHS, "m5x", "core/X")
+    path = tmp_path / board_cooldown.RELPATH
+    store = board_cooldown.load(path)
+    board_cooldown.record(store, "m5x", "doc-unreachable", {}, now=T0 - dt.timedelta(days=1))
+    del store["by_board"]["m5x"]["url"]
+    board_cooldown.save(store, path, now=T0)
+    calls: list = []
+    _fake_unreachable(calls, monkeypatch)
+
+    _tick(tmp_path, T0)
+    res = _tick(tmp_path, T0 + dt.timedelta(hours=1))
+    assert calls == ["m5x"]
+    assert "cooling 1" in res.summary
+    assert board_cooldown.load(path)["by_board"]["m5x"]["url"] == \
+        board_backfill.VENDOR_DOC_RESOLVERS["m5stack"]("m5x", "esp32")[-1]
