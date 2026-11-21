@@ -519,12 +519,14 @@ def test_scorer_and_unresolved_skips_are_remembered_with_their_ttl(root, monkeyp
 
 
 def test_the_next_tick_walks_past_remembered_skips_to_the_next_repos(root, monkeypatch):
-    """The point of the memory: with budget 1 a tick scores 5 repos; 5 archived repos lead the star
-    order and a good one sits 6th. Tick 1 admits nothing, tick 2 reaches and admits the 6th."""
-    junk = [_topic_entry(f"Junk Cardputer Tool {i}", f"https://github.com/j/junk{i}", "A Cardputer tool") for i in range(5)]
+    """The point of the memory: with budget 1 a tick scores SCORE_MULTIPLIER repos; that many archived
+    repos lead the star order and a good one sits right after. Tick 1 admits nothing, tick 2 reaches and
+    admits it (the count follows the constant: 5 → 10 on 2026-11-18, F3)."""
+    n = stage_admit_topics.SCORE_MULTIPLIER
+    junk = [_topic_entry(f"Junk Cardputer Tool {i}", f"https://github.com/j/junk{i}", "A Cardputer tool") for i in range(n)]
     good = _topic_entry("My Cardputer Tool", "https://github.com/n/newtool", "A Cardputer tool")
     monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: junk + [good])
-    metas = {f"j/junk{i}": _meta(f"j/junk{i}", archived=True, description="A Cardputer tool", rid=300 + i) for i in range(5)}
+    metas = {f"j/junk{i}": _meta(f"j/junk{i}", archived=True, description="A Cardputer tool", rid=300 + i) for i in range(n)}
     metas["n/newtool"] = _meta("n/newtool", stars=30, description="A Cardputer tool", rid=101)
     fetched = []
     fetch = _fake_fetch_meta(metas)
@@ -616,3 +618,10 @@ def test_below_floor_and_device_skips_keep_their_own_records_only(root, monkeypa
     assert sum(v for k, v in res.rejects.items() if k not in ("below_floor",)) == 1, res.rejects
     assert _repo_note(root, "n/filler") is None
     assert _repo_note(root, "n/server") is None
+
+
+def test_the_score_cap_is_twenty_candidates_a_tick_within_the_measured_budget():
+    """F3 (2026-11-18): 10 scored a tick used 45-49/150 calls and 84-91/360 s (50 ticks, Nov 17); 20 fits."""
+    import stage_admit_topics as sat
+    import tick
+    assert sat.SCORE_MULTIPLIER == 10 and tick.TOPICS_PER_TICK * sat.SCORE_MULTIPLIER == 20

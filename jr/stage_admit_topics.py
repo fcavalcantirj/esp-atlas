@@ -64,7 +64,11 @@ from budget import BudgetExceeded
 # only cap the LATER selection step — so left at its default this stage would fetch_meta a
 # hundred-odd repos every hour even though it only ever admits `budget`. Keeps the "BOUNDED,
 # low-risk" contract on GitHub-call cost, not just on admitted count.
-SCORE_MULTIPLIER = 5
+# 5 → 10 on 2026-11-18 (F3 of the Nov 17 growth plan, after #1775's skip memory held on two daily pairs):
+# with 10 candidates scored a tick the whole tick spent 45–49 of 150 calls and 84–91 of 360 s (Nov 17,
+# 50 ticks measured), and the topic pairs rotate once a day, so scoring 20 keeps every budget and doubles
+# how much of each pair is judged before its next turn.
+SCORE_MULTIPLIER = 10
 
 _ROOTED_ATTRS = ("REPO", "FIRMWARE_DIR", "BOARDS_DIR", "SOCS_DIR", "MODULES_DIR", "COVERAGE_MD")
 

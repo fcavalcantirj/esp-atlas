@@ -233,7 +233,8 @@ that's a coverage hole to close, not a silent gap.
     (esp32-s3-devkitc-1, esp32-c3-devkitm-1, lolin-s3-mini, lilygo-t-display-s3, m5stick-c), e.g.
     esp32-c3-adblock (3,597 stars) and project_aura (797).
   - **The GitHub-topics source remembers every paid decision (2026-11-16).** `jr/stage_admit_topics.py`
-    scores at most `budget * SCORE_MULTIPLIER` prefiltered repos per tick, in the search's star order.
+    scores at most `budget * SCORE_MULTIPLIER` prefiltered repos per tick, in the search's star order
+    (`SCORE_MULTIPLIER` 10 since 2026-11-18, from 5: measured ticks spent a third of their call budget).
     Every repo it paid a metadata fetch for ends in a remembered decision, the launcher's rule: a
     scorer skip (`no_board_evidence`, `library_*`, `archived`, `duplicate_of`, ...), an unreadable
     repo (`repo_unresolved`) or an id the ledger already holds (`already_*`) is recorded `rejected`
