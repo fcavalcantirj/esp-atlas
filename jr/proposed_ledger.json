@@ -3956,7 +3956,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-21T06:00:32.350998+00:00"
+      "timestamp": "2026-11-21T08:00:31.643373+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4112,7 +4112,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-21T06:00:32.350998+00:00"
+      "timestamp": "2026-11-21T08:00:31.643373+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -4207,13 +4207,12 @@
       "timestamp": "2026-11-18T13:00:31.999065+00:00"
     },
     "flipperzeroirplayer": {
-      "expired_at": "2026-11-20T13:00:31.599297+00:00",
-      "expires": "2026-11-20T12:00:59.681161+00:00",
+      "expires": "2026-12-21T07:00:32.173066+00:00",
       "id": "flipperzeroirplayer",
       "pr_ref": null,
       "repo": "james-p-d/flipperzeroirplayer",
-      "status": "expired",
-      "timestamp": "2026-10-21T12:00:59.681161+00:00"
+      "status": "seen",
+      "timestamp": "2026-11-21T07:00:32.173066+00:00"
     },
     "floatingbottle-pc-monitor": {
       "expires": "2026-12-14T15:00:55.432444+00:00",
@@ -12837,6 +12836,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T19:00:32.749098+00:00"
     },
+    "lcdwizardexamples": {
+      "expires": "2027-01-20T07:00:32.173066+00:00",
+      "id": "lcdwizardexamples",
+      "pr_ref": null,
+      "reason": "not_device_firmware: no espressif32 platformio.ini, ESP-IDF project, Arduino sketch or release .bin",
+      "repo": "lildev1979/lcdwizardexamples",
+      "status": "rejected",
+      "timestamp": "2026-11-21T07:00:32.173066+00:00"
+    },
     "lerobot-rc": {
       "expires": "2026-12-10T10:00:55.135052+00:00",
       "id": "lerobot-rc",
@@ -12981,13 +12989,12 @@
       "timestamp": "2026-10-23T20:01:00.044967+00:00"
     },
     "lx-shell": {
-      "expired_at": "2026-11-20T14:00:32.540500+00:00",
-      "expires": "2026-11-20T13:00:59.612446+00:00",
+      "expires": "2026-12-21T07:00:32.173066+00:00",
       "id": "lx-shell",
       "pr_ref": null,
       "repo": "ppyne/lx_shell",
-      "status": "expired",
-      "timestamp": "2026-10-21T13:00:59.612446+00:00"
+      "status": "seen",
+      "timestamp": "2026-11-21T07:00:32.173066+00:00"
     },
     "m5-amiibolink": {
       "expires": "2026-12-14T17:00:55.342931+00:00",
@@ -13415,13 +13422,12 @@
       "timestamp": "2026-11-10T09:00:55.291604+00:00"
     },
     "m5-vids": {
-      "expired_at": "2026-11-20T13:00:31.599297+00:00",
-      "expires": "2026-11-20T12:00:59.681161+00:00",
+      "expires": "2026-12-21T07:00:32.173066+00:00",
       "id": "m5-vids",
       "pr_ref": null,
       "repo": "williamd1k0/m5-vids",
-      "status": "expired",
-      "timestamp": "2026-10-21T12:00:59.681161+00:00"
+      "status": "seen",
+      "timestamp": "2026-11-21T07:00:32.173066+00:00"
     },
     "m5adc": {
       "expires": "2027-01-20T05:02:40+00:00",
@@ -16442,13 +16448,12 @@
       "timestamp": "2026-11-14T16:00:55.104121+00:00"
     },
     "namezero": {
-      "expired_at": "2026-11-20T13:00:31.599297+00:00",
-      "expires": "2026-11-20T12:00:59.681161+00:00",
+      "expires": "2026-12-21T07:00:32.173066+00:00",
       "id": "namezero",
       "pr_ref": null,
       "repo": "xelbor/namezero",
-      "status": "expired",
-      "timestamp": "2026-10-21T12:00:59.681161+00:00"
+      "status": "seen",
+      "timestamp": "2026-11-21T07:00:32.173066+00:00"
     },
     "navboxesp": {
       "expires": "2026-12-15T09:00:31.430360+00:00",
@@ -17412,7 +17417,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-21T06:00:32.350998+00:00"
+      "timestamp": "2026-11-21T08:00:31.643373+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -23382,6 +23387,14 @@
       "status": "seen",
       "timestamp": "2026-11-15T07:00:31.352637+00:00"
     },
+    "sensors-esp": {
+      "expires": "2026-12-21T07:00:32.173066+00:00",
+      "id": "sensors-esp",
+      "pr_ref": null,
+      "repo": "milewski/sensors-esp",
+      "status": "seen",
+      "timestamp": "2026-11-21T07:00:32.173066+00:00"
+    },
     "seraphs-subghz-tool": {
       "expired_at": "2026-10-11T20:00:11.593510+00:00",
       "expires": "2026-10-11T19:00:59.205076+00:00",
@@ -23432,13 +23445,12 @@
       "timestamp": "2026-11-14T14:00:56.621804+00:00"
     },
     "signalrf": {
-      "expired_at": "2026-11-20T13:00:31.599297+00:00",
-      "expires": "2026-11-20T12:00:59.681161+00:00",
+      "expires": "2026-12-21T07:00:32.173066+00:00",
       "id": "signalrf",
       "pr_ref": null,
       "repo": "bytehub-1337/signalrf",
-      "status": "expired",
-      "timestamp": "2026-10-21T12:00:59.681161+00:00"
+      "status": "seen",
+      "timestamp": "2026-11-21T07:00:32.173066+00:00"
     },
     "sigurdos-tdeck": {
       "evidence_url": "https://github.com/hermes-gadget/SigurdOS-tdeck",
@@ -24104,13 +24116,12 @@
       "timestamp": "2026-09-12T11:00:47.292793+00:00"
     },
     "synthcard": {
-      "expired_at": "2026-11-20T14:00:32.540500+00:00",
-      "expires": "2026-11-20T13:00:59.612446+00:00",
+      "expires": "2026-12-21T07:00:32.173066+00:00",
       "id": "synthcard",
       "pr_ref": null,
       "repo": "meister5/synthcard",
-      "status": "expired",
-      "timestamp": "2026-10-21T13:00:59.612446+00:00"
+      "status": "seen",
+      "timestamp": "2026-11-21T07:00:32.173066+00:00"
     },
     "sysx": {
       "expired_at": "2026-09-19T14:00:22.488207+00:00",
@@ -24423,6 +24434,14 @@
       "status": "seen",
       "timestamp": "2026-11-11T08:00:55.170556+00:00"
     },
+    "tdisplay-menu": {
+      "expires": "2026-12-21T07:00:32.173066+00:00",
+      "id": "tdisplay-menu",
+      "pr_ref": null,
+      "repo": "assada/tdisplay-menu",
+      "status": "seen",
+      "timestamp": "2026-11-21T07:00:32.173066+00:00"
+    },
     "teenygpstestbed-c2": {
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "teenygpstestbed-c2",
@@ -24607,13 +24626,12 @@
       "timestamp": "2026-11-14T20:00:55.786187+00:00"
     },
     "tonegenerator": {
-      "expired_at": "2026-11-20T13:00:31.599297+00:00",
-      "expires": "2026-11-20T12:00:59.681161+00:00",
+      "expires": "2026-12-21T07:00:32.173066+00:00",
       "id": "tonegenerator",
       "pr_ref": null,
       "repo": "james-p-d/tonegenerator",
-      "status": "expired",
-      "timestamp": "2026-10-21T12:00:59.681161+00:00"
+      "status": "seen",
+      "timestamp": "2026-11-21T07:00:32.173066+00:00"
     },
     "totp-auth-for-cardputer-adv": {
       "expires": "2026-12-14T22:00:55.399488+00:00",
@@ -25425,7 +25443,7 @@
       "pr_ref": "#1895",
       "repo": "designer2k2/xmas-tree",
       "status": "proposed",
-      "timestamp": "2026-11-21T06:00:32.350998+00:00"
+      "timestamp": "2026-11-21T08:00:31.643373+00:00"
     },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
@@ -25752,6 +25770,7 @@
     "asg02fever/m5-dial-rgb-light-strip-controller-": "m5-dial-rgb-light-strip-controller",
     "askrejans/g86-info": "repo-note:askrejans/g86-info",
     "aspikray/solotputer": "solotputer",
+    "assada/tdisplay-menu": "tdisplay-menu",
     "asuka02eva/esp-aichat": "repo-note:asuka02eva/esp-aichat",
     "at0m-b0mb/wraith-flipperzero": "repo-note:at0m-b0mb/wraith-flipperzero",
     "atomdreams/cardputersmagps": "cardputersmagps",
@@ -27373,6 +27392,7 @@
     "liankui/microcom": "microcom",
     "libretiny-eu/libretiny": "repo-note:libretiny-eu/libretiny",
     "lilbricky101/ghost-firmware": "ghost-firmware",
+    "lildev1979/lcdwizardexamples": "lcdwizardexamples",
     "limengdu/reterminal_sticky_bunny": "reterminal-sticky-bunny",
     "limengdu/reterminal_sticky_inksalah": "reterminal-sticky-inksalah",
     "linclip/irsend-test": "irsend-test",
@@ -27557,6 +27577,7 @@
     "microsoft/pxt-common-packages": "repo-note:microsoft/pxt-common-packages",
     "migit/verhobot": "repo-note:migit/verhobot",
     "mikeroyal/raspberry-pi-guide": "repo-note:mikeroyal/raspberry-pi-guide",
+    "milewski/sensors-esp": "sensors-esp",
     "mindovermiles262/tamaputer": "tamaputer",
     "mingrzou/papermono-launcher": "papermono-launcher",
     "minkleee/cardputersshclient": "cardputersshclient",
