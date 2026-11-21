@@ -94,6 +94,10 @@
 {"calls": 49, "counts": {}, "paths": 0, "produced": 0, "seconds": 64.0, "stage": "admit_topics", "tick": "2026-11-19T17:00Z", "units": 2}
 {"calls": 49, "counts": {"cooled": 1, "cooling": 83, "filled": 0, "skipped": 1}, "paths": 1, "produced": 0, "seconds": 64.0, "stage": "backfill", "tick": "2026-11-19T17:00Z", "units": 2}
 {"calls": 49, "counts": {}, "paths": 0, "produced": 0, "seconds": 64.0, "stage": "boardmap", "tick": "2026-11-19T17:00Z", "units": 2}
+{"calls": 72, "counts": {}, "paths": 0, "produced": 0, "seconds": 115.2, "stage": "admit", "tick": "2026-11-19T18:00Z", "units": 2}
+{"calls": 72, "counts": {}, "paths": 2, "produced": 1, "seconds": 115.2, "stage": "admit_topics", "tick": "2026-11-19T18:00Z", "units": 2}
+{"calls": 72, "counts": {"cooled": 0, "cooling": 84, "filled": 0, "skipped": 0}, "paths": 0, "produced": 0, "seconds": 115.2, "stage": "backfill", "tick": "2026-11-19T18:00Z", "units": 2}
+{"calls": 72, "counts": {}, "paths": 0, "produced": 0, "seconds": 115.2, "stage": "boardmap", "tick": "2026-11-19T18:00Z", "units": 2}
 {"calls": 74, "counts": {}, "paths": 2, "produced": 1, "seconds": 83.4, "stage": "admit", "tick": "2026-11-20T12:00Z", "units": 2}
 {"calls": 74, "counts": {}, "paths": 0, "produced": 0, "seconds": 83.4, "stage": "admit_topics", "tick": "2026-11-20T12:00Z", "units": 2}
 {"calls": 74, "counts": {"cooled": 2, "cooling": 56, "filled": 0, "skipped": 2}, "paths": 1, "produced": 0, "seconds": 83.4, "stage": "backfill", "tick": "2026-11-20T12:00Z", "units": 2}
