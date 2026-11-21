@@ -122,12 +122,22 @@ switches allow: `jr/autonomy.json` `demand_automerge: true` (a reviewed PR) and 
 Optional repository secret `ESPATLAS_JR_TOKEN` (the bot's PAT): with it the canary's merge is made by the
 bot and triggers main's workflows like a person's merge; without it the workflow token merges and main's
 push-triggered runs do not fire for that merge (the PR's checks at the same head stand). `tick_automerge` /
-`JR_TICK_AUTOMERGE` is the same pattern for review-routed tick PRs (`tick-canary`, one a day, every added
+`JR_TICK_AUTOMERGE` is the same pattern for review-routed tick PRs (`tick-canary`, four a day, every added
 recipe's PASS receipt re-verified live by `receipt-guard`); `code_automerge` / `JR_CODE_AUTOMERGE` is the
 code canary (`.github/workflows/agent-review.yml`: the agent reviewer's PASS at the exact head, one merge an
 hour). The review runs on the runner's subscription delegate first (`jr/agent_review.py once`, hourly; the
 job is the runner operator's, like the heal launcher) and falls back to Actions with the repository secret
 `ANTHROPIC_API_KEY` only when the delegate reports its lane down, at most 3 a day (label `review-fallback`).
+**What pays for the fallback (2026-11-20).** The Console organization behind that key holds two balances: the
+purchased one, and the plan's monthly API credit (Console, Billing, "Promotional credits"; refilled each
+billing cycle, no rollover). The monthly credit pays for the Claude API and the Agent SDK, not for Claude Code,
+and Anthropic bills `anthropics/claude-code-action` as Claude Code. The fallback therefore runs `claude -p`
+directly, which is billed as Agent SDK usage
+([what the credits cover](https://platform.claude.com/docs/en/about-claude/api-credits-for-subscribers),
+[help article](https://support.claude.com/en/articles/17154008-monthly-api-credits-for-max-ultra-and-team-plans)).
+A refusal reads `billing_error` / "Credit balance is too low" in the review step's log, which prints the
+result's error and cost. The Console's "Spend limits" page is a ceiling, not a balance: a workspace limit
+caps what this lane may spend in a month.
 Stop it: `gh variable set JR_CODE_AUTOMERGE --body 0`. Stop the tick canary: `gh variable set JR_TICK_AUTOMERGE --body 0`.
 
 ## Hourly GitHub counts

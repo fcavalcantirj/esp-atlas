@@ -29,14 +29,13 @@ const GROUPS: { id: ExampleGroup; title: string; hint: string }[] = [
   { id: "just-show-me", title: "Just show me", hint: "Browse by the specs people actually ask for." },
 ];
 
-function ExampleCard({ example, hidden = false }: { example: Example; hidden?: boolean }) {
+function ExampleCard({ example }: { example: Example }) {
   const href = exampleHref(example);
   const onClick = () => track("example_click", { example: example.id, kind: example.kind });
-  const className = hidden ? "example-card is-hidden" : "example-card";
 
   if (example.kind === "firmware") {
     return (
-      <Link href={href} className={className} hidden={hidden} onClick={onClick}>
+      <Link href={href} className="example-card" onClick={onClick}>
         <span className="example-card-label">{example.label}</span>
         {example.description && <span className="example-card-desc">{example.description}</span>}
         <span className="example-card-reason">
@@ -67,6 +66,10 @@ function ExampleCard({ example, hidden = false }: { example: Example; hidden?: b
 // >=1 recipe). SPEC-firmware-popularity.md §1/D4 makes this shelf the same
 // full ranked/paginated browse as /firmware, not a curated teaser; the other
 // two shelves are small fixed candidate lists and stay fully rendered.
+// Only the revealed cards are rendered (2026-11-18, §5 home amendment): the
+// hidden overflow was 128 KiB and ~1,900 elements of the home HTML; every
+// firmware stays crawlable from /firmware and the sitemap, and "Show more"
+// renders the next page from the data the page already holds.
 const RUN_FIRMWARE: ExampleGroup = "run-firmware";
 
 export default function ExamplesGrid({ examples }: { examples: Example[] }) {
@@ -105,8 +108,8 @@ export default function ExamplesGrid({ examples }: { examples: Example[] }) {
             </div>
             <p className="example-group-hint">{group.hint}</p>
             <div className="example-grid" ref={isFirmwareShelf ? firmwareGrid : undefined}>
-              {inGroup.map((example, i) => (
-                <ExampleCard key={example.id} example={example} hidden={isFirmwareShelf && i >= revealed} />
+              {(isFirmwareShelf ? inGroup.slice(0, revealed) : inGroup).map((example) => (
+                <ExampleCard key={example.id} example={example} />
               ))}
             </div>
             {isFirmwareShelf && (

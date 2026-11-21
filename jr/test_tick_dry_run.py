@@ -57,8 +57,11 @@ def _checkout(root: Path) -> Path:
     _board(root, UNREACHABLE, "esp32-c6")
     _board(root, ALREADY_COOLING, "esp32-h2")
     (root / "jr").mkdir()
+    # its user guide was tried and failed (`url` set), so it waits out its cooldown; a record with no
+    # `url` would be retried once its resolver yields one (jr/stage_backfill.py _is_cooling)
     (root / "jr" / "board_cooldown.json").write_text(json.dumps({"by_board": {ALREADY_COOLING: {
         "board": ALREADY_COOLING, "reason": "doc-unreachable", "field_reasons": {},
+        "url": bb.board_user_guide_url(ALREADY_COOLING, "esp32-h2"),
         "timestamp": (NOW - timedelta(days=1)).isoformat(),
         "expires": (NOW + timedelta(days=6)).isoformat()}}}, indent=2, sort_keys=True) + "\n")
     lapsed = {"id": "old-fw", "repo": "o/old-fw", "status": "seen", "reason": "below floor", "pr_ref": None,
@@ -146,6 +149,7 @@ def test_dry_run_with_the_real_stages_leaves_the_checkout_byte_identical(tmp_pat
     assert (GROUNDABLE_MD, "usb_serial") in writes
     assert (GROUNDABLE_MD, "download_mode") in writes
     assert ("jr/board_cooldown.json", f"by_board.{UNREACHABLE}") in writes
+    assert ("jr/board_cooldown.json", f"by_board.{ALREADY_COOLING}") not in writes   # still cooling: not fetched
     assert ("jr/proposed_ledger.json", "by_id.old-fw") in writes       # the lapsed decision a real tick expires
     assert ("docs/telemetry/data-trend.jsonl", "row 2026-09-05") in writes
     assert not r.paths                                # nothing was WRITTEN, only would-be

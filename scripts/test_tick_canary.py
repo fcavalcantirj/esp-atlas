@@ -84,11 +84,17 @@ def test_not_a_tick_branch(autonomy, eligible):
     assert run(autonomy(True), gh, branch="jr/research-x") == "not_tick" and gh.calls == []
 
 
-def test_one_review_routed_merge_per_day(autonomy, eligible):
-    gh = FakeGh(merged=[("jr/tick-20261117-1500", "2026-11-17")])
+def test_at_most_four_review_routed_merges_per_day(autonomy, eligible):
+    # 2026-11-21: Jr opened 10 review-routed tick PRs Nov 18-20 (about 3.3 a day) and one a day merged, so
+    # the queue only grew and the tick re-proposed nothing its open PRs held (yield 0 over 24 ticks)
+    assert tc.DAILY_CAP == 4
+    three = [(f"jr/tick-20261117-{h}00", "2026-11-17") for h in (10, 11, 12)]
+    gh = FakeGh(merged=three)
+    assert run(autonomy(True), gh) == "merge_requested" and len(gh.merges()) == 1
+    gh = FakeGh(merged=three + [("jr/tick-20261117-1300", "2026-11-17")])
     assert run(autonomy(True), gh) == "capped" and gh.merges() == []
-    gh = FakeGh(merged=[("jr/tick-20261116-1500", "2026-11-16")])
-    assert run(autonomy(True), gh) == "merge_requested"
+    gh = FakeGh(merged=[(f"jr/tick-20261116-{h}00", "2026-11-16") for h in (10, 11, 12, 13, 14)])
+    assert run(autonomy(True), gh) == "merge_requested"                 # yesterday's merges never count
 
 
 def test_a_receipt_problem_or_an_unreadable_upstream_never_merges(autonomy, eligible, capsys):

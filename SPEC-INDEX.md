@@ -27,6 +27,7 @@
 | `SPEC-data-population.md` | The *official-catalog seeding* adapter pack (new boards/modules/socs from Arduino index, Launcher, M5Burner). |
 | `SPEC-discovery.md` | The *community-discovery* adapter pack (awesome-esp32, GitHub trending, Reddit, HN) **+ the `prompt-recipe` and `example` entities**. |
 | `SPEC-home-explorer.md` | Home IA: 3 sections, Newcomer Wizard (classic→Groq), and **surfacing/ordering** of examples. Consumes, never defines, the cron. |
+| `SPEC-firmware-search.md` | **Firmware index search**: `GET /firmware` `q` + `board`/`soc`/`category`/`capability`/`tested` filters, relevance order, `GET /firmware/facets`, the `/firmware` form, its noindex rule. Builds on `SPEC-firmware-ordering.md` (orders) and `SPEC-firmware-popularity.md` (the default order). |
 | `SPEC-hosting-lane.md` | The **server-capable memory lane**: `psram_min`/`flash_min` filters + oracle invariants. (UI naming/placement per §3 here.) |
 | `SPEC-pin-planner.md` | **Pin Planner + Power Budget** (the crown jewel): `board.io.gpio_pins` structured pin set; deterministic `/plan` GPIO assignment (free = gpio_pins − reserved_pins), no-fit honesty, power verdict from `power_out`+`drive`. |
 | `SPEC-io-power.md` | **I/O exposure & power delivery**: board `io` (exposed/free GPIO count, `power_out`) + soc `drive` (per-pad current); build-guide `io_heavy` ranking + load-aware honesty note. |

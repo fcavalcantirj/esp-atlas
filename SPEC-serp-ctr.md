@@ -55,6 +55,17 @@ Search Console for pages with position ≤ 10 and clicks = 0 in the window. It i
 `seo_title` change and is the baseline of the 14-day re-measure. Pulled by the operator's runner (GSC access
 lives there), committed as data.
 
+## 5b. Sitemap `lastmod`: deliberately omitted (decision 2026-11-18)
+
+`app/sitemap.ts` sets no `lastmod`. Google uses `lastmod` only when it is consistently accurate, and a wrong
+date is worse than none. The only exact source is each record's last commit, which is not available where the
+sitemap is produced: the sitemap renders at request time in a serverless function with no repository, and
+Vercel's build clone is shallow (`git clone --depth=10`, per Vercel's build documentation), so a record not
+touched in the last ten commits has no date there. `sources[].verified` is not a modification date (removed in
+60ea19af for that reason). Unshallowing the clone on every build would add a network dependency to deploys for
+a ~330-URL site Google already recrawls within days (URL inspection, 2026-11-18: `/parts/m5stick-s3` crawled
+11-17, `/firmware/bruce` 11-18). Revisit only if crawl lag on changed pages is measured as a problem.
+
 ## 6. Oracle
 
 `apps/web/lib/format.test.ts`: every rule above has a test; a new rule lands with its RED test first (chip-hub
