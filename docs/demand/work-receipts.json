@@ -2497,6 +2497,35 @@
     },
     "reserved_by": "jr/demand_run.py"
    }
+  },
+  {
+   "key": "c404a55544c49f7f",
+   "branch": "jr/research-c404a55544c49f7f",
+   "term": "esp32 tenstar",
+   "phase": "research",
+   "state": "reserved",
+   "started_on": "2026-11-21",
+   "source": "ga4 search_submit (unknown word)",
+   "linked_work": [],
+   "window": {
+    "start": "2026-10-23",
+    "end": "2026-11-19"
+   },
+   "metrics": {
+    "searches": 3,
+    "zero_result_searches": 0
+   },
+   "provenance": {
+    "snapshot": "docs/demand/research-queue.json",
+    "opened_on": "2026-11-21",
+    "status": "new",
+    "classification": "missing_content",
+    "remote": {
+     "branch": false,
+     "prs": []
+    },
+    "reserved_by": "jr/demand_run.py"
+   }
   }
  ]
 }
