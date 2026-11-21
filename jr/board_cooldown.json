@@ -403,6 +403,25 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-15T21:00:31.486348+00:00"
     },
+    "lilygo-t-beam-supreme": {
+      "board": "lilygo-t-beam-supreme",
+      "expires": "2026-11-28T06:00:32.350998+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "images": {
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-21T06:00:32.350998+00:00",
+      "url": null
+    },
     "lilygo-t-deck": {
       "board": "lilygo-t-deck",
       "expires": "2026-11-22T22:00:31.751655+00:00",
