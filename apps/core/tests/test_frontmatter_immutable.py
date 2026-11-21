@@ -63,3 +63,13 @@ def test_the_deployed_entry_point_turns_it_on_before_anything_reads_the_data():
     text = (REPO / "apps" / "web" / "api" / "index.py").read_text(encoding="utf-8")
     flag = text.index('os.environ.setdefault("ESP_ATLAS_IMMUTABLE_DATA", "1")')
     assert flag < text.index("from esp_atlas_api.main import") and flag < text.index("build_index(")
+
+
+def test_a_caller_that_changes_a_cached_result_never_changes_what_the_next_caller_gets(counted, monkeypatch):
+    f, reads = counted
+    monkeypatch.setenv("ESP_ATLAS_IMMUTABLE_DATA", "1")
+    fmod.parse_frontmatter(f)                                   # the first call fills the cache
+    cached = fmod.parse_frontmatter(f)[0]                       # served from the cache
+    cached["tags"].append("mutated")
+    cached["id"] = "changed"
+    assert fmod.parse_frontmatter(f)[0] == {"id": "x", "tags": ["a"]} and reads == [str(f)]
