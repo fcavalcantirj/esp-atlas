@@ -1,27 +1,20 @@
 {
  "calls": 30,
  "errors": 0,
- "fetched": "2026-11-11",
+ "fetched": "2026-11-19",
  "notes": [
+  "extra_configs matched more than 40 files; kept the 40 naming an ESP32 family first",
   "call budget exhausted while expanding extra_configs",
   "call budget exhausted at 30"
  ],
  "ref": "main",
  "repo": "BruceDevices/firmware",
  "resolved": {
-  "boards": [
-   "lcdwiki-es3c28p",
-   "lilygo-t-deck",
-   "lilygo-t-display-s3",
-   "lilygo-t-embed",
-   "lilygo-t-watch-s3",
-   "m5cardputer",
-   "m5stack-core",
-   "m5stack-core2",
-   "m5stack-cores3"
-  ],
+  "boards": [],
   "socs": [
+   "esp32",
    "esp32-c5",
+   "esp32-c6",
    "esp32-s3"
   ],
   "unresolved": [
@@ -34,6 +27,8 @@
    "Bruce-CYD-2USB",
    "Bruce-CYD-3248S035C",
    "Bruce-CYD-3248S035R",
+   "Bruce-ES3C28P",
+   "Bruce-Freenove-FNK0104AB",
    "Bruce-LAUNCHER_CYD-2432S028",
    "Bruce-LAUNCHER_CYD-2432W328C",
    "Bruce-LAUNCHER_CYD-2432W328R-or-S024R",
@@ -52,15 +47,21 @@
    "Bruce-Marauder-v61",
    "Bruce-Marauder-v7",
    "Bruce-Phantom_S024R",
+   "Bruce-S3_supermini_madara",
    "Bruce-WaveSentry-R1",
    "Bruce-arduino-nesso-n1",
    "Bruce-elecrow-24B",
    "Bruce-elecrow-28B",
    "Bruce-elecrow-advance-35-s3",
+   "Bruce-esp-wroom32-ili9341",
+   "Bruce-esp-wroom32-st7789",
    "Bruce-esp32-c5",
    "Bruce-esp32-c5-tft",
+   "Bruce-esp32-c5-tft-ST7789-170x320",
+   "Bruce-esp32-c5-tft-ST7789-240x320",
    "Bruce-esp32-s3-devkitc-1",
    "Bruce-esp32-s3-devkitc-1-psram",
+   "Bruce-lilka",
    "Bruce-lilygo-t-deck",
    "Bruce-lilygo-t-deck-pro",
    "Bruce-lilygo-t-display-S3-pro",
@@ -74,6 +75,9 @@
    "Bruce-lilygo-t-hmi",
    "Bruce-lilygo-t-lora-pager",
    "Bruce-lilygo-t-watch-s3",
+   "Bruce-lilygo-t-watch-ultra",
+   "Bruce-lilygo-t4",
+   "Bruce-m5stack-atoms3",
    "Bruce-m5stack-cardputer",
    "Bruce-m5stack-core16mb",
    "Bruce-m5stack-core2",
@@ -82,952 +86,928 @@
    "Bruce-m5stack-cplus1_1",
    "Bruce-m5stack-cplus2",
    "Bruce-m5stack-dinmeter",
+   "Bruce-m5stack-stackchan",
    "Bruce-m5stack-sticks3",
+   "Bruce-m5stack-tab5",
    "Bruce-nm-cyd-c5",
    "Bruce-reaper",
+   "Bruce-seeedstudio-xiao-esp32s3",
    "Bruce-smoochiee-board",
-   "CYD-2432S028",
-   "ESP-General",
-   "_New-Device-Model",
-   "arduino-nesso-n1",
-   "elecrow-esp32-24B",
-   "esp32-c5-devkitc-1",
-   "esp32-s3-devkitc1-n16r8",
-   "lilygo-t-display-s3-pro",
-   "lilygo-t-display-ttgo",
-   "lilygo-t-embed-cc1101",
-   "lilygo-t-hmi",
-   "lilygo-t-lora-pager",
-   "m5stack-cplus1_1",
-   "m5stack-cplus2",
-   "m5stack-dinmeter",
-   "m5stack-sticks3"
+   "Bruce-waveshare-c5-35"
   ]
  },
  "signals": [
   {
    "extra": {
     "asset": "Bruce-arduino-nesso-n1.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-arduino-nesso-n1",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-arduino-nesso-n1.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-arduino-nesso-n1.bin"
   },
   {
    "extra": {
     "asset": "Bruce-Awok-Mini.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-Awok-Mini",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-Awok-Mini.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-Awok-Mini.bin"
   },
   {
    "extra": {
     "asset": "Bruce-Awok-Touch.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-Awok-Touch",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-Awok-Touch.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-Awok-Touch.bin"
   },
   {
    "extra": {
     "asset": "Bruce-CYD-2432S028.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-CYD-2432S028.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-CYD-2432S028.bin"
   },
   {
    "extra": {
     "asset": "Bruce-CYD-2432W328C.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-CYD-2432W328C",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-CYD-2432W328C.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-CYD-2432W328C.bin"
   },
   {
    "extra": {
     "asset": "Bruce-CYD-2432W328C_2.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-CYD-2432W328C_2",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-CYD-2432W328C_2.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-CYD-2432W328C_2.bin"
   },
   {
    "extra": {
     "asset": "Bruce-CYD-2432W328R-or-S024R.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-CYD-2432W328R-or-S024R",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-CYD-2432W328R-or-S024R.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-CYD-2432W328R-or-S024R.bin"
   },
   {
    "extra": {
     "asset": "Bruce-CYD-2USB.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-CYD-2USB",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-CYD-2USB.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-CYD-2USB.bin"
   },
   {
    "extra": {
     "asset": "Bruce-CYD-3248S035C.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-CYD-3248S035C",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-CYD-3248S035C.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-CYD-3248S035C.bin"
   },
   {
    "extra": {
     "asset": "Bruce-CYD-3248S035R.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-CYD-3248S035R",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-CYD-3248S035R.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-CYD-3248S035R.bin"
   },
   {
    "extra": {
     "asset": "Bruce-elecrow-24B.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-elecrow-24B",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-elecrow-24B.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-elecrow-24B.bin"
   },
   {
    "extra": {
     "asset": "Bruce-elecrow-28B.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-elecrow-28B",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-elecrow-28B.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-elecrow-28B.bin"
   },
   {
    "extra": {
     "asset": "Bruce-elecrow-advance-35-s3.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-elecrow-advance-35-s3",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-elecrow-advance-35-s3.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-elecrow-advance-35-s3.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-ES3C28P.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-ES3C28P",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-ES3C28P.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-esp-wroom32-ili9341.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-esp-wroom32-ili9341",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-esp-wroom32-ili9341.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-esp-wroom32-st7789.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-esp-wroom32-st7789",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-esp-wroom32-st7789.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-esp32-c5-tft-ST7789-170x320.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-esp32-c5-tft-ST7789-170x320",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-esp32-c5-tft-ST7789-170x320.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-esp32-c5-tft-ST7789-240x320.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-esp32-c5-tft-ST7789-240x320",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-esp32-c5-tft-ST7789-240x320.bin"
   },
   {
    "extra": {
     "asset": "Bruce-esp32-c5-tft.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-esp32-c5-tft",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-esp32-c5-tft.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-esp32-c5-tft.bin"
   },
   {
    "extra": {
     "asset": "Bruce-esp32-c5.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-esp32-c5",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-esp32-c5.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-esp32-c5.bin"
   },
   {
    "extra": {
     "asset": "Bruce-esp32-s3-devkitc-1-psram.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-esp32-s3-devkitc-1-psram",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-esp32-s3-devkitc-1-psram.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-esp32-s3-devkitc-1-psram.bin"
   },
   {
    "extra": {
     "asset": "Bruce-esp32-s3-devkitc-1.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-esp32-s3-devkitc-1",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-esp32-s3-devkitc-1.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-esp32-s3-devkitc-1.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-Freenove-FNK0104AB.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-Freenove-FNK0104AB",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-Freenove-FNK0104AB.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_CYD-2432S028.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_CYD-2432S028.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_CYD-2432S028.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_CYD-2432W328C.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_CYD-2432W328C",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_CYD-2432W328C.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_CYD-2432W328C.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_CYD-2432W328R-or-S024R.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_CYD-2432W328R-or-S024R",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_CYD-2432W328R-or-S024R.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_CYD-2432W328R-or-S024R.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_CYD-2USB.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_CYD-2USB",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_CYD-2USB.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_CYD-2USB.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_CYD-3248S035C.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_CYD-3248S035C",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_CYD-3248S035C.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_CYD-3248S035C.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_CYD-3248S035R.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_CYD-3248S035R",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_CYD-3248S035R.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_CYD-3248S035R.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_m5stack-cplus1_1.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_m5stack-cplus1_1",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_m5stack-cplus1_1.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_m5stack-cplus1_1.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_Marauder-Mini.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_Marauder-Mini",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_Marauder-Mini.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_Marauder-Mini.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_Marauder-V4-V6.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_Marauder-V4-V6",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_Marauder-V4-V6.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_Marauder-V4-V6.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_Marauder-v61.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_Marauder-v61",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_Marauder-v61.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_Marauder-v61.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_Marauder-v7.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_Marauder-v7",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_Marauder-v7.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_Marauder-v7.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_Phantom_S024R.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_Phantom_S024R",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_Phantom_S024R.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_Phantom_S024R.bin"
   },
   {
    "extra": {
     "asset": "Bruce-LAUNCHER_WaveSentry-R1.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-LAUNCHER_WaveSentry-R1",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-LAUNCHER_WaveSentry-R1.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-LAUNCHER_WaveSentry-R1.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-lilka.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-lilka",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilka.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-deck-pro.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-deck-pro",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-deck-pro.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-deck-pro.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-deck.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-deck",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-deck.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-deck.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-display-s3-mmc.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-display-s3-mmc",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-display-s3-mmc.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-display-s3-mmc.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-display-S3-pro.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-display-S3-pro",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-display-S3-pro.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-display-S3-pro.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-display-s3-touch-mmc.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-display-s3-touch-mmc",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-display-s3-touch-mmc.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-display-s3-touch-mmc.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-display-s3-touch.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-display-s3-touch",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-display-s3-touch.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-display-s3-touch.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-display-s3.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-display-s3",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-display-s3.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-display-s3.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-display-ttgo.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-display-ttgo",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-display-ttgo.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-display-ttgo.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-embed-cc1101.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-embed-cc1101",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-embed-cc1101.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-embed-cc1101.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-embed.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-embed",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-embed.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-embed.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-hmi.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-hmi",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-hmi.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-hmi.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-lora-pager.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-lora-pager",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-lora-pager.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-lora-pager.bin"
   },
   {
    "extra": {
     "asset": "Bruce-lilygo-t-watch-s3.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-lilygo-t-watch-s3",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-lilygo-t-watch-s3.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-watch-s3.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-lilygo-t-watch-ultra.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-lilygo-t-watch-ultra",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t-watch-ultra.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-lilygo-t4.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-lilygo-t4",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-lilygo-t4.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-m5stack-atoms3.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-m5stack-atoms3",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-m5stack-atoms3.bin"
   },
   {
    "extra": {
     "asset": "Bruce-m5stack-cardputer.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-m5stack-cardputer",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-m5stack-cardputer.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-m5stack-cardputer.bin"
   },
   {
    "extra": {
     "asset": "Bruce-m5stack-core16mb.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-m5stack-core16mb",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-m5stack-core16mb.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-m5stack-core16mb.bin"
   },
   {
    "extra": {
     "asset": "Bruce-m5stack-core2.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-m5stack-core2",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-m5stack-core2.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-m5stack-core2.bin"
   },
   {
    "extra": {
     "asset": "Bruce-m5stack-core4mb.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-m5stack-core4mb",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-m5stack-core4mb.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-m5stack-core4mb.bin"
   },
   {
    "extra": {
     "asset": "Bruce-m5stack-cores3.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-m5stack-cores3",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-m5stack-cores3.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-m5stack-cores3.bin"
   },
   {
    "extra": {
     "asset": "Bruce-m5stack-cplus1_1.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-m5stack-cplus1_1",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-m5stack-cplus1_1.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-m5stack-cplus1_1.bin"
   },
   {
    "extra": {
     "asset": "Bruce-m5stack-cplus2.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-m5stack-cplus2",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-m5stack-cplus2.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-m5stack-cplus2.bin"
   },
   {
    "extra": {
     "asset": "Bruce-m5stack-dinmeter.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-m5stack-dinmeter",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-m5stack-dinmeter.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-m5stack-dinmeter.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-m5stack-stackchan.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-m5stack-stackchan",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-m5stack-stackchan.bin"
   },
   {
    "extra": {
     "asset": "Bruce-m5stack-sticks3.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-m5stack-sticks3",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-m5stack-sticks3.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-m5stack-sticks3.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-m5stack-tab5.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-m5stack-tab5",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-m5stack-tab5.bin"
   },
   {
    "extra": {
     "asset": "Bruce-Marauder-Mini.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-Marauder-Mini",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-Marauder-Mini.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-Marauder-Mini.bin"
   },
   {
    "extra": {
     "asset": "Bruce-Marauder-V4-V6.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-Marauder-V4-V6",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-Marauder-V4-V6.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-Marauder-V4-V6.bin"
   },
   {
    "extra": {
     "asset": "Bruce-Marauder-v61.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-Marauder-v61",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-Marauder-v61.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-Marauder-v61.bin"
   },
   {
    "extra": {
     "asset": "Bruce-Marauder-v7.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-Marauder-v7",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-Marauder-v7.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-Marauder-v7.bin"
   },
   {
    "extra": {
     "asset": "Bruce-nm-cyd-c5.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-nm-cyd-c5",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-nm-cyd-c5.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-nm-cyd-c5.bin"
   },
   {
    "extra": {
     "asset": "Bruce-Phantom_S024R.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-Phantom_S024R",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-Phantom_S024R.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-Phantom_S024R.bin"
   },
   {
    "extra": {
     "asset": "Bruce-reaper.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-reaper",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-reaper.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-reaper.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-S3_supermini_madara.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-S3_supermini_madara",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-S3_supermini_madara.bin"
+  },
+  {
+   "extra": {
+    "asset": "Bruce-seeedstudio-xiao-esp32s3.bin",
+    "release": "1.17"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Bruce-seeedstudio-xiao-esp32s3",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-seeedstudio-xiao-esp32s3.bin"
   },
   {
    "extra": {
     "asset": "Bruce-smoochiee-board.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-smoochiee-board",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-smoochiee-board.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-smoochiee-board.bin"
   },
   {
    "extra": {
     "asset": "Bruce-WaveSentry-R1.bin",
-    "release": "1.16.1"
+    "release": "1.17"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Bruce-WaveSentry-R1",
-   "url": "https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-WaveSentry-R1.bin"
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-WaveSentry-R1.bin"
   },
   {
    "extra": {
-    "env": "CYD-2432S028",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+    "asset": "Bruce-waveshare-c5-35.bin",
+    "release": "1.17"
    },
-   "kind": "platformio",
-   "line": 13,
-   "rank": 2,
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
    "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
-  },
-  {
-   "extra": {
-    "env": "CYD-2USB",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
-   },
-   "kind": "platformio",
-   "line": 13,
-   "rank": 2,
-   "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
-  },
-  {
-   "extra": {
-    "env": "LAUNCHER_CYD-2USB",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
-   },
-   "kind": "platformio",
-   "line": 13,
-   "rank": 2,
-   "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
-  },
-  {
-   "extra": {
-    "env": "CYD-2432W328C",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
-   },
-   "kind": "platformio",
-   "line": 13,
-   "rank": 2,
-   "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
-  },
-  {
-   "extra": {
-    "env": "LAUNCHER_CYD-2432S028",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
-   },
-   "kind": "platformio",
-   "line": 13,
-   "rank": 2,
-   "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
-  },
-  {
-   "extra": {
-    "env": "CYD-2432W328C_2",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
-   },
-   "kind": "platformio",
-   "line": 13,
-   "rank": 2,
-   "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
-  },
-  {
-   "extra": {
-    "env": "LAUNCHER_CYD-2432W328C",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
-   },
-   "kind": "platformio",
-   "line": 13,
-   "rank": 2,
-   "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
-  },
-  {
-   "extra": {
-    "env": "CYD-2432W328R-or-S024R",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
-   },
-   "kind": "platformio",
-   "line": 13,
-   "rank": 2,
-   "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
-  },
-  {
-   "extra": {
-    "env": "LAUNCHER_CYD-2432W328R-or-S024R",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
-   },
-   "kind": "platformio",
-   "line": 13,
-   "rank": 2,
-   "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
-  },
-  {
-   "extra": {
-    "env": "CYD-3248S035R",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
-   },
-   "kind": "platformio",
-   "line": 169,
-   "rank": 2,
-   "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L169"
-  },
-  {
-   "extra": {
-    "env": "LAUNCHER_CYD-3248S035R",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
-   },
-   "kind": "platformio",
-   "line": 169,
-   "rank": 2,
-   "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L169"
-  },
-  {
-   "extra": {
-    "env": "CYD-3248S035C",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
-   },
-   "kind": "platformio",
-   "line": 169,
-   "rank": 2,
-   "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L169"
-  },
-  {
-   "extra": {
-    "env": "LAUNCHER_CYD-3248S035C",
-    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
-   },
-   "kind": "platformio",
-   "line": 169,
-   "rank": 2,
-   "soc": null,
-   "token": "CYD-2432S028",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L169"
-  },
-  {
-   "extra": {
-    "env": "ES3C28P",
-    "file": "boards/ES3C28P/ES3C28P.ini"
-   },
-   "kind": "platformio",
-   "line": 17,
-   "rank": 2,
-   "soc": null,
-   "token": "ES3C28P",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/ES3C28P/ES3C28P.ini#L17"
-  },
-  {
-   "extra": {
-    "env": "esp32-s3-devkitc-1-psram",
-    "file": "boards/ESP-General/ESP-General.ini"
-   },
-   "kind": "platformio",
-   "line": 30,
-   "rank": 2,
-   "soc": null,
-   "token": "ESP-General",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/ESP-General/ESP-General.ini#L30"
-  },
-  {
-   "extra": {
-    "env": "esp32-s3-devkitc-1",
-    "file": "boards/ESP-General/ESP-General.ini"
-   },
-   "kind": "platformio",
-   "line": 30,
-   "rank": 2,
-   "soc": null,
-   "token": "ESP-General",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/ESP-General/ESP-General.ini#L30"
+   "token": "Bruce-waveshare-c5-35",
+   "url": "https://github.com/BruceDevices/firmware/releases/download/1.17/Bruce-waveshare-c5-35.bin"
   },
   {
    "extra": {
@@ -1038,7 +1018,31 @@
    "line": 12,
    "rank": 2,
    "soc": null,
-   "token": "esp32-c5-devkitc-1",
+   "token": "esp32c5",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/ESP32-C5-tft/ESP32-C5-tft.ini#L12"
+  },
+  {
+   "extra": {
+    "env": "esp32-c5-tft-ST7789-170x320",
+    "file": "boards/ESP32-C5-tft/ESP32-C5-tft.ini"
+   },
+   "kind": "platformio",
+   "line": 12,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32c5",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/ESP32-C5-tft/ESP32-C5-tft.ini#L12"
+  },
+  {
+   "extra": {
+    "env": "esp32-c5-tft-ST7789-240x320",
+    "file": "boards/ESP32-C5-tft/ESP32-C5-tft.ini"
+   },
+   "kind": "platformio",
+   "line": 12,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32c5",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/ESP32-C5-tft/ESP32-C5-tft.ini#L12"
   },
   {
@@ -1050,8 +1054,296 @@
    "line": 12,
    "rank": 2,
    "soc": null,
-   "token": "esp32-c5-devkitc-1",
+   "token": "esp32c5",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/ESP32-C5/ESP32-C5.ini#L12"
+  },
+  {
+   "extra": {
+    "env": "esp32-s3-n16r8-st7789v",
+    "file": "boards/esp32-s3-n16r8-st7789v/esp32-s3-n16r8-st7789v.ini"
+   },
+   "kind": "platformio",
+   "line": 6,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/esp32-s3-n16r8-st7789v/esp32-s3-n16r8-st7789v.ini#L6"
+  },
+  {
+   "extra": {
+    "env": "esp32s3-ili9341",
+    "file": "boards/esp32s3-ili9341/esp32s3-ili9341.ini"
+   },
+   "kind": "platformio",
+   "line": 9,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/esp32s3-ili9341/esp32s3-ili9341.ini#L9"
+  },
+  {
+   "extra": {
+    "env": "esp32s3-st7789",
+    "file": "boards/esp32s3-st7789/esp32s3-st7789.ini"
+   },
+   "kind": "platformio",
+   "line": 9,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/esp32s3-st7789/esp32s3-st7789.ini#L9"
+  },
+  {
+   "extra": {
+    "env": "seeedstudio-xiao-esp32s3",
+    "file": "boards/seeedstudio-xiao-esp32s3/seeedstudio-xiao-esp32s3.ini"
+   },
+   "kind": "platformio",
+   "line": 24,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/seeedstudio-xiao-esp32s3/seeedstudio-xiao-esp32s3.ini#L24"
+  },
+  {
+   "extra": {
+    "env": "CYD-2432S028",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "CYD-2USB",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "LAUNCHER_CYD-2USB",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "CYD-2432W328C",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "LAUNCHER_CYD-2432S028",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "CYD-2432W328C_2",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "LAUNCHER_CYD-2432W328C",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "CYD-2432W328R-or-S024R",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "LAUNCHER_CYD-2432W328R-or-S024R",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "CYD-3248S035R",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 73,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L73"
+  },
+  {
+   "extra": {
+    "env": "LAUNCHER_CYD-3248S035R",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 73,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L73"
+  },
+  {
+   "extra": {
+    "env": "CYD-3248S035C",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 73,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L73"
+  },
+  {
+   "extra": {
+    "env": "LAUNCHER_CYD-3248S035C",
+    "file": "boards/CYD-2432S028/CYD-2432S028.ini"
+   },
+   "kind": "platformio",
+   "line": 73,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/CYD-2432S028/CYD-2432S028.ini#L73"
+  },
+  {
+   "extra": {
+    "env": "ES3C28P",
+    "file": "boards/ES3C28P/ES3C28P.ini"
+   },
+   "kind": "platformio",
+   "line": 17,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/ES3C28P/ES3C28P.ini#L17"
+  },
+  {
+   "extra": {
+    "env": "esp32-s3-devkitc-1-psram",
+    "file": "boards/ESP-General/ESP-General.ini"
+   },
+   "kind": "platformio",
+   "line": 32,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/ESP-General/ESP-General.ini#L32"
+  },
+  {
+   "extra": {
+    "env": "esp32-s3-devkitc-1",
+    "file": "boards/ESP-General/ESP-General.ini"
+   },
+   "kind": "platformio",
+   "line": 32,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/ESP-General/ESP-General.ini#L32"
+  },
+  {
+   "extra": {
+    "env": "Freenove-FNK0104AB",
+    "file": "boards/Freenove-FNK0104AB/Freenove-FNK0104AB.ini"
+   },
+   "kind": "platformio",
+   "line": 17,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/Freenove-FNK0104AB/Freenove-FNK0104AB.ini#L17"
+  },
+  {
+   "extra": {
+    "env": "Mako",
+    "file": "boards/Mako/Mako.ini"
+   },
+   "kind": "platformio",
+   "line": 12,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32c5",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/Mako/Mako.ini#L12"
+  },
+  {
+   "extra": {
+    "env": "Pebble",
+    "file": "boards/Pebble/Pebble.ini"
+   },
+   "kind": "platformio",
+   "line": 12,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32c5",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/Pebble/Pebble.ini#L12"
+  },
+  {
+   "extra": {
+    "env": "S3_supermini_madara",
+    "file": "boards/S3_supermini_madara/S3_supermini_madara.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/S3_supermini_madara/S3_supermini_madara.ini#L13"
   },
   {
    "extra": {
@@ -1062,23 +1354,20 @@
    "line": 12,
    "rank": 2,
    "soc": null,
-   "token": "_New-Device-Model",
+   "token": "esp32s3",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/_New-Device-Model/_New-Device-Model.ini#L12"
   },
   {
    "extra": {
     "env": "arduino-nesso-n1",
-    "file": "boards/arduino-nesso-n1/platformio.ini",
-    "product_markers": [
-     "dinmeter"
-    ]
+    "file": "boards/arduino-nesso-n1/arduino-nesso-n1.ini"
    },
    "kind": "platformio",
    "line": 12,
    "rank": 2,
    "soc": null,
-   "token": "arduino-nesso-n1",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/arduino-nesso-n1/platformio.ini#L12"
+   "token": "esp32c6",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/arduino-nesso-n1/arduino-nesso-n1.ini#L12"
   },
   {
    "extra": {
@@ -1089,7 +1378,7 @@
    "line": 20,
    "rank": 2,
    "soc": null,
-   "token": "elecrow-esp32-24B",
+   "token": "esp32",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/elecrow/elecrow.ini#L20"
   },
   {
@@ -1101,7 +1390,7 @@
    "line": 20,
    "rank": 2,
    "soc": null,
-   "token": "elecrow-esp32-24B",
+   "token": "esp32",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/elecrow/elecrow.ini#L20"
   },
   {
@@ -1113,7 +1402,7 @@
    "line": 20,
    "rank": 2,
    "soc": null,
-   "token": "elecrow-esp32-24B",
+   "token": "esp32",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/elecrow/elecrow.ini#L20"
   },
   {
@@ -1125,7 +1414,7 @@
    "line": 20,
    "rank": 2,
    "soc": null,
-   "token": "elecrow-esp32-24B",
+   "token": "esp32",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/elecrow/elecrow.ini#L20"
   },
   {
@@ -1137,7 +1426,7 @@
    "line": 20,
    "rank": 2,
    "soc": null,
-   "token": "elecrow-esp32-24B",
+   "token": "esp32",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/elecrow/elecrow.ini#L20"
   },
   {
@@ -1149,7 +1438,7 @@
    "line": 20,
    "rank": 2,
    "soc": null,
-   "token": "elecrow-esp32-24B",
+   "token": "esp32",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/elecrow/elecrow.ini#L20"
   },
   {
@@ -1161,7 +1450,7 @@
    "line": 20,
    "rank": 2,
    "soc": null,
-   "token": "elecrow-esp32-24B",
+   "token": "esp32",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/elecrow/elecrow.ini#L20"
   },
   {
@@ -1173,7 +1462,7 @@
    "line": 20,
    "rank": 2,
    "soc": null,
-   "token": "elecrow-esp32-24B",
+   "token": "esp32",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/elecrow/elecrow.ini#L20"
   },
   {
@@ -1185,8 +1474,56 @@
    "line": 13,
    "rank": 2,
    "soc": null,
-   "token": "esp32-s3-devkitc1-n16r8",
+   "token": "esp32s3",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/elecrow_advance_s3/elecrow_advance_s3.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "esp-wroom32-ili9341",
+    "file": "boards/esp-wroom32-ili9341/esp-wroom32-ili9341.ini"
+   },
+   "kind": "platformio",
+   "line": 8,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/esp-wroom32-ili9341/esp-wroom32-ili9341.ini#L8"
+  },
+  {
+   "extra": {
+    "env": "esp-wroom32-st7789",
+    "file": "boards/esp-wroom32-st7789/esp-wroom32-st7789.ini"
+   },
+   "kind": "platformio",
+   "line": 9,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/esp-wroom32-st7789/esp-wroom32-st7789.ini#L9"
+  },
+  {
+   "extra": {
+    "env": "freenove-fnk0103",
+    "file": "boards/freenove-fnk0103/freenove-fnk0103.ini"
+   },
+   "kind": "platformio",
+   "line": 4,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/freenove-fnk0103/freenove-fnk0103.ini#L4"
+  },
+  {
+   "extra": {
+    "env": "lilka",
+    "file": "boards/lilka/lilka.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilka/lilka.ini#L2"
   },
   {
    "extra": {
@@ -1197,7 +1534,7 @@
    "line": 12,
    "rank": 2,
    "soc": null,
-   "token": "lilygo-t-deck",
+   "token": "esp32s3",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-deck/lilygo-t-deck.ini#L12"
   },
   {
@@ -1209,20 +1546,32 @@
    "line": 12,
    "rank": 2,
    "soc": null,
-   "token": "lilygo-t-deck",
+   "token": "esp32s3",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-deck/lilygo-t-deck.ini#L12"
   },
   {
    "extra": {
+    "env": "lilygo-t-display-c5",
+    "file": "boards/lilygo-t-display-c5/lilygo-t-display-c5.ini"
+   },
+   "kind": "platformio",
+   "line": 7,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32c5",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-display-c5/lilygo-t-display-c5.ini#L7"
+  },
+  {
+   "extra": {
     "env": "lilygo-t-display-S3-pro",
-    "file": "boards/lilygo-t-display-s3-pro/platformio.ini"
+    "file": "boards/lilygo-t-display-s3-pro/lilygo-t-display-s3-pro.ini"
    },
    "kind": "platformio",
    "line": 13,
    "rank": 2,
    "soc": null,
-   "token": "lilygo-t-display-s3-pro",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-display-s3-pro/platformio.ini#L13"
+   "token": "esp32s3",
+   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-display-s3-pro/lilygo-t-display-s3-pro.ini#L13"
   },
   {
    "extra": {
@@ -1233,7 +1582,7 @@
    "line": 2,
    "rank": 2,
    "soc": null,
-   "token": "lilygo-t-display-s3",
+   "token": "esp32s3",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-display-s3/lilygo-t-display-s3.ini#L2"
   },
   {
@@ -1245,7 +1594,7 @@
    "line": 2,
    "rank": 2,
    "soc": null,
-   "token": "lilygo-t-display-s3",
+   "token": "esp32s3",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-display-s3/lilygo-t-display-s3.ini#L2"
   },
   {
@@ -1257,7 +1606,7 @@
    "line": 2,
    "rank": 2,
    "soc": null,
-   "token": "lilygo-t-display-s3",
+   "token": "esp32s3",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-display-s3/lilygo-t-display-s3.ini#L2"
   },
   {
@@ -1269,7 +1618,7 @@
    "line": 2,
    "rank": 2,
    "soc": null,
-   "token": "lilygo-t-display-s3",
+   "token": "esp32s3",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-display-s3/lilygo-t-display-s3.ini#L2"
   },
   {
@@ -1281,197 +1630,8 @@
    "line": 2,
    "rank": 2,
    "soc": null,
-   "token": "lilygo-t-display-ttgo",
+   "token": "esp32",
    "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-display-ttgo/lilygo-t-display-s3.ini#L2"
-  },
-  {
-   "extra": {
-    "env": "lilygo-t-embed-cc1101",
-    "file": "boards/lilygo-t-embed-cc1101/lilygo-t-embed-cc1101.ini"
-   },
-   "kind": "platformio",
-   "line": 3,
-   "rank": 2,
-   "soc": null,
-   "token": "lilygo-t-embed-cc1101",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-embed-cc1101/lilygo-t-embed-cc1101.ini#L3"
-  },
-  {
-   "extra": {
-    "env": "lilygo-t-embed",
-    "file": "boards/lilygo-t-embed-cc1101/lilygo-t-embed.ini"
-   },
-   "kind": "platformio",
-   "line": 2,
-   "rank": 2,
-   "soc": null,
-   "token": "lilygo-t-embed",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-embed-cc1101/lilygo-t-embed.ini#L2"
-  },
-  {
-   "extra": {
-    "env": "lilygo-t-hmi",
-    "file": "boards/lilygo-t-hmi/lilygo-t-hmi.ini"
-   },
-   "kind": "platformio",
-   "line": 2,
-   "rank": 2,
-   "soc": null,
-   "token": "lilygo-t-hmi",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-hmi/lilygo-t-hmi.ini#L2"
-  },
-  {
-   "extra": {
-    "env": "lilygo-t-lora-pager",
-    "file": "boards/lilygo-t-lora-pager/lilygo-t-lora-pager.ini"
-   },
-   "kind": "platformio",
-   "line": 3,
-   "rank": 2,
-   "soc": null,
-   "token": "lilygo-t-lora-pager",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-lora-pager/lilygo-t-lora-pager.ini#L3"
-  },
-  {
-   "extra": {
-    "env": "lilygo-t-watch-s3",
-    "file": "boards/lilygo-t-watch-s3/lilygo-t-watch-s3.ini"
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "lilygo-t-watch-s3",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/lilygo-t-watch-s3/lilygo-t-watch-s3.ini#L12"
-  },
-  {
-   "extra": {
-    "env": "m5stack-cardputer",
-    "file": "boards/m5stack-cardputer/m5stack-cardputer.ini",
-    "product_markers": [
-     "cardputer"
-    ]
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "m5stack-cardputer",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/m5stack-cardputer/m5stack-cardputer.ini#L12"
-  },
-  {
-   "extra": {
-    "env": "m5stack-core4mb",
-    "file": "boards/m5stack-core/m5stack-core.ini"
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "m5stack-core",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/m5stack-core/m5stack-core.ini#L12"
-  },
-  {
-   "extra": {
-    "env": "m5stack-core16mb",
-    "file": "boards/m5stack-core/m5stack-core.ini"
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "m5stack-core",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/m5stack-core/m5stack-core.ini#L12"
-  },
-  {
-   "extra": {
-    "env": "m5stack-core2",
-    "file": "boards/m5stack-core2/m5stack-core2.ini"
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "m5stack-core2",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/m5stack-core2/m5stack-core2.ini#L12"
-  },
-  {
-   "extra": {
-    "env": "m5stack-cores3",
-    "file": "boards/m5stack-cores3/m5stack-cores3.ini"
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "m5stack-cores3",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/m5stack-cores3/m5stack-cores3.ini#L12"
-  },
-  {
-   "extra": {
-    "env": "m5stack-cplus1_1",
-    "file": "boards/m5stack-cplus1_1/m5stack-cplus1_1.ini"
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "m5stack-cplus1_1",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/m5stack-cplus1_1/m5stack-cplus1_1.ini#L12"
-  },
-  {
-   "extra": {
-    "env": "LAUNCHER_m5stack-cplus1_1",
-    "file": "boards/m5stack-cplus1_1/m5stack-cplus1_1.ini"
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "m5stack-cplus1_1",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/m5stack-cplus1_1/m5stack-cplus1_1.ini#L12"
-  },
-  {
-   "extra": {
-    "env": "m5stack-cplus2",
-    "file": "boards/m5stack-cplus2/m5stack-cplus2.ini"
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "m5stack-cplus2",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/m5stack-cplus2/m5stack-cplus2.ini#L12"
-  },
-  {
-   "extra": {
-    "env": "m5stack-dinmeter",
-    "file": "boards/m5stack-dinmeter/platformio.ini",
-    "product_markers": [
-     "dinmeter"
-    ]
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "m5stack-dinmeter",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/m5stack-dinmeter/platformio.ini#L12"
-  },
-  {
-   "extra": {
-    "env": "m5stack-sticks3",
-    "file": "boards/m5stack-sticks3/m5stack-sticks3.ini",
-    "product_markers": [
-     "sticks3"
-    ]
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "m5stack-sticks3",
-   "url": "https://github.com/BruceDevices/firmware/blob/main/boards/m5stack-sticks3/m5stack-sticks3.ini#L12"
   }
  ]
 }

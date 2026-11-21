@@ -1,7 +1,7 @@
 {
  "calls": 6,
  "errors": 0,
- "fetched": "2026-11-11",
+ "fetched": "2026-11-19",
  "notes": [],
  "ref": "main",
  "repo": "BitMaker-hub/NerdMiner_v2",
@@ -12,6 +12,7 @@
    "lilygo-t-embed",
    "lolin-s2-mini",
    "lolin-s3-mini",
+   "m5cardputer-adv",
    "m5stamp-s3",
    "m5stick-c",
    "m5stick-cplus",
