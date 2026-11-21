@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import FirmwareReadme from "@/components/firmware/FirmwareReadme";
 import FirmwareDetailView from "@/components/firmware/FirmwareDetailView";
 import type { Firmware } from "@/lib/api";
-import { fetchAllParts, fetchFirmware, fetchRecipesForFirmware } from "@/lib/api-server";
+import { dataOrThrow, fetchAllPartsResult, fetchFirmware, fetchRecipesForFirmware } from "@/lib/api-server";
 import { detailRobots } from "@/lib/detail-robots";
 import { firmwareMetaDescription, firmwareMetaTitle } from "@/lib/format";
 import { fetchReadme, type RepoReadme } from "@/lib/readme";
@@ -61,11 +61,13 @@ export default async function FirmwarePage({ params }: PageProps<"/firmware/[id]
   // The upstream README is optional. Start its bounded fetch now, but stream
   // the firmware identity and cited board recipes as soon as their APIs answer.
   const readmePromise = fetchReadme(firmware.url);
-  const [recipesResult, parts] = await Promise.all([
+  const [recipesResult, partsResult] = await Promise.all([
     fetchRecipesForFirmware(id),
-    fetchAllParts(),
+    fetchAllPartsResult(),
   ]);
-  const recipes = recipesResult.status === "ok" ? recipesResult.data.results : [];
+  // A failed fetch throws rather than render no boards: the ISR cache would keep that page (dataOrThrow).
+  const recipes = dataOrThrow(recipesResult, `Recipes API for ${id}`).results;
+  const parts = dataOrThrow(partsResult, "Parts API").results;
   return (
     <FirmwareDetailView
       firmware={firmware}

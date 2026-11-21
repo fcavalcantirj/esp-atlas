@@ -5,7 +5,7 @@ import PartDetailView from "@/components/part/PartDetailView";
 import PartViewTracker from "@/components/part/PartViewTracker";
 import type { RecipeRow } from "@/components/RecipeGroupList";
 import type { Firmware } from "@/lib/api";
-import { fetchFirmwareList, fetchPartDetail, fetchRecipesForBoard } from "@/lib/api-server";
+import { dataOrThrow, fetchFirmwareList, fetchPartDetail, fetchRecipesForBoard } from "@/lib/api-server";
 import { firmwareForChip } from "@/lib/chip-firmware";
 import { detailRobots } from "@/lib/detail-robots";
 import { partMetaDescription, partMetaTitle } from "@/lib/format";
@@ -24,8 +24,9 @@ export function generateStaticParams() {
   return [];
 }
 
-// Two API responses joined for display (lib/recipe-rows.ts); a failed recipes
-// fetch yields no rows rather than an error.
+// Two API responses joined for display (lib/recipe-rows.ts). A failed fetch
+// throws rather than render the page without its firmware rows: the ISR cache
+// would keep that page until the next revalidation (dataOrThrow).
 async function fetchBoardFirmwareRows(
   boardId: string,
   boardName: string,
@@ -33,16 +34,15 @@ async function fetchBoardFirmwareRows(
   downloadMode: DownloadMode | null,
 ): Promise<RecipeRow[]> {
   const [recipesResult, firmwareResult] = await Promise.all([fetchRecipesForBoard(boardId), fetchFirmwareList()]);
-  if (recipesResult.status !== "ok") return [];
-  const firmware = firmwareResult.status === "ok" ? firmwareResult.data.results : [];
-  return boardFirmwareRows(recipesResult.data.results, firmware, boardName, usbConnector, downloadMode);
+  const recipes = dataOrThrow(recipesResult, `Recipes API for ${boardId}`).results;
+  const firmware = dataOrThrow(firmwareResult, "Firmware API").results;
+  return boardFirmwareRows(recipes, firmware, boardName, usbConnector, downloadMode);
 }
 
-// The chip hub's firmware (SPEC-serp-ctr.md §4); a failed firmware fetch
-// yields no rows, so the section simply doesn't render.
+// The chip hub's firmware (SPEC-serp-ctr.md §4); a chip with no firmware
+// yields no rows, so the section simply doesn't render. A failed fetch throws (see above).
 async function fetchChipFirmware(socId: string): Promise<Firmware[]> {
-  const result = await fetchFirmwareList();
-  return result.status === "ok" ? firmwareForChip(result.data.results, socId) : [];
+  return firmwareForChip(dataOrThrow(await fetchFirmwareList(), "Firmware API").results, socId);
 }
 
 // The board's cited download_mode frontmatter (mode/steps/note), for the flash
