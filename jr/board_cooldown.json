@@ -12,60 +12,6 @@
       "reason": "doc-unreachable",
       "timestamp": "2026-11-16T04:00:31.943499+00:00"
     },
-    "adafruit-feather-esp32-s2": {
-      "board": "adafruit-feather-esp32-s2",
-      "expires": "2026-11-20T21:00:55.139769+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "doc_unreachable"
-        },
-        "getting_started": {
-          "vendor": "doc_unreachable"
-        },
-        "usb_serial": {
-          "boards_txt": "no_pattern_match",
-          "manifest": "no_pattern_match",
-          "vendor": "doc_unreachable"
-        }
-      },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-13T21:00:55.139769+00:00"
-    },
-    "adafruit-feather-esp32-s2-reverse-tft": {
-      "board": "adafruit-feather-esp32-s2-reverse-tft",
-      "expires": "2026-11-20T21:00:55.139769+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "doc_unreachable"
-        },
-        "usb_serial": {
-          "boards_txt": "no_pattern_match",
-          "manifest": "no_pattern_match",
-          "vendor": "doc_unreachable"
-        }
-      },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-13T21:00:55.139769+00:00"
-    },
-    "adafruit-feather-esp32-s2-tft": {
-      "board": "adafruit-feather-esp32-s2-tft",
-      "expires": "2026-11-20T21:00:55.139769+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "doc_unreachable"
-        },
-        "usb_serial": {
-          "boards_txt": "no_pattern_match",
-          "manifest": "no_pattern_match",
-          "vendor": "doc_unreachable"
-        }
-      },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-13T21:00:55.139769+00:00"
-    },
     "adafruit-feather-esp32-s3": {
       "board": "adafruit-feather-esp32-s3",
       "expires": "2026-11-23T05:00:31.772256+00:00",
@@ -77,42 +23,6 @@
       },
       "reason": "nothing-groundable",
       "timestamp": "2026-11-16T05:00:31.772256+00:00"
-    },
-    "adafruit-feather-esp32-s3-no-psram": {
-      "board": "adafruit-feather-esp32-s3-no-psram",
-      "expires": "2026-11-20T22:00:55.476104+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "doc_unreachable"
-        }
-      },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-13T22:00:55.476104+00:00"
-    },
-    "adafruit-feather-esp32-s3-reverse-tft": {
-      "board": "adafruit-feather-esp32-s3-reverse-tft",
-      "expires": "2026-11-20T22:00:55.476104+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "no_pattern_match"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-13T22:00:55.476104+00:00"
-    },
-    "adafruit-feather-esp32-s3-tft": {
-      "board": "adafruit-feather-esp32-s3-tft",
-      "expires": "2026-11-20T22:00:55.476104+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "doc_unreachable"
-        }
-      },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-13T22:00:55.476104+00:00"
     },
     "adafruit-funhouse": {
       "board": "adafruit-funhouse",
@@ -409,7 +319,7 @@
     },
     "freenove-fnk0104a": {
       "board": "freenove-fnk0104a",
-      "expires": "2026-11-19T20:00:55.759999+00:00",
+      "expires": "2026-11-27T12:00:31.870191+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -422,11 +332,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-12T20:00:55.759999+00:00"
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "freenove-fnk0104b": {
       "board": "freenove-fnk0104b",
-      "expires": "2026-11-19T20:00:55.759999+00:00",
+      "expires": "2026-11-27T12:00:31.870191+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -439,52 +349,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-12T20:00:55.759999+00:00"
-    },
-    "freenove-fnk0104s": {
-      "board": "freenove-fnk0104s",
-      "expires": "2026-11-19T20:00:55.759999+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "no_manifest",
-          "vendor": "field_absent"
-        },
-        "usb_serial": {
-          "boards_txt": "no_board_key",
-          "manifest": "no_manifest",
-          "vendor": "field_absent"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-12T20:00:55.759999+00:00"
-    },
-    "heltec-wifi-kit-32-v3": {
-      "board": "heltec-wifi-kit-32-v3",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "no_manifest",
-          "vendor": "field_absent"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
-    },
-    "heltec-wifi-lora-32-v3": {
-      "board": "heltec-wifi-lora-32-v3",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "no_manifest",
-          "vendor": "field_absent"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "heltec-wireless-paper": {
       "board": "heltec-wireless-paper",
-      "expires": "2026-11-19T21:00:55.047326+00:00",
+      "expires": "2026-11-28T04:00:32.449949+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -495,7 +364,8 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-12T21:00:55.047326+00:00"
+      "timestamp": "2026-11-21T04:00:32.449949+00:00",
+      "url": "https://docs.heltec.org/en/node/esp32/wireless_paper/index.html"
     },
     "heltec-wireless-stick-v3": {
       "board": "heltec-wireless-stick-v3",
@@ -532,6 +402,25 @@
       },
       "reason": "nothing-groundable",
       "timestamp": "2026-11-15T21:00:31.486348+00:00"
+    },
+    "lilygo-t-beam-supreme": {
+      "board": "lilygo-t-beam-supreme",
+      "expires": "2026-11-28T06:00:32.350998+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "images": {
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-21T06:00:32.350998+00:00",
+      "url": null
     },
     "lilygo-t-deck": {
       "board": "lilygo-t-deck",

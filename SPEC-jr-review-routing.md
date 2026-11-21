@@ -294,6 +294,15 @@ phase 2.
   and the review cap still holds; the canary is the reader. A PR the guard refuses (an edit to an existing
   record, an UNCERTAIN receipt, a receipt the live upstream no longer supports) waits for the agent
   reviewer or a person. A person audits the first five canary merges after the fact and holds the switch.
+- **Every recipe Jr writes carries its receipt (2026-11-21).** The topic stage's drain
+  (`jr/drain.author_selected`) wrote "the repo lists X as a supported device" with no evidence check, so the
+  receipt guard refused all of them (E1) and Jr closed four tick PRs after 72 h. The drain now runs the
+  guard's own live check (`drain.live_evidence_gate`: `scripts/receipt_guard.live_sources` through
+  `writers.evidence_gate`, the gate `stage_admit` runs). FAIL is never written; a sibling of the same chip
+  replaces the board; PASS and UNCERTAIN are written with "Evidence check v… <verdict> — <why>" in the notes.
+  An upstream that cannot be read writes the recipe as before, with no receipt, for a reviewer. Run live on
+  the four stuck recipes: esp32-template, fennek and pisces-moon-os on the T-Deck PASS; xmas-tree on the
+  QT Py S2 FAILS (the source never names that board) and would not have been proposed.
 
 ### 7b. Code pull requests: the agent reviewer and the code canary (2026-11-17, lanes 2026-11-18)
 

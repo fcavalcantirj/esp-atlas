@@ -18,8 +18,21 @@ The same GA4 pull the miner already makes (`eventName` × `customEvent:q`, event
 - `searches` — the term's `search_submit` count in the window;
 - `zero_result_searches` — the term's `search_empty` count in the window.
 
-A term is a **candidate** when `zero_result_searches >= 1` **and** `searches >= 1`. A term that
-returned results creates nothing, however often it was searched.
+A term is a **candidate** when `zero_result_searches >= 1` **and** `searches >= 1`.
+
+**Or when it names something the catalog has never heard of (2026-11-21).** A term that returned
+results is a candidate too when it pairs an ESP32 word (`esp32…`, `esp8266`) with a word no catalog
+entry carries: letters only, at least 4 long, not generic, and not inside any entry's id, title or
+alias, compared compact (`research_queue.unknown_words`). Every other search containing those words
+joins it ("tenstar", "tenstar robot"). The candidate is keyed by the shortest of their terms, with their
+searches summed. It carries `intake: unknown_word`, `missing_words`, `zero_result_searches: 0` and
+`source: "ga4 search_submit (unknown word)"`. It shares the daily cap, after the zero-result candidates.
+
+Why: Oct 21-Nov 17, "Tenstar T-display Esp32", "esp32 tenstar" and "esp32-s3 tenstar" were each searched
+once, and the site answered with generic matches ("t-display" returns 49 results). No row was ever
+zero-result, so a brand nothing in the catalog carries never reached research.
+
+Any other term that returned results creates nothing, however often it was searched.
 
 ## The queue file — `docs/demand/research-queue.json`
 
