@@ -57,9 +57,13 @@ HUMAN_CHANNELS = frozenset({"Organic Search", "Paid Search", "AI Assistant", "Or
                             "Email", "Organic Video", "Organic Shopping", "Paid Shopping", "Paid Video", "Display"})
 
 
+JUNK_MAX_AVG_DURATION_S = 5.0
+JUNK_MAX_ENGAGEMENT_RATE = 0.10
+
+
 def _is_junk_segment(channel: str, avg_duration_s: float, engagement_rate: float, *,
-                      max_avg_duration_s: float = 5.0,
-                      max_engagement_rate: float = 0.10) -> bool:
+                      max_avg_duration_s: float = JUNK_MAX_AVG_DURATION_S,
+                      max_engagement_rate: float = JUNK_MAX_ENGAGEMENT_RATE) -> bool:
     """A behavioral bot/junk rule, matching deep-analytics' bot_filter.py: a segment is junk only when its
     channel is NOT a human-arrival channel (`HUMAN_CHANNELS`: search, AI assistants, social, email, ads) AND
     its average session duration is at most `max_avg_duration_s` AND its engagement rate is at most
@@ -152,25 +156,124 @@ def _channel_of(source: str) -> str:
     return "Direct" if source == "(direct)" else "Referral"
 
 
-def spam_adjusted(raw_sessions: float, rows: list, denylist: frozenset) -> dict:
-    """Adjusted sessions = raw minus sessionSource rows that are denylisted or behavioural junk
-    (each excluded row once); adjusted engaged sessions = all rows' engaged minus the same rows."""
-    excluded_sessions = engaged = 0.0
-    for row in rows:
-        dims = row.get("dimensionValues", [])
-        source = dims[0].get("value", "") if dims else ""
-        channel = dims[2].get("value", "") if len(dims) > 2 else _channel_of(source)
-        mvals = row.get("metricValues", [])
-        m = {name: float(mvals[i]["value"]) if i < len(mvals) else 0.0
-             for i, name in enumerate(GA4_SOURCE_METRICS)}
-        rate = (m["engagedSessions"] / m["sessions"]) if m["sessions"] else 0.0
-        if (_is_denylisted(source, denylist)
-                or _is_junk_segment(channel, m["averageSessionDuration"], rate)):
-            excluded_sessions += m["sessions"]
+# Bot rules, aligned with deep-analytics' bot_rules.py (owner-approved 2026-11-20). Each rule judges
+# the aggregate of its own group key, then claims every breakdown row in a matched group. Every group
+# key is a function of the row key, so a session lives in one row and is excluded once; a row
+# matching several rules is attributed to the first in SPAM_RULE_KEYS.
+GA4_SOURCE_DIMS = ["sessionSource", "city", "sessionDefaultChannelGroup", "screenResolution", "browser"]
+GA4_SOURCE_ROW_LIMIT = 10000
+RULES_EXEMPT_CHANNEL = "Organic Search"     # rules (a)-(c) never count or remove these rows
+ZERO_ENGAGED_MIN_SESSIONS = 5               # (a) a source with >= this many sessions, 0 engaged
+JUNK_SCREEN_RESOLUTIONS = frozenset({"800x600"})       # (b) headless-browser default
+JUNK_BROWSERS = frozenset({"Android Webview"})         # (c) in-app link previews
+DEVICE_MAX_ENGAGEMENT_RATE = 0.10           # engagement ceiling for (b) and (c)
+SPAM_RULE_KEYS = ("fast_unengaged", "referral_denylist", "zero_engaged_source",
+                  "screen_resolution", "browser")
+
+
+def _cell(row: dict) -> dict:
+    """One breakdown row; a row without a channel dimension takes it from its source."""
+    dims = [v.get("value", "") for v in row.get("dimensionValues", [])]
+    source, city, channel, resolution, browser = (dims + [""] * len(GA4_SOURCE_DIMS))[:len(GA4_SOURCE_DIMS)]
+    mvals = row.get("metricValues", [])
+    m = {name: float(mvals[i]["value"]) if i < len(mvals) else 0.0
+         for i, name in enumerate(GA4_SOURCE_METRICS)}
+    return {"source": source, "city": city, "channel": channel if len(dims) > 2 else _channel_of(source),
+            "resolution": resolution, "browser": browser,
+            "sessions": m["sessions"], "engaged": m["engagedSessions"],
+            "duration": m["averageSessionDuration"] * m["sessions"]}
+
+
+def _engagement(g: dict) -> float:
+    return (g["engaged"] / g["sessions"]) if g["sessions"] else 0.0
+
+
+def _avg_duration(g: dict) -> float:
+    return (g["duration"] / g["sessions"]) if g["sessions"] else 0.0
+
+
+def _any_channel(cell: dict) -> bool:
+    return True
+
+
+def _not_exempt(cell: dict) -> bool:
+    return cell["channel"] != RULES_EXEMPT_CHANNEL
+
+
+def _spam_rules(denylist: frozenset) -> list:
+    """(key, scope, group_of, matches) per rule, in SPAM_RULE_KEYS order. Thresholds are read at
+    call time so the module constants stay the single source of config."""
+    ceiling = DEVICE_MAX_ENGAGEMENT_RATE
+    rules = {
+        "fast_unengaged": (_any_channel, lambda c: (c["source"], c["city"], c["channel"]),
+                           lambda k, g: _is_junk_segment(
+                               k[2], _avg_duration(g), _engagement(g),
+                               max_avg_duration_s=JUNK_MAX_AVG_DURATION_S,
+                               max_engagement_rate=JUNK_MAX_ENGAGEMENT_RATE)),
+        "referral_denylist": (_any_channel, lambda c: (c["source"],),
+                              lambda k, g: _is_denylisted(k[0], denylist)),
+        "zero_engaged_source": (_not_exempt, lambda c: (c["source"],),
+                                lambda k, g: (g["sessions"] >= ZERO_ENGAGED_MIN_SESSIONS
+                                              and g["engaged"] == 0)),
+        "screen_resolution": (_not_exempt, lambda c: (c["resolution"],),
+                              lambda k, g: k[0] in JUNK_SCREEN_RESOLUTIONS and _engagement(g) <= ceiling),
+        "browser": (_not_exempt, lambda c: (c["browser"],),
+                    lambda k, g: k[0] in JUNK_BROWSERS and _engagement(g) <= ceiling),
+    }
+    return [(key, *rules[key]) for key in SPAM_RULE_KEYS]
+
+
+def _matched_groups(cells: list, scope, group_of, matches) -> set:
+    groups: dict = {}
+    for c in filter(scope, cells):
+        g = groups.setdefault(group_of(c), {"sessions": 0.0, "engaged": 0.0, "duration": 0.0})
+        for k in g:
+            g[k] += c[k]
+    return {k for k, g in groups.items() if matches(k, g)}
+
+
+def _classify(rows: list, denylist: frozenset) -> tuple[dict, float]:
+    """(sessions removed per rule, engaged sessions of the kept rows). Each row is removed at most
+    once, under the first rule whose matched groups contain it."""
+    cells = [_cell(row) for row in rows]
+    rules = _spam_rules(denylist)
+    matched = {key: _matched_groups(cells, scope, group_of, matches)
+               for key, scope, group_of, matches in rules}
+    removed = {key: 0.0 for key in SPAM_RULE_KEYS}
+    engaged = 0.0
+    for c in cells:
+        hit = next((key for key, scope, group_of, _ in rules
+                    if scope(c) and group_of(c) in matched[key]), None)
+        if hit is None:
+            engaged += c["engaged"]
         else:
-            engaged += m["engagedSessions"]
-    return {"sessions": int(max(0.0, raw_sessions - excluded_sessions)),
+            removed[hit] += c["sessions"]
+    return removed, engaged
+
+
+def spam_adjusted(raw_sessions: float, rows: list, denylist: frozenset) -> dict:
+    """Adjusted sessions = raw minus the breakdown rows any bot rule claims (each row once);
+    adjusted engaged sessions = the kept rows' engaged sessions."""
+    removed, engaged = _classify(rows, denylist)
+    return {"sessions": int(max(0.0, raw_sessions - sum(removed.values()))),
             "engaged_sessions": int(engaged)}
+
+
+def removed_by_rule(rows: list, denylist: frozenset) -> dict:
+    """Sessions each rule removed; the values sum to the sessions spam_adjusted excludes."""
+    return {key: int(v) for key, v in _classify(rows, denylist)[0].items()}
+
+
+def rule_line(removed: dict) -> str:
+    ceiling = f"≤{DEVICE_MAX_ENGAGEMENT_RATE:.0%} engaged"
+    labels = {"fast_unengaged": (f"non-human channel ≤{JUNK_MAX_AVG_DURATION_S:g}s & "
+                                 f"≤{JUNK_MAX_ENGAGEMENT_RATE:.0%} engaged"),
+              "referral_denylist": "referral denylist",
+              "zero_engaged_source": f"source ≥{ZERO_ENGAGED_MIN_SESSIONS} sessions & 0 engaged",
+              "screen_resolution": f"screen {', '.join(sorted(JUNK_SCREEN_RESOLUTIONS))} {ceiling}",
+              "browser": f"browser {', '.join(sorted(JUNK_BROWSERS))} {ceiling}"}
+    return ("🧹 sessions removed by rule (a session matched by several rules counted once): "
+            + " · ".join(f"{labels[key]}: {removed.get(key, 0)}" for key in SPAM_RULE_KEYS))
 
 
 def prior_window(start: str, end: str) -> tuple[str, str]:
@@ -204,14 +307,20 @@ def completed_window(days: int = 7, today_utc: dt.date | None = None) -> tuple[s
 
 
 def _ga4_source_rows(start: str, end: str) -> list | None:
-    """The source × city × channel breakdown behind the spam-adjusted numbers (one row per segment the
-    junk rule judges); None when the fetch fails."""
+    """The bot-rule breakdown behind the spam-adjusted numbers. None when the fetch fails or the
+    report is truncated (at the row limit, or GA4's rowCount exceeds the rows returned): partial
+    rows would under-exclude, so the caller fails closed exactly as on a failed fetch."""
     ga = _ex("GOOGLE_ANALYTICS_RUN_REPORT", {"property": GA4_PROPERTY,
              "dateRanges": [{"startDate": start, "endDate": end}],
-             "dimensions": [{"name": "sessionSource"}, {"name": "city"}, {"name": "sessionDefaultChannelGroup"}],
+             "dimensions": [{"name": name} for name in GA4_SOURCE_DIMS],
              "metrics": [{"name": name} for name in GA4_SOURCE_METRICS],
-             "limit": 10000})
-    return None if ga is None else ga.get("rows", [])
+             "limit": GA4_SOURCE_ROW_LIMIT})
+    if ga is None:
+        return None
+    rows = ga.get("rows") or []
+    if len(rows) >= GA4_SOURCE_ROW_LIMIT or int(ga.get("rowCount") or 0) > len(rows):
+        return None
+    return rows
 
 
 def _adjusted_engaged(start: str, end: str, denylist: frozenset) -> int | None:
@@ -230,7 +339,7 @@ def _gsc_clicks(start: str, end: str) -> int | None:
     return None if t is None else t.get("clicks", 0)
 
 
-def _ga4_line(start: str, end: str, denylist: frozenset) -> str:
+def _ga4_lines(start: str, end: str, denylist: frozenset) -> list:
     ga = _ex("GOOGLE_ANALYTICS_RUN_REPORT", {"property": GA4_PROPERTY,
              "dateRanges": [{"startDate": start, "endDate": end}],
              "dimensions": [],
@@ -239,13 +348,14 @@ def _ga4_line(start: str, end: str, denylist: frozenset) -> str:
         row = ga["rows"][0]["metricValues"]
         users, sessions = int(float(row[0]["value"])), int(float(row[1]["value"]))
     except Exception:
-        return "👥 GA4: unavailable (no complete no-dimension total)"
+        return ["👥 GA4: unavailable (no complete no-dimension total)"]
     raw = f"👥 GA4: raw *{users}* distinct active users / {sessions} sessions"
     rows = _ga4_source_rows(start, end)
     if rows is None:
-        return raw + " · spam-adjusted unavailable"
+        return [raw + " · spam-adjusted unavailable"]
     adj = spam_adjusted(sessions, rows, denylist)
-    return raw + f" · spam-adjusted {adj['sessions']} sessions / {adj['engaged_sessions']} engaged sessions"
+    return [raw + f" · spam-adjusted {adj['sessions']} sessions / {adj['engaged_sessions']} engaged sessions",
+            rule_line(removed_by_rule(rows, denylist))]
 
 
 def _growth_lines(denylist: frozenset) -> list:
@@ -261,7 +371,7 @@ def weekly_digest(days: int = 7) -> str:
     denylist = load_referral_denylist(REFERRAL_DENYLIST_PATH)   # fail closed before any fetch
     S, E = completed_window(days)
 
-    ga_line = _ga4_line(S, E, denylist)
+    ga_lines = _ga4_lines(S, E, denylist)
 
     t = _gsc_total(S, E)
     if t is None:
@@ -277,7 +387,7 @@ def weekly_digest(days: int = 7) -> str:
     queries = top_search_demand((tq or {}).get("rows", []))
 
     lines = [f"🤖 *Jr — weekly telemetry* · esp-atlas.com · {S}→{E}",
-             ga_line,
+             *ga_lines,
              gsc_line,
              *_growth_lines(denylist),
              GOAL_LINE,
