@@ -509,6 +509,14 @@
       "status": "rejected",
       "timestamp": "2026-11-15T03:00:32.103528+00:00"
     },
+    "arduino-sketches": {
+      "expires": "2026-12-21T04:00:32.449949+00:00",
+      "id": "arduino-sketches",
+      "pr_ref": null,
+      "repo": "calint/arduino-sketches",
+      "status": "seen",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
+    },
     "arduinogotchi-m5stick-esp32-tamagotchi": {
       "expires": "2026-12-08T20:00:54.954530+00:00",
       "id": "arduinogotchi-m5stick-esp32-tamagotchi",
@@ -956,6 +964,14 @@
       "status": "rejected",
       "timestamp": "2026-11-15T18:00:31.614867+00:00"
     },
+    "bobinadora-cnc": {
+      "expires": "2026-12-21T04:00:32.449949+00:00",
+      "id": "bobinadora-cnc",
+      "pr_ref": null,
+      "repo": "daniel21569-a11y/bobinadora_cnc",
+      "status": "seen",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
+    },
     "boocore": {
       "expires": "2026-12-05T00:00:59.720006+00:00",
       "id": "boocore",
@@ -1314,8 +1330,8 @@
       "id": "cardbuddy",
       "pr_ref": "#1930",
       "repo": "konsumer/cardbuddy",
-      "status": "proposed",
-      "timestamp": "2026-11-21T03:00:32.808901+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "cardcaliper": {
       "expires": "2026-12-05T20:00:59.980852+00:00",
@@ -3932,7 +3948,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-21T03:00:32.808901+00:00"
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4088,7 +4104,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-21T03:00:32.808901+00:00"
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -5649,14 +5665,13 @@
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
     "launcher-1897200000000000010": {
-      "expired_at": "2026-11-20T22:00:31.624593+00:00",
-      "expires": "2026-11-20T21:00:55.139769+00:00",
+      "expires": "2026-11-28T04:00:32.449949+00:00",
       "id": "launcher-1897200000000000010",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'atomxiaozhi user:peien'",
       "repo": "launcher:1897200000000000010",
-      "status": "expired",
-      "timestamp": "2026-11-13T21:00:55.139769+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "launcher-1897200000000000011": {
       "expires": "2026-11-22T04:00:34.403128+00:00",
@@ -6263,14 +6278,13 @@
       "timestamp": "2026-11-14T17:00:55.342931+00:00"
     },
     "launcher-1897200000000000395": {
-      "expired_at": "2026-11-20T23:00:31.744690+00:00",
-      "expires": "2026-11-20T22:00:55.476104+00:00",
+      "expires": "2026-11-28T04:00:32.449949+00:00",
       "id": "launcher-1897200000000000395",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'echos3r xiaozhi voice assistant user:m5stack'",
       "repo": "launcher:1897200000000000395",
-      "status": "expired",
-      "timestamp": "2026-11-13T22:00:55.476104+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "launcher-1897200000000000404": {
       "expires": "2026-11-21T19:00:55.274449+00:00",
@@ -6904,14 +6918,13 @@
       "timestamp": "2026-11-16T03:00:32.040222+00:00"
     },
     "launcher-1897200000000000938": {
-      "expired_at": "2026-11-20T22:00:31.624593+00:00",
-      "expires": "2026-11-20T21:00:55.139769+00:00",
+      "expires": "2026-11-28T04:00:32.449949+00:00",
       "id": "launcher-1897200000000000938",
       "pr_ref": null,
       "reason": "no_source_repo: 29 matches for 'userdemo user:m5stack'",
       "repo": "launcher:1897200000000000938",
-      "status": "expired",
-      "timestamp": "2026-11-13T21:00:55.139769+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "launcher-1897200000000000940": {
       "expires": "2026-11-24T00:00:31.875326+00:00",
@@ -7310,14 +7323,13 @@
       "timestamp": "2026-11-16T05:00:31.772256+00:00"
     },
     "launcher-1897200000000001167": {
-      "expired_at": "2026-11-20T22:00:31.624593+00:00",
-      "expires": "2026-11-20T21:00:55.139769+00:00",
+      "expires": "2026-11-28T04:00:32.449949+00:00",
       "id": "launcher-1897200000000001167",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'blynkuniversal user:peien'",
       "repo": "launcher:1897200000000001167",
-      "status": "expired",
-      "timestamp": "2026-11-13T21:00:55.139769+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "launcher-1897200000000001171": {
       "expires": "2026-11-22T11:00:32.244008+00:00",
@@ -9136,14 +9148,13 @@
       "timestamp": "2026-11-16T19:00:33.230649+00:00"
     },
     "launcher-1897200000000002536": {
-      "expired_at": "2026-11-20T23:00:31.744690+00:00",
-      "expires": "2026-11-20T22:00:55.476104+00:00",
+      "expires": "2026-11-28T04:00:32.449949+00:00",
       "id": "launcher-1897200000000002536",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'printer userdemo user:m5stack'",
       "repo": "launcher:1897200000000002536",
-      "status": "expired",
-      "timestamp": "2026-11-13T22:00:55.476104+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "launcher-1897200000000002537": {
       "expires": "2026-11-22T02:00:31.969279+00:00",
@@ -9308,14 +9319,13 @@
       "timestamp": "2026-11-15T19:00:32.749098+00:00"
     },
     "launcher-1897200000000002660": {
-      "expired_at": "2026-11-20T23:00:31.744690+00:00",
-      "expires": "2026-11-20T22:00:55.476104+00:00",
+      "expires": "2026-11-28T04:00:32.449949+00:00",
       "id": "launcher-1897200000000002660",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'airq userdemo user:m5stack'",
       "repo": "launcher:1897200000000002660",
-      "status": "expired",
-      "timestamp": "2026-11-13T22:00:55.476104+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "launcher-1897200000000002662": {
       "expires": "2026-11-22T02:00:31.969279+00:00",
@@ -9579,14 +9589,13 @@
       "timestamp": "2026-11-16T00:00:31.813641+00:00"
     },
     "launcher-1897200000000002873": {
-      "expired_at": "2026-11-20T22:00:31.624593+00:00",
-      "expires": "2026-11-20T21:00:55.139769+00:00",
+      "expires": "2027-02-19T04:00:32.449949+00:00",
       "id": "launcher-1897200000000002873",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (legoatdu49); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002873",
-      "status": "expired",
-      "timestamp": "2026-11-13T21:00:55.139769+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "launcher-1897200000000002881": {
       "expires": "2026-11-22T18:00:31.614867+00:00",
@@ -10202,14 +10211,13 @@
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-1897200000000003383": {
-      "expired_at": "2026-11-20T23:00:31.744690+00:00",
-      "expires": "2026-11-20T22:00:55.476104+00:00",
+      "expires": "2026-11-28T04:00:32.449949+00:00",
       "id": "launcher-1897200000000003383",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'echo speaker test user:kur1k0'",
       "repo": "launcher:1897200000000003383",
-      "status": "expired",
-      "timestamp": "2026-11-13T22:00:55.476104+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "launcher-1897200000000003412": {
       "expires": "2026-11-21T18:00:55.491519+00:00",
@@ -11020,14 +11028,13 @@
       "timestamp": "2026-11-16T20:00:32.230506+00:00"
     },
     "launcher-2118529634514075650": {
-      "expired_at": "2026-11-20T23:00:31.744690+00:00",
-      "expires": "2026-11-20T22:00:55.476104+00:00",
+      "expires": "2027-02-19T04:00:32.449949+00:00",
       "id": "launcher-2118529634514075650",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (booolue); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2118529634514075650",
-      "status": "expired",
-      "timestamp": "2026-11-13T22:00:55.476104+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "launcher-2118705378773082114": {
       "expires": "2026-11-22T12:00:31.921339+00:00",
@@ -11317,6 +11324,15 @@
       "repo": "launcher:2123365058572402690",
       "status": "seen",
       "timestamp": "2026-11-19T11:00:35.342145+00:00"
+    },
+    "launcher-2123759745246380033": {
+      "expires": "2026-11-28T04:00:32.449949+00:00",
+      "id": "launcher-2123759745246380033",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'hero talk user:kirayan'",
+      "repo": "launcher:2123759745246380033",
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "launcher-2124f637db75857c962f9097575271f4": {
       "expired_at": "2026-11-11T03:00:55.156011+00:00",
@@ -17340,7 +17356,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-21T03:00:32.808901+00:00"
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -18206,6 +18222,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T22:00:32.010942+00:00"
     },
+    "repo-note:andreafuzz/ble_presskey": {
+      "expires": "2026-12-21T04:00:32.449949+00:00",
+      "id": "repo-note:andreafuzz/ble_presskey",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "andreafuzz/ble_presskey",
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
+    },
     "repo-note:androidcrypto/esp32_transist_from_arduino_to_platformio": {
       "expires": "2026-12-18T08:00:31.492566+00:00",
       "id": "repo-note:androidcrypto/esp32_transist_from_arduino_to_platformio",
@@ -18800,6 +18825,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T04:00:31.831476+00:00"
     },
+    "repo-note:davidegat/squaredcoso": {
+      "expires": "2026-12-21T04:00:32.449949+00:00",
+      "id": "repo-note:davidegat/squaredcoso",
+      "pr_ref": null,
+      "reason": "chip_family_mismatch: repo names ['esp32-s3'], but board 'm5stack-core2' is esp32",
+      "repo": "davidegat/squaredcoso",
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
+    },
     "repo-note:davidkreidler/openco2_sensor": {
       "expires": "2026-12-17T18:00:31.692410+00:00",
       "id": "repo-note:davidkreidler/openco2_sensor",
@@ -18925,6 +18959,15 @@
       "repo": "dmoibm/lorawan_bme280_thp",
       "status": "rejected",
       "timestamp": "2026-11-19T09:00:33.766355+00:00"
+    },
+    "repo-note:dragoncoder047/tinytcl": {
+      "expires": "2027-02-19T04:00:32.449949+00:00",
+      "id": "repo-note:dragoncoder047/tinytcl",
+      "pr_ref": null,
+      "reason": "archived: dragoncoder047/tinytcl is archived",
+      "repo": "dragoncoder047/tinytcl",
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "repo-note:drew-alleman/powershell-backdoor-generator": {
       "expires": "2026-12-18T13:00:31.999065+00:00",
@@ -19205,6 +19248,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T07:00:32.097367+00:00"
     },
+    "repo-note:fl4p/daplink-s3": {
+      "expires": "2026-12-21T04:00:32.449949+00:00",
+      "id": "repo-note:fl4p/daplink-s3",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "fl4p/daplink-s3",
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
+    },
     "repo-note:flink2000/chatti": {
       "expires": "2026-12-18T14:00:31.448865+00:00",
       "id": "repo-note:flink2000/chatti",
@@ -19303,6 +19355,15 @@
       "repo": "geerlingguy/pico-w-garage-door-sensor",
       "status": "rejected",
       "timestamp": "2026-11-19T11:00:35.342145+00:00"
+    },
+    "repo-note:geisekss/jig_arduino_uno": {
+      "expires": "2026-12-21T04:00:32.449949+00:00",
+      "id": "repo-note:geisekss/jig_arduino_uno",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "geisekss/jig_arduino_uno",
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "repo-note:gemi254/plantstatus-lilygo-ttgo-higrow": {
       "expires": "2026-12-18T07:00:31.406931+00:00",
@@ -19493,6 +19554,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T09:00:32.446822+00:00"
     },
+    "repo-note:henryoyoto/henryoyoto.github.io": {
+      "expires": "2026-12-21T04:00:32.449949+00:00",
+      "id": "repo-note:henryoyoto/henryoyoto.github.io",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "henryoyoto/henryoyoto.github.io",
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
+    },
     "repo-note:heywillow/willow": {
       "expires": "2026-12-18T00:00:31.739025+00:00",
       "id": "repo-note:heywillow/willow",
@@ -19618,6 +19688,15 @@
       "repo": "hybridgroup/gobot",
       "status": "rejected",
       "timestamp": "2026-11-17T15:00:33.111992+00:00"
+    },
+    "repo-note:hypnotoad08/sen66-matter-sensor": {
+      "expires": "2026-12-21T04:00:32.449949+00:00",
+      "id": "repo-note:hypnotoad08/sen66-matter-sensor",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "hypnotoad08/sen66-matter-sensor",
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "repo-note:iamjond/samsung-smartthings-hub": {
       "expires": "2026-12-18T12:00:31.958773+00:00",
@@ -20464,6 +20543,15 @@
       "repo": "matthewkukanich/can_commander",
       "status": "rejected",
       "timestamp": "2026-11-17T13:00:31.835731+00:00"
+    },
+    "repo-note:matthias-bs/dyp-r01cw": {
+      "expires": "2026-12-21T04:00:32.449949+00:00",
+      "id": "repo-note:matthias-bs/dyp-r01cw",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "matthias-bs/dyp-r01cw",
+      "status": "rejected",
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "repo-note:matthias-bs/flora2": {
       "expires": "2026-12-19T04:00:31.893783+00:00",
@@ -25236,7 +25324,7 @@
       "pr_ref": "#1895",
       "repo": "designer2k2/xmas-tree",
       "status": "proposed",
-      "timestamp": "2026-11-21T03:00:32.808901+00:00"
+      "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
@@ -25511,6 +25599,7 @@
     "andjiang0083/snowveil": "snowveil",
     "andjiang0083/ticker": "ticker",
     "andrea-dandrea/coreink-meteo": "coreink-meteo",
+    "andreafuzz/ble_presskey": "repo-note:andreafuzz/ble_presskey",
     "andrecolz/monomesh": "monomesh",
     "andrewdjohnson/bme680environmental-monitorm5cardputer": "bme680environmental-monitorm5cardputer",
     "andrewdjohnson/m5cardputerintervalometer": "m5cardputerintervalometer",
@@ -25653,6 +25742,7 @@
     "c5lab/pancake": "pancake",
     "cabra-vabra/ruleta-rusa": "ruleta-rusa",
     "calcaware/tama-search-uni": "tama-search-uni",
+    "calint/arduino-sketches": "arduino-sketches",
     "camemake/cm_esp_p4_c5-open-hardware-platform": "repo-note:camemake/cm_esp_p4_c5-open-hardware-platform",
     "captainchorche/cardcaliper": "cardcaliper",
     "carlosdanieldev/copyrfid": "copyrfid",
@@ -25797,6 +25887,7 @@
     "dalianblue/m5voicestick": "m5voicestick",
     "dalianblue/mbti_book": "mbti-book",
     "daniebker/paperos": "paperos",
+    "daniel21569-a11y/bobinadora_cnc": "bobinadora-cnc",
     "danpeig/esp32energymonitor": "repo-note:danpeig/esp32energymonitor",
     "danpodeanu/seeed-reterminal-e100x": "seeed-reterminal-e100x",
     "danst0/fennek": "fennek",
@@ -25810,6 +25901,7 @@
     "datjan/m5stack_examples": "m5stack-examples",
     "davervw/cardputer-game-station-emulators": "cardputer-game-station-emulators",
     "davervw/m5_minijoystickc_gamepad": "m5-minijoystickc-gamepad",
+    "davidegat/squaredcoso": "repo-note:davidegat/squaredcoso",
     "davidkreidler/openco2_sensor": "repo-note:davidkreidler/openco2_sensor",
     "davidmonterocrespo24/velxio": "repo-note:davidmonterocrespo24/velxio",
     "dawningw/einkassistant": "repo-note:dawningw/einkassistant",
@@ -25854,6 +25946,7 @@
     "dr3d/somafm-for-cardputer": "somafm-for-cardputer",
     "dracosdev/sysx": "sysx",
     "dragon34344/m5deck": "m5deck",
+    "dragoncoder047/tinytcl": "repo-note:dragoncoder047/tinytcl",
     "drdavidda/papercolor-desk-terminal": "papercolor-desk-terminal",
     "drew-alleman/powershell-backdoor-generator": "repo-note:drew-alleman/powershell-backdoor-generator",
     "dronebridge/esp32": "repo-note:dronebridge/esp32",
@@ -25953,6 +26046,7 @@
     "ffrafat/tomatoclock_m5cardputer": "tomatoclock-m5cardputer",
     "filipo3221/cardtube": "cardtube",
     "filippocappa/netstalker": "repo-note:filippocappa/netstalker",
+    "fl4p/daplink-s3": "repo-note:fl4p/daplink-s3",
     "flashertwelve/ir_replay": "ir-replay",
     "flink2000/chatti": "repo-note:flink2000/chatti",
     "flipper-xfw/xtreme-firmware": "repo-note:flipper-xfw/xtreme-firmware",
@@ -25997,6 +26091,7 @@
     "gdantas04/cardputer-system-monitor": "cardputer-system-monitor",
     "gebeto/macroreader-paper-s3": "macroreader-paper-s3",
     "geerlingguy/pico-w-garage-door-sensor": "repo-note:geerlingguy/pico-w-garage-door-sensor",
+    "geisekss/jig_arduino_uno": "repo-note:geisekss/jig_arduino_uno",
     "gemi254/plantstatus-lilygo-ttgo-higrow": "repo-note:gemi254/plantstatus-lilygo-ttgo-higrow",
     "gemmayclee-droid/papers3weather-calendar": "papers3weather-calendar",
     "generaldussduss/poseidon": "poseidon",
@@ -26086,6 +26181,7 @@
     "heltecautomation/platform-asrmicro650x": "repo-note:heltecautomation/platform-asrmicro650x",
     "hengmyj/xiaozhi-adv-car": "xiaozhi-adv-car",
     "henriquesebastiao/saturn": "saturn",
+    "henryoyoto/henryoyoto.github.io": "repo-note:henryoyoto/henryoyoto.github.io",
     "hermannbjorgvin/clawdmeter": "clawdmeter",
     "hermes-gadget/sigurdos-tdeck": "sigurdos-tdeck",
     "hermes-gadget/tdeck-screenfix": "tdeck-screenfix",
@@ -26123,6 +26219,7 @@
     "hybridgroup/cylon": "repo-note:hybridgroup/cylon",
     "hybridgroup/go-haystack": "repo-note:hybridgroup/go-haystack",
     "hybridgroup/gobot": "repo-note:hybridgroup/gobot",
+    "hypnotoad08/sen66-matter-sensor": "repo-note:hypnotoad08/sen66-matter-sensor",
     "i-am-shodan/usbarmyknife.git": "usbarmyknife",
     "i12bp8/echo": "echo",
     "i12bp8/tagtinker-adv": "tagtinker-adv",
@@ -26985,6 +27082,7 @@
     "launcher:2122980972947259394": "launcher-2122980972947259394",
     "launcher:2123152497574887425": "launcher-2123152497574887425",
     "launcher:2123365058572402690": "launcher-2123365058572402690",
+    "launcher:2123759745246380033": "launcher-2123759745246380033",
     "launcher:2124f637db75857c962f9097575271f4": "launcher-2124f637db75857c962f9097575271f4",
     "launcher:214c554f9da22d70e6837d4db79fc793": "launcher-214c554f9da22d70e6837d4db79fc793",
     "launcher:215b511e97a94512db05452db92ba0bf": "launcher-215b511e97a94512db05452db92ba0bf",
@@ -27310,6 +27408,7 @@
     "matthew-5pl/gb_cardputer": "gb-cardputer",
     "matthew-5plpeanut-gb": "matthew-5plpeanut-gb",
     "matthewkukanich/can_commander": "repo-note:matthewkukanich/can_commander",
+    "matthias-bs/dyp-r01cw": "repo-note:matthias-bs/dyp-r01cw",
     "matthias-bs/flora2": "repo-note:matthias-bs/flora2",
     "mauricioaalmeida/m5stickc-plus2-avionics-vario": "m5stickc-plus2-avionics-vario",
     "maxgramser/homeassistant_espscreen": "repo-note:maxgramser/homeassistant_espscreen",
