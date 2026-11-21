@@ -2281,11 +2281,13 @@
    "key": "pam-d84f4d6b45b0b9386a8c999b",
    "branch": "jr/research-pam-d84f4d6b45b0b9386a8c999b",
    "term": "SparkFun Thing Plus - ESP32-S3",
-   "phase": "research",
+   "phase": "author",
    "state": "reserved",
    "started_on": "2026-11-20",
    "source": "pam_feed",
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1935"
+   ],
    "feed": {
     "checked_at": "2026-11-20T11:15:31.091318Z",
     "feeds": {
@@ -2496,7 +2498,9 @@
      "prs": []
     },
     "reserved_by": "jr/demand_run.py"
-   }
+   },
+   "last_attempt_on": "2026-11-20",
+   "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1935"
   },
   {
    "key": "c404a55544c49f7f",
