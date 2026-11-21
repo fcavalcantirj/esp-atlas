@@ -286,7 +286,9 @@ phase 2.
 - `tick-canary` (`scripts/tick_canary.py`, needs schema, tests, jr-tests, receipt-guard, jr-pr-guard,
   g2-guard, ledger-guard): when `jr/autonomy.json` has `tick_automerge: true` (a reviewed PR) AND the
   repository variable `JR_TICK_AUTOMERGE` is not `0` (the kill switch), the PR carries `jr-review`, no
-  other review-routed tick PR merged today (UTC; **one a day**), and the receipt guard says eligible, it
+  fewer than `DAILY_CAP` review-routed tick PRs merged today (UTC; **one a day** until 2026-11-21, **four**
+  since: Jr opened about 3.3 a day and one a day let the queue grow until the tick yielded nothing for 24
+  ticks; the first three canary merges were audited correct), and the receipt guard says eligible, it
   requests `gh pr merge --auto --match-head-commit <head>`: the merge lands only when every required check
   is green at exactly that head. The routing itself does not change: the PR is still labelled `jr-review`
   and the review cap still holds; the canary is the reader. A PR the guard refuses (an edit to an existing

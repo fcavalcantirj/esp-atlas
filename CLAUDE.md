@@ -100,7 +100,7 @@ reviewed PR; the matching `JR_*` variable set to `0` is the instant kill; every 
   the exact head when both switches allow (`jr/autonomy.json` + repo variable `JR_DEMAND_AUTOMERGE`, see
   `DEPLOY.md` "Jr's merge switches"); a person audits after the fact and holds the kill switch. A
   **review-routed tick PR** merges the same way when every recipe it adds carries a PASS evidence receipt
-  that `receipt-guard` re-verifies on the live upstream (`tick-canary`, one a day, `tick_automerge` +
+  that `receipt-guard` re-verifies on the live upstream (`tick-canary`, four a day, `tick_automerge` +
   `JR_TICK_AUTOMERGE`). **Code PRs** get the same exact-head review from the agent reviewer
   (`docs/REVIEW-CONTRACT.md`): the runner's subscription delegate first (`jr/agent_review.py`, hourly), the
   API lane in `.github/workflows/agent-review.yml` only as a capped fallback when that lane is down; the
