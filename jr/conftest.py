@@ -106,3 +106,20 @@ def pytest_collection_modifyitems(config, items):
         for item in marked:
             item.add_marker(skip)
 
+
+
+@pytest.fixture(autouse=True)
+def _the_drains_evidence_gate_never_reaches_the_network(monkeypatch):
+    """drain.author_selected runs the receipt guard's live check (2026-11-21). No test may read a real
+    upstream by accident: the default here is "unreadable" (no receipt, the recipe written as before); a
+    test about the check stubs live_sources or passes its own gate."""
+    import sys as _sys
+    from pathlib import Path as _Path
+    scripts = str(_Path(__file__).resolve().parent.parent / "scripts")
+    if scripts not in _sys.path:
+        _sys.path.insert(0, scripts)
+    import receipt_guard
+
+    def unreadable(*a, **k):
+        raise receipt_guard.Unreadable("this test did not stub the drain's live evidence check")
+    monkeypatch.setattr(receipt_guard, "live_sources", unreadable)

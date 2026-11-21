@@ -223,7 +223,7 @@ def schema_enums() -> dict:
 
 def author_recipe(recipe_id: str, board: str, firmware: str, chip_family: str,
                   sources: list[dict], body: str, status: str = "unverified",
-                  flash: dict | None = None) -> dict:
+                  flash: dict | None = None, notes: str | None = None) -> dict:
     """Write a recipe pairing a firmware to a CATALOGUED board (resolves the orphan rule —
     firmware can't stand alone). `board` must be a catalogued board id, `chip_family` a valid soc
     id, `status` defaults to `unverified` (trust is human-only). Returns {"path": ...}."""
@@ -232,6 +232,8 @@ def author_recipe(recipe_id: str, board: str, firmware: str, chip_family: str,
                  "status": status, "chip_family": chip_family}
     if flash:
         rec["flash"] = flash
+    if notes:
+        rec["notes"] = notes
     rec["sources"] = sources
     front = yaml.safe_dump(rec, sort_keys=False, default_flow_style=False).strip()
     d = REPO / "data" / "recipes" / recipe_id
@@ -521,7 +523,7 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
                                 stars: int | None = None,
                                 forks: int | None = None, downloads: int | None = None,
                                 homepage: str | None = None,
-                                today: str | None = None) -> dict:
+                                today: str | None = None, notes: dict | None = None) -> dict:
     """DETERMINISTIC authoring — the model supplies ONLY judgment (category, which catalogued
     `boards` it runs on, capabilities from the README). `socs` and every recipe's `chip_family`
     are DERIVED from the board records — the model never touches a chip id (kills the
@@ -590,7 +592,8 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
     for b in boards:
         rid = f"{b}__{firmware_id}"
         author_recipe(rid, b, firmware_id, board_soc(b), src,
-                      f"{name} on the {b} ({board_soc(b)}). `unverified`; the repo lists {b} as a supported device.")
+                      f"{name} on the {b} ({board_soc(b)}). `unverified`; the repo lists {b} as a supported device.",
+                      notes=(notes or {}).get(b))
         recipes.append(rid)
     return {"firmware": firmware_id, "socs": socs, "recipes": recipes}
 
