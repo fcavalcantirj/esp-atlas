@@ -122,7 +122,7 @@ switches allow: `jr/autonomy.json` `demand_automerge: true` (a reviewed PR) and 
 Optional repository secret `ESPATLAS_JR_TOKEN` (the bot's PAT): with it the canary's merge is made by the
 bot and triggers main's workflows like a person's merge; without it the workflow token merges and main's
 push-triggered runs do not fire for that merge (the PR's checks at the same head stand). `tick_automerge` /
-`JR_TICK_AUTOMERGE` is the same pattern for review-routed tick PRs (`tick-canary`, one a day, every added
+`JR_TICK_AUTOMERGE` is the same pattern for review-routed tick PRs (`tick-canary`, four a day, every added
 recipe's PASS receipt re-verified live by `receipt-guard`); `code_automerge` / `JR_CODE_AUTOMERGE` is the
 code canary (`.github/workflows/agent-review.yml`: the agent reviewer's PASS at the exact head, one merge an
 hour). The review runs on the runner's subscription delegate first (`jr/agent_review.py once`, hourly; the

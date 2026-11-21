@@ -387,6 +387,9 @@ def _hours_since(stamp: str | None, now: str) -> float:
 
 
 SELF_SUFFICIENT_DAYS = 7
+# The catalog's daily size, one row a day from the tick (jr/data_snapshot.py, SPEC-data-trend.md).
+TREND = REPO / "docs" / "telemetry" / "data-trend.jsonl"
+GROWTH_COUNTS = ("firmware_count", "recipe_count", "boards_with_firmware", "boards_zero_firmware")
 SCOREBOARD_KEEP = 60
 
 
@@ -404,11 +407,41 @@ def _machine(login: str | None) -> bool:
     return login == publish.JR_LOGIN or login.endswith("[bot]") or login.startswith("app/")
 
 
+def catalog_growth(day: str, path: Path | None = None) -> tuple[int | None, str]:
+    """(growth, span) of the catalog between the trend row of `day` and the newest row before it: firmware,
+    recipes, boards (with and without firmware) and filled board fields (`board_fields[*].count`), so a new
+    record, a new recipe or a backfilled field all count. (None, why) when the file cannot be read, has no row
+    for `day`, or has nothing before it. The newest row per date wins (a re-run appends)."""
+    try:
+        lines = (path or TREND).read_text(encoding="utf-8").splitlines()
+        rows = {}
+        for line in lines:
+            if line.strip():
+                row = json.loads(line)
+                if isinstance(row, dict) and row.get("date"):
+                    rows[str(row["date"])] = row
+    except (OSError, ValueError) as e:
+        return None, f"catalog growth unreadable ({e.__class__.__name__})"
+    if day not in rows:
+        return None, f"catalog growth unknown: no trend row for {day}"
+    before = sorted(d for d in rows if d < day)
+    if not before:
+        return None, "catalog growth unknown: fewer than two trend rows"
+
+    def size(row: dict) -> int:
+        fields = row.get("board_fields") or {}
+        return (sum(int(row.get(k) or 0) for k in GROWTH_COUNTS)
+                + sum(int((v or {}).get("count") or 0) for v in fields.values() if isinstance(v, dict)))
+    return size(rows[day]) - size(rows[before[-1]]), f"{before[-1]}→{day}"
+
+
 def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
     """Once a UTC day from DIGEST_HOUR: the owner's audit and the self-sufficiency scoreboard in one line.
     The scoreboard measures JR, not people: a day is self-sufficient when no person had to merge one of Jr's
     own PRs (`jr/tick-*`, `jr/research-*`, `jr/heal-*`) in the last 24 h, none of Jr's own PRs carries
-    `needs-human`, and no heal incident is stuck (needs_human, stalled, halted). People
+    `needs-human`, no heal incident is stuck (needs_human, stalled, halted), AND the catalog grew since the day
+    before (`catalog_growth`: 2026-11-21, a day of 36 bookkeeping merges and nothing added is not Jr doing its
+    job; unreadable growth proves nothing, so it is not self-sufficient either). People
     merging and holding their OWN PRs is ordinary work: counted and shown, never a broken day (2026-11-19:
     the first line read 0/7 for a person's 18 infrastructure merges and 6 PRs blocked by review; under that
     rule the count could never reach 7 while anybody worked here). Merges unreadable → not proven → not
@@ -443,10 +476,12 @@ def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
         by_person = sum(1 for m in by_hand if _jr_authored(m.get("headRefName")))    # a person did Jr's job
         own = len(by_hand) - by_person                                               # people's own work
         ok = by_person == 0 and not waiting and not stuck
+    grew, span = catalog_growth(day)
+    ok = bool(ok) and grew is not None and grew > 0
     rows = [r for r in (data.get("scoreboard") or []) if r.get("day") != day]
     blocked = sum(1 for p in theirs if HUMAN_LABEL in _labels(p))
     rows.append({"day": day, "by_jr": by_jr, "by_person": by_person, "waiting": len(waiting), "stuck": len(stuck),
-                 "ok": ok, "own_merged": own, "own_open": len(theirs)})
+                 "ok": ok, "own_merged": own, "own_open": len(theirs), "grew": grew})
     rows = rows[-SCOREBOARD_KEEP:]
     streak = 0
     for r in reversed(rows):
@@ -465,7 +500,8 @@ def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
            f"{_hours_since(queue[0].get('createdAt'), now):.0f} h)")
     verdict = (f"self-sufficient {min(streak, SELF_SUFFICIENT_DAYS)}/{SELF_SUFFICIENT_DAYS} days"
                + (" — SELF-SUFFICIENT" if streak >= SELF_SUFFICIENT_DAYS else ""))
-    return f"🧹 Jr daily {day} (last 24 h): {merges} · {held} · {jrq} · {people} · {verdict}"
+    growth = (span if grew is None else f"catalog {grew:+d} ({span})" if grew else f"catalog did not grow ({span})")
+    return f"🧹 Jr daily {day} (last 24 h): {merges} · {growth} · {held} · {jrq} · {people} · {verdict}"
 
 
 def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False,
