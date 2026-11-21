@@ -1441,12 +1441,13 @@
       "timestamp": "2026-09-02T17:03:09.131008+00:00"
     },
     "cardping-multi": {
+      "expired_at": "2026-11-21T16:00:31.907068+00:00",
       "expires": "2026-11-21T15:00:55.432444+00:00",
       "id": "cardping-multi",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "moo93egy/cardping_multi.git",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T15:00:55.432444+00:00"
     },
     "cardputer": {
@@ -2349,12 +2350,13 @@
       "timestamp": "2026-11-15T09:00:31.430360+00:00"
     },
     "cardputeros": {
+      "expired_at": "2026-11-21T16:00:31.907068+00:00",
       "expires": "2026-11-21T15:00:55.432444+00:00",
       "id": "cardputeros",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "rlee203/cardputeros.git",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T15:00:55.432444+00:00"
     },
     "cardputerradiacode": {
@@ -4142,7 +4144,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-21T15:00:32.207430+00:00"
+      "timestamp": "2026-11-21T16:00:31.907068+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -5328,12 +5330,13 @@
       "timestamp": "2026-11-14T21:00:55.045531+00:00"
     },
     "k85os-m5sticks3": {
+      "expired_at": "2026-11-21T16:00:31.907068+00:00",
       "expires": "2026-11-21T15:00:55.432444+00:00",
       "id": "k85os-m5sticks3",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "kion85/k85os_m5sticks3",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T15:00:55.432444+00:00"
     },
     "kali-on-cardputerzero": {
@@ -8432,12 +8435,13 @@
       "timestamp": "2026-11-16T18:00:31.810746+00:00"
     },
     "launcher-1897200000000001861": {
+      "expired_at": "2026-11-21T16:00:31.907068+00:00",
       "expires": "2026-11-21T15:00:55.432444+00:00",
       "id": "launcher-1897200000000001861",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'quest log user:vanille'",
       "repo": "launcher:1897200000000001861",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T15:00:55.432444+00:00"
     },
     "launcher-1897200000000001866": {
@@ -9612,12 +9616,13 @@
       "timestamp": "2026-11-15T06:00:32.532426+00:00"
     },
     "launcher-1897200000000002838": {
+      "expired_at": "2026-11-21T16:00:31.907068+00:00",
       "expires": "2026-11-21T15:00:55.432444+00:00",
       "id": "launcher-1897200000000002838",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002838",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T15:00:55.432444+00:00"
     },
     "launcher-1897200000000002842": {
@@ -15863,11 +15868,12 @@
       "timestamp": "2026-11-15T09:00:31.430360+00:00"
     },
     "marauderstudio": {
+      "expired_at": "2026-11-21T16:00:31.907068+00:00",
       "expires": "2026-11-21T15:00:59.628002+00:00",
       "id": "marauderstudio",
       "pr_ref": null,
       "repo": "usachevip/marauderstudio",
-      "status": "seen",
+      "status": "expired",
       "timestamp": "2026-10-22T15:00:59.628002+00:00"
     },
     "marstechhan": {
@@ -17465,7 +17471,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-21T15:00:32.207430+00:00"
+      "timestamp": "2026-11-21T16:00:31.907068+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -25572,7 +25578,7 @@
       "pr_ref": "#1895",
       "repo": "designer2k2/xmas-tree",
       "status": "proposed",
-      "timestamp": "2026-11-21T15:00:32.207430+00:00"
+      "timestamp": "2026-11-21T16:00:31.907068+00:00"
     },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
