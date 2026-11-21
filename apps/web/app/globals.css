@@ -858,8 +858,10 @@ input[type="checkbox"]:checked::after {
 }
 
 .help-tip-toggle {
-  width: 1.15rem;
-  height: 1.15rem;
+  /* At least 24 px whatever the text scale: WCAG 2.2 target size (Lighthouse measured 17.2 px at 1.15rem
+     and 22.6 px at 1.5rem with the root below 16 px, 2026-11-18). */
+  width: max(1.5rem, 24px);
+  height: max(1.5rem, 24px);
   padding: 0;
   border-radius: 50%;
   border: 1px solid var(--border-strong);
@@ -1685,6 +1687,9 @@ input[type="checkbox"]:checked::after {
 
 .spec-group-note a {
   color: var(--accent);
+  /* A link inside a sentence must not rely on colour alone. */
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .spec-dl {

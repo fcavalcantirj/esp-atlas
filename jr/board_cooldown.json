@@ -405,7 +405,7 @@
     },
     "lilygo-t-beam-supreme": {
       "board": "lilygo-t-beam-supreme",
-      "expires": "2026-11-28T05:00:32.251837+00:00",
+      "expires": "2026-11-28T06:00:32.350998+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -419,7 +419,7 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-21T05:00:32.251837+00:00",
+      "timestamp": "2026-11-21T06:00:32.350998+00:00",
       "url": null
     },
     "lilygo-t-deck": {

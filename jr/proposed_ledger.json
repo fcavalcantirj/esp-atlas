@@ -3956,7 +3956,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-21T05:00:32.251837+00:00"
+      "timestamp": "2026-11-21T06:00:32.350998+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4112,7 +4112,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-21T05:00:32.251837+00:00"
+      "timestamp": "2026-11-21T06:00:32.350998+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -8092,14 +8092,13 @@
       "timestamp": "2026-11-16T15:00:33.094076+00:00"
     },
     "launcher-1897200000000001652": {
-      "expired_at": "2026-11-20T22:00:31.624593+00:00",
-      "expires": "2026-11-20T21:00:55.139769+00:00",
+      "expires": "2026-11-28T06:00:32.350998+00:00",
       "id": "launcher-1897200000000001652",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'spiffsfile management system user:peien'",
       "repo": "launcher:1897200000000001652",
-      "status": "expired",
-      "timestamp": "2026-11-13T21:00:55.139769+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-21T06:00:32.350998+00:00"
     },
     "launcher-1897200000000001653": {
       "expires": "2026-11-22T03:00:32.103528+00:00",
@@ -8984,14 +8983,13 @@
       "timestamp": "2026-11-15T09:00:31.430360+00:00"
     },
     "launcher-1897200000000002363": {
-      "expired_at": "2026-11-20T23:00:31.744690+00:00",
-      "expires": "2026-11-20T22:00:55.476104+00:00",
+      "expires": "2026-11-28T06:00:32.350998+00:00",
       "id": "launcher-1897200000000002363",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'arduino nesso factory code user:kawacci'",
       "repo": "launcher:1897200000000002363",
-      "status": "expired",
-      "timestamp": "2026-11-13T22:00:55.476104+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-21T06:00:32.350998+00:00"
     },
     "launcher-1897200000000002378": {
       "expires": "2026-11-22T05:00:32.367472+00:00",
@@ -11348,6 +11346,15 @@
       "status": "rejected",
       "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
+    "launcher-2124005308617408513": {
+      "expires": "2027-02-19T06:00:32.350998+00:00",
+      "id": "launcher-2124005308617408513",
+      "pr_ref": null,
+      "reason": "owner_missing: owner not on GitHub (stormyfront); gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:2124005308617408513",
+      "status": "rejected",
+      "timestamp": "2026-11-21T06:00:32.350998+00:00"
+    },
     "launcher-2124f637db75857c962f9097575271f4": {
       "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
@@ -13417,13 +13424,31 @@
       "timestamp": "2026-10-21T12:00:59.681161+00:00"
     },
     "m5adc": {
-      "expires": "2027-01-20T05:00:32.251837+00:00",
+      "expires": "2027-01-20T05:02:40+00:00",
+      "history": [
+        {
+          "expires": "2027-01-20T05:00:32.251837+00:00",
+          "id": "m5adc",
+          "pr_ref": null,
+          "reason": "needs_review_target: arduino_sketch: a .ino but no ESP board named (sketch.yaml fqbn, esp32 build workflow, library.properties architectures=esp32)",
+          "repo": "bokunimowakaru/m5adc",
+          "status": "rejected",
+          "timestamp": "2026-11-21T05:00:32.251837+00:00"
+        }
+      ],
       "id": "m5adc",
       "pr_ref": null,
-      "reason": "needs_review_target: arduino_sketch: a .ino but no ESP board named (sketch.yaml fqbn, esp32 build workflow, library.properties architectures=esp32)",
+      "reason": "needs_review_target: owner review raised in #1951",
       "repo": "bokunimowakaru/m5adc",
+      "review": {
+        "evidence": null,
+        "evidence_rev": null,
+        "outcome": "open",
+        "pr_ref": "#1951",
+        "raised_at": "2026-11-21T05:02:40+00:00"
+      },
       "status": "rejected",
-      "timestamp": "2026-11-21T05:00:32.251837+00:00"
+      "timestamp": "2026-11-21T05:02:40+00:00"
     },
     "m5airmouse": {
       "expires": "2026-12-08T20:00:54.954530+00:00",
@@ -17387,7 +17412,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-21T05:00:32.251837+00:00"
+      "timestamp": "2026-11-21T06:00:32.350998+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -25400,7 +25425,7 @@
       "pr_ref": "#1895",
       "repo": "designer2k2/xmas-tree",
       "status": "proposed",
-      "timestamp": "2026-11-21T05:00:32.251837+00:00"
+      "timestamp": "2026-11-21T06:00:32.350998+00:00"
     },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
@@ -27161,6 +27186,7 @@
     "launcher:2123152497574887425": "launcher-2123152497574887425",
     "launcher:2123365058572402690": "launcher-2123365058572402690",
     "launcher:2123759745246380033": "launcher-2123759745246380033",
+    "launcher:2124005308617408513": "launcher-2124005308617408513",
     "launcher:2124f637db75857c962f9097575271f4": "launcher-2124f637db75857c962f9097575271f4",
     "launcher:214c554f9da22d70e6837d4db79fc793": "launcher-214c554f9da22d70e6837d4db79fc793",
     "launcher:215b511e97a94512db05452db92ba0bf": "launcher-215b511e97a94512db05452db92ba0bf",
