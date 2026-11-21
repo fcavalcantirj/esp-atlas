@@ -186,7 +186,7 @@ class Repo:
         assert not (args[:2] == ("pr", "list") and "--label" in args)   # the label search lags: REST only
         if args[:2] == ("pr", "list"):
             return json.dumps([{"number": n, "isDraft": p.get("draft", False), "isCrossRepository": p.get("fork", False),
-                                "autoMergeRequest": ({"enabledAt": "x"} if p.get("armed") else None),
+                                "autoMergeRequest": ({"enabledAt": p.get("armed_at", "x")} if p.get("armed") else None),
                                 "labels": [{"name": x} for x in self._labels(n)]} for n, p in self.prs.items()])
         if args[:1] == ("api",) and "/issues?state=open" in args[1]:
             if self.lag:                                             # a read that has not caught up with a write
@@ -201,6 +201,11 @@ class Repo:
         if args[:2] == ("pr", "view") and "state,autoMergeRequest" in args:
             return json.dumps({"state": self.prs[n].get("state", "OPEN"),
                                "autoMergeRequest": {"enabledAt": "x"} if self.prs[n].get("armed") else None})
+        if args[:2] == ("pr", "view") and "mergeable" in args:
+            answers = self.prs[n].get("mergeable", "MERGEABLE")
+            if isinstance(answers, list):                           # GitHub computes it lazily: UNKNOWN, then the answer
+                answers = answers.pop(0) if len(answers) > 1 else answers[0]
+            return json.dumps({"mergeable": answers})
         if args[:2] == ("pr", "view"):
             if self.prs[n].get("unreadable"):
                 return "not json"
@@ -214,6 +219,9 @@ class Repo:
             self._labels(n).append(args[args.index("--add-label") + 1])
         if args[:2] == ("pr", "edit") and "--remove-label" in args:
             self._labels(n).remove(args[args.index("--remove-label") + 1])
+        if args[:2] == ("pr", "merge") and "--disable-auto" in args:
+            self.prs[n]["armed"] = False
+            return ""
         if args[:2] == ("pr", "merge"):
             if self.merge_fails == "after":           # GitHub applied it, the answer got lost
                 self.prs[n]["state"] = "MERGED"
@@ -223,7 +231,10 @@ class Repo:
         return ""
 
     def merges(self):
-        return [int(c[2]) for c in self.calls if c[:2] == ("pr", "merge")]
+        return [int(c[2]) for c in self.calls if c[:2] == ("pr", "merge") and "--disable-auto" not in c]
+
+    def disarmed(self):
+        return [int(c[2]) for c in self.calls if c[:2] == ("pr", "merge") and "--disable-auto" in c]
 
     def labelled(self):
         return [(int(c[2]), c[c.index("--add-label") + 1]) for c in self.calls if c[:2] == ("pr", "edit") and "--add-label" in c]
@@ -375,3 +386,73 @@ def test_the_cli_sweep_prints_every_decision_and_exits_zero(monkeypatch, autonom
 def test_the_cli_needs_a_pr_or_the_sweep(capsys):
     with pytest.raises(SystemExit):
         cc.main([])
+
+
+# --- an armed merge that cannot land never holds the hour (2026-11-20) --------------------------------------
+# #1851 had a PASS and conflicted with main. The canary armed its merge at 03:14Z; GitHub never merges a
+# conflicted PR, the armed merge counted as "this hour's merge" every hour, and four reviewed PRs waited
+# behind it until a person disarmed it at 07:55Z.
+
+def test_a_conflicting_pass_is_never_armed_and_never_uses_the_cap(autonomy):
+    gh = Repo({1851: dict(head=h("a"), verdict="PASS", mergeable="CONFLICTING"), 1797: dict(head=h("b"), verdict="PASS")})
+    out = sweep(gh, autonomy(True), pause=lambda s: None)
+    assert out == {1851: "conflict", 1797: "merge_requested"} and gh.merges() == [1797]
+    assert gh.labelled() == [(1797, cc.PASS_LABEL)]                 # the conflicting one gets no label at all
+
+
+def test_mergeability_github_has_not_computed_yet_is_asked_again_before_arming(autonomy):
+    waits = []
+    gh = Repo({1851: dict(head=h("a"), verdict="PASS", mergeable=["UNKNOWN", "UNKNOWN", "CONFLICTING"])})
+    assert sweep(gh, autonomy(True), pause=waits.append) == {1851: "conflict"} and gh.merges() == [] and len(waits) == 2
+    gh = Repo({1: dict(head=h("a"), verdict="PASS", mergeable=["UNKNOWN"])})          # never settles: armed, the sweep is the backstop
+    assert sweep(gh, autonomy(True), pause=lambda s: None) == {1: "merge_requested"}
+
+
+def test_the_sweep_disarms_an_armed_merge_that_conflicts_and_gives_the_hour_to_the_next_pass(autonomy):
+    gh = Repo({1851: dict(head=h("a"), verdict="PASS", labels=[cc.PASS_LABEL], armed=True, armed_at="2026-11-17T20:50:00Z",
+                          mergeable="CONFLICTING"),
+               1797: dict(head=h("b"), verdict="PASS"), 1896: dict(head=h("c"), verdict="PASS")}, lag=True)
+    out = sweep(gh, autonomy(True), pause=lambda s: None)
+    assert gh.disarmed() == [1851] and cc.PASS_LABEL not in gh.prs[1851]["labels"] and gh.prs[1851]["armed"] is False
+    assert out == {1851: "conflict", 1797: "merge_requested", 1896: "capped"} and gh.merges() == [1797]
+
+
+def test_the_sweep_disarms_a_merge_armed_over_an_hour_ago_and_does_not_arm_it_again_in_the_same_sweep(autonomy):
+    gh = Repo({1: dict(head=h("a"), verdict="PASS", labels=[cc.PASS_LABEL], armed=True, armed_at="2026-11-17T19:59:00Z"),
+               2: dict(head=h("b"), verdict="PASS")})
+    out = sweep(gh, autonomy(True), pause=lambda s: None)
+    assert gh.disarmed() == [1] and out == {1: "disarmed_stuck", 2: "merge_requested"} and gh.merges() == [2]
+
+
+def test_a_merge_armed_within_the_hour_and_mergeable_still_holds_the_cap(autonomy):
+    gh = Repo({1: dict(head=h("a"), verdict="PASS", labels=[cc.PASS_LABEL], armed=True, armed_at="2026-11-17T20:01:00Z"),
+               2: dict(head=h("b"), verdict="PASS")})
+    assert sweep(gh, autonomy(True), pause=lambda s: None) == {1: "queued", 2: "capped"}
+    assert gh.disarmed() == [] and gh.merges() == []
+    gh = Repo({1: dict(head=h("a"), verdict="PASS", labels=[cc.PASS_LABEL], armed=True, armed_at="not a date"),
+               2: dict(head=h("b"), verdict="PASS")})                 # an unreadable date is not "stuck"
+    assert sweep(gh, autonomy(True), pause=lambda s: None) == {1: "queued", 2: "capped"} and gh.disarmed() == []
+
+
+def test_a_dry_run_reports_a_stuck_merge_and_disarms_nothing(autonomy):
+    gh = Repo({1: dict(head=h("a"), verdict="PASS", labels=[cc.PASS_LABEL], armed=True, armed_at="2026-11-17T19:00:00Z"),
+               2: dict(head=h("b"), verdict="PASS")})
+    out = sweep(gh, autonomy(True), dry_run=True, pause=lambda s: None)
+    # the label is still on #1 in a dry run, and the next PASS is still reported as free to merge
+    assert out == {1: "disarmed_stuck", 2: "dry_run"} and gh.disarmed() == [] and gh.prs[1]["armed"] is True
+    assert gh.merges() == [] and cc.PASS_LABEL in gh.prs[1]["labels"]
+
+
+def test_a_stuck_merge_that_cannot_be_disarmed_keeps_the_cap_and_is_reported(autonomy):
+    # lag: GitHub's own read shows nothing queued, so only this sweep's count keeps the hour used
+    gh = Repo({1: dict(head=h("a"), verdict="PASS", labels=[cc.PASS_LABEL], armed=True, armed_at="2026-11-17T19:00:00Z"),
+               2: dict(head=h("b"), verdict="PASS")}, lag=True)
+    real = gh.__call__
+
+    def failing(*args):
+        if args[:2] == ("pr", "merge") and "--disable-auto" in args:
+            raise RuntimeError("gh pr merge: HTTP 502")
+        return real(*args)
+    out = cc.sweep(repo_slug="o/r", now=NOW, env={}, autonomy_path=autonomy(True), gh=failing, pause=lambda s: None)
+    assert out[1].startswith("unreadable") and out[2] == "capped"     # still armed: the hour stays used
+    assert gh.merges() == [] and gh.prs[1]["armed"] is True

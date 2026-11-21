@@ -3,11 +3,20 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import JsonLd from "@/components/JsonLd";
 import PartResultCard from "@/components/PartResultCard";
-import { fetchBrandPage } from "@/lib/api-server";
+import { dataOrThrow, fetchBrandPage } from "@/lib/api-server";
 import type { PartRecord } from "@/lib/api";
 import { typePlural } from "@/lib/format";
 import { OG_IMAGE, SITE_NAME } from "@/lib/site";
 import { brandGraph } from "@/lib/structured-data";
+
+// Render each detail page on its first visit, then serve it from the cache (ISR) instead of rendering
+// every request (2026-11-18: these routes were dynamic, `cache-control: private, no-store`, x-vercel-cache
+// MISS on every hit). No path is pre-rendered at build (an empty list): the catalog API is not reachable
+// during a Vercel build, and a cold first render is the same as today's every render. The data fetches keep
+// their own revalidate and `catalog`/`popularity` tags, so POST /api/revalidate still purges these pages.
+export function generateStaticParams() {
+  return [];
+}
 
 // Brand hub: the brand's editorial identity (data/brands/<slug>/brand.md) plus
 // every part the core returns for it, server-rendered like the part pages. The
@@ -25,13 +34,13 @@ function describe(name: string, parts: PartRecord[]): string {
 
 export async function generateMetadata({ params }: PageProps<"/brands/[brand]">): Promise<Metadata> {
   const { brand: slug } = await params;
-  const result = await fetchBrandPage(slug);
-  if (result.status !== "ok" || result.data.results.length === 0) {
+  const page = dataOrThrow(await fetchBrandPage(slug), `Brand API for ${slug}`);
+  if (page.results.length === 0) {
     return { title: slug, robots: { index: false, follow: true } };
   }
-  const name = result.data.brand.name;
+  const name = page.brand.name;
   const title = `${name} — ESP32 boards and modules`;
-  const description = describe(name, result.data.results);
+  const description = describe(name, page.results);
   const path = `/brands/${encodeURIComponent(slug)}`;
   // Nested metadata objects replace the root ones wholesale (see the part page).
   return {
@@ -45,19 +54,10 @@ export async function generateMetadata({ params }: PageProps<"/brands/[brand]">)
 
 export default async function BrandPage({ params }: PageProps<"/brands/[brand]">) {
   const { brand: slug } = await params;
-  const result = await fetchBrandPage(slug);
-  if (result.status === "ok" && result.data.results.length === 0) notFound();
+  // A cold or unreachable API throws (the ISR cache would otherwise keep an "API did not answer" page).
+  const { brand, results: parts } = dataOrThrow(await fetchBrandPage(slug), `Brand API for ${slug}`);
+  if (parts.length === 0) notFound();
 
-  if (result.status !== "ok") {
-    return (
-      <main id="main" className="container container--narrow" tabIndex={-1}>
-        <h1>{slug}</h1>
-        <p className="lead">The API did not answer in time — this brand page could not be rendered. Try again in a moment.</p>
-      </main>
-    );
-  }
-
-  const { brand, results: parts } = result.data;
   const groups = TYPE_ORDER.map((type) => ({ type, items: parts.filter((p) => p.type === type) })).filter((g) => g.items.length > 0);
 
   return (

@@ -12,6 +12,7 @@
 // fallback instead of a 500.
 import type { BrandPage, Example, Facets, Firmware, PartDetail, PartRecord, Recipe } from "@/lib/api";
 import { DEFAULT_SORT } from "./firmware-sort.ts";
+import { apiQueryString, type FirmwareFacets, type FirmwareQuery } from "./firmware-filters.ts";
 import type { BootBoard } from "@/lib/troubleshooter";
 
 const REVALIDATE_SECONDS = 3600;
@@ -96,6 +97,15 @@ async function serverFetch<T>(path: string): Promise<ServerFetchResult<T>> {
   }
 }
 
+/** For the ISR detail pages (generateStaticParams): whatever they render is cached and served until
+ * the next revalidation, so a degraded render (a section missing, an "API did not answer" shell) must
+ * throw instead. A thrown render is never stored: Next keeps serving the last good page and retries on
+ * the next request (Next docs, Incremental Static Regeneration, "Handling uncaught exceptions"). */
+export function dataOrThrow<T>(result: ServerFetchResult<T>, what: string): T {
+  if (result.status === "ok") return result.data;
+  throw new Error(`${what} unavailable: ${result.status === "error" ? result.message : "not found"}`);
+}
+
 export function fetchPartDetail(id: string): Promise<ServerFetchResult<PartDetail>> {
   return serverFetch<PartDetail>(`/parts/${encodeURIComponent(id)}`);
 }
@@ -131,6 +141,18 @@ export function fetchBrandPage(slug: string): Promise<ServerFetchResult<BrandPag
 export async function fetchFirmwareList(sort?: string): Promise<ServerFetchResult<{ results: Firmware[] }>> {
   const query = sort && sort !== DEFAULT_SORT ? `?sort=${encodeURIComponent(sort)}` : "";
   return serverFetch<{ results: Firmware[] }>(`/firmware${query}`);
+}
+
+/** SPEC-firmware-search.md: the searched/filtered list. With nothing set the request is the bare `/firmware`,
+ * byte-identical to fetchFirmwareList(), so the default page hits the same cached response as before. */
+export async function fetchFirmwareSearch(
+  query: FirmwareQuery,
+): Promise<ServerFetchResult<{ results: Firmware[]; total: number; catalog_total?: number | null }>> {
+  return serverFetch<{ results: Firmware[]; total: number; catalog_total?: number | null }>(`/firmware${apiQueryString(query)}`);
+}
+
+export function fetchFirmwareFacets(): Promise<ServerFetchResult<FirmwareFacets>> {
+  return serverFetch<FirmwareFacets>("/firmware/facets");
 }
 
 export function fetchFirmware(id: string): Promise<ServerFetchResult<Firmware>> {

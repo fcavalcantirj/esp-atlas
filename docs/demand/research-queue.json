@@ -29,6 +29,34 @@
    "closed_on": "2026-11-05",
    "history": []
   },
+  "esp32 tenstar": {
+   "term": "esp32 tenstar",
+   "first_seen": "2026-11-21",
+   "last_seen": "2026-11-21",
+   "source": "ga4 search_submit (unknown word)",
+   "window": {
+    "start": "2026-10-23",
+    "end": "2026-11-19"
+   },
+   "searches": 3,
+   "zero_result_searches": 0,
+   "intake": "unknown_word",
+   "missing_words": [
+    "tenstar"
+   ],
+   "status": "new",
+   "classification": "missing_content",
+   "evidence": {
+    "rule": "no catalog id, title or alias matches",
+    "ids": [],
+    "matches": [],
+    "checked": 325
+   },
+   "linked_work": [],
+   "outcome": null,
+   "closed_on": null,
+   "history": []
+  },
   "fnk0104s": {
    "term": "fnk0104s",
    "first_seen": "2026-11-03",
@@ -928,6 +956,279 @@
    },
    "closed_on": "2026-11-12"
   },
+  "pam-93c3816cefd99e10e97cc0a4": {
+   "term": "LILYGO T-Beam Supreme",
+   "source": "pam_feed",
+   "status": "closed",
+   "first_seen": "2026-11-19",
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-20",
+     "resolution": "delivered",
+     "work": "pam-93c3816cefd99e10e97cc0a4",
+     "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1893",
+     "merge_sha": "4e66a5ace8bd40b00915ae0a77d1ad3b22416209",
+     "deployment": "983024c8a6cc3336b8df92f569356e425ae4f156"
+    }
+   ],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1893"
+   ],
+   "snapshot": "docs/demand/pam-leads.json",
+   "feed": {
+    "checked_at": "2026-11-19T11:15:31.127163Z",
+    "feeds": {
+     "products": {
+      "url": "https://pamfinds.com/api/products.json",
+      "fetched_at": "2026-11-06T04:22:34.124739Z",
+      "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+      "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+      "bytes": 110684
+     },
+     "specs": {
+      "url": "https://pamfinds.com/api/specs.json",
+      "fetched_at": "2026-11-06T04:22:34.124739Z",
+      "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+      "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+      "bytes": 349157
+     }
+    },
+    "lead": {
+     "source_id": "lilygo-t-beam-supreme",
+     "name_hint": "LILYGO T-Beam Supreme",
+     "chip_hint": "ESP32-S3",
+     "page": "https://pamfinds.com/esp32/lilygo-t-beam-supreme/",
+     "source_pointers": {
+      "cpu_arch": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "cpu_cores": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "cpu_freq_mhz": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "flash_mb": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "sram_kb": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "psram_mb": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "wifi": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "ble": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "lora": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "lora_range": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "meshtastic": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "gps": [
+       "https://lilygo.cc/en-us/products/t-beam-supreme"
+      ],
+      "display": [
+       "https://lilygo.cc/en-us/products/t-beam-supreme"
+      ],
+      "gpio_count": [
+       "https://lilygo.cc/en-us/products/t-beam-supreme"
+      ],
+      "spi": [
+       "https://lilygo.cc/en-us/products/t-beam-supreme"
+      ],
+      "i2c": [
+       "https://lilygo.cc/en-us/products/t-beam-supreme"
+      ],
+      "usb_type": [
+       "https://lilygo.cc/en-us/products/t-beam-supreme"
+      ],
+      "sd_card": [
+       "https://lilygo.cc/en-us/products/t-beam-supreme"
+      ],
+      "input_voltage": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "battery_charging": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "solar_charging": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "deep_sleep_ua": [
+       "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+      ],
+      "dimensions_mm": [
+       "https://lilygo.cc/en-us/products/t-beam-supreme"
+      ],
+      "form_factor": [
+       "https://lilygo.cc/en-us/products/t-beam-supreme"
+      ]
+     },
+     "fingerprint": "2665070be54d411ea0f30ecbdbe6e863a71cffa1ecc9fcfbdc1630517fa4a170",
+     "matches": [],
+     "status": "potential_identity_gap"
+    }
+   },
+   "validation": {
+    "verified_on": "2026-11-19",
+    "forbidden_ids": [
+     "lilygo-t-beam-supreme-144",
+     "lilygo-t-beam-bpf",
+     "lilygo-t-beam-1w"
+    ],
+    "verification_kind": "catalog_part",
+    "validated_by": "jr-demand-executor (Claude Code delegate) run 2026-11-19/pam-93c3816cefd99e10e97cc0a4",
+    "primary_sources": [
+     "https://lilygo.cc/products/t-beam-supreme",
+     "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/docs/en/t_beam_supreme/t_beam_supreme_hw.md",
+     "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/schematic/T-Beam-S3-Supreme/T-Beam-S3-Core.pdf",
+     "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/schematic/T-Beam-S3-Supreme/T-Beam-S3-Supreme-V3.1.pdf",
+     "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/docs/en/t_beam_supreme/t_beam_supreme_144_hw.md"
+    ],
+    "expected_ids": [
+     "lilygo-t-beam-supreme"
+    ],
+    "notes": "LILYGO's product page (T-Beam SUPREME: ESP32-S3FN8, 8MB flash, 8MB PSRAM, QMI8658 IMU; variants L76K or UBLOX GNSS x 433/868/915/920 MHz and L76K 144~148 MHz) and its official LoRa-Series hardware doc (ESP32-S3FN8, SX1262 or LR1121 radio, L76K or u-blox M10 GNSS, SH1106 OLED, AXP2101 PMU with an 18650 holder, USB-C) describe one board. The GNSS and frequency/radio options, including the 144~148 MHz SX1278 build LILYGO documents on its own hardware page, are variants of this one product listing and stay in this one record (as the catalogued T-Beam does with its region SKUs); no per-variant record may appear. Kept distinct: the original ESP32 T-Beam (already catalogued as lilygo-t-beam, unchanged), the T-Beam-BPF and the T-Beam-1W (separate LILYGO boards).",
+    "identity_verified": true,
+    "term_key": "lilygo t beam supreme"
+   },
+   "outcome": {
+    "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1893",
+    "merge_sha": "4e66a5ace8bd40b00915ae0a77d1ad3b22416209",
+    "merged_at": "2026-11-20T03:29:58Z",
+    "verification_kind": "catalog_part",
+    "query": "LILYGO T-Beam Supreme",
+    "checked_at": "2026-11-20T11:15:31.091318+00:00",
+    "expected_ids": [
+     "lilygo-t-beam-supreme"
+    ],
+    "forbidden_ids": [
+     "lilygo-t-beam-supreme-144",
+     "lilygo-t-beam-bpf",
+     "lilygo-t-beam-1w"
+    ],
+    "source": "pam_feed",
+    "feed": {
+     "checked_at": "2026-11-19T11:15:31.127163Z",
+     "feeds": {
+      "products": {
+       "url": "https://pamfinds.com/api/products.json",
+       "fetched_at": "2026-11-06T04:22:34.124739Z",
+       "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+       "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+       "bytes": 110684
+      },
+      "specs": {
+       "url": "https://pamfinds.com/api/specs.json",
+       "fetched_at": "2026-11-06T04:22:34.124739Z",
+       "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+       "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+       "bytes": 349157
+      }
+     },
+     "lead": {
+      "source_id": "lilygo-t-beam-supreme",
+      "name_hint": "LILYGO T-Beam Supreme",
+      "chip_hint": "ESP32-S3",
+      "page": "https://pamfinds.com/esp32/lilygo-t-beam-supreme/",
+      "source_pointers": {
+       "cpu_arch": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "cpu_cores": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "cpu_freq_mhz": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "flash_mb": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "sram_kb": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "psram_mb": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "wifi": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "ble": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "lora": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "lora_range": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "meshtastic": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "gps": [
+        "https://lilygo.cc/en-us/products/t-beam-supreme"
+       ],
+       "display": [
+        "https://lilygo.cc/en-us/products/t-beam-supreme"
+       ],
+       "gpio_count": [
+        "https://lilygo.cc/en-us/products/t-beam-supreme"
+       ],
+       "spi": [
+        "https://lilygo.cc/en-us/products/t-beam-supreme"
+       ],
+       "i2c": [
+        "https://lilygo.cc/en-us/products/t-beam-supreme"
+       ],
+       "usb_type": [
+        "https://lilygo.cc/en-us/products/t-beam-supreme"
+       ],
+       "sd_card": [
+        "https://lilygo.cc/en-us/products/t-beam-supreme"
+       ],
+       "input_voltage": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "battery_charging": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "solar_charging": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "deep_sleep_ua": [
+        "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+       ],
+       "dimensions_mm": [
+        "https://lilygo.cc/en-us/products/t-beam-supreme"
+       ],
+       "form_factor": [
+        "https://lilygo.cc/en-us/products/t-beam-supreme"
+       ]
+      },
+      "fingerprint": "2665070be54d411ea0f30ecbdbe6e863a71cffa1ecc9fcfbdc1630517fa4a170",
+      "matches": [],
+      "status": "potential_identity_gap"
+     }
+    },
+    "http": 200,
+    "deployment": "983024c8a6cc3336b8df92f569356e425ae4f156",
+    "ids": [
+     "lilygo-t-beam-supreme"
+    ],
+    "missing": [],
+    "forbidden_hits": []
+   },
+   "closed_on": "2026-11-20"
+  },
   "pam-c2beecd3b941f4023d832c9d": {
    "term": "Heltec WiFi LoRa 32 V4",
    "source": "pam_feed",
@@ -1453,6 +1754,134 @@
    },
    "closed_on": "2026-11-10",
    "snapshot": "docs/demand/2026-11-10.json"
+  },
+  "pam-d84f4d6b45b0b9386a8c999b": {
+   "term": "SparkFun Thing Plus - ESP32-S3",
+   "source": "pam_feed",
+   "status": "linked",
+   "first_seen": "2026-11-20",
+   "history": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1935"
+   ],
+   "snapshot": "docs/demand/pam-leads.json",
+   "feed": {
+    "checked_at": "2026-11-20T11:15:31.091318Z",
+    "feeds": {
+     "products": {
+      "url": "https://pamfinds.com/api/products.json",
+      "fetched_at": "2026-11-06T04:22:34.124739Z",
+      "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+      "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+      "bytes": 110684
+     },
+     "specs": {
+      "url": "https://pamfinds.com/api/specs.json",
+      "fetched_at": "2026-11-06T04:22:34.124739Z",
+      "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+      "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+      "bytes": 349157
+     }
+    },
+    "lead": {
+     "source_id": "thing-plus-esp32-s3",
+     "name_hint": "SparkFun Thing Plus - ESP32-S3",
+     "chip_hint": "ESP32-S3",
+     "page": "https://pamfinds.com/esp32/thing-plus-esp32-s3/",
+     "source_pointers": {
+      "cpu_arch": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "cpu_cores": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "cpu_freq_mhz": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "flash_mb": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "sram_kb": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "psram_mb": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "wifi": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "ble": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "gpio_count": [
+       "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+      ],
+      "adc_channels": [
+       "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+      ],
+      "spi": [
+       "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+      ],
+      "i2c": [
+       "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+      ],
+      "uart": [
+       "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+      ],
+      "usb_type": [
+       "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+      ],
+      "qwiic": [
+       "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+      ],
+      "sd_card": [
+       "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+      ],
+      "input_voltage": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "deep_sleep_ua": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "battery_charging": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "fuel_gauge": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "dimensions_mm": [
+       "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+      ],
+      "form_factor": [
+       "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+      ]
+     },
+     "fingerprint": "292953c4751a5960ddd7458d3df2c5c09caa1ab0a37d51ddb3fe6d383092a8b6",
+     "matches": [],
+     "status": "potential_identity_gap"
+    }
+   },
+   "validation": {
+    "verified_on": "2026-11-20",
+    "forbidden_ids": [
+     "sparkfun-thing-plus-esp32-c6",
+     "sparkfun-thing-plus-esp32-c5"
+    ],
+    "verification_kind": "catalog_part",
+    "validated_by": "jr-demand-executor (Claude Code delegate) run 2026-11-20/pam-d84f4d6b45b0b9386a8c999b",
+    "primary_sources": [
+     "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html",
+     "https://docs.sparkfun.com/SparkFun_Thing_Plus_ESP32-S3/hardware_overview/",
+     "https://cdn.sparkfun.com/assets/5/e/6/5/0/SparkFun_Thing_Plus_ESP32-S3.pdf",
+     "https://cdn.sparkfun.com/assets/4/f/e/7/b/SparkFun_Thing_Plus_ESP32-S3-Dimensions.jpg"
+    ],
+    "expected_ids": [
+     "sparkfun-thing-plus-esp32-s3"
+    ],
+    "notes": "SparkFun's product page (SKU WRL-24408) and its hookup guide describe one board: ESP32-S3-MINI-1-N4R2 (4MB flash, 2MB PSRAM) on the Thing Plus (Feather) footprint, USB-C wired straight to the ESP32-S3's native USB (schematic: D+/D- to IO20/IO19, no bridge chip), MCP73831 charger + MAX17048 fuel gauge, Qwiic, microSD on SDIO, WS2812 on IO46, 21 header GPIOs. Kept distinct: the ESP32 WROOM and ESP32-S2 WROOM Thing Plus boards (already catalogued as sparkfun-thing-plus-esp32-wroom and sparkfun-thing-plus-esp32-s2-wroom, unchanged), and the ESP32-C6 / ESP32-C5 Thing Plus boards SparkFun lists in the same family (different SoCs; no record for them may appear). The product page's 2.55in length and 'WiFi 6' line contradict the hookup guide and official dimension drawing (2.30in x 0.90in) and the ESP32-S3 silicon; they are not used.",
+    "identity_verified": true,
+    "term_key": "sparkfun thing plus esp32 s3"
+   }
   }
  }
 }

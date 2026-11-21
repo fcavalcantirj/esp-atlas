@@ -272,3 +272,101 @@ def test_intent_firmware_query_surfaces_cited_board_reasons(client):
     if "esp32-c5-devkitc-1" in by_board:
         assert by_board["esp32-c5-devkitc-1"]["status"] == "broken"
     assert any(r["status"] == "known-good" for r in reasons), "Marauder still has known-good boards"
+
+
+# --- search, filters, facets (SPEC-firmware-search.md) -------------------------------------------------
+# Against the real catalog: the core oracle (apps/core/tests/test_firmware_search.py) pins the rules on a
+# fixture; these prove the endpoint passes every parameter through and keeps the bare list unchanged.
+
+def _ids(r):
+    return [x["id"] for x in r.json()["results"]]
+
+
+def test_the_bare_list_is_exactly_what_it_was(client):
+    bare = client.get("/firmware").json()
+    assert bare["total"] == len(bare["results"]) == len(core_list_firmware())
+    assert set(bare) == {"results", "total"}                      # the same body as before: no new key
+    assert _ids(client.get("/firmware", params={"sort": "popularity"})) == [r["id"] for r in bare["results"]]
+
+
+def test_q_finds_a_split_name_first_and_reports_both_totals(client):
+    r = client.get("/firmware", params={"q": "ghost esp firmware"})
+    body = r.json()
+    assert r.status_code == 200 and body["results"][0]["id"].replace("-", "") == "ghostesp"
+    assert 0 < body["total"] < body["catalog_total"] == len(core_list_firmware())
+
+
+def test_board_filter_is_exactly_the_firmware_with_a_recipe_for_it(client):
+    from esp_atlas_core.firmware import list_recipes
+    expected = {r["firmware"] for r in list_recipes() if r["board"] == "m5cardputer"}
+    assert set(_ids(client.get("/firmware", params={"board": "m5cardputer"}))) == expected
+    both = set(_ids(client.get("/firmware", params={"board": "m5cardputer", "soc": "esp32-s3", "q": "mesh"})))
+    assert both and both <= expected
+
+
+def test_every_filter_narrows_and_an_unknown_value_is_an_empty_list_not_an_error(client):
+    total = len(core_list_firmware())
+    for params in ({"soc": "esp32-c6"}, {"category": "mesh"}, {"capability": "lora"}, {"tested": "1"}):
+        n = client.get("/firmware", params=params).json()["total"]
+        assert 0 < n < total, params
+    for params in ({"board": "no-such-board"}, {"soc": "z80"}, {"category": "nope"}, {"capability": "nope"}):
+        r = client.get("/firmware", params=params)
+        assert r.status_code == 200 and r.json()["results"] == [] and r.json()["total"] == 0, params
+
+
+def test_an_explicit_sort_wins_over_relevance_and_paging_slices_after_ordering(client):
+    by_name = _ids(client.get("/firmware", params={"q": "cardputer", "sort": "name"}))
+    by_relevance = _ids(client.get("/firmware", params={"q": "cardputer"}))
+    names = {r["id"]: r["name"] for r in core_list_firmware()}
+    assert len(by_name) > 3 and sorted(by_name) == sorted(by_relevance) and by_name != by_relevance
+    assert [names[i].lower() for i in by_name] == sorted(names[i].lower() for i in by_name)
+    page = client.get("/firmware", params={"q": "cardputer", "sort": "name", "limit": 2, "offset": 1}).json()
+    assert [x["id"] for x in page["results"]] == by_name[1:3] and page["total"] == len(by_name)
+
+
+def test_an_over_long_query_is_refused_not_scanned(client):
+    assert client.get("/firmware", params={"q": "x" * 121}).status_code == 422
+    for name in ("board", "soc", "category", "capability"):        # the page lets 80 characters through
+        assert client.get("/firmware", params={name: "x" * 80}).json()["total"] == 0, name
+
+
+def test_a_query_no_record_can_be_found_by_is_an_empty_list(client):
+    for q in ("!!!", "小智"):
+        body = client.get("/firmware", params={"q": q}).json()
+        assert body["total"] == 0 and body["results"] == [] and body["catalog_total"] > 0, q
+
+
+def test_facets_list_every_option_with_counts_and_board_names(client):
+    f = client.get("/firmware/facets").json()
+    assert f["catalog_total"] == len(core_list_firmware())
+    top = f["boards"][0]
+    assert top["count"] >= f["boards"][-1]["count"] and top["name"] and top["id"]
+    assert {o["id"] for o in f["socs"]} >= {"esp32", "esp32-s3"}
+    assert all(o["count"] > 0 for group in ("boards", "socs", "categories", "capabilities") for o in f[group])
+    board = top["id"]
+    assert client.get("/firmware", params={"board": board}).json()["total"] == top["count"]
+
+
+def test_facets_is_not_mistaken_for_a_firmware_id(client):
+    assert "boards" in client.get("/firmware/facets").json()
+    assert client.get("/firmware/definitely-not-a-firmware").status_code == 404
+
+
+def test_a_board_maker_is_a_search_word_and_board_names_come_from_the_index(client):
+    from esp_atlas_core.firmware import list_recipes
+    on_m5 = {r["firmware"] for r in list_recipes() if r["board"].startswith("m5")}
+    got = set(_ids(client.get("/firmware", params={"q": "m5stack meshcore"})))
+    assert got and got <= on_m5
+    names = {o["id"]: o["name"] for o in client.get("/firmware/facets").json()["boards"]}
+    assert names["m5cardputer"] == client.get("/parts/m5cardputer").json()["name"]
+
+
+def test_a_search_does_not_parse_the_catalog_again(client, monkeypatch):
+    from esp_atlas_core import firmware as core_firmware
+    client.get("/firmware", params={"q": "bruce"})                    # warm
+    parses = []
+    real = core_firmware.parse_frontmatter
+    monkeypatch.setattr(core_firmware, "parse_frontmatter", lambda p: (parses.append(p), real(p))[1])
+    assert client.get("/firmware", params={"q": "marauder", "board": "m5cardputer"}).status_code == 200
+    assert client.get("/firmware/facets").status_code == 200
+    assert parses == []

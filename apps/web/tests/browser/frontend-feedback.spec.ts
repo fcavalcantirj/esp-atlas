@@ -217,19 +217,19 @@ test("a stalled guide times out visibly and re-enables submit", async ({ page })
   await expect(page.getByRole("button", { name: "Go", exact: true })).toBeEnabled();
 });
 
-test("home shelf really hides overflow from display and keyboard until revealed", async ({ page }) => {
+test("home shelf renders only the revealed cards and moves focus to the first new one", async ({ page }) => {
+  // SPEC-firmware-popularity.md §5 home amendment (2026-11-18): overflow is not in the DOM at all, so it can
+  // be neither seen nor focused; the full list stays crawlable on /firmware.
   await page.goto("/");
   const cards = page.locator(".example-card");
-  await expect(cards).toHaveCount(49);
+  await expect(cards).toHaveCount(24);
   await expect(page.locator(".example-card:visible")).toHaveCount(24);
-  await cards.nth(24).evaluate(element => (element as HTMLElement).focus());
-  await expect(cards.nth(24)).not.toBeFocused();
   await page.getByRole("button", { name: "Show more", exact: true }).click();
+  await expect(cards).toHaveCount(48);
   await expect(cards.nth(24)).toBeFocused();
-  await expect(page.locator(".example-card:visible")).toHaveCount(48);
   await page.getByRole("button", { name: "Show more", exact: true }).click();
+  await expect(cards).toHaveCount(49);
   await expect(cards.nth(48)).toBeFocused();
-  await expect(page.locator(".example-card:visible")).toHaveCount(49);
   await noOverflow(page);
 });
 

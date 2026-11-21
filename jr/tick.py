@@ -1069,6 +1069,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             r.warnings.append(f"chores unavailable: {r.chores.get('why')}")
         for i in r.chores.get("recorded") or []:
             r.warnings.append(f"chore incident {i} recorded")
+        for w in r.chores.get("warnings") or []:
+            r.warnings.append(str(w))
     line = report.render_line(r)
     print(line)
     review_opened = (r.publish or {}).get("route") == review_routing.REVIEW

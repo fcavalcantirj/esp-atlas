@@ -53,6 +53,14 @@ after the publisher and its public JSON have been independently verified.
 - `GET /search?q=&type=&radio=&band=&form=&protocol=&soc=&module=&ieee802154=&ble=&bt_classic=&usb_native=`
   -> `{results: [record...]}` — structured filters + free-text, no LLM. `soc=<id>` /
   `module=<id>` return only parts built on that SoC / module (exact id match).
+- `GET /firmware?q=&board=&soc=&category=&capability=&tested=&sort=&limit=&offset=`
+  -> `{results: [firmware...], total, catalog_total?}` — the firmware index (`SPEC-firmware-search.md`).
+  `q` is a forgiving word search over each firmware's name, id, maintainer, tags, summary and the boards it
+  has recipes for; the filters are AND-combined; `tested=1` keeps firmware with a `known-good` recipe.
+  `sort` is `popularity` (default), `name`, `name-desc`, `forks`, `boards`, or `relevance` (the default when
+  `q` is set). With no `q` and no filter the response is the plain list (no `catalog_total`).
+- `GET /firmware/facets` -> `{boards: [{id, name, count}], socs, categories, capabilities, catalog_total}`
+  — the filter options with their firmware counts.
 - `POST /wizard` body `{needs: {protocol?, radio?, band?, ble?, bt_classic?,
   usb_native?, ieee802154?, form?, type?, budget?}}` -> `{results: [record + score + reasons...]}`.
   `budget` is one of `cheap` / `medium` / `expensive` (or omitted). It's a

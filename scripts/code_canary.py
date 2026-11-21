@@ -8,12 +8,16 @@
       THIS head — a verdict for another sha is no verdict;
   C4  at most one agent-merged PR per hour (label `agent-pass` is put on the PR before the merge request and
       counted over the last 60 minutes);
+  C4b a PR that conflicts with its base is never armed: GitHub would never merge it, and an armed merge
+      counts as the hour's merge for as long as it stays open;
   C5  then `gh pr merge --merge --auto --match-head-commit <head>`: lands only when every required check is
       green at exactly this head. A BLOCK verdict labels the PR `needs-human` (the reviewer already posted
       the findings) and merges nothing.
 
 `--sweep` gives the same decision to every open PR that has a verdict for its current head: the hourly
-catch-up for a PASS the cap made wait and for a verdict whose canary run never answered.
+catch-up for a PASS the cap made wait and for a verdict whose canary run never answered. It also disarms an
+armed merge that cannot land (it conflicts, or it was armed over an hour ago and is still open), so one stuck
+PR never holds the hour for every other reviewed PR (2026-11-20: #1851 did, for four and a half hours).
 
 Every decision is printed; exit 0 always except an unreadable input (2); `--dry-run` never acts.
 """
@@ -23,6 +27,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -34,6 +39,8 @@ import demand_canary  # noqa: E402
 FLAG, VARIABLE = "code_automerge", "JR_CODE_AUTOMERGE"
 PASS_LABEL, HUMAN_LABEL = "agent-pass", "needs-human"
 HOURLY_CAP = 1
+STUCK_AFTER = timedelta(hours=1)      # an armed merge still open after this is not landing by itself
+MERGEABLE_TRIES, MERGEABLE_WAIT = 3, 3   # GitHub computes `mergeable` lazily: UNKNOWN first, the answer seconds later
 # never merged by the machine, whatever the verdict: the switches, CI itself, the canaries and guards, the reviewer
 # and its contract (4th review of #1809, 2026-11-19: an agent-PASSed PR could otherwise switch automation on)
 HUMAN_ONLY = ("jr/autonomy.json", ".github/", "scripts/code_canary.py", "scripts/demand_canary.py",
@@ -65,12 +72,39 @@ def read_verdict(text: str | None) -> dict:
     return doc
 
 
-def merged_last_hour(gh, repo_slug: str, now: datetime) -> list[str]:
+def mergeable_state(gh, repo_slug: str, pr: int, pause=time.sleep) -> str:
+    """GitHub's `mergeable` for the PR: "CONFLICTING", "MERGEABLE", "UNKNOWN" (still not computed after
+    MERGEABLE_TRIES reads), or "" when the answer carries no such field."""
+    state = ""
+    for attempt in range(MERGEABLE_TRIES):
+        try:
+            doc = json.loads(gh("pr", "view", str(pr), "--repo", repo_slug, "--json", "mergeable") or "{}")
+        except json.JSONDecodeError:
+            return ""
+        state = str(doc.get("mergeable") or "").upper() if isinstance(doc, dict) else ""
+        if state != "UNKNOWN":
+            return state
+        if attempt < MERGEABLE_TRIES - 1:
+            pause(MERGEABLE_WAIT)
+    return state
+
+
+def armed_for(pr: dict, now: datetime) -> timedelta | None:
+    """How long ago the PR's auto-merge was requested; None when GitHub's date cannot be read."""
+    try:
+        at = datetime.fromisoformat(str((pr.get("autoMergeRequest") or {}).get("enabledAt")).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return now - (at if at.tzinfo else at.replace(tzinfo=timezone.utc))
+
+
+def merged_last_hour(gh, repo_slug: str, now: datetime, ignore=frozenset()) -> list[str]:
     """What already used this hour's merge: PRs merged in the last 60 minutes that carry agent-pass, and open
     PRs that carry it (a merge already requested). Both are REST list reads, never the search API: `gh pr
     list --label` goes through the search index, which lags a label written seconds earlier, so two decisions
     in one job could both see the cap free (review BLOCK of #1871, 2026-11-19). Every base counts: the
-    per-comment path merges a stacked PR into its base branch too (second review)."""
+    per-comment path merges a stacked PR into its base branch too (second review). `ignore`: open PRs whose
+    armed merge the sweep has just taken back (a read may still show their label)."""
     since = (now - timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
     out = gh("api", f"repos/{repo_slug}/pulls?state=closed&sort=updated&direction=desc&per_page=100")
     queued = gh("api", f"repos/{repo_slug}/issues?state=open&labels={PASS_LABEL}&per_page=100")
@@ -81,16 +115,18 @@ def merged_last_hour(gh, repo_slug: str, now: datetime) -> list[str]:
         names = lambda r: {str(x.get("name")) for x in r.get("labels") or []}  # noqa: E731
         return ([f"#{r.get('number')}" for r in rows
                  if str(r.get("merged_at") or "") >= since and PASS_LABEL in names(r)]
-                + [f"#{r.get('number')} (queued)" for r in waiting if "pull_request" in r])
+                + [f"#{r.get('number')} (queued)" for r in waiting
+                   if "pull_request" in r and r.get("number") not in ignore])
     except (json.JSONDecodeError, TypeError, AttributeError) as e:
         raise Unreadable(f"merged list unparsable: {e}") from e
 
 
 def decide(*, pr: int, head: str, verdict_json: str | None, repo_slug: str, now: datetime, env: dict,
            autonomy_path: Path = demand_canary.AUTONOMY, gh=demand_canary.default_gh, dry_run: bool = False,
-           out=None, cap_used: tuple = ()) -> str:
+           out=None, cap_used: tuple = (), released=frozenset(), pause=time.sleep) -> str:
     """`cap_used`: merges this very process already requested or saw queued (the sweep passes them), counted
-    on top of what GitHub reports, so one job never requests two merges whatever a read returns."""
+    on top of what GitHub reports, so one job never requests two merges whatever a read returns.
+    `released`: PRs whose stuck armed merge this process took back, no longer counted as queued."""
     out = out or sys.stdout
     say = lambda s: print(s, file=out)  # noqa: E731
     on, why = demand_canary.switches(autonomy_path, env, flag=FLAG, variable=VARIABLE)
@@ -114,7 +150,11 @@ def decide(*, pr: int, head: str, verdict_json: str | None, repo_slug: str, now:
         if not dry_run:
             gh("pr", "edit", str(pr), "--repo", repo_slug, "--add-label", HUMAN_LABEL)
         return "human_only"
-    done = sorted(set(merged_last_hour(gh, repo_slug, now)) | set(cap_used))
+    if mergeable_state(gh, repo_slug, pr, pause) == "CONFLICTING":
+        say("C4b conflicts with its base: GitHub would never merge it, so no merge is requested and the hour "
+            "stays free; it is decided again once the branch is brought up to date")
+        return "conflict"
+    done = sorted(set(merged_last_hour(gh, repo_slug, now, ignore=released)) | set(cap_used))
     if len(done) >= HOURLY_CAP:
         say(f"C4 hourly cap: {', '.join(done)} merged in the last hour; this one waits for the next run")
         return "capped"
@@ -124,7 +164,7 @@ def decide(*, pr: int, head: str, verdict_json: str | None, repo_slug: str, now:
         return "dry_run"
     gh("pr", "edit", str(pr), "--repo", repo_slug, "--add-label", PASS_LABEL)
     try:
-        gh("pr", "merge", str(pr), "--repo", repo_slug, "--merge", "--auto", "--match-head-commit", head)
+        demand_canary.request_merge(gh, repo_slug, pr, head)
     except Exception:
         # An error does not say the merge did not happen (a 502 or a timeout after GitHub applied it): ask.
         # Only a PR that is neither merged nor armed loses its label, since the label alone would read as a
@@ -160,14 +200,17 @@ def verdict_from_comments(gh, repo_slug: str, pr: int) -> tuple[str, str | None]
 
 
 def sweep(*, repo_slug: str, now: datetime, env: dict, autonomy_path: Path = demand_canary.AUTONOMY,
-          gh=demand_canary.default_gh, dry_run: bool = False, out=None) -> dict:
+          gh=demand_canary.default_gh, dry_run: bool = False, out=None, pause=time.sleep) -> dict:
     """{pr number: outcome} for every open PR that has a verdict for its CURRENT head: the same decision a
     marker comment gets, for the verdicts nobody acted on (the hourly cap printed "waits for the next run" and
     there was none; a canary run that crashed answered nothing). Oldest PR first. Left alone: drafts, forks, a
     PR whose merge is really requested, a verdict for another head. A BLOCK or a human-only PASS that already
     carries its label costs no write. An agent-pass label with no auto-merge behind it is dropped and the PR
     decided again. Every merge requested or found queued here counts against the cap for the rest of the
-    sweep. One unreadable PR never stops the others; switches off -> {} and no call."""
+    sweep. An armed merge that cannot land is taken back first (auto-merge off, label dropped) and stops
+    counting: one that conflicts ("conflict") or one armed more than STUCK_AFTER ago and still open
+    ("disarmed_stuck", decided again by the next sweep, not this one, so it cannot take the hour it just gave
+    back). One unreadable PR never stops the others; switches off -> {} and no call."""
     out = out or sys.stdout
     on, why = demand_canary.switches(autonomy_path, env, flag=FLAG, variable=VARIABLE)
     if not on:
@@ -181,9 +224,30 @@ def sweep(*, repo_slug: str, now: datetime, env: dict, autonomy_path: Path = dem
     prs = sorted((p for p in prs if not p.get("isDraft") and not p.get("isCrossRepository")),
                  key=lambda p: int(p.get("number") or 0))
     labels = {int(p["number"]): {str(x.get("name")) for x in p.get("labels") or []} for p in prs}
-    used = tuple(f"#{p['number']} (queued)" for p in prs
-                 if PASS_LABEL in labels[int(p["number"])] and p.get("autoMergeRequest"))
-    results = {}
+    results, used, released = {}, (), set()
+    for pr in prs:
+        n = int(pr["number"])
+        if not (PASS_LABEL in labels[n] and pr.get("autoMergeRequest")):
+            continue
+        age = armed_for(pr, now)
+        try:
+            if age is not None and age > STUCK_AFTER:
+                outcome, why = "disarmed_stuck", f"armed {int(age.total_seconds() // 60)} min ago and still open"
+            elif mergeable_state(gh, repo_slug, n, pause) == "CONFLICTING":
+                outcome, why = "conflict", "it conflicts with its base"
+            else:
+                used += (f"#{n} (queued)",)
+                continue
+            print(f"sweep: #{n} has a merge armed that cannot land ({why}); taking it back so it stops holding the hour",
+                  file=out)
+            if not dry_run:
+                gh("pr", "merge", str(n), "--repo", repo_slug, "--disable-auto")
+                gh("pr", "edit", str(n), "--repo", repo_slug, "--remove-label", PASS_LABEL)
+            released.add(n)
+            results[n] = outcome
+        except Exception as e:  # noqa: BLE001 — could not be taken back: still armed, so the hour stays used
+            used += (f"#{n} (queued)",)
+            results[n] = f"unreadable: {str(e)[:160]}"
     # stale labels go first, all of them: one left on a newer PR would cap an older PASS for this sweep
     for pr in prs:
         n = int(pr["number"])
@@ -215,7 +279,8 @@ def sweep(*, repo_slug: str, now: datetime, env: dict, autonomy_path: Path = dem
                 print(f"sweep: #{n} at {head[:8]}", file=out)
                 try:
                     results[n] = decide(pr=n, head=head, verdict_json=vj, repo_slug=repo_slug, now=now, env=env,
-                                        autonomy_path=autonomy_path, gh=gh, dry_run=dry_run, out=out, cap_used=used)
+                                        autonomy_path=autonomy_path, gh=gh, dry_run=dry_run, out=out, cap_used=used,
+                                        released=frozenset(released), pause=pause)
                 except Exception:
                     if is_pass:                         # a decision that died may have merged: the cap is used
                         used += (f"#{n} (unknown)",)

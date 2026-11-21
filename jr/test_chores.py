@@ -11,6 +11,7 @@ the owner what still needs a human. Incidents reach the delegate only through `c
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 from types import SimpleNamespace
@@ -18,6 +19,35 @@ from types import SimpleNamespace
 import agent_review as ar
 import chores
 import ci_watch as cw
+
+@pytest.fixture(autouse=True)
+def _the_expiry_never_reaches_git_or_the_network(monkeypatch):
+    """chores.run() ends with expire_tick_prs, whose defaults fetch a branch and read live upstreams. No test
+    may do that by accident: a test that means to exercise it stubs both itself."""
+    def not_stubbed(*a, **k):
+        raise RuntimeError("this test did not stub the tick-PR expiry")
+    monkeypatch.setattr(chores, "_fetch_branch", not_stubbed)
+    monkeypatch.setattr(chores, "_guard", not_stubbed)
+
+
+def trend_row(date, firmware=170, recipes=348, with_fw=62, zero_fw=59, usb=66):
+    return {"date": date, "firmware_count": firmware, "recipe_count": recipes, "boards_with_firmware": with_fw,
+            "boards_zero_firmware": zero_fw, "board_fields": {"usb_serial": {"count": usb, "pct": 54.5}}}
+
+
+def write_trend(path, rows):
+    import json as _json
+    path.write_text("".join(_json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+    return path
+
+
+@pytest.fixture(autouse=True)
+def _a_growing_catalog_unless_a_test_says_otherwise(monkeypatch, tmp_path):
+    """The daily line reads the catalog's growth from docs/telemetry/data-trend.jsonl. Every test gets a trend
+    that grew by one firmware each day of November, so only the tests about growth see anything else."""
+    rows = [trend_row(f"2026-11-{d:02d}", firmware=150 + d) for d in range(1, 31)]
+    monkeypatch.setattr(chores, "TREND", write_trend(tmp_path / "data-trend.jsonl", rows))
+
 
 NOW = "2026-11-19T12:05:00+00:00"
 LATER = "2026-11-19T13:05:00+00:00"
@@ -142,16 +172,20 @@ def merged(*logins):
     return [{"number": 100 + i, "headRefName": "x", "mergedBy": {"login": l}} for i, l in enumerate(logins)]
 
 
+def merged_jr(*logins, branch="jr/tick-20261119-0100"):
+    return [{"number": 200 + i, "headRefName": branch, "mergedBy": {"login": l}} for i, l in enumerate(logins)]
+
+
 def test_the_daily_line_comes_once_a_utc_day_from_12z_with_the_numbers(tmp_path):
     store = _store(tmp_path)
-    prs = [pr(3, labels=["needs-human"], updated="2026-11-18T12:00:00Z")]
-    gh = Gh(prs, merged=merged("espatlas-jr", "espatlas-jr", "fcavalcantirj"))
+    prs = [pr(3, branch="jr/tick-20261118-0700", labels=["needs-human"], updated="2026-11-18T12:00:00Z")]
+    gh = Gh(prs, merged=merged_jr("espatlas-jr", "espatlas-jr", "fcavalcantirj"))
     early = chores.run(gh, store, "2026-11-19T11:05:00+00:00", slug="o/r")
     first = chores.run(gh, store, NOW, slug="o/r")
     again = chores.run(gh, store, LATER, slug="o/r")
     assert early["digest"] is None and again["digest"] is None
     line = first["digest"]
-    assert line.startswith("🧹 Jr daily 2026-11-19") and "merged by Jr 2" in line and "by a person 1" in line
+    assert line.startswith("🧹 Jr daily 2026-11-19") and "merged by Jr 2" in line and "Jr's PRs merged by a person 1" in line
     assert "#3 needs-human 24 h" in line and "self-sufficient 0/7 days" in line
 
 
@@ -164,13 +198,13 @@ def test_self_sufficient_days_count_up_and_a_human_merge_breaks_the_run(tmp_path
     clean = Gh([], merged=merged("espatlas-jr", "github-actions[bot]"))
     assert "self-sufficient 1/7 days" in _day(store, clean, 19)
     assert "self-sufficient 2/7 days" in _day(store, clean, 20)
-    assert "self-sufficient 0/7 days" in _day(store, Gh([], merged=merged("fcavalcantirj")), 21)
+    assert "self-sufficient 0/7 days" in _day(store, Gh([], merged=merged_jr("fcavalcantirj")), 21)   # a person merged JR'S PR
     assert "self-sufficient 1/7 days" in _day(store, clean, 22)
 
 
 def test_a_waiting_needs_human_pr_or_a_halted_heal_is_not_a_self_sufficient_day(tmp_path):
     store = _store(tmp_path)
-    assert "self-sufficient 0/7 days" in _day(store, Gh([pr(3, labels=["needs-human"])], merged=[]), 19)
+    assert "self-sufficient 0/7 days" in _day(store, Gh([pr(3, branch="jr/heal-abc", labels=["needs-human"])], merged=[]), 19)
     data = store._load()
     data["halted"] = True
     store._save(data)
@@ -291,10 +325,12 @@ def test_a_merged_ci_heal_pr_resets_the_ack_brake_too(tmp_path):
 
 
 def test_a_pr_open_a_day_without_any_label_still_waits_on_someone(tmp_path):
-    prs = [pr(5, created="2026-11-17T12:00:00Z"), pr(6, created="2026-11-18T06:00:00Z", updated=NOW), pr(7),
-           pr(8, draft=True, created="2026-11-01T00:00:00Z")]
+    T = "jr/tick-20261117-1200"
+    prs = [pr(5, branch=T, created="2026-11-17T12:00:00Z"), pr(6, branch=T, created="2026-11-18T06:00:00Z", updated=NOW),
+           pr(7, branch=T), pr(8, branch=T, draft=True, created="2026-11-01T00:00:00Z")]
     line = chores.run(Gh(prs, merged=merged("espatlas-jr")), _store(tmp_path), NOW, slug="o/r")["digest"]
-    assert "2 PR(s) open ≥ 24 h (oldest #5, 48 h)" in line and "self-sufficient 0/7 days" in line   # CI touching #6 changes nothing
+    # Jr's own open PRs are its queue (shown with the oldest's age from createdAt: CI touching #6 changes nothing)
+    assert "Jr's own queue: 3 open (oldest #5, 48 h)" in line and "self-sufficient 1/7 days" in line
 
 
 # --- a red required check on ANY open PR is work, not silence (2026-11-19: tick PR #1828 sat red on `tests`;
@@ -867,3 +903,281 @@ def test_a_failure_beside_a_canary_that_ran_reruns_the_canary_not_the_failed_job
     retry(gh, _store(tmp_path), tmp_path)
     assert gh.acts() == [("api", "-X", "POST", "repos/o/r/actions/jobs/950/rerun")]
 
+
+def test_the_fix_prompt_tells_the_agent_how_to_correct_a_pr_description_and_to_leave_a_conflict_job_small():
+    # 2026-11-19: 8 PRs were blocked on a future check tagged [REAL] in their description, and #1840 was blocked
+    # again after its code fix because the description still told the old mechanism. The fix agent could push
+    # commits but had no way to change a description, so those blocks could never clear.
+    prompt = (Path(chores.__file__).resolve().parent.parent / "docs" / "ops" / "HEAL-PROMPT.md").read_text()
+    section = prompt[prompt.index("## When `INCIDENT.context.check` starts with `conflict:`"):]
+    assert "`PR_DESCRIPTION`" in section and "the relay replaces" in section
+    assert "`[REAL]` only on something already observed" in section
+    assert "git commit --allow-empty" in section                       # a verdict is tied to the head
+    assert "do not refactor or split files" in section                 # the 516-line split the relay refused
+    assert "Never create a virtualenv" in prompt and "`PYTHON`" in prompt   # /tmp filled up and reviews stopped
+
+
+# --- Jr never parks a PR on a person (2026-11-19) ----------------------------------------------------------------
+
+def _third_block(tmp_path, branch):
+    store = _store(tmp_path)
+    for day in ("2026-11-15", "2026-11-16"):                                 # two fix rounds that did not end it
+        rec = store.record(cw.pr_fix_verdict("review-fix", 11, branch, H1), f"{day}T09:00:00+00:00")
+        data = store._load()
+        data["incidents"][rec["id"]]["state"] = "resolved"
+        store._save(data)
+    gh = Gh([pr(11, branch=branch, labels=["needs-human"], head=H1)], comments={11: [block(H1)]})
+    out = chores.run(gh, store, NOW, slug="o/r")
+    return store, gh, out
+
+
+def test_the_third_block_on_a_persons_pr_is_given_up_with_one_comment_and_the_pr_stays_open(tmp_path):
+    store, gh, out = _third_block(tmp_path, "feat/x")
+    rec = _incidents(store)["review-fix:#11"]
+    assert rec["state"] == "abandoned"
+    said = [c for c in gh.calls if c[:2] == ("pr", "comment")]
+    assert len(said) == 1 and said[0][2] == "11" and "Nobody is waited on" in said[0][-1]
+    assert not [c for c in gh.calls if c[:2] == ("pr", "close")]
+    again = Gh(gh.prs, comments=gh.comments)
+    chores.run(again, store, LATER, slug="o/r")                              # next tick: said once, never again
+    assert not [c for c in again.calls if c[:2] in {("pr", "comment"), ("pr", "close")}]
+    assert store.claim(LATER, allow_pr_fix=True) is None                     # and never handed to the delegate
+
+
+def test_the_third_block_on_jrs_own_heal_pr_closes_it(tmp_path):
+    store, gh, out = _third_block(tmp_path, "jr/heal-0cf1acb95f79")
+    closed = [c for c in gh.calls if c[:2] == ("pr", "close")]
+    assert len(closed) == 1 and closed[0][2] == "11" and "Jr stops here" in closed[0][-1]
+
+
+def test_a_pause_is_named_in_the_daily_line_only_on_its_own_day(tmp_path):
+    store = _store(tmp_path)
+    data = store._load()
+    data.update(halted=True, halted_day="2026-11-19")
+    store._save(data)
+    assert "self-heal paused until 00:00 UTC" in _day(store, Gh([], merged=[]), 19)
+
+
+# --- the scoreboard measures Jr, not people (2026-11-19) ------------------------------------------------------
+# The first daily line read "by a person 18 · waiting 6 → 0/7": the 18 were a person's own infrastructure PRs and
+# the 6 were a person's PRs blocked by review. Under that rule one ordinary merge by anyone, or one human PR left
+# open a day, reset the count for good: it could never reach 7 while anybody worked on the repository.
+
+def test_people_merging_and_holding_their_own_prs_never_break_a_self_sufficient_day(tmp_path):
+    store = _store(tmp_path)
+    prs = [pr(1840, branch="feat/analytics", labels=["needs-human"], created="2026-11-17T00:00:00Z"),   # a person's, blocked
+           pr(1852, branch="perf/inline-css", created="2026-11-16T00:00:00Z")]                           # a person's, idle
+    gh = Gh(prs, merged=merged("fcavalcantirj", "fcavalcantirj") + merged_jr("espatlas-jr", "github-actions[bot]"))
+    line = _day(store, gh, 19)
+    assert "self-sufficient 1/7 days" in line and "nothing of Jr's waits on a person" in line
+    assert "merged by Jr 2" in line and "Jr's PRs merged by a person 0" in line
+    assert "people's own: 2 merged, 2 open (1 blocked by review)" in line
+    row = store._load()["scoreboard"][-1]
+    assert row["ok"] is True and row["by_person"] == 0 and row["own_merged"] == 2 and row["own_open"] == 2
+
+
+@pytest.mark.parametrize("branch", ["jr/tick-20261119-0100", "jr/research-pam-abc", "jr/heal-0cf1acb95f79"])
+def test_a_person_merging_any_of_jrs_own_prs_breaks_the_day(tmp_path, branch):
+    line = _day(_store(tmp_path), Gh([], merged=merged_jr("fcavalcantirj", branch=branch)), 19)
+    assert "Jr's PRs merged by a person 1" in line and "self-sufficient 0/7 days" in line
+
+
+def test_the_machine_merging_a_persons_pr_is_jrs_work(tmp_path):
+    line = _day(_store(tmp_path), Gh([], merged=merged("github-actions[bot]", "espatlas-jr")), 19)
+    assert "merged by Jr 2" in line and "self-sufficient 1/7 days" in line
+
+
+def test_jrs_own_pr_labelled_needs_human_still_breaks_the_day(tmp_path):
+    labelled = [pr(1897, branch="jr/heal-0cf1acb95f79", labels=["needs-human"])]
+    assert "self-sufficient 0/7 days" in _day(_store(tmp_path / "b"), Gh(labelled, merged=[]), 19)
+
+
+
+# --- Jr's own tick PRs never wait for a person (2026-11-19) -------------------------------------------------------
+# A review-routed tick PR the evidence check cannot vouch for sat open until a person reviewed it: on Nov 19 four
+# of them were 25 to 38 hours old. Jr now closes such a PR itself after EXPIRE_HOURS, with the reasons, and keeps
+# the ones that ARE eligible: those only wait for the tick canary's daily slot, which is Jr's own throttle.
+
+OLD, YOUNG = "2026-11-16T10:00:00Z", "2026-11-18T10:00:00Z"            # 74 h and 26 h before NOW
+
+
+def review_tick(n, created=OLD, labels=("jr-review",), **kw):
+    return pr(n, branch=f"jr/tick-202611{n % 28 + 1:02d}-0700", labels=labels, created=created, **kw)
+
+
+class ExpGh(Gh):
+    def __call__(self, *a):
+        if a[:2] == ("pr", "close"):
+            self.calls.append(a)
+            return SimpleNamespace(returncode=0, stdout="", stderr="")
+        return super().__call__(*a)
+
+    def closed(self):
+        return [int(c[2]) for c in self.calls if c[:2] == ("pr", "close")]
+
+
+def expire(gh, verdicts, now=NOW, dry_run=False):
+    """`verdicts`: {branch suffix or pr number: problems list | Exception}."""
+    fetched = []
+    def guard(repo, *, base, head, branch):
+        got = verdicts.get(branch, [])
+        if isinstance(got, Exception):
+            raise got
+        return got, ["E1 …"]
+    out = chores.expire_tick_prs(gh, gh.prs, now, dry_run, guard=guard, fetch=lambda b: fetched.append(b))
+    return out, fetched
+
+
+def test_a_review_tick_pr_the_guard_cannot_vouch_for_is_closed_after_three_days_with_the_reasons(tmp_path):
+    p = review_tick(1828)
+    gh = ExpGh([p])
+    out, fetched = expire(gh, {p["headRefName"]: ["E1 data/recipes/lilygo-t-deck__esp32-template/recipe.md: no evidence receipt"]})
+    assert out["closed"] == [1828] and gh.closed() == [1828] and fetched == [p["headRefName"]]
+    text = next(c for c in gh.calls if c[:2] == ("pr", "close"))[-1]
+    assert "no evidence receipt" in text and "72 h" in text and "30 days" in text
+
+
+def test_an_eligible_one_is_kept_whatever_its_age_and_a_young_one_is_not_even_looked_at(tmp_path):
+    old_ok, young = review_tick(1827), review_tick(1875, created=YOUNG)
+    gh = ExpGh([old_ok, young])
+    out, fetched = expire(gh, {young["headRefName"]: ["E1 no receipt"]})
+    assert out == {"closed": [], "kept": [1827], "unreadable": []} and gh.closed() == []
+    assert fetched == [old_ok["headRefName"]]
+
+
+def test_an_unreadable_upstream_or_fetch_never_closes_anything(tmp_path):
+    p = review_tick(1839)
+    gh = ExpGh([p])
+    out, _ = expire(gh, {p["headRefName"]: RuntimeError("GitHub API: HTTP 502")})
+    assert out == {"closed": [], "kept": [], "unreadable": [1839]} and gh.closed() == []
+
+
+def test_only_review_routed_tick_prs_of_this_repo_on_main_are_ever_closed(tmp_path):
+    bad = ["E1 no receipt"]
+    prs = [review_tick(1, labels=()),                                     # AUTO route: merges itself
+           review_tick(2, draft=True), review_tick(3, fork=True), review_tick(4, base="feat/x"),
+           pr(5, branch="jr/research-pam-x", labels=["jr-review"], created=OLD),    # demand: its own lane
+           pr(6, branch="jr/heal-abc", labels=["jr-review"], created=OLD),          # heal: the agent review
+           pr(7, branch="feat/x", labels=["jr-review"], created=OLD)]               # a person's
+    gh = ExpGh(prs)
+    out, fetched = expire(gh, {p["headRefName"]: bad for p in prs})
+    assert out["closed"] == [] and fetched == [] and gh.closed() == []
+
+
+def test_at_most_two_a_tick_oldest_first_and_a_dry_run_closes_nothing(tmp_path):
+    prs = [review_tick(30, created="2026-11-15T10:00:00Z"), review_tick(10, created="2026-11-13T10:00:00Z"),
+           review_tick(20, created="2026-11-14T10:00:00Z")]
+    bad = {p["headRefName"]: ["E1 no receipt"] for p in prs}
+    gh = ExpGh(prs)
+    assert expire(gh, bad)[0]["closed"] == [10, 20]
+    dry = ExpGh(prs)
+    assert expire(dry, bad, dry_run=True)[0]["closed"] == [10, 20] and dry.closed() == []
+
+
+def test_the_chores_run_the_expiry_and_report_it(tmp_path, monkeypatch):
+    p = review_tick(1828)
+    monkeypatch.setattr(chores, "_guard", lambda repo, *, base, head, branch: (["E1 no receipt"], []))
+    monkeypatch.setattr(chores, "_fetch_branch", lambda branch: None)
+    gh = ExpGh([p])
+    out = chores.run(gh, _store(tmp_path), NOW, slug="o/r")
+    assert out["status"] == "ok" and out["expired"] == [1828] and gh.closed() == [1828]
+    dry = chores.run(ExpGh([p]), _store(tmp_path / "d"), NOW, slug="o/r", dry_run=True)
+    assert "close tick PR #1828 (72 h, not eligible)" in dry["would"]
+
+
+def test_jrs_queued_tick_prs_are_shown_but_are_not_waiting_on_a_person(tmp_path):
+    # an eligible tick PR waits for the canary's daily slot, a not-eligible one for its own expiry: Jr's queue
+    prs = [review_tick(1827), review_tick(1875, created=YOUNG)]
+    line = _day(_store(tmp_path), Gh(prs, merged=merged_jr("espatlas-jr")), 19)
+    assert "self-sufficient 1/7 days" in line and "nothing of Jr's waits on a person" in line
+    assert "Jr's own queue: 2 open (oldest #1827, 74 h)" in line
+
+
+# --- the tick says so when the backup reviewer answers nothing (2026-11-19) ---------------------------------------
+
+def test_a_backup_reviewer_that_gave_no_verdict_today_is_a_warning_in_the_chores_output(tmp_path):
+    state = tmp_path / "agent-review.json"
+    state.write_text(json.dumps({"fallback_empty": {"day": "2026-11-19", "prs": [1840, 1843]}}))
+    line = chores.review_lane_warning(NOW, state)
+    assert "#1840, #1843" in line and "NO verdict today" in line and "credit" in line
+    assert chores.review_lane_warning("2026-11-20T12:05:00+00:00", state) is None       # yesterday's is not today's
+    assert chores.review_lane_warning(NOW, tmp_path / "missing.json") is None
+    state.write_text("not json")
+    assert chores.review_lane_warning(NOW, state) is None
+
+
+def test_the_chores_carry_that_warning(tmp_path, monkeypatch):
+    monkeypatch.setattr(chores, "review_lane_warning", lambda now, state_path=None: "the backup reviewer … NO verdict today")
+    out = chores.run(Gh([]), _store(tmp_path), NOW, slug="o/r")
+    assert out["warnings"] == ["the backup reviewer … NO verdict today"]
+    monkeypatch.setattr(chores, "review_lane_warning", lambda now, state_path=None: None)
+    assert chores.run(Gh([]), _store(tmp_path / "b"), NOW, slug="o/r")["warnings"] == []
+
+
+def test_the_tick_line_carries_the_chores_warnings(tmp_path):
+    from test_tick import git_ok, gh_ok, run
+
+    def chores_runner(gh, now, dry_run):
+        return {"status": "ok", "recorded": [], "warnings": ["the backup reviewer was asked and gave NO verdict today (#1840)"]}
+    r = run(git=git_ok(tmp_path), gh=gh_ok(rate="120"), chores_runner=chores_runner, notifier=lambda m: None)
+    assert any("backup reviewer was asked and gave NO verdict" in w for w in r.warnings)
+
+
+# --- a self-sufficient day is a day the catalog grew (2026-11-21) -----------------------------------------------
+# Nov 20 counted 36 merges by Jr, none by a person, nothing waiting: by the old rule a good day. Every one of those
+# merges was bookkeeping (the ledger, telemetry); the catalog stayed at 170 firmware / 348 recipes and every lane
+# yielded 0 for 24 ticks. Seven such days would have read SELF-SUFFICIENT with nothing added.
+
+def _clean():
+    return Gh([], merged=merged("espatlas-jr", "github-actions[bot]"))
+
+
+def test_a_day_the_catalog_did_not_grow_is_not_self_sufficient(tmp_path, monkeypatch):
+    monkeypatch.setattr(chores, "TREND", write_trend(tmp_path / "t.jsonl", [trend_row("2026-11-18"), trend_row("2026-11-19")]))
+    store = _store(tmp_path)
+    line = _day(store, _clean(), 19)
+    assert "catalog did not grow (2026-11-18→2026-11-19)" in line and "self-sufficient 0/7 days" in line
+    row = store._load()["scoreboard"][-1]
+    assert row["ok"] is False and row["grew"] == 0 and row["by_person"] == 0 and row["waiting"] == 0
+
+
+def test_any_new_firmware_recipe_board_or_filled_board_field_is_growth(tmp_path, monkeypatch):
+    for i, change in enumerate((dict(firmware=171), dict(recipes=349), dict(zero_fw=60),
+                                dict(with_fw=63, zero_fw=58, recipes=349), dict(usb=67))):
+        monkeypatch.setattr(chores, "TREND", write_trend(tmp_path / f"t{i}.jsonl",
+                                                         [trend_row("2026-11-18"), trend_row("2026-11-19", **change)]))
+        (tmp_path / f"s{i}").mkdir()
+        store = _store(tmp_path / f"s{i}")
+        line = _day(store, _clean(), 19)
+        assert "self-sufficient 1/7 days" in line and "catalog +" in line, change
+
+
+def test_growth_is_measured_up_to_todays_trend_row_and_a_missing_or_broken_trend_proves_nothing(tmp_path, monkeypatch):
+    cases = {
+        "no trend row for 2026-11-19": [trend_row("2026-11-17"), trend_row("2026-11-18", firmware=171)],
+        "fewer than two trend rows": [trend_row("2026-11-19")],
+        "catalog growth unreadable": None,
+    }
+    for i, (says, rows) in enumerate(cases.items()):
+        path = tmp_path / f"t{i}.jsonl"
+        if rows is None:
+            path.write_text("{not json\n", encoding="utf-8")
+        else:
+            write_trend(path, rows)
+        monkeypatch.setattr(chores, "TREND", path)
+        line = _day(_store(tmp_path / f"s{i}"), _clean(), 19)
+        assert says in line and "self-sufficient 0/7 days" in line, says
+    monkeypatch.setattr(chores, "TREND", tmp_path / "absent.jsonl")
+    assert "self-sufficient 0/7 days" in _day(_store(tmp_path / "s9"), _clean(), 19)
+
+
+def test_a_catalog_that_shrank_is_not_growth(tmp_path, monkeypatch):
+    monkeypatch.setattr(chores, "TREND", write_trend(tmp_path / "t.jsonl", [trend_row("2026-11-18"), trend_row("2026-11-19", recipes=347)]))
+    line = _day(_store(tmp_path), _clean(), 19)
+    assert "catalog -1 (2026-11-18→2026-11-19)" in line and "self-sufficient 0/7 days" in line
+
+
+def test_the_growth_rule_reads_the_newest_row_per_day_in_date_order(tmp_path, monkeypatch):
+    rows = [trend_row("2026-11-19", firmware=172), trend_row("2026-11-18"), trend_row("2026-11-19", firmware=171)]
+    monkeypatch.setattr(chores, "TREND", write_trend(tmp_path / "t.jsonl", rows))     # an appended re-run of the 19th
+    assert "catalog +1 (2026-11-18→2026-11-19)" in _day(_store(tmp_path), _clean(), 19)

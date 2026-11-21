@@ -40,7 +40,11 @@ SUCCESS = ("SUCCESS", "NEUTRAL", "SKIPPED")
 DAILY_DISPATCHES = 2          # per UTC day, all breaks together
 MAX_PER_FINGERPRINT = 2       # the same break: first time + one recurrence; the third needs a human
 MAX_AUTO_WITHOUT_ACK = 3      # dispatches since a human last ran `ci_watch.py ack`; then the lane halts
-STALL_HOURS = 4               # dispatched and still no heal PR: stalled, never retried automatically
+STALL_HOURS = 4               # dispatched and still no heal PR: stalled
+# Jr never parks work on a person (owner, 2026-11-19: "what else does this project need"). Every stop below
+# used to wait for a human; each now has its own way out, bounded by the daily budgets above.
+RETRY_AFTER_HOURS = 24        # a stalled job is tried once more a day later; a second stall is given up
+ABANDON_DAYS = 7              # a break Jr gave up on is not looked at again for a week, then counts afresh
 LIVE = ("open", "dispatched", "pr_opened", "pushed", "needs_human", "stalled")
 MAX_CHANGED_LINES = 300
 LOG_EXCERPT_LINES = 200
@@ -410,6 +414,9 @@ class Store:
         base = verdict.fingerprint[:12]
         same = sorted((r for r in data["incidents"].values() if r["fingerprint"] == verdict.fingerprint),
                       key=lambda r: r["first_seen"])
+        if same and same[-1]["state"] == "abandoned" and \
+                _hours(same[-1].get("abandoned_at") or same[-1]["first_seen"], now) < ABANDON_DAYS * 24:
+            return None                      # given up this week: not recorded again, nothing nudged again
         if same and same[-1]["state"] not in ("resolved", "abandoned"):
             live = same[-1]
             # an open PR fix not handed out yet follows the PR's live head: the delegate must start from it
@@ -422,9 +429,14 @@ class Store:
                     self._save(data)
             return None
         incident_id = base if not same else f"{base}-{len(same) + 1}"
-        state = "needs_human" if len(same) >= MAX_PER_FINGERPRINT else "open"
+        # the tries since Jr last gave up on this break (a week ago or more): the count starts afresh after it
+        last_given_up = max((n for n, r in enumerate(same) if r["state"] == "abandoned"), default=-1)
+        tries = len(same) - (last_given_up + 1)
+        state = "abandoned" if tries >= MAX_PER_FINGERPRINT else "open"
         rec = {"id": incident_id, "fingerprint": verdict.fingerprint, "branch": HEAL_BRANCH + incident_id,
                "state": state, "first_seen": now, "context": asdict(verdict)}
+        if state == "abandoned":
+            rec["abandoned_at"] = now
         data["incidents"][incident_id] = rec
         self._save(data)
         return rec
@@ -437,6 +449,14 @@ class Store:
         (§1d) are handed out only with `allow_pr_fix` (a launcher that pushes to the PR's own branch, and
         the `pr_fix_dispatch` switch), against their own PR_FIX_DAILY budget."""
         data = self._load()
+        day = _utc_day(now)
+        # the pause after MAX_AUTO_WITHOUT_ACK fruitless dispatches lasts until the next UTC day, not until a
+        # person runs `ack`: the daily budgets already bound what a day can cost
+        # (a pause written by the older code has no `halted_day`: it ends at the first claim under this code,
+        # instead of never — review BLOCK of #1901)
+        if data.get("halted") and data.get("halted_day") != day:
+            data.update(auto_since_ack=0, halted=False, halt_nudged=False, halted_day=None)
+            self._save(data)
         waiting = sorted((r for r in data["incidents"].values() if r["state"] == "open"
                           and (allow_stall or not str(r["context"].get("check") or "").startswith(STALL_CHECK))
                           and (allow_pr_fix or not is_pr_fix(r))),
@@ -445,10 +465,9 @@ class Store:
             return None
         if data.get("auto_since_ack", 0) >= MAX_AUTO_WITHOUT_ACK:
             if not data.get("halted"):
-                data["halted"] = True
+                data.update(halted=True, halted_day=day)
                 self._save(data)
             return None
-        day = _utc_day(now)
         today = [r for r in data["incidents"].values() if _utc_day(r.get("dispatched_at")) == day]
         spent_fix = sum(1 for r in today if is_pr_fix(r))
         spent = len(today) - spent_fix
@@ -473,16 +492,22 @@ class Store:
     def ack(self, now: str) -> None:
         """A human looked: the count of dispatches without one starts again."""
         data = self._load()
-        data.update(auto_since_ack=0, halted=False, halt_nudged=False, acked_at=now)
+        data.update(auto_since_ack=0, halted=False, halt_nudged=False, halted_day=None, acked_at=now)
         self._save(data)
 
     @_exclusive
     def progress(self, heal_prs: dict, now: str, merged: set | frozenset = frozenset()) -> list[str]:
         """Dispatched incidents: a PR on the incident's branch -> pr_opened; none after STALL_HOURS ->
-        stalled (never re-dispatched). A heal PR in `merged` (numbers) is a productive outcome: the ack
-        brake starts again (§1d). Returns the ids that stalled."""
+        stalled. A stalled incident is opened once more RETRY_AFTER_HOURS later; a second stall is
+        `abandoned` (given up: no person is asked). A heal PR in `merged` (numbers) is a productive outcome:
+        the ack brake starts again (§1d). Returns the ids that stalled or were given up this pass."""
         data, stalled, changed = self._load(), [], False
         for rec in data["incidents"].values():
+            if rec["state"] == "stalled" and not rec.get("retried") and \
+                    _hours(rec.get("stalled_at"), now) > RETRY_AFTER_HOURS:
+                rec.update(state="open", retried=True)
+                changed = True
+                continue
             if rec["state"] == "pr_opened" and rec.get("pr") in merged and not rec.get("merged"):
                 rec["merged"] = True
                 data.update(auto_since_ack=0, halted=False, halt_nudged=False)
@@ -493,7 +518,7 @@ class Store:
                 rec.update(state="pr_opened", pr=heal_prs[rec["branch"]])
                 changed = True
             elif _hours(rec.get("dispatched_at"), now) > STALL_HOURS:
-                rec.update(state="stalled", stalled_at=now)
+                _stall(rec, now)
                 stalled.append(rec["id"])
                 changed = True
         if changed:
@@ -510,8 +535,8 @@ class Store:
             out.append(_nudge(rec, data.get("auto_since_ack", 0)))
             rec["nudged_state"] = rec["state"]
         if data.get("halted") and not data.get("halt_nudged"):
-            out.append(f"🛑 Jr self-heal halted: {MAX_AUTO_WITHOUT_ACK} heal dispatches since a human last looked. "
-                       "Nothing more is dispatched until someone checks and runs `python3 jr/ci_watch.py ack` on the runner.")
+            out.append(f"🛑 Jr self-heal paused until 00:00 UTC: {MAX_AUTO_WITHOUT_ACK} heal dispatches without a merged "
+                       "fix. It resumes by itself; `python3 jr/ci_watch.py ack` on the runner resumes it now.")
             data["halt_nudged"] = True
         if out:
             self._save(data)
@@ -545,7 +570,7 @@ class Store:
                 rec.pop("absent", None)
                 since = rec.get("pushed_at") if rec["state"] == "pushed" else rec.get("dispatched_at")
                 if rec["state"] in ("dispatched", "pushed") and _hours(since, now) > STALL_HOURS:
-                    rec.update(state="stalled", stalled_at=now)     # a push that did not clear it: a human
+                    _stall(rec, now)                 # tried once more a day later, then given up
                     out["stalled"].append(rec["id"])
                 continue
             # the condition is gone this pass. GitHub's merge state blinks (UNKNOWN while it recomputes) and a
@@ -674,6 +699,15 @@ def _hours(start: str | None, now: str) -> float:
         return 0.0
 
 
+def _stall(rec: dict, now: str) -> None:
+    """The first time a job produces nothing it is `stalled` (and opened once more a day later); the second
+    time it is `abandoned`."""
+    if rec.get("retried"):
+        rec.update(state="abandoned", abandoned_at=now)
+    else:
+        rec.update(state="stalled", stalled_at=now)
+
+
 def _nudge(rec: dict, auto: int) -> str:
     c, i = rec["context"], rec["id"]
     if str(c.get("check") or "").startswith(STALL_CHECK):
@@ -702,7 +736,10 @@ def _nudge(rec: dict, auto: int) -> str:
         "resolved": f"✅ Jr CI incident {i} resolved: {c.get('check')} is green on main and on the newest tick PR.",
         "needs_human": f"🛑 Jr CI incident {i}: the same break came back a {MAX_PER_FINGERPRINT + 1}rd time. "
                        f"Nothing is dispatched; it needs a human. {what}.",
-        "stalled": f"🛑 Jr heal {i} stalled: no PR {STALL_HOURS} h after dispatch. It is not retried; it needs a human.",
+        "stalled": f"🛑 Jr heal {i} stalled: nothing {STALL_HOURS} h after dispatch. Jr tries it once more in "
+                   f"{RETRY_AFTER_HOURS} h.",
+        "abandoned": f"🏳 Jr gave up on incident {i} after {MAX_PER_FINGERPRINT} tries: {what}. Nothing waits on you; "
+                     f"Jr does not look at it again for {ABANDON_DAYS} days.",
     }.get(rec["state"], f"Jr CI incident {i}: {rec['state']}")
 
 

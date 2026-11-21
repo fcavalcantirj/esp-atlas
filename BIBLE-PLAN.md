@@ -20,8 +20,10 @@
 - Operational goal, checked weekly: **every completed 28-day window has Google Search clicks ≥ the previous
   window AND spam-adjusted engaged sessions ≥ the previous window.** The weekly digest prints both deltas
   (↑/↓/→). Two consecutive ↓ on either metric is a review item in the project's Solvr room, not a failure.
-- Spam-adjusted = minus referral hosts in the committed denylist and minus segments that match the behavioural
-  junk rule (`jr/telemetry.py`). Raw numbers stay printed next to adjusted ones.
+- Spam-adjusted = minus referral hosts in the committed denylist and minus sessions that match the behavioural
+  bot rules shared with deep-analytics (fast unengaged non-human segments, zero-engaged sources, 800x600
+  screens, Android Webview — `jr/telemetry.py`, SPEC-espatlas-jr.md §3d). Raw numbers stay printed next to
+  adjusted ones.
 - Title/description work follows `SPEC-serp-ctr.md`: evidence file first, editorial overrides only restating
   record facts, re-measured after 14 days.
 
