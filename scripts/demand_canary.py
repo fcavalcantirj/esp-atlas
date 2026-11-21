@@ -55,6 +55,34 @@ def default_gh(*args: str) -> str:
     return p.stdout
 
 
+# GitHub refuses to switch auto-merge on for a PR that can merge right now; these are its words for that
+_MERGEABLE_NOW = ("in clean status", "in unstable status")
+
+
+def request_merge(gh, repo_slug: str, pr: int, head: str) -> str:
+    """The one way a canary asks GitHub to merge (demand, tick and code canaries). "auto": auto-merge armed at
+    exactly `head`, it lands when every required check is green there. "merged": GitHub refused auto-merge
+    because the PR can merge right now (clean or unstable status), every REQUIRED check at the PR's head has
+    passed, so it is merged now at exactly `head` (2026-11-21: the demand canary died on that refusal and #1935
+    never merged). A required check that did not pass, an unreadable check list or any other refusal raises
+    Unreadable: nothing is merged around a check."""
+    try:
+        gh("pr", "merge", str(pr), "--repo", repo_slug, "--merge", "--auto", "--match-head-commit", head)
+        return "auto"
+    except Unreadable as e:
+        if not any(words in str(e) for words in _MERGEABLE_NOW):
+            raise
+    try:
+        checks = json.loads(gh("pr", "checks", str(pr), "--repo", repo_slug, "--required", "--json", "name,bucket") or "[]")
+    except json.JSONDecodeError as e:
+        raise Unreadable(f"required checks unparsable: {e}") from e
+    if not checks or any(str(c.get("bucket")) != "pass" for c in checks):
+        raise Unreadable(f"#{pr} can merge now but its required checks are not all passing: "
+                         f"{[(c.get('name'), c.get('bucket')) for c in checks]}")
+    gh("pr", "merge", str(pr), "--repo", repo_slug, "--merge", "--match-head-commit", head)
+    return "merged"
+
+
 DEMAND_SCOPE = ("data/", "docs/demand/")
 
 
@@ -196,8 +224,9 @@ def decide(*, pr: int, head: str, branch: str, base: str, repo_slug: str, today:
         say(f"D6 dry run: would mark #{pr} ready and request merge --auto --match-head-commit {head}")
         return "dry_run"
     gh("pr", "ready", str(pr), "--repo", repo_slug)
-    gh("pr", "merge", str(pr), "--repo", repo_slug, "--merge", "--auto", "--match-head-commit", head)
-    say(f"D6 #{pr} marked ready; merge requested at exact head {head} (lands when every required check is green there)")
+    how = request_merge(gh, repo_slug, pr, head)
+    say(f"D6 #{pr} marked ready; " + ("merge requested at exact head {head} (lands when every required check is green there)"
+                                       if how == "auto" else f"merged now at exact head {head} (every required check passed)").format(head=head))
     return "merge_requested"
 
 
