@@ -366,6 +366,22 @@ publish unfiltered numbers) and minus the rows matching the behavioural junk rul
 once. Two **28-day growth deltas** follow, one line each with ↑/↓/→ and both numbers: GSC clicks
 and adjusted engaged sessions for the completed 28-day window vs the 28 days before it.
 
+**Bot rules aligned with deep-analytics (owner-approved 2026-11-20):** the adjustment breakdown is
+`sessionSource × city × sessionDefaultChannelGroup × screenResolution × browser` with an explicit
+row `limit`. Every session lives in exactly one row and every rule's group key is a function of the
+row key, so a session matched by several rules is excluded once. Each rule judges the aggregate of
+its own group, then claims every row in a matched group; a row is attributed to the first matching
+rule, in this order: (1) **fast unengaged** — a source × city × channel segment outside the
+human-arrival channels (`HUMAN_CHANNELS`, unchanged since 2026-11-18) with avg duration ≤ 5s and
+engagement ≤ 10%; (2) **referral denylist** — any channel; (3) **zero-engaged source** — a
+`sessionSource` with ≥ 5 sessions and 0 engaged; (4) **screen 800x600** with engagement ≤ 10%;
+(5) **browser Android Webview** with engagement ≤ 10%. Rules (3)–(5) apply to every channel except
+Organic Search, whose rows neither count toward nor get removed by them. Thresholds are module
+constants in `jr/telemetry.py`. A response at the row limit, or whose `rowCount` exceeds the rows
+returned, is treated like a failed fetch (spam-adjusted and the 28d adjusted delta print
+`unavailable`). Both 28d windows use the same rules. A `🧹` line under the GA4 line names how
+many sessions each rule removed.
+
 **The steering loop (this is why it's Jr's, not a bystander's):** GSC **demand** is a first-class
 **data-priority signal** — queries with impressions but no matching record, or a thin one, jump
 the staleness/population queue. *People are searching for a board/firmware we don't cover well →
