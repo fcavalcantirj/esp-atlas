@@ -19,6 +19,17 @@ PR adds are the ones the validation receipt promised. This script is that readin
       two-parent merge of the base's history whose docs/demand is exactly git's automatic merge of its
       parents (a refresh of the branch, GitHub's test merge). A hand-resolved or edited merge is counted.
 
+A SETTLE PR (2026-11-21: #1968 closed 'esp32 tenstar' as abandoned, a store brand) delivers nothing: its
+receipt KEY goes from a live state to `abandoned` or `rejected` (work_record.py settle). It is judged by
+R1, S1-S3, R4 for the receipts and R6 instead of R2/R3/R5:
+  S1  nothing under data/ changed;
+  S2  the receipt's resolution names the same state and a reason;
+  S3  in the queue only the candidates whose term is the receipt's term ON THE BASE changed (or appeared),
+      each `closed` with the same outcome; every other candidate and top-level field is unchanged;
+  S4  the receipt changed only what `work_record.py settle`/`attempt` write: state, resolution,
+      last_attempt_on (exact-head review BLOCK of #1974: a settle that rewrote its own term could close
+      another item).
+
 Exit 0: every rule holds (the receipt lines say what was checked). Exit 1: a rule failed, named.
 Exit 2: not a demand branch, or git/JSON could not be read.
 
@@ -39,6 +50,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "jr"))
 sys.path.insert(0, str(REPO / "apps" / "core" / "src"))
 
+import research_queue as rq  # noqa: E402
 import research_work as rw  # noqa: E402
 
 BRANCH_PREFIX = "jr/research-"
@@ -132,6 +144,11 @@ def check(repo: Path, *, base: str, head: str, branch: str, pr_url: str | None) 
 
     q_base, q_head = _json_at(repo, base, QUEUE), _json_at(repo, head, QUEUE)
     r_base, r_head = _json_at(repo, base, RECEIPTS), _json_at(repo, head, RECEIPTS)
+    rec_base = {r.get("key"): r for r in (r_base.get("receipts") or []) if isinstance(r, dict)}.get(key) or {}
+    rec_head = {r.get("key"): r for r in (r_head.get("receipts") or []) if isinstance(r, dict)}.get(key) or {}
+    if rec_head.get("state") in SETTLE_STATES and rec_base.get("state") not in SETTLE_STATES + ("delivered",):
+        _check_settle(repo, key, base, head, changes, q_base, q_head, r_base, r_head, rec_base, rec_head, problems, lines)
+        return problems, lines
     cands_head = q_head.get("candidates") or {}
     cand = cands_head.get(key)
     if not isinstance(cand, dict):
@@ -171,9 +188,7 @@ def check(repo: Path, *, base: str, head: str, branch: str, pr_url: str | None) 
         return json.dumps(d, sort_keys=True)
 
     def _others_r(doc):
-        d = {k: v for k, v in doc.items() if k != "receipts"}
-        d["receipts"] = sorted((json.dumps(r, sort_keys=True) for r in (doc.get("receipts") or []) if (r or {}).get("key") != key))
-        return json.dumps(d, sort_keys=True)
+        return _receipts_but(doc, key)
 
     if _others_q(q_base) != _others_q(q_head):
         problems.append(f"R4 a candidate other than {key}, or a queue top-level field, changed")
@@ -192,6 +207,56 @@ def check(repo: Path, *, base: str, head: str, branch: str, pr_url: str | None) 
         problems.append(f"R5 data/** changed beyond the expected records: {', '.join(other_data)}")
     lines.append(f"R5 records added: {sorted(added_ids)}")
 
+    _check_commits(repo, base, head, problems, lines)
+    return problems, lines
+
+
+SETTLE_STATES = ("abandoned", "rejected")
+SETTLE_FIELDS = ("state", "resolution", "last_attempt_on")     # what work_record settle/attempt write
+
+
+def _receipts_but(doc: dict, key: str) -> str:
+    d = {k: v for k, v in doc.items() if k != "receipts"}
+    d["receipts"] = sorted((json.dumps(r, sort_keys=True) for r in (doc.get("receipts") or []) if (r or {}).get("key") != key))
+    return json.dumps(d, sort_keys=True)
+
+
+def _check_settle(repo, key, base, head, changes, q_base, q_head, r_base, r_head, rec_base, rec_head, problems, lines):
+    """S1-S3, R4 for the receipts and R6 for a PR that settles its work item instead of delivering it."""
+    state = rec_head.get("state")
+    lines.append(f"S1 settle {key}: {rec_base.get('state')} -> {state}")
+    data = sorted(p for _s, p in changes if p.startswith("data/"))
+    if data:
+        problems.append(f"S1 a settle changed catalog data: {', '.join(data[:5])}")
+    res = rec_head.get("resolution") if isinstance(rec_head.get("resolution"), dict) else {}
+    if res.get("status") != state or not str(res.get("reason") or "").strip():
+        problems.append(f"S2 receipt {key} resolution {res!r} does not name {state!r} and a reason")
+    changed = sorted(f for f in set(rec_base) | set(rec_head)
+                     if f not in SETTLE_FIELDS and rec_base.get(f) != rec_head.get(f))
+    if changed:
+        problems.append(f"S4 receipt {key} changed {', '.join(changed)}; a settle may change only {', '.join(SETTLE_FIELDS)}"
+                        + (f" (term {rec_base.get('term')!r} -> {rec_head.get('term')!r})" if "term" in changed else ""))
+    term = rq.term_key(rec_base.get("term"))
+    cb, ch = q_base.get("candidates") or {}, q_head.get("candidates") or {}
+    for k in sorted(set(cb) | set(ch)):
+        if cb.get(k) == ch.get(k):
+            continue
+        c = ch.get(k) if isinstance(ch.get(k), dict) else {}
+        outcome = c.get("outcome") if isinstance(c.get("outcome"), dict) else {}
+        if rq.term_key(c.get("term")) != term or not term:
+            problems.append(f"S3 queue candidate {k!r} changed, but it is not the settled term {term!r}")
+        elif c.get("status") != "closed" or outcome.get("status") != state:
+            problems.append(f"S3 queue candidate {k!r} is {c.get('status')!r} with outcome {outcome.get('status')!r}, "
+                            f"not closed as {state!r}")
+    if {k: v for k, v in q_base.items() if k != "candidates"} != {k: v for k, v in q_head.items() if k != "candidates"}:
+        problems.append("S3 a queue top-level field changed")
+    if _receipts_but(r_base, key) != _receipts_but(r_head, key):
+        problems.append(f"R4 a receipt other than {key}, or a receipts top-level field, changed")
+    _check_commits(repo, base, head, problems, lines)
+
+
+def _check_commits(repo, base, head, problems, lines):
+    """R6, shared by deliveries and settles."""
     # A merge that brings main in and leaves docs/demand exactly as git's own automatic merge of its two
     # parents does is not a hand edit: it only carries what main changed there since the branch was cut (every
     # refresh of the branch, GitHub's test merge; 2026-11-19: #1846 went red on "Merge branch 'main'"). Anything
@@ -210,7 +275,6 @@ def check(repo: Path, *, base: str, head: str, branch: str, pr_url: str | None) 
         problems.append(f"R6 commit(s) touching docs/demand without the {COMMIT_PREFIX} subject: {bad[:3]}")
     merged = f" ({merges_of_main} clean merge of main not counted)" if merges_of_main else ""
     lines.append(f"R6 demand commits: {len(subjects)}, all {COMMIT_PREFIX}{merged}" if not bad else "R6 see above")
-    return problems, lines
 
 
 def default_base() -> str:
