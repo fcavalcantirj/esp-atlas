@@ -1,7 +1,7 @@
 {
  "calls": 12,
  "errors": 0,
- "fetched": "2026-11-11",
+ "fetched": "2026-11-18",
  "notes": [],
  "ref": "main",
  "repo": "wled/WLED",
@@ -12,12 +12,14 @@
    "esp32-c6-devkitc-1",
    "esp32-c6-devkitm-1",
    "esp32-s3-devkitc-1",
+   "freenove-esp32-wrover",
    "lolin-s2-mini",
    "lolin-s3-mini"
   ],
   "socs": [
    "esp32",
    "esp32-c3",
+   "esp32-p4",
    "esp32-s2",
    "esp32-s3"
   ],
@@ -44,7 +46,6 @@
    "ESP32_Ethernet",
    "ESP32_HUB75",
    "ESP32_HUB75_forum_pinout",
-   "ESP32_WROVER",
    "ESP8266",
    "ESP8266_160",
    "ESP8266_compat",
