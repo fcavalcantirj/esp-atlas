@@ -3814,7 +3814,7 @@
       "pr_ref": "#1969",
       "repo": "tesa-klebeband/esp32-deauther",
       "status": "proposed",
-      "timestamp": "2026-11-21T22:00:42.329042+00:00"
+      "timestamp": "2026-11-21T23:00:33.423444+00:00"
     },
     "esp32-dragon-radar": {
       "expires": "2026-12-06T21:00:55.650872+00:00",
@@ -4148,7 +4148,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-21T22:00:42.329042+00:00"
+      "timestamp": "2026-11-21T23:00:33.423444+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -5751,12 +5751,13 @@
       "timestamp": "2026-11-21T19:01:00.686047+00:00"
     },
     "launcher-1897200000000000016": {
+      "expired_at": "2026-11-21T23:00:33.423444+00:00",
       "expires": "2026-11-21T22:00:55.399488+00:00",
       "id": "launcher-1897200000000000016",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'user pipboy user:mateusrodriguesf'",
       "repo": "launcher:1897200000000000016",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T22:00:55.399488+00:00"
     },
     "launcher-1897200000000000023": {
@@ -6203,12 +6204,13 @@
       "timestamp": "2026-11-14T21:00:55.045531+00:00"
     },
     "launcher-1897200000000000284": {
+      "expired_at": "2026-11-21T23:00:33.423444+00:00",
       "expires": "2026-11-21T22:00:55.399488+00:00",
       "id": "launcher-1897200000000000284",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'uiflow2 user:m5stack'",
       "repo": "launcher:1897200000000000284",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T22:00:55.399488+00:00"
     },
     "launcher-1897200000000000291": {
@@ -6753,12 +6755,13 @@
       "timestamp": "2026-11-16T10:00:32.342729+00:00"
     },
     "launcher-1897200000000000684": {
+      "expired_at": "2026-11-21T23:00:33.423444+00:00",
       "expires": "2026-11-21T22:00:55.399488+00:00",
       "id": "launcher-1897200000000000684",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000000684",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T22:00:55.399488+00:00"
     },
     "launcher-1897200000000000708": {
@@ -7014,12 +7017,13 @@
       "timestamp": "2026-11-15T03:00:32.103528+00:00"
     },
     "launcher-1897200000000000954": {
+      "expired_at": "2026-11-21T23:00:33.423444+00:00",
       "expires": "2026-11-21T22:00:55.399488+00:00",
       "id": "launcher-1897200000000000954",
       "pr_ref": null,
       "reason": "no_source_repo: 2 matches for 'calculator user:m5stack'",
       "repo": "launcher:1897200000000000954",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T22:00:55.399488+00:00"
     },
     "launcher-1897200000000000959": {
@@ -7922,12 +7926,13 @@
       "timestamp": "2026-11-15T09:00:31.430360+00:00"
     },
     "launcher-1897200000000001480": {
+      "expired_at": "2026-11-21T23:00:33.423444+00:00",
       "expires": "2026-11-21T22:00:55.399488+00:00",
       "id": "launcher-1897200000000001480",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'xiaozhi voice assistant user:m5stack'",
       "repo": "launcher:1897200000000001480",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T22:00:55.399488+00:00"
     },
     "launcher-1897200000000001481": {
@@ -8342,12 +8347,13 @@
       "timestamp": "2026-11-16T04:00:31.943499+00:00"
     },
     "launcher-1897200000000001759": {
+      "expired_at": "2026-11-21T23:00:33.423444+00:00",
       "expires": "2026-11-21T22:00:55.399488+00:00",
       "id": "launcher-1897200000000001759",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'uiflow atomu user:m5stack'",
       "repo": "launcher:1897200000000001759",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T22:00:55.399488+00:00"
     },
     "launcher-1897200000000001767": {
@@ -8899,12 +8905,13 @@
       "timestamp": "2026-11-16T12:00:31.947873+00:00"
     },
     "launcher-1897200000000002232": {
+      "expired_at": "2026-11-21T23:00:33.423444+00:00",
       "expires": "2026-11-21T22:00:55.399488+00:00",
       "id": "launcher-1897200000000002232",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'tilt flappy user:lama-lama'",
       "repo": "launcher:1897200000000002232",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T22:00:55.399488+00:00"
     },
     "launcher-1897200000000002250": {
@@ -9371,12 +9378,13 @@
       "timestamp": "2026-11-15T16:00:31.979974+00:00"
     },
     "launcher-1897200000000002635": {
+      "expired_at": "2026-11-21T23:00:33.423444+00:00",
       "expires": "2026-11-21T22:00:55.399488+00:00",
       "id": "launcher-1897200000000002635",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'marauder not user:tech-nickk'",
       "repo": "launcher:1897200000000002635",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T22:00:55.399488+00:00"
     },
     "launcher-1897200000000002638": {
@@ -10202,12 +10210,13 @@
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-1897200000000003268": {
+      "expired_at": "2026-11-21T23:00:33.423444+00:00",
       "expires": "2026-11-21T22:00:55.399488+00:00",
       "id": "launcher-1897200000000003268",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'uiflow coreink user:m5stack'",
       "repo": "launcher:1897200000000003268",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-14T22:00:55.399488+00:00"
     },
     "launcher-1897200000000003270": {
@@ -17523,7 +17532,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-21T22:00:42.329042+00:00"
+      "timestamp": "2026-11-21T23:00:33.423444+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -25723,7 +25732,7 @@
       "pr_ref": "#1895",
       "repo": "designer2k2/xmas-tree",
       "status": "proposed",
-      "timestamp": "2026-11-21T22:00:42.329042+00:00"
+      "timestamp": "2026-11-21T23:00:33.423444+00:00"
     },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
