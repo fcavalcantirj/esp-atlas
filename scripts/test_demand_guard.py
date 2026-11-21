@@ -357,3 +357,48 @@ def test_anything_beyond_a_clean_settle_fails(tmp_path, kw, rule):
 def test_a_delivery_pr_is_judged_exactly_as_before(repo):
     problems, lines = dg.check(repo, base="main", head="HEAD", branch=BRANCH, pr_url=PR)
     assert not any(ln.startswith("S1") for ln in lines)
+
+
+def test_a_settle_cannot_rewrite_its_receipt_to_close_another_item(tmp_path):
+    """Exact-head review BLOCK of #1974: rewrite receipt KEY's term to 'Other Kit', settle it, close that
+    other candidate, leave the real one untouched. S3 must judge by the term the receipt had on main, and the
+    receipt may change only what work_record settle/attempt write."""
+    r = tmp_path / "exploit"
+    r.mkdir()
+    _git(r, "init", "-q", "-b", "main")
+    q = {"version": 1, "candidates": {"freenove esp32 wrover starter kit": {"term": TERM, "status": "new", "history": [], "linked_work": []},
+                                     "other kit": {"term": "Other Kit", "status": "new", "history": [], "linked_work": []}}}
+    rc = _receipts()
+    _write(r, dg.QUEUE, json.dumps(q, indent=1))
+    _write(r, dg.RECEIPTS, json.dumps(rc, indent=1))
+    _commit(r, "base")
+    _git(r, "checkout", "-q", "-b", BRANCH)
+    q["candidates"]["other kit"].update(status="closed", outcome={"status": "rejected", "reason": "x"})
+    rc["receipts"][0].update(term="Other Kit", state="rejected", resolution={"status": "rejected", "reason": "x"})
+    _write(r, dg.QUEUE, json.dumps(q, indent=1))
+    _write(r, dg.RECEIPTS, json.dumps(rc, indent=1))
+    _commit(r, f"chore(demand): settle {KEY} rejected")
+    problems, _ = _settle_check(r)
+    assert any(p.startswith("S4") and "term" in p for p in problems), problems
+    assert any(p.startswith("S3") and "other kit" in p for p in problems), problems
+
+
+def test_a_settle_may_create_the_closed_candidate_for_its_term(tmp_path):
+    """work_record settle materializes the queue candidate for the receipt's term when there is none."""
+    r = tmp_path / "create"
+    r.mkdir()
+    _git(r, "init", "-q", "-b", "main")
+    q = {"version": 1, "candidates": {"other kit": {"term": "Other Kit", "status": "new", "history": [], "linked_work": []}}}
+    rc = _receipts()
+    _write(r, dg.QUEUE, json.dumps(q, indent=1))
+    _write(r, dg.RECEIPTS, json.dumps(rc, indent=1))
+    _commit(r, "base")
+    _git(r, "checkout", "-q", "-b", BRANCH)
+    q["candidates"]["freenove esp32 wrover starter kit"] = {"term": TERM, "status": "closed", "history": [], "linked_work": [],
+                                                             "outcome": {"status": "abandoned", "reason": REASON}}
+    rc["receipts"][0].update(state="abandoned", resolution={"status": "abandoned", "reason": REASON, "closed_on": "2026-11-21",
+                                                            "evidence": {"settled_by": "work_record settle"}})
+    _write(r, dg.QUEUE, json.dumps(q, indent=1))
+    _write(r, dg.RECEIPTS, json.dumps(rc, indent=1))
+    _commit(r, f"chore(demand): settle {KEY} abandoned")
+    assert _settle_check(r)[0] == []

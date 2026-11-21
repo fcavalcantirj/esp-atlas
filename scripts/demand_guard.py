@@ -24,8 +24,11 @@ receipt KEY goes from a live state to `abandoned` or `rejected` (work_record.py 
 R1, S1-S3, R4 for the receipts and R6 instead of R2/R3/R5:
   S1  nothing under data/ changed;
   S2  the receipt's resolution names the same state and a reason;
-  S3  in the queue only the candidates whose term is the receipt's term changed, each to `closed` with the
-      same outcome; every other candidate and top-level field is unchanged.
+  S3  in the queue only the candidates whose term is the receipt's term ON THE BASE changed (or appeared),
+      each `closed` with the same outcome; every other candidate and top-level field is unchanged;
+  S4  the receipt changed only what `work_record.py settle`/`attempt` write: state, resolution,
+      last_attempt_on (exact-head review BLOCK of #1974: a settle that rewrote its own term could close
+      another item).
 
 Exit 0: every rule holds (the receipt lines say what was checked). Exit 1: a rule failed, named.
 Exit 2: not a demand branch, or git/JSON could not be read.
@@ -209,6 +212,7 @@ def check(repo: Path, *, base: str, head: str, branch: str, pr_url: str | None) 
 
 
 SETTLE_STATES = ("abandoned", "rejected")
+SETTLE_FIELDS = ("state", "resolution", "last_attempt_on")     # what work_record settle/attempt write
 
 
 def _receipts_but(doc: dict, key: str) -> str:
@@ -227,7 +231,12 @@ def _check_settle(repo, key, base, head, changes, q_base, q_head, r_base, r_head
     res = rec_head.get("resolution") if isinstance(rec_head.get("resolution"), dict) else {}
     if res.get("status") != state or not str(res.get("reason") or "").strip():
         problems.append(f"S2 receipt {key} resolution {res!r} does not name {state!r} and a reason")
-    term = rq.term_key(rec_head.get("term"))
+    changed = sorted(f for f in set(rec_base) | set(rec_head)
+                     if f not in SETTLE_FIELDS and rec_base.get(f) != rec_head.get(f))
+    if changed:
+        problems.append(f"S4 receipt {key} changed {', '.join(changed)}; a settle may change only {', '.join(SETTLE_FIELDS)}"
+                        + (f" (term {rec_base.get('term')!r} -> {rec_head.get('term')!r})" if "term" in changed else ""))
+    term = rq.term_key(rec_base.get("term"))
     cb, ch = q_base.get("candidates") or {}, q_head.get("candidates") or {}
     for k in sorted(set(cb) | set(ch)):
         if cb.get(k) == ch.get(k):
