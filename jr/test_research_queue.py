@@ -582,3 +582,69 @@ def test_a_failed_write_keeps_the_prior_bytes_and_is_surfaced(tmp_path, monkeypa
         rq.write_queue(run([row("es3c28p"), row("lilygo-t-bea")])[0], path)
     assert path.read_bytes() == before
     assert [p.name for p in tmp_path.iterdir()] == [rq.QUEUE_NAME]
+
+
+# ─────────────────────────── a word the catalog has never heard of (2026-11-21) ───────────────────────────
+# GA4, Oct 21-Nov 17: "Tenstar T-display Esp32", "esp32 tenstar" and "esp32-s3 tenstar" were searched once each
+# and the site answered with results (generic "t-display" / "esp32" matches), so no row was zero-result and
+# the queue never saw a brand nothing in the catalog carries.
+
+def test_an_esp32_search_with_a_word_no_catalog_entry_carries_joins_the_queue_without_a_zero_result():
+    queue, report = run([row("esp32 tenstar", searches=1, zero=0)])
+    c = queue["candidates"]["esp32 tenstar"]
+    assert report["opened"] == ["esp32 tenstar"]
+    assert c["intake"] == "unknown_word" and c["missing_words"] == ["tenstar"] and c["zero_result_searches"] == 0
+
+
+def test_the_variants_of_one_unknown_word_are_one_candidate_under_its_shortest_term():
+    catalog = CATALOG + [{"id": "lilygo-t-display", "kind": "board", "title": "T-Display", "aliases": []}]
+    rows = [row("Tenstar T-display Esp32", zero=0), row("esp32 tenstar", zero=0), row("esp32-s3 tenstar", zero=0)]
+    queue, report = rq.update_queue(rq.empty_queue(), rows, catalog, TODAY)
+    assert report["opened"] == ["esp32 tenstar"] and list(queue["candidates"]) == ["esp32 tenstar"]
+    assert queue["candidates"]["esp32 tenstar"]["searches"] == 3
+
+
+def test_searches_of_the_unknown_word_without_an_esp32_word_join_its_candidate():
+    rows = [row("tenstar", zero=0), row("tenstar robot", searches=2, zero=0), row("tenstar esp32-s3", zero=0),
+            row("security", zero=0)]
+    queue, report = run(rows, source="ga4 search_empty", window={"start": "2026-10-06", "end": TODAY})
+    assert report["opened"] == ["tenstar"] and list(queue["candidates"]) == ["tenstar"]
+    c = queue["candidates"]["tenstar"]
+    assert c["searches"] == 4 and c["missing_words"] == ["tenstar"]
+    assert c["source"] == rq.UNKNOWN_WORD_SOURCE                       # not "search_empty": nothing came back empty
+    queue, _ = run([row("tenstar robot", zero=0)], queue=queue)          # alone, with no ESP32 word: no intake
+    assert queue["candidates"]["tenstar"]["searches"] == 4
+
+
+@pytest.mark.parametrize("term", [
+    "security",                 # no ESP32 word: an English word, not a product
+    "tenstar",                  # nor here: one word alone is the zero-result rule's job
+    "esp32-c6",                 # every word is known
+    "esp32 t-beam",             # 't-beam' is a catalog title
+    "esp32 marauder",           # a catalog title word
+    "esp32 lilygo",             # a brand
+    "esp32 how to",             # generic and short words
+    "esp32 s3 n16r8",           # no word of four letters: SKUs are the model-identity rule's job
+])
+def test_no_unknown_word_without_an_esp32_word_or_with_only_known_generic_or_short_words(term):
+    queue, report = run([row(term, zero=0)])
+    assert report["opened"] == [] and queue["candidates"] == {}
+
+
+def test_zero_result_searches_keep_their_order_ahead_of_unknown_words_and_share_the_daily_cap():
+    rows = [row("esp32 tenstar", searches=9, zero=0), row("es3c28p", searches=1, zero=1)]
+    _, report = run(rows, max_new_per_day=1)
+    assert report["opened"] == ["es3c28p"] and report["deferred"] == ["esp32 tenstar"]
+
+
+def test_a_zero_result_search_is_not_relabelled_by_the_unknown_word_rule():
+    queue, _ = run([row("esp32 tenstar", searches=2, zero=1)])
+    c = queue["candidates"]["esp32 tenstar"]
+    assert "intake" not in c and c["zero_result_searches"] == 1
+
+
+def test_the_real_catalog_knows_t_display_but_not_tenstar():
+    catalog = rq.load_catalog()
+    assert rq.unknown_words("Tenstar T-display Esp32", catalog) == ["tenstar"]
+    for term in ("esp32-c3", "qt py", "security", "esp32 marauder", "esp32-s3 t-display"):
+        assert rq.unknown_words(term, catalog) == [], term

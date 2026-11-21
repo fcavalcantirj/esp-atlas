@@ -47,6 +47,14 @@ ALIAS_TYPO, SEARCH_DEFECT, MISSING_CONTENT, UNCLEAR = "alias_typo", "search_defe
 GENERIC_WORDS = {"esp32", "esp", "firmware", "board", "boards", "device", "module", "chip", "dev",
                  "kit", "devkit", "for", "the", "and", "on", "with", "a", "an", "of", "to", "how"}
 
+# A search that pairs an ESP32 word with a word no catalog entry carries ("esp32 tenstar") is demand for
+# something missing even when the site answered with generic matches (2026-11-21: three Tenstar searches got
+# "t-display" results, so no zero-result row ever reached the queue).
+_ANCHOR_RE = re.compile(r"^(?:esp32|esp8266)")
+MIN_UNKNOWN_CHARS = 4         # shorter words ('s3', 'qt', 'py') are SKUs or noise, never a missing product
+INTAKE_UNKNOWN_WORD = "unknown_word"
+UNKNOWN_WORD_SOURCE = "ga4 search_submit (unknown word)"
+
 # (dir under data/, record file, kind) — the parts behind /parts/<id> are socs + modules
 CATALOG_SOURCES = (("boards/*/*", "board.md", "board"), ("firmware/*", "firmware.md", "firmware"),
                    ("socs/*", "chip.md", "part"), ("modules/*", "module.md", "part"),
@@ -292,9 +300,27 @@ def _opened_on(c: dict) -> str | None:
     return reopens[-1] if reopens else c.get("first_seen")
 
 
-def _candidate_rows(rows: list[dict]) -> dict[str, dict]:
+def unknown_words(term: str | None, catalog: list[dict]) -> list[str]:
+    """The words of `term` no catalog entry carries, when the term also names an ESP32 ("esp32",
+    "esp32-s3", "esp8266"): letters, at least MIN_UNKNOWN_CHARS long, not generic, and not inside any
+    entry's id, title or alias (compared compact, so 'display' is inside 'T-Display-S3'). Empty when
+    there is no ESP32 word: one bare word ("security") is the zero-result rule's job."""
+    toks = _tokens(term)
+    if not any(_ANCHOR_RE.match(t) for t in toks):
+        return []
+    known = [compact(label) for e in catalog for _, label in _labels(e)]        # brands are entries too
+    return sorted({t for t in toks
+                   if len(t) >= MIN_UNKNOWN_CHARS and t.isalpha() and not _ANCHOR_RE.match(t)
+                   and t not in GENERIC_WORDS and not any(t in k for k in known if k)})
+
+
+def _candidate_rows(rows: list[dict], catalog: list[dict] | None = None) -> dict[str, dict]:
     """Zero-result rows with at least one submitted search, merged per key (case/spacing
-    variants of one day's pull), in rate-limit order."""
+    variants of one day's pull), in rate-limit order; then, when `catalog` is given, the searches
+    that pair an ESP32 word with words no catalog entry carries (`unknown_words`): one candidate per
+    set of unknown words, joined by every other search that contains those words ("tenstar",
+    "tenstar robot"), under the shortest of their terms, their searches summed (letters only: words
+    with digits are model numbers, the zero-result and model-identity rules' job)."""
     merged: dict[str, dict] = {}
     for r in rows or []:
         key = term_key(r.get("term"))
@@ -305,7 +331,24 @@ def _candidate_rows(rows: list[dict]) -> dict[str, dict]:
         m["zero_result_searches"] += int(r.get("zero_result_searches") or 0)
     hits = {k: v for k, v in merged.items() if v["searches"] >= 1 and v["zero_result_searches"] >= 1}
     order = sorted(hits, key=lambda k: (-hits[k]["zero_result_searches"], -hits[k]["searches"], k))
-    return {k: hits[k] for k in order}
+    out = {k: hits[k] for k in order}
+    groups: dict[tuple, list] = {}
+    rest = {k: v for k, v in merged.items() if k not in hits and v["searches"] >= 1} if catalog else {}
+    for k, v in rest.items():
+        missing = tuple(unknown_words(v["term"], catalog))
+        if missing:
+            groups.setdefault(missing, []).append((k, v))
+    claimed = {k for members in groups.values() for k, _ in members}
+    for missing, members in groups.items():
+        members += [(k, v) for k, v in rest.items()
+                    if k not in claimed and set(missing) <= set(_tokens(v["term"]))]
+    extra = {}
+    for missing, members in groups.items():
+        k, v = min(members, key=lambda kv: (len(kv[0]), kv[0]))
+        extra[k] = {**v, "searches": sum(m[1]["searches"] for m in members), "missing_words": list(missing)}
+    for k in sorted(extra, key=lambda k: (-extra[k]["searches"], k)):
+        out[k] = extra[k]
+    return out
 
 
 def _provenance(source: str | None, window: dict | None) -> dict:
@@ -317,17 +360,22 @@ def _provenance(source: str | None, window: dict | None) -> dict:
     return out
 
 
+def _intake(r: dict) -> dict:
+    """How a row that is not a zero-result search got in: its unknown words."""
+    return {"intake": INTAKE_UNKNOWN_WORD, "missing_words": r["missing_words"]} if r.get("missing_words") else {}
+
+
 def _new_candidate(r: dict, today: str, catalog: list[dict], provenance: dict) -> dict:
     cls, ev = classify(r["term"], catalog)
     return {"term": r["term"], "first_seen": today, "last_seen": today, **provenance,
-            "searches": r["searches"], "zero_result_searches": r["zero_result_searches"],
+            "searches": r["searches"], "zero_result_searches": r["zero_result_searches"], **_intake(r),
             "status": STATUS_NEW, "classification": cls, "evidence": ev,
             "linked_work": [], "outcome": None, "closed_on": None, "history": []}
 
 
 def _refresh(c: dict, r: dict, today: str, catalog: list[dict], provenance: dict) -> None:
     c.update(last_seen=today, searches=r["searches"], zero_result_searches=r["zero_result_searches"],
-             **provenance)
+             **provenance, **_intake(r))
     if c["status"] == STATUS_NEW:
         c["classification"], c["evidence"] = classify(c["term"], catalog)
 
@@ -357,10 +405,12 @@ def update_queue(queue: dict, rows: list[dict], catalog: list[dict], today: str,
     provenance = _provenance(source, window)
     report = {"opened": [], "reopened": [], "refreshed": [], "deferred": [], "suppressed_closed": []}
     slots = max_new_per_day - sum(1 for c in candidates.values() if _opened_on(c) == today)
-    for key, r in _candidate_rows(rows).items():
+    for key, r in _candidate_rows(rows, catalog).items():
+        prov = ({**provenance, "source": UNKNOWN_WORD_SOURCE} if r.get("missing_words") and "source" in provenance
+                else provenance)
         c = candidates.get(key)
         if c is not None and c["status"] != STATUS_CLOSED:
-            _refresh(c, r, today, catalog, provenance)
+            _refresh(c, r, today, catalog, prov)
             report["refreshed"].append(key)
             continue
         if c is not None:
@@ -373,10 +423,10 @@ def update_queue(queue: dict, rows: list[dict], catalog: list[dict], today: str,
             continue
         slots -= 1
         if c is None:
-            candidates[key] = _new_candidate(r, today, catalog, provenance)
+            candidates[key] = _new_candidate(r, today, catalog, prov)
             report["opened"].append(key)
         else:
-            _reopen(c, r, today, catalog, provenance)
+            _reopen(c, r, today, catalog, prov)
             report["reopened"].append(key)
     queue["candidates"] = dict(sorted(candidates.items()))
     return queue, report
