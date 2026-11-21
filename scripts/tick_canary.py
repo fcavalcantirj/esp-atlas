@@ -94,7 +94,7 @@ def decide(*, pr: int, head: str, branch: str, base: str, repo_slug: str, today:
     if dry_run:
         say(f"T6 dry run: would request merge --auto --match-head-commit {head}")
         return "dry_run"
-    gh("pr", "merge", str(pr), "--repo", repo_slug, "--merge", "--auto", "--match-head-commit", head)
+    demand_canary.request_merge(gh, repo_slug, pr, head)
     say(f"T6 #{pr} merge requested at exact head {head} (lands when every required check is green there)")
     return "merge_requested"
 
