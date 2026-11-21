@@ -154,7 +154,7 @@ refused, or cut short by the tick's call budget is never sent twice in a day; it
 ### 1f. Jr's own tick PRs never wait for a person (2026-11-19)
 
 A review-routed tick PR merges by itself when `scripts/receipt_guard.py` vouches for every recipe it adds (the
-tick canary, one a day). One the guard cannot vouch for used to sit open until a person read it (four of them,
+tick canary, four a day since 2026-11-21). One the guard cannot vouch for used to sit open until a person read it (four of them,
 25 to 38 hours old, on Nov 19). `jr/chores.py expire_tick_prs`, every tick: a `jr/tick-*` PR labelled
 `jr-review`, open 72 h (`EXPIRE_HOURS`), is checked by the same guard once more (branch fetched, live
 upstream); when it still cannot vouch for it, Jr closes the PR with the guard's reasons, at most two a tick,
