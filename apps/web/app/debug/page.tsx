@@ -26,6 +26,11 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: `${TITLE} · ${SITE_NAME}`, description: DESCRIPTION, images: [OG_IMAGE.url] },
 };
 
+// The boot-board list is catalog data. Its refresh period must be declared here: with no catalog read during
+// `next build` (lib/api-server.ts isBuildPhase), Next would otherwise bake this page static with an empty list
+// (review BLOCK on #1984). 3600 s is the fetch's own period (catalogCachePolicy for /boards/boot).
+export const revalidate = 3600;
+
 export default async function DebugPage() {
   const bootBoards = await fetchBootBoards();
   return (

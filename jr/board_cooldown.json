@@ -96,7 +96,7 @@
     },
     "adafruit-feather-esp32-s3-reverse-tft": {
       "board": "adafruit-feather-esp32-s3-reverse-tft",
-      "expires": "2026-11-29T05:00:34.103182+00:00",
+      "expires": "2026-11-29T06:00:34.928059+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -104,12 +104,12 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-22T05:00:34.103182+00:00",
+      "timestamp": "2026-11-22T06:00:34.928059+00:00",
       "url": "https://learn.adafruit.com/esp32-s3-reverse-tft-feather"
     },
     "adafruit-feather-esp32-s3-tft": {
       "board": "adafruit-feather-esp32-s3-tft",
-      "expires": "2026-11-29T05:00:34.103182+00:00",
+      "expires": "2026-11-29T06:00:34.928059+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -117,7 +117,7 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-22T05:00:34.103182+00:00",
+      "timestamp": "2026-11-22T06:00:34.928059+00:00",
       "url": null
     },
     "adafruit-funhouse": {
