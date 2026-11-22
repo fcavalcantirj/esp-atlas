@@ -49,6 +49,13 @@ getting_started: https://learn.adafruit.com/adafruit-metro-esp32-s3
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/865/medium800/MS3F_top_angle.jpg
   pinout: https://cdn-learn.adafruit.com/assets/assets/000/123/894/medium800/adafruit_products_MS3_pinouts.jpg?1692825286
+platformio_definitions:
+- id: adafruit_metro_esp32s3
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 600de50860b6ab0edcd1d527faf81531cebfd9b0bc59a292c4987c28cc649f09
+- id: adafruit_metro_esp32s3
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 87705b2eab7ed70ef304a7cace2ecc786322a4b82f46f715576ed601a4f887d5
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5500
@@ -80,6 +87,12 @@ sources:
 - field: images.pinout
   url: https://cdn-learn.adafruit.com/assets/assets/000/123/894/medium800/adafruit_products_MS3_pinouts.jpg?1692825286
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/adafruit_metro_esp32s3.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/adafruit_metro_esp32s3.json
+  verified: '2026-11-22'
 ---
 
 # Adafruit Metro ESP32-S3

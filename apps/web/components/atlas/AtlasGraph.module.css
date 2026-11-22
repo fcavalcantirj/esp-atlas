@@ -28,7 +28,7 @@
 .edges path { stroke: var(--map-ink); stroke-width: .7; opacity: .075; }
 .edges path[data-kind="recipe"] { stroke-dasharray: 2 4; }
 .edges path[data-status="known-good"], .edges path[data-kind="lineage"] { stroke-dasharray: none; }
-.edges path[data-status="reported"], .edges path[data-status="declared"] { stroke-dasharray: 6 4; }
+.edges path[data-status="reported"], .edges path[data-status="declared"], .edges path[data-status="build-target"] { stroke-dasharray: 6 4; }
 .edges path[data-status="broken"] { stroke: var(--danger); stroke-dasharray: 2 5; }
 .edges path[data-active], .edges path[data-hovered] { stroke: var(--map-accent); stroke-width: 1.15; opacity: .62; }
 .edges path[data-status="broken"][data-active], .edges path[data-status="broken"][data-hovered] { stroke: var(--danger); }

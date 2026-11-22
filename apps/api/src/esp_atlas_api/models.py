@@ -506,6 +506,24 @@ class RecipeFlash(BaseModel):
     partition: Optional[str] = None
 
 
+class RecipeClaimRepo(BaseModel):
+    slug: str
+    id: int
+
+
+class RecipeClaim(BaseModel):
+    """A build-target recipe's configuration fact (Jr redesign plan, 2026-11-22): at commit `sha`, PlatformIO
+    `platformio_version` resolves env `env` of `repo` to the board option `board_id`. The page names the commit
+    and env from here; scripts/check_claims.py re-proves the whole block."""
+
+    kind: str
+    repo: RecipeClaimRepo
+    sha: str
+    env: str
+    board_id: str
+    platformio_version: str
+
+
 class RecipeRecord(BaseModel):
     """A recipe record straight from data/recipes/<id>/recipe.md — see
     esp_atlas_core.firmware. First-class like a brand: never in /search, /wizard,
@@ -523,6 +541,8 @@ class RecipeRecord(BaseModel):
     verified_at: Optional[str] = None
     notes: Optional[str] = None
     sources: list[SourceEntry]
+    #: present only on status "build-target"
+    claim: Optional[RecipeClaim] = None
 
 
 class RecipeListResponse(BaseModel):

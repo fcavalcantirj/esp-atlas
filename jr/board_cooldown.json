@@ -449,7 +449,7 @@
     },
     "freenove-fnk0104s": {
       "board": "freenove-fnk0104s",
-      "expires": "2026-11-29T07:00:33.373089+00:00",
+      "expires": "2026-11-29T20:00:33.232813+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -462,8 +462,21 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-22T07:00:33.373089+00:00",
+      "timestamp": "2026-11-22T20:00:33.232813+00:00",
       "url": "https://docs.freenove.com/projects/fnk0104/en/latest/"
+    },
+    "heltec-wifi-kit-32-v3": {
+      "board": "heltec-wifi-kit-32-v3",
+      "expires": "2026-11-29T20:00:33.232813+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-22T20:00:33.232813+00:00",
+      "url": "https://docs.heltec.org/en/node/esp32/wifi_kit_32/index.html"
     },
     "heltec-wireless-paper": {
       "board": "heltec-wireless-paper",

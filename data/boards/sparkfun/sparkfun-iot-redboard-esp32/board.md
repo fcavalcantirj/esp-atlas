@@ -52,6 +52,13 @@ usb_serial: ch340
 getting_started: https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide
 images:
   pinout: https://cdn.sparkfun.com/assets/learn_tutorials/2/2/5/7/BoardOutline.png
+platformio_definitions:
+- id: sparkfun_esp32_iot_redboard
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 5ce94e0feb2baad2e11c1730c1a8fffe1de49f9e4cde6964fc2564ac345d6e27
+- id: sparkfun_esp32_iot_redboard
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 00b9cb389921e68edb824dd0ca93738aeb237379d3e7a180d8b090bf17ae68c0
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-iot-redboard-esp32-development-board.html
@@ -86,6 +93,12 @@ sources:
 - field: images.pinout
   url: https://cdn.sparkfun.com/assets/learn_tutorials/2/2/5/7/BoardOutline.png
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/sparkfun_esp32_iot_redboard.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/sparkfun_esp32_iot_redboard.json
+  verified: '2026-11-22'
 ---
 
 # SparkFun IoT RedBoard - ESP32 Development Board

@@ -44,6 +44,13 @@ notes:
 getting_started: https://learn.sparkfun.com/tutorials/esp32-s2-thing-plus-hookup-guide
 images:
   pinout: https://cdn.sparkfun.com/assets/learn_tutorials/1/6/6/0/ESP32-S2_thing_plus_graphical_datasheet.png
+platformio_definitions:
+- id: sparkfun_esp32s2_thing_plus
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 2a2ebefe666f3cdce147a85c71bae5d73d9eea8f7731bb593f55210ffef2b59c
+- id: sparkfun_esp32s2_thing_plus
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 6d442b2f09626bc414a0d63b17d8c903779630e3dbd7bb39bae4f41f1f428983
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-thing-plus-esp32-s2-wroom.html
@@ -72,6 +79,12 @@ sources:
 - field: images.pinout
   url: https://cdn.sparkfun.com/assets/learn_tutorials/1/6/6/0/ESP32-S2_thing_plus_graphical_datasheet.png
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/sparkfun_esp32s2_thing_plus.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/sparkfun_esp32s2_thing_plus.json
+  verified: '2026-11-22'
 ---
 
 # SparkFun Thing Plus - ESP32-S2 WROOM

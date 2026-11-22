@@ -15,7 +15,7 @@ export interface AtlasGraphProps {
 }
 
 const kindName = { soc: "Silicon", module: "Module", board: "Board", firmware: "Firmware" };
-const statusName: Record<string, string> = { "known-good": "Known good", reported: "Reported", declared: "Declared", unverified: "Unverified", broken: "Broken" };
+const statusName: Record<string, string> = { "known-good": "Known good", reported: "Reported", declared: "Declared", unverified: "Unverified", "build-target": "Build target", broken: "Broken" };
 function Glyph({ kind }: { kind: "left" | "right" | "plus" | "minus" | "fit" | "expand" | "close" }) {
   const paths = {
     left: "M3 5v6h6M3 11a9 9 0 1 1 3 8", right: "M21 5v6h-6M21 11a9 9 0 1 0-3 8",

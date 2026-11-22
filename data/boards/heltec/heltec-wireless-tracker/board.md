@@ -48,6 +48,10 @@ notes:
 getting_started: https://docs.heltec.org/en/node/esp32/wireless_tracker/index.html
 images:
   pinout: https://resource.heltec.cn/download/Wireless_Tracker/Wireless%20Tracker%20Pin%20Map.png
+platformio_definitions:
+- id: heltec_wireless_tracker
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: bd8260355e31af366fd832e58772a903a81b1f40b23d88a0364f2c349d51b55b
 sources:
 - field: '*'
   url: https://heltec.org/project/wireless-tracker/
@@ -73,6 +77,9 @@ sources:
 - field: images.pinout
   url: https://resource.heltec.cn/download/Wireless_Tracker/Wireless%20Tracker%20Pin%20Map.png
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/heltec_wireless_tracker.json
+  verified: '2026-11-22'
 ---
 
 # Wireless Tracker

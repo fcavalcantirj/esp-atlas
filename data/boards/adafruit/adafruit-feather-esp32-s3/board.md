@@ -47,6 +47,13 @@ getting_started: https://learn.adafruit.com/adafruit-esp32-s3-feather
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/568/medium800/FESPS3_top_angle.jpg
   pinout: https://cdn-learn.adafruit.com/assets/assets/000/139/614/medium800/adafruit_products_Artboard_1_4x.png?1757533230
+platformio_definitions:
+- id: adafruit_feather_esp32s3
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 942805fc9d9d9c6be909d7baa0448098b4c29531868c4d9f11162b5557edcb06
+- id: adafruit_feather_esp32s3
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 3b641508d6f5574aa8c08a6d6850c12447b156723cf6651c2bbc6bd5d8d3e97a
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5477
@@ -75,6 +82,12 @@ sources:
 - field: images.pinout
   url: https://cdn-learn.adafruit.com/assets/assets/000/139/614/medium800/adafruit_products_Artboard_1_4x.png?1757533230
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/adafruit_feather_esp32s3.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/adafruit_feather_esp32s3.json
+  verified: '2026-11-22'
 ---
 
 # Adafruit ESP32-S3 Feather (4MB Flash 2MB PSRAM)

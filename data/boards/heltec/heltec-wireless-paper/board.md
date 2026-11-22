@@ -49,6 +49,10 @@ notes:
   boards and cost nothing further'
 - usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag
 getting_started: https://docs.heltec.org/en/node/esp32/wireless_paper/index.html
+platformio_definitions:
+- id: heltec_wireless_paper
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: efe894ecf60b7f26fa6a0fc0482a6ff971b346b9118e681389b5d93ec63a516b
 sources:
 - field: '*'
   url: https://heltec.org/project/wireless-paper/
@@ -71,6 +75,9 @@ sources:
 - field: getting_started
   url: https://docs.heltec.org/en/node/esp32/wireless_paper/index.html
   verified: '2026-09-12'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/heltec_wireless_paper.json
+  verified: '2026-11-22'
 ---
 
 # Wireless Paper
