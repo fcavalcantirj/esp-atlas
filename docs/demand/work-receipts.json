@@ -2282,7 +2282,7 @@
    "branch": "jr/research-pam-d84f4d6b45b0b9386a8c999b",
    "term": "SparkFun Thing Plus - ESP32-S3",
    "phase": "author",
-   "state": "reserved",
+   "state": "delivered",
    "started_on": "2026-11-20",
    "source": "pam_feed",
    "linked_work": [
@@ -2500,7 +2500,131 @@
     "reserved_by": "jr/demand_run.py"
    },
    "last_attempt_on": "2026-11-20",
-   "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1935"
+   "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1935",
+   "resolution": {
+    "status": "delivered",
+    "reason": "catalog_part postcondition observed",
+    "closed_on": "2026-11-22",
+    "evidence": {
+     "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1935",
+     "merge_sha": "27889284196b8dea9477cda01fef40cc41ad3635",
+     "merged_at": "2026-11-21T23:14:33Z",
+     "verification_kind": "catalog_part",
+     "query": "SparkFun Thing Plus - ESP32-S3",
+     "checked_at": "2026-11-22T11:15:32.492374+00:00",
+     "expected_ids": [
+      "sparkfun-thing-plus-esp32-s3"
+     ],
+     "forbidden_ids": [
+      "sparkfun-thing-plus-esp32-c6",
+      "sparkfun-thing-plus-esp32-c5"
+     ],
+     "source": "pam_feed",
+     "feed": {
+      "checked_at": "2026-11-20T11:15:31.091318Z",
+      "feeds": {
+       "products": {
+        "url": "https://pamfinds.com/api/products.json",
+        "fetched_at": "2026-11-06T04:22:34.124739Z",
+        "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+        "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+        "bytes": 110684
+       },
+       "specs": {
+        "url": "https://pamfinds.com/api/specs.json",
+        "fetched_at": "2026-11-06T04:22:34.124739Z",
+        "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+        "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+        "bytes": 349157
+       }
+      },
+      "lead": {
+       "source_id": "thing-plus-esp32-s3",
+       "name_hint": "SparkFun Thing Plus - ESP32-S3",
+       "chip_hint": "ESP32-S3",
+       "page": "https://pamfinds.com/esp32/thing-plus-esp32-s3/",
+       "source_pointers": {
+        "cpu_arch": [
+         "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+        ],
+        "cpu_cores": [
+         "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+        ],
+        "cpu_freq_mhz": [
+         "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+        ],
+        "flash_mb": [
+         "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+        ],
+        "sram_kb": [
+         "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+        ],
+        "psram_mb": [
+         "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+        ],
+        "wifi": [
+         "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+        ],
+        "ble": [
+         "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+        ],
+        "gpio_count": [
+         "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+        ],
+        "adc_channels": [
+         "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+        ],
+        "spi": [
+         "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+        ],
+        "i2c": [
+         "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+        ],
+        "uart": [
+         "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+        ],
+        "usb_type": [
+         "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+        ],
+        "qwiic": [
+         "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+        ],
+        "sd_card": [
+         "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+        ],
+        "input_voltage": [
+         "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+        ],
+        "deep_sleep_ua": [
+         "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+        ],
+        "battery_charging": [
+         "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+        ],
+        "fuel_gauge": [
+         "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+        ],
+        "dimensions_mm": [
+         "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+        ],
+        "form_factor": [
+         "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+        ]
+       },
+       "fingerprint": "292953c4751a5960ddd7458d3df2c5c09caa1ab0a37d51ddb3fe6d383092a8b6",
+       "matches": [],
+       "status": "potential_identity_gap"
+      }
+     },
+     "http": 200,
+     "deployment": "a84f4630bb09cb5747bbd4bae488d2e86bee6b17",
+     "ids": [
+      "sparkfun-thing-plus-esp32-s3"
+     ],
+     "missing": [],
+     "forbidden_hits": []
+    }
+   }
   },
   {
    "key": "c404a55544c49f7f",

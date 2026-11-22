@@ -1735,43 +1735,22 @@
    },
    "closed_on": "2026-11-15"
   },
-  "term512": {
-   "term": "term512",
-   "status": "closed",
-   "source": "gsc_query",
-   "first_seen": "2026-11-08",
-   "last_seen": "2026-11-08",
-   "window": {
-    "start": "2026-10-13",
-    "end": "2026-11-10"
-   },
-   "metrics": {
-    "impressions": 21,
-    "position": 7.2
-   },
-   "linked_work": [],
-   "history": [
-    {
-     "event": "closed",
-     "date": "2026-11-10",
-     "resolution": "abandoned",
-     "work": "a12a2a3be93aa793",
-     "reason": "term512 is TERM512, a CardputerAdv expansion kit (3D-printed CapTFT enclosure + 2.8in ILI9341 display + AMS1117 module, no MCU) for the already-catalogued area512 firmware, not a board: https://github.com/Prokuon/term512"
-    }
-   ],
-   "outcome": {
-    "status": "abandoned",
-    "reason": "term512 is TERM512, a CardputerAdv expansion kit (3D-printed CapTFT enclosure + 2.8in ILI9341 display + AMS1117 module, no MCU) for the already-catalogued area512 firmware, not a board: https://github.com/Prokuon/term512"
-   },
-   "closed_on": "2026-11-10",
-   "snapshot": "docs/demand/2026-11-10.json"
-  },
   "pam-d84f4d6b45b0b9386a8c999b": {
    "term": "SparkFun Thing Plus - ESP32-S3",
    "source": "pam_feed",
-   "status": "linked",
+   "status": "closed",
    "first_seen": "2026-11-20",
-   "history": [],
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-22",
+     "resolution": "delivered",
+     "work": "pam-d84f4d6b45b0b9386a8c999b",
+     "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1935",
+     "merge_sha": "27889284196b8dea9477cda01fef40cc41ad3635",
+     "deployment": "a84f4630bb09cb5747bbd4bae488d2e86bee6b17"
+    }
+   ],
    "linked_work": [
     "https://github.com/fcavalcantirj/esp-atlas/pull/1935"
    ],
@@ -1892,7 +1871,158 @@
     "notes": "SparkFun's product page (SKU WRL-24408) and its hookup guide describe one board: ESP32-S3-MINI-1-N4R2 (4MB flash, 2MB PSRAM) on the Thing Plus (Feather) footprint, USB-C wired straight to the ESP32-S3's native USB (schematic: D+/D- to IO20/IO19, no bridge chip), MCP73831 charger + MAX17048 fuel gauge, Qwiic, microSD on SDIO, WS2812 on IO46, 21 header GPIOs. Kept distinct: the ESP32 WROOM and ESP32-S2 WROOM Thing Plus boards (already catalogued as sparkfun-thing-plus-esp32-wroom and sparkfun-thing-plus-esp32-s2-wroom, unchanged), and the ESP32-C6 / ESP32-C5 Thing Plus boards SparkFun lists in the same family (different SoCs; no record for them may appear). The product page's 2.55in length and 'WiFi 6' line contradict the hookup guide and official dimension drawing (2.30in x 0.90in) and the ESP32-S3 silicon; they are not used.",
     "identity_verified": true,
     "term_key": "sparkfun thing plus esp32 s3"
-   }
+   },
+   "outcome": {
+    "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1935",
+    "merge_sha": "27889284196b8dea9477cda01fef40cc41ad3635",
+    "merged_at": "2026-11-21T23:14:33Z",
+    "verification_kind": "catalog_part",
+    "query": "SparkFun Thing Plus - ESP32-S3",
+    "checked_at": "2026-11-22T11:15:32.492374+00:00",
+    "expected_ids": [
+     "sparkfun-thing-plus-esp32-s3"
+    ],
+    "forbidden_ids": [
+     "sparkfun-thing-plus-esp32-c6",
+     "sparkfun-thing-plus-esp32-c5"
+    ],
+    "source": "pam_feed",
+    "feed": {
+     "checked_at": "2026-11-20T11:15:31.091318Z",
+     "feeds": {
+      "products": {
+       "url": "https://pamfinds.com/api/products.json",
+       "fetched_at": "2026-11-06T04:22:34.124739Z",
+       "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+       "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+       "bytes": 110684
+      },
+      "specs": {
+       "url": "https://pamfinds.com/api/specs.json",
+       "fetched_at": "2026-11-06T04:22:34.124739Z",
+       "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+       "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+       "bytes": 349157
+      }
+     },
+     "lead": {
+      "source_id": "thing-plus-esp32-s3",
+      "name_hint": "SparkFun Thing Plus - ESP32-S3",
+      "chip_hint": "ESP32-S3",
+      "page": "https://pamfinds.com/esp32/thing-plus-esp32-s3/",
+      "source_pointers": {
+       "cpu_arch": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "cpu_cores": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "cpu_freq_mhz": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "flash_mb": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "sram_kb": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "psram_mb": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "wifi": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "ble": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "gpio_count": [
+        "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+       ],
+       "adc_channels": [
+        "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+       ],
+       "spi": [
+        "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+       ],
+       "i2c": [
+        "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+       ],
+       "uart": [
+        "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+       ],
+       "usb_type": [
+        "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+       ],
+       "qwiic": [
+        "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+       ],
+       "sd_card": [
+        "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+       ],
+       "input_voltage": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "deep_sleep_ua": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "battery_charging": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "fuel_gauge": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "dimensions_mm": [
+        "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+       ],
+       "form_factor": [
+        "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+       ]
+      },
+      "fingerprint": "292953c4751a5960ddd7458d3df2c5c09caa1ab0a37d51ddb3fe6d383092a8b6",
+      "matches": [],
+      "status": "potential_identity_gap"
+     }
+    },
+    "http": 200,
+    "deployment": "a84f4630bb09cb5747bbd4bae488d2e86bee6b17",
+    "ids": [
+     "sparkfun-thing-plus-esp32-s3"
+    ],
+    "missing": [],
+    "forbidden_hits": []
+   },
+   "closed_on": "2026-11-22"
+  },
+  "term512": {
+   "term": "term512",
+   "status": "closed",
+   "source": "gsc_query",
+   "first_seen": "2026-11-08",
+   "last_seen": "2026-11-08",
+   "window": {
+    "start": "2026-10-13",
+    "end": "2026-11-10"
+   },
+   "metrics": {
+    "impressions": 21,
+    "position": 7.2
+   },
+   "linked_work": [],
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-10",
+     "resolution": "abandoned",
+     "work": "a12a2a3be93aa793",
+     "reason": "term512 is TERM512, a CardputerAdv expansion kit (3D-printed CapTFT enclosure + 2.8in ILI9341 display + AMS1117 module, no MCU) for the already-catalogued area512 firmware, not a board: https://github.com/Prokuon/term512"
+    }
+   ],
+   "outcome": {
+    "status": "abandoned",
+    "reason": "term512 is TERM512, a CardputerAdv expansion kit (3D-printed CapTFT enclosure + 2.8in ILI9341 display + AMS1117 module, no MCU) for the already-catalogued area512 firmware, not a board: https://github.com/Prokuon/term512"
+   },
+   "closed_on": "2026-11-10",
+   "snapshot": "docs/demand/2026-11-10.json"
   }
  }
 }
