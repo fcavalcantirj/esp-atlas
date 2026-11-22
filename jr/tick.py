@@ -744,6 +744,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         # Before any close: the decisions every open tick PR committed (memory.carry_decisions, step 3).
         open_pr_ledgers, carry_warnings = _open_pr_ledgers(gh_c, slug, tick_prs)
         r.warnings += carry_warnings
+        open_pr_yield, yield_warnings = yield_ledger.open_pr_rows(gh_c, slug, tick_prs)   # a producing tick's row
+        r.warnings += yield_warnings                                                       # waits in its review PR
         superseded, stuck = _triage_tick_prs(gh_c, tick_prs, now, stale_pr_hours)
         for pr in superseded:
             if dry_run:
@@ -900,9 +902,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             steer_cfg, steer_warnings = steering.load(root)
             r.warnings += steer_warnings
             ycfg = steer_cfg["yield"]
+            carried_yield = []
             try:
-                r.yields = yield_ledger.lane_yield(yield_ledger.read_rows(root / yield_ledger.RELPATH), now,
-                                                   ycfg["window_ticks"])
+                main_rows = yield_ledger.read_rows(root / yield_ledger.RELPATH)
+                carried_yield = yield_ledger.rows_missing(main_rows, open_pr_yield)
+                r.yields = yield_ledger.lane_yield(main_rows + carried_yield, now, ycfg["window_ticks"])
             except Exception as e:  # noqa: BLE001 — a report/steer step must never abort the tick
                 r.yields = None
                 r.warnings.append(f"yield ledger unreadable: {type(e).__name__}: {e}")
@@ -967,6 +971,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             try:
                 rows = yield_ledger.rows_for_tick(r.stages, r.split, now, calls=budget.calls,
                                                   seconds=budget.elapsed(), units_topics=TOPICS_PER_TICK)
+                rows += yield_ledger.rows_missing(rows, carried_yield)     # the open PRs' rows ride this commit
                 if rows and not dry_run:
                     yield_ledger.append_rows(root / yield_ledger.RELPATH, rows)
                     if yield_ledger.RELPATH not in r.extra_paths:

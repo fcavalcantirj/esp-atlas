@@ -2281,11 +2281,13 @@
    "key": "pam-d84f4d6b45b0b9386a8c999b",
    "branch": "jr/research-pam-d84f4d6b45b0b9386a8c999b",
    "term": "SparkFun Thing Plus - ESP32-S3",
-   "phase": "research",
+   "phase": "author",
    "state": "reserved",
    "started_on": "2026-11-20",
    "source": "pam_feed",
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1935"
+   ],
    "feed": {
     "checked_at": "2026-11-20T11:15:31.091318Z",
     "feeds": {
@@ -2496,6 +2498,46 @@
      "prs": []
     },
     "reserved_by": "jr/demand_run.py"
+   },
+   "last_attempt_on": "2026-11-20",
+   "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1935"
+  },
+  {
+   "key": "c404a55544c49f7f",
+   "branch": "jr/research-c404a55544c49f7f",
+   "term": "esp32 tenstar",
+   "phase": "research",
+   "state": "abandoned",
+   "started_on": "2026-11-21",
+   "source": "ga4 search_submit (unknown word)",
+   "linked_work": [],
+   "window": {
+    "start": "2026-10-23",
+    "end": "2026-11-19"
+   },
+   "metrics": {
+    "searches": 3,
+    "zero_result_searches": 0
+   },
+   "provenance": {
+    "snapshot": "docs/demand/research-queue.json",
+    "opened_on": "2026-11-21",
+    "status": "new",
+    "classification": "missing_content",
+    "remote": {
+     "branch": false,
+     "prs": []
+    },
+    "reserved_by": "jr/demand_run.py"
+   },
+   "last_attempt_on": "2026-11-21",
+   "resolution": {
+    "status": "abandoned",
+    "reason": "Not catalog content: 'tenstar' is TENSTAR ROBOT, an AliExpress store brand that resells many generic boards (ESP32-S3 SuperMini, ESP32-S3-Zero, ESP32-C3/H2 SuperMini; e.g. https://devices.esphome.io/devices/tenstar-robot-esp32-s3-supermini/), so 'esp32 tenstar' names no one specific board, and the brand has no manufacturer site (tenstar-robot.com, tenstarrobot.com, tenstar.com do not resolve, checked 2026-11-21)",
+    "closed_on": "2026-11-21",
+    "evidence": {
+     "settled_by": "jr/work_record.py"
+    }
    }
   }
  ]

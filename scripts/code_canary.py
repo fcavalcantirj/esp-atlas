@@ -164,7 +164,7 @@ def decide(*, pr: int, head: str, verdict_json: str | None, repo_slug: str, now:
         return "dry_run"
     gh("pr", "edit", str(pr), "--repo", repo_slug, "--add-label", PASS_LABEL)
     try:
-        gh("pr", "merge", str(pr), "--repo", repo_slug, "--merge", "--auto", "--match-head-commit", head)
+        demand_canary.request_merge(gh, repo_slug, pr, head)
     except Exception:
         # An error does not say the merge did not happen (a 502 or a timeout after GitHub applied it): ask.
         # Only a PR that is neither merged nor armed loses its label, since the label alone would read as a

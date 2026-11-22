@@ -140,6 +140,19 @@ result's error and cost. The Console's "Spend limits" page is a ceiling, not a b
 caps what this lane may spend in a month.
 Stop it: `gh variable set JR_CODE_AUTOMERGE --body 0`. Stop the tick canary: `gh variable set JR_TICK_AUTOMERGE --body 0`.
 
+## Deploy only when the site changed (2026-11-21)
+
+`apps/web/vercel.json` sets `ignoreCommand: bash scripts/ignore-build.sh` (Vercel's Ignored Build Step: exit 0
+skips the deployment, exit 1 builds). The script skips a deployment only when nothing the site is built from
+changed since the last successful deployment of the branch (`VERCEL_GIT_PREVIOUS_SHA`): `apps/web/`,
+`data/`, `schema/`, `apps/core/src/`, `apps/api/src/` and the root `llms.txt`. Every doubt builds.
+
+Why: each new deployment starts with an empty page cache (Vercel's ISR documentation), and Jr's hourly
+bookkeeping merges were deploying production about 40 times a day. Uncached pages answer in 2-4 s, and Google
+held back crawling new pages ("expected to overload the site"): 3 of the 38 firmware pages added in November
+were indexed. A new path the site starts reading at build time must be added to the script's list (its tests
+in `apps/web/lib/ignore-build.test.ts`).
+
 ## Hourly GitHub counts
 
 Stars and forks are refreshed by the `hourly GitHub counts` workflow

@@ -17,6 +17,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+import pending_prs
+
 RELPATH = "docs/telemetry/yield.jsonl"
 LANES = {"backfill": ("backfill",), "firmware": ("admit", "boardmap"), "topics": ("admit_topics",)}
 SPLIT_LANES = ("backfill", "firmware")        # the two the allocator splits; topics is fixed
@@ -53,7 +55,7 @@ def read_rows(path: Path) -> list[dict]:
     return parse_rows(p.read_text(encoding="utf-8")) if p.is_file() else []
 
 
-def parse_rows(text: str) -> list[dict]:
+def parse_rows(text: str | None) -> list[dict]:
     """Every well-formed row of a yield.jsonl text, in order; a corrupt line is skipped."""
     rows = []
     for line in (text or "").splitlines():
@@ -81,6 +83,40 @@ def append_rows(path: Path, rows: list[dict]) -> list[dict]:
     tmp.write_text(_render(kept), encoding="utf-8")
     tmp.replace(p)
     return kept
+
+
+def rows_missing(have: list[dict], other: list[dict]) -> list[dict]:
+    """The rows of `other` whose (tick, stage) `have` lacks, first copy wins: what an open tick PR wrote
+    that main never received (a producing tick's PR waits for review, so its row is not on main)."""
+    keys, out = {(r["tick"], r["stage"]) for r in have}, []
+    for r in other:
+        if (r["tick"], r["stage"]) not in keys:
+            keys.add((r["tick"], r["stage"]))
+            out.append(r)
+    return out
+
+
+def open_pr_rows(gh, slug: str, prs: list) -> tuple[list[dict], list[str]]:
+    """([rows], warnings): the yield rows each eligible open tick PR committed, read raw at its pinned head
+    (headRefOid), one call per PR and only for a PR that changes this ledger. A producing tick opens a
+    jr-review PR and its row waits there for the owner, so main's ledger alone shows only the silent ticks
+    (2026-11-19, stall:topics: 0/48u while #1828, #1875 and #1895 had authored 4 records). Best-effort:
+    an unreadable copy is a warning, never an abort."""
+    rows, warnings = [], []
+    for pr in sorted((pr for pr in prs if pending_prs.eligible(pr)), key=lambda pr: pr.get("number") or 0):
+        n, oid = pr.get("number"), pr.get("headRefOid")
+        if RELPATH not in [f.get("path") for f in (pr.get("files") or []) if isinstance(f, dict)]:
+            continue
+        try:
+            if not slug or not isinstance(oid, str) or not oid:
+                raise ValueError("no pinned head")
+            p = gh("api", "-H", pending_prs.RAW_MEDIA, f"repos/{slug}/contents/{RELPATH}?ref={oid}")
+            if getattr(p, "returncode", 1) != 0:
+                raise ValueError("gh api failed")
+            rows += rows_missing(rows, parse_rows(getattr(p, "stdout", "")))
+        except Exception as e:  # noqa: BLE001 — one PR's copy must never abort the tick
+            warnings.append(f"open-PR yield rows from #{n} unreadable: {type(e).__name__}: {e}")
+    return rows, warnings
 
 
 def merge_text(main: str, pr: str) -> str:
