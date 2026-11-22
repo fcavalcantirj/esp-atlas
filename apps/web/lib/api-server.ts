@@ -4,8 +4,17 @@
 // it, but the Next server needs an absolute URL. Resolution order:
 //   1. API_INTERNAL_URL            explicit override (non-standard deployments)
 //   2. NEXT_PUBLIC_API_URL         only if absolute (local dev: http://localhost:8000)
-//   3. Vercel system env           https://<production domain or deployment URL>/api
+//   3. Vercel system env           https://<this deployment's own URL>/api, with the project's automation
+//                                  bypass (Vercel injects VERCEL_AUTOMATION_BYPASS_SECRET into every
+//                                  deployment); production falls back to its alias only when that secret is
+//                                  missing, because the own *.vercel.app URL is protected
 //   4. http://localhost:8000       bare local dev
+//
+// Why the OWN deployment (2026-11-22, Jr redesign plan step 1): Vercel's Data Cache survives deployments and
+// is keyed by URL. Reading through the production alias let a new deployment render pages from the previous
+// deployment's API; the own URL makes every cache key deployment-specific. No catalog read happens during
+// `next build` (the deployment's own API does not exist yet), and no catalog fetch follows a redirect, so the
+// bypass header can never reach another host.
 //
 // Every call is bounded (3 s) and never throws: callers get a status they can
 // branch on, so a cold/unreachable Python function degrades to the client-side
@@ -49,21 +58,34 @@ export function serverApiBase(): string {
   if (process.env.API_INTERNAL_URL) return stripSlash(process.env.API_INTERNAL_URL);
   const pub = process.env.NEXT_PUBLIC_API_URL;
   if (pub && /^https?:\/\//.test(pub)) return stripSlash(pub);
-  const host =
-    process.env.VERCEL_ENV === "production" ? process.env.VERCEL_PROJECT_PRODUCTION_URL : process.env.VERCEL_URL;
-  if (host) return `https://${host}/api`;
+  const own = process.env.VERCEL_URL;
+  if (process.env.VERCEL_ENV === "production") {
+    if (own && process.env.VERCEL_AUTOMATION_BYPASS_SECRET) return `https://${own}/api`;
+    const alias = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+    if (alias) return `https://${alias}/api`;
+  }
+  if (own) return `https://${own}/api`;
   return "http://localhost:8000";
 }
 
-/** Preview deployments are protected from their own server-side HTTP fetches.
- * Vercel injects this system secret only when automation bypass is configured.
- * Never forward it to API_INTERNAL_URL, NEXT_PUBLIC_API_URL, or another host. */
+/** A deployment's own URL is protected (the project protects everything but its custom domain), so its
+ * server-side reads of its own API carry the automation bypass Vercel injects into every deployment. The
+ * header goes to exactly that origin — https://$VERCEL_URL/api — and nowhere else: never to the alias,
+ * API_INTERNAL_URL, NEXT_PUBLIC_API_URL or another host. */
 export function serverApiHeaders(base = serverApiBase()): HeadersInit | undefined {
   const deployment = process.env.VERCEL_URL;
   const secret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
-  if (process.env.VERCEL_ENV !== "preview" || !deployment || !secret) return undefined;
+  const env = process.env.VERCEL_ENV;
+  if ((env !== "preview" && env !== "production") || !deployment || !secret) return undefined;
   if (base !== `https://${deployment}/api`) return undefined;
   return { "x-vercel-protection-bypass": secret };
+}
+
+/** `next build` renders whatever it can, but the deployment's own API is not running yet: a catalog read
+ * then would reach an old deployment or nothing. Every catalog helper answers "unavailable" without touching
+ * the network during the build; pages fill in at runtime from their own deployment. */
+export function isBuildPhase(): boolean {
+  return process.env.NEXT_PHASE === "phase-production-build";
 }
 
 export type ServerFetchResult<T> =
@@ -76,6 +98,7 @@ async function attempt<T>(path: string, timeoutMs: number): Promise<ServerFetchR
   const res = await fetch(`${base}${path}`, {
     next: catalogCachePolicy(path),
     headers: serverApiHeaders(base),
+    redirect: "error",          // a redirect would carry the bypass header to wherever it points
     signal: AbortSignal.timeout(timeoutMs),
   });
   if (res.status === 404) return { status: "not_found" };
@@ -84,6 +107,7 @@ async function attempt<T>(path: string, timeoutMs: number): Promise<ServerFetchR
 }
 
 async function serverFetch<T>(path: string): Promise<ServerFetchResult<T>> {
+  if (isBuildPhase()) return { status: "error", message: "build phase: the catalog is read at runtime" };
   try {
     return await attempt<T>(path, TIMEOUT_MS);
   } catch {

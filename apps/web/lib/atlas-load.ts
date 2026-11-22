@@ -1,5 +1,5 @@
 import type { Firmware, PartRecord, Recipe, SourceEntry } from "./api.ts";
-import { catalogCachePolicy, serverApiHeaders } from "./api-server.ts";
+import { catalogCachePolicy, isBuildPhase, serverApiHeaders } from "./api-server.ts";
 import type { AtlasCatalog } from "./atlas-model.ts";
 
 export type AtlasCatalogResult =
@@ -106,6 +106,7 @@ async function collection<T extends { id: string }>(
       response = await fetcher(url, {
         next: catalogCachePolicy(path),
         headers: serverApiHeaders(baseUrl),
+        redirect: "error",      // never let a redirect carry the bypass header to another host
         signal: AbortSignal.timeout(timeout),
       });
       break;
@@ -157,5 +158,6 @@ async function loadAtlasCatalogOnce(baseUrl: string, fetcher: typeof fetch, fres
 }
 
 export function loadAtlasCatalog(baseUrl: string, fetcher: typeof fetch = fetch): Promise<AtlasCatalogResult> {
+  if (isBuildPhase()) return Promise.resolve(error("/parts", "Build phase: the catalog is read at runtime."));
   return loadAtlasCatalogOnce(baseUrl, fetcher, false);
 }
