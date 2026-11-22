@@ -12,6 +12,42 @@
       "reason": "doc-unreachable",
       "timestamp": "2026-11-16T04:00:31.943499+00:00"
     },
+    "adafruit-feather-esp32-s2-reverse-tft": {
+      "board": "adafruit-feather-esp32-s2-reverse-tft",
+      "expires": "2026-11-29T03:00:33.646310+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-22T03:00:33.646310+00:00",
+      "url": null
+    },
+    "adafruit-feather-esp32-s2-tft": {
+      "board": "adafruit-feather-esp32-s2-tft",
+      "expires": "2026-11-29T03:00:33.646310+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-22T03:00:33.646310+00:00",
+      "url": null
+    },
     "adafruit-feather-esp32-s3": {
       "board": "adafruit-feather-esp32-s3",
       "expires": "2026-11-23T05:00:31.772256+00:00",
