@@ -150,3 +150,13 @@ def test_a_page_features_use_is_counted_only_on_its_own_pages():
     assert '"pagePath", "inListFilter": {"values": ["/atlas"]}' in atlas
     flash = next(f for f in used if "flash_open" in f)
     assert "pagePath" not in flash
+
+
+def test_feature_names_are_escaped_for_telegram_legacy_markdown():
+    """Review BLOCK on #1842: part_pages / firmware_index / home_ask have underscores, which legacy Markdown
+    (parse_mode "Markdown") reads as italics; the digest must escape them."""
+    import feature_usage as fu
+    rep = fu.Report(end="2026-11-22", rows=[fu.FeatureRow("part_pages", None, [8, 6, 0, 0], [20, 10, 0, 0])],
+                    unavailable=["home_ask"])
+    out = "\n".join(fu.lines(rep))
+    assert "part\\_pages" in out and "home\\_ask" in out and "part_pages" not in out.replace("part\\_pages", "")

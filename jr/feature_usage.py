@@ -161,6 +161,13 @@ def _arrow(cur: int, prev: int) -> str:
     return "↑" if cur > prev else "↓" if cur < prev else "→"
 
 
+def _md(text: str) -> str:
+    """Escape what Telegram's legacy Markdown (notify.send_telegram, parse_mode "Markdown") would read as
+    markup in a plain name: an underscore opens italics, so part_pages / firmware_index / home_ask would break
+    the whole message (review BLOCK on #1842)."""
+    return "".join("\\" + c if c in "_*`[" else c for c in text)
+
+
 def lines(rep: Report) -> list[str]:
     """The digest section: one line per feature, newest window first, vs the window before."""
     out = ["*Feature usage* — users who used each feature, last 28d (vs prior 28d)"
@@ -174,9 +181,9 @@ def lines(rep: Report) -> list[str]:
             reach = f" of {r.reached[0]} who reached it{rate}"
         per = f" · {round(r.events[0] / u0, 1)} actions each" if u0 else ""
         flag = " · low use 4 windows" if r.low_use else ""
-        out.append(f"  • {r.name} — {u0}{reach}{per} · {_arrow(u0, u1)} vs {u1}{flag}")
+        out.append(f"  • {_md(r.name)} — {u0}{reach}{per} · {_arrow(u0, u1)} vs {u1}{flag}")
     for name in rep.unavailable:
-        out.append(f"  • {name} — unavailable (GA4 call failed)")
+        out.append(f"  • {_md(name)} — unavailable (GA4 call failed)")
     return out
 
 
