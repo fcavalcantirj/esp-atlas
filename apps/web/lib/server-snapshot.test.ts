@@ -125,3 +125,25 @@ test("no recipe-derived route pre-renders catalog ids at build", () => {
     assert.match(m[1], /return \[\];/, `${p} must pre-render nothing`);
   }
 });
+
+test("every route that reads the catalog declares how it refreshes, so the build guard cannot bake it static", () => {
+  // Review BLOCK on #1984 (2026-11-22): /debug's only refresh setting came from its build-time fetch. With no
+  // catalog read during `next build`, Next would have baked it fully static with an empty board list. A file
+  // under app/ (outside app/api/, whose handlers are dynamic) that imports a catalog helper must export
+  // `revalidate`/`dynamic`, call `connection()`, or sit under a dynamic [segment] (rendered on demand).
+  const offenders: string[] = [];
+  const walk = (dir: string) => {
+    for (const name of readdirSync(dir)) {
+      const p = join(dir, name);
+      if (statSync(p).isDirectory()) { if (p !== join("app", "api")) walk(p); continue; }
+      if (!/\.(tsx?)$/.test(name) || name.includes(".test.")) continue;
+      const text = readFileSync(p, "utf8");
+      if (!/from "@\/lib\/(api-server|atlas-server)"/.test(text)) continue;
+      const declares = /export const (revalidate|dynamic)\b/.test(text) || /\bawait connection\(\)/.test(text)
+        || /export (async )?function generateStaticParams/.test(text);
+      if (!declares && !/\[[^\]]+\]/.test(p)) offenders.push(p);
+    }
+  };
+  walk("app");
+  assert.deepEqual(offenders, []);
+});
