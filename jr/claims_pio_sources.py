@@ -72,6 +72,16 @@ def fetch_project(http, slug: str, dest: Path) -> dict:
     sha = (http.json(f"https://api.github.com/repos/{slug}/commits/{branch}") or {}).get("sha")
     if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{40}", sha):
         raise Unreadable(f"{slug}: could not pin {branch} to a commit")
+    return fetch_project_at(http, slug, sha, dest, meta=meta)
+
+
+def fetch_project_at(http, slug: str, sha: str, dest: Path, meta: dict | None = None) -> dict:
+    """fetch_project at a GIVEN commit (the trusted checker re-reads a claim's own commit, never the branch tip)."""
+    if not re.fullmatch(r"[0-9a-f]{40}", sha or ""):
+        raise Unreadable(f"{slug}: {sha!r} is not a full commit sha")
+    meta = meta if meta is not None else http.json(f"https://api.github.com/repos/{slug}")
+    if not isinstance(meta.get("id"), int):
+        raise Unreadable(f"{slug}: no numeric id")
     tree = http.json(f"https://api.github.com/repos/{slug}/git/trees/{sha}?recursive=1")
     if tree.get("truncated"):
         raise Unreadable(f"{slug}@{sha[:7]}: tree truncated, the config closure cannot be proven complete")
@@ -163,3 +173,25 @@ def board_for(board_id: str, manifest_digest: str, catalog: dict) -> str | None:
     hits = [b for b, defs in catalog.items()
             if any(d.get("id") == board_id and d.get("manifest_digest") == manifest_digest for d in defs or [])]
     return hits[0] if len(hits) == 1 else None
+
+
+def platformio_version() -> str:
+    import platformio
+    return platformio.__version__
+
+
+def claim_for(http, slug: str, sha: str, env: str, platform_index, workdir: Path) -> dict:
+    """The build-target claim for `env` of `slug` at commit `sha`, exactly as recipes carry it (schema `claim`).
+    Raises Unreadable when a source cannot be read and ValueError when the env is refused or absent."""
+    import claims_pio as cp
+    proj = fetch_project_at(http, slug, sha, Path(workdir))
+    resolved = cp.resolve_project(Path(workdir))
+    facts, refusals = cp.judge(resolved, platform_index)
+    fact = next((f for f in facts if f["env"] == env), None)
+    if fact is None:
+        why = next((f"{r['rule']}: {r['detail']}" for r in refusals if r["env"] == env), "no such env")
+        raise ValueError(f"env {env} is refused ({why})")
+    return {"kind": "pio-env", "repo": proj["repo"], "sha": sha, "env": env, "board_id": fact["board_id"],
+            "platformio_version": platformio_version(), "platform": fact["platform"],
+            "files": [{"path": p, "blob": proj["blobs"][p]} for p in resolved["loaded"]],
+            "sections": fact["sections"]}

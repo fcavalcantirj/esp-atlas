@@ -112,6 +112,34 @@ jobs:
       - name: Check every cited source URL is still live
         run: python3 scripts/check_sources_live.py
 
+  claims:
+    # Jr redesign plan step 5: re-prove every build-target claim a PR adds (scripts/check_claims.py). The
+    # CHECKER and the board links come from main's tip (trusted/); the PR is only data (pr/). Report-only for
+    # now: not a required check until it is verified on real PRs, then branch protection requires it.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: trusted
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          path: pr
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml jsonschema && pip install -r trusted/jr/requirements-claims.txt && pip install -e trusted/apps/core
+      - name: Re-prove the build-target claims this PR adds (PASS / FAIL / INCONCLUSIVE)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 trusted/scripts/check_claims.py --pr-dir pr --data-dir trusted/data --base origin/${{ github.base_ref }}
+
   quotes:
     # Every quoted span in a record this PR adds or changes must appear verbatim on a page the record
     # cites (scripts/check_quotes.py): the part of a human review that was still done by hand on
