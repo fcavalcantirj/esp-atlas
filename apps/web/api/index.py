@@ -19,6 +19,9 @@ from pathlib import Path
 _BUNDLE = Path(__file__).resolve().parent / "_bundle"
 sys.path.insert(0, str(_BUNDLE))
 os.environ.setdefault("ESP_ATLAS_REPO_ROOT", str(_BUNDLE))
+# The bundled data/ never changes within a deployment: parse each file once per process
+# (esp_atlas_core.frontmatter; 2026-11-21, uncached pages took 2.3-3.9 s re-parsing ~640 files per request).
+os.environ.setdefault("ESP_ATLAS_IMMUTABLE_DATA", "1")
 
 from fastapi import FastAPI, Request  # noqa: E402
 from esp_atlas_api.main import app as _inner_app  # noqa: E402
