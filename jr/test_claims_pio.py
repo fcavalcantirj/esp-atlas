@@ -149,3 +149,20 @@ def test_a_reference_the_check_cannot_inspect_refuses_the_env(tmp_path):
     assert rules(r, "x") & {"external-input", "unresolvable"}            # PlatformIO itself refuses a missing section
     facts, _ = cp.judge(r, manifests_for)
     assert [f["env"] for f in facts] == ["ok"]                           # and one bad env never hides the others
+
+
+def test_an_interpolated_extra_configs_refuses_every_env(tmp_path):
+    """Review BLOCK on #1998 at 8679efc3: extra_configs = extra_${sysenv.T}.ini makes the hermetic run load other
+    files than a real build. Any interpolation in an option that decides which files or definitions load makes
+    the whole project unverifiable."""
+    r = project(tmp_path, f"[platformio]\nextra_configs = extra_${{sysenv.T}}.ini\n\n[env:x]\nplatform = {PIOARDUINO_37}\n"
+                          "board = heltec_wifi_kit_32_V3\n", {"extra_a.ini": "[env:x]\nboard = m5stick-c\n"})
+    facts, _ = cp.judge(r, manifests_for)
+    assert facts == [] and "external-input" in rules(r, "x")
+
+
+@pytest.mark.parametrize("opt", ["boards_dir", "core_dir"])
+def test_an_interpolated_definition_directory_refuses_every_env(tmp_path, opt):
+    r = project(tmp_path, f"[platformio]\n{opt} = ${{sysenv.D}}/boards\n\n[env:x]\nplatform = {PIOARDUINO_37}\n"
+                          "board = heltec_wifi_kit_32_V3\n")
+    assert "external-input" in rules(r, "x")

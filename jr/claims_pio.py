@@ -75,6 +75,7 @@ def sections_of(env):
                     todo.append(m.group(1))
     return seen
 out = {"loaded": [os.path.relpath(p, root) for p in cfg._parsed], "envs": {},
+       "platformio_raw": {o: raw("platformio", o) for o in (P.options("platformio") if P.has_section("platformio") else [])},
        "boards_dir": cfg.get("platformio", "boards_dir", None), "core_dir": cfg.get("platformio", "core_dir", None)}
 for env in cfg.envs():
     sec = "env:" + env
@@ -234,10 +235,25 @@ def _shadowed(resolved: dict, board: str) -> list[str]:
     return sorted(set(hits))
 
 
+# [platformio] options that decide WHICH files and definitions PlatformIO loads. Any interpolation in one of them
+# makes the hermetic resolution unverifiable against a real build (review BLOCK on #1998 at 8679efc3:
+# extra_configs = extra_${sysenv.T}.ini loaded other files), so every env of the project is refused.
+STRUCTURAL = ("extra_configs", "boards_dir", "core_dir", "platforms_dir", "packages_dir", "workspace_dir")
+
+
+def _structural_inputs(resolved: dict) -> list[str]:
+    return sorted(f"[platformio] {o} = {v}" for o, v in (resolved.get("platformio_raw") or {}).items()
+                  if o in STRUCTURAL and isinstance(v, str) and "${" in v)
+
+
 def judge(resolved: dict, platform_index) -> tuple[list[dict], list[dict]]:
     """(facts, refusals) for every env. A fact: {env, board_id, platform{spec, package_digest, manifest_digest},
     sections[{name, file, line}]}. A refusal: {env, rule, detail}."""
     facts, refusals = [], []
+    structural = _structural_inputs(resolved)
+    if structural:
+        return [], [{"env": env, "rule": "external-input", "detail": "; ".join(structural)[:300]}
+                    for env in sorted(resolved.get("envs") or {})]
     for env, info in sorted((resolved.get("envs") or {}).items()):
         def refuse(rule, detail=""):
             refusals.append({"env": env, "rule": rule, "detail": detail})
