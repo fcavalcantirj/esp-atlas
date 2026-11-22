@@ -74,6 +74,19 @@ getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp3
 images:
   photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/_images/esp32-c5-devkitc-1-isometric_v1.1.png
   pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/_images/esp32-c5-devkitc-1-pin-layout_v1.2.png
+platformio_definitions:
+- id: esp32-c5-devkitc-1
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: e95ab7ad343eb06bf997259b416471c27e074e0c3eda44388924df3c697e0a0f
+- id: esp32-c5-devkitc1-n16r4
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 759dcb9cfcfedf39a96750664d23bdd6403755be7229b66cbca658d450dffbcf
+- id: esp32-c5-devkitc1-n4
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 5c5cd02507ddd8f19584cd4be6b893bfb77c130e7af42fbf79e3b665d75c6d30
+- id: esp32-c5-devkitc1-n8r4
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: d3e7f53b1c7880d09f26eca5a5dfd506e555fce0c46f1dc65448e3361bd03311
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
@@ -111,6 +124,18 @@ sources:
 - field: images
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
   verified: '2026-09-09'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/esp32-c5-devkitc-1.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/esp32-c5-devkitc1-n16r4.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/esp32-c5-devkitc1-n4.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/esp32-c5-devkitc1-n8r4.json
+  verified: '2026-11-22'
 ---
 
 # ESP32-C5-DevKitC-1

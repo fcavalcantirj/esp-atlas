@@ -805,3 +805,32 @@ def test_a_malformed_marker_on_an_eligible_bot_same_repo_jr_tick_pr_still_fails_
 def test_an_eligible_bot_same_repo_jr_tick_pr_that_cannot_be_shown_whole_is_still_a_gap():
     idx = _load(_gh([], files_rc=1), [_pr(1600, WIDE)])
     assert not idx.complete and any("#1600" in g and "listed whole" in g for g in idx.gaps), idx.gaps
+
+
+# --- a coordinator timeout is a re-queue, not a veto (Jr redesign plan step 6, 2026-11-22) -------------------
+# scripts/data_merge.py closes a data PR stalled over 6 h with the `jr-timeout` label and a marker comment posted
+# by the workflow (author github-actions). That close says "try again", not "the owner rejects this": its firmware
+# must not be held for 30 days. Any other close, a person's included, stays a veto.
+
+MARKER = "<!-- jr-data-merge timeout -->"
+
+
+def _timed_out(**kw):
+    base = dict(closedAt=_iso(NOW - timedelta(days=1)), mergedAt=None, labels=[{"name": "jr-timeout"}],
+                comments=[{"author": {"login": "github-actions"}, "body": MARKER + "\nClosed by jr-data-merge: stale."}])
+    base.update(kw)
+    return _pr(1990, NEWTOOL_PR_FILES, **base)
+
+
+def test_a_coordinator_timeout_holds_nothing():
+    assert pending_prs.build([], [_timed_out()], NOW).hold("newtool") is None
+
+
+@pytest.mark.parametrize("kw", [
+    dict(labels=[]),                                                                     # marker but no label
+    dict(comments=[]),                                                                   # label but no marker
+    dict(comments=[{"author": {"login": "fcavalcantirj"}, "body": MARKER}]),             # a person pasted the marker
+])
+def test_anything_short_of_the_coordinators_own_timeout_stays_a_veto(kw):
+    hold = pending_prs.build([], [_timed_out(**kw)], NOW).hold("newtool")
+    assert hold and hold.state == pending_prs.VETOED

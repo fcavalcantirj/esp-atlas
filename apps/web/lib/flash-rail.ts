@@ -91,7 +91,7 @@ function docsFor(recipe: Recipe, handoff: FlashHandoff): string[] {
 
 function brokenContent(recipe: Recipe, handoff: FlashHandoff, boardName: string): FlashPanelContent {
   const explanation = recipe.notes?.trim() || BROKEN_FALLBACK;
-  return { kind: "broken", claim: tierClaim(recipe.status, boardName), explanation, docs: docsFor(recipe, handoff) };
+  return { kind: "broken", claim: tierClaim(recipe.status, boardName, recipe.claim), explanation, docs: docsFor(recipe, handoff) };
 }
 
 /** What the panel shows. For a broken recipe any open phase — including a stale

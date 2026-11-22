@@ -505,6 +505,7 @@ _TIER_CAVEAT = {
     "reported": "community-reported, not independently verified",
     "declared": "named in the project's own build files, no flashable build confirmed",
     "unverified": "a plausible pairing, not confirmed for this board",
+    "build-target": "the project's PlatformIO config selects this board's definition; configuration only, not built or tested on hardware",
     "broken": "known incompatible or regressed",
 }
 

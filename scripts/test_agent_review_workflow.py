@@ -286,3 +286,16 @@ def test_a_test_file_the_reviewer_cannot_run_is_read_and_left_to_the_required_ch
     validate = yaml.safe_load((REPO / ".github" / "workflows" / "validate.yml").read_text())
     assert any(str(s.get("run", "")).strip() == "npm test" for s in validate["jobs"]["tests"]["steps"])
 
+
+
+def test_the_reviewer_can_run_every_python_test_ci_runs():
+    """2026-11-22: #1993 was BLOCKed only because the API lane lacked fastapi (apps/api tests could not import).
+    The reviewer installs at least the packages CI's `tests` job installs."""
+    review = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    validate = yaml.safe_load((REPO / ".github" / "workflows" / "validate.yml").read_text(encoding="utf-8"))
+    install = next(s["run"] for s in review["jobs"]["agent-review"]["steps"] if s.get("name", "").startswith("Install what the reviewer"))
+    ci = [s["run"] for s in validate["jobs"]["tests"]["steps"] if "pip install -e apps/core" in str(s.get("run", ""))]
+    assert ci, "validate.yml tests job no longer installs the packages"
+    for pkg in ("-e apps/core[test]", "-e apps/api[test]", "-e apps/cli[test]"):
+        assert pkg in ci[0], pkg
+        assert pkg in install, pkg

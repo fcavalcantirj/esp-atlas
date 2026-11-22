@@ -34,6 +34,13 @@ notes:
 getting_started: https://www.wemos.cc/en/latest/s2/s2_mini.html
 images:
   pinout: https://www.wemos.cc/en/latest/_images/s2_mini_v1.0.0_2_16x16.jpg
+platformio_definitions:
+- id: lolin_s2_mini
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 63abd8b75e3c94b3ac378f4c6011087c656454fd1499b731e13e9e63cb560c99
+- id: lolin_s2_mini
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 4d93a5c5b7dc732018dcb7d434b0b80586a51d257a4fe2fb80415b26b0bd4b69
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/s2/s2_mini.html
@@ -50,6 +57,12 @@ sources:
 - field: images.pinout
   url: https://www.wemos.cc/en/latest/_images/s2_mini_v1.0.0_2_16x16.jpg
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/lolin_s2_mini.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/lolin_s2_mini.json
+  verified: '2026-11-22'
 ---
 
 # LOLIN S2 mini
