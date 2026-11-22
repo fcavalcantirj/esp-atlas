@@ -135,3 +135,18 @@ def test_the_dimension_is_blamed_only_when_the_same_probe_succeeds_without_it():
     rep = fu.build(down, "properties/1", END, DOC)
     assert rep.internal_excluded is True and rep.rows == [] and rep.unavailable == ["atlas", "flash"]
     assert "NOT excluded" not in "\n".join(fu.lines(rep))
+
+
+def test_a_page_features_use_is_counted_only_on_its_own_pages():
+    """Review of #1842: '/' fires wizard_submit and relax_filter too (HomeView -> executeWizard), and /wizard
+    fires example_click. Counting those as wizard or examples use overstated the feature and divided two
+    different groups ('15 of 11 who reached it'). A page feature's action counts only on its pages; a
+    prefix-only feature has no reach to divide by and keeps every page."""
+    ex = fake_ga(ANSWERS)
+    fu.build(ex, "properties/1", END, DOC)
+    used = [json.dumps(c["dimensionFilter"]) for c in ex.calls if '"page_view"' not in json.dumps(c["dimensionFilter"])
+            and '"eventName"' in json.dumps(c["dimensionFilter"])]
+    atlas = next(f for f in used if "atlas_inspect" in f)
+    assert '"pagePath", "inListFilter": {"values": ["/atlas"]}' in atlas
+    flash = next(f for f in used if "flash_open" in f)
+    assert "pagePath" not in flash

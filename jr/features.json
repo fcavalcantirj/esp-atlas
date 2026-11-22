@@ -1,5 +1,5 @@
 {
-  "_about": "The site's features as the weekly Feature usage report counts them (jr/feature_usage.py). A feature is reached by viewing one of its pages and used by firing one of its action events (user-initiated only; outcomes like flash_handoff are not actions). Adding or renaming a feature is a data edit here; the event names must exist in apps/web/lib/analytics.ts.",
+  "_about": "The site's features as the weekly Feature usage report counts them (jr/feature_usage.py). A feature is reached by viewing one of its pages and used by firing one of its action events on one of those pages (a prefix-only feature: on any page; user-initiated only; outcomes like flash_handoff are not actions). Adding or renaming a feature is a data edit here; the event names must exist in apps/web/lib/analytics.ts.",
   "version": 1,
   "features": {
     "flash": {"pages": [], "page_prefixes": ["/parts/", "/firmware/"], "events": ["flash_open", "flash_consent", "flash_connect", "flash_outcome"]},

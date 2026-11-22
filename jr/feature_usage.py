@@ -5,7 +5,9 @@ For every feature in `jr/features.json` it counts, over the completed 28-day win
 (four GA4 date ranges in one request):
   - reached: distinct users who viewed one of its pages (None for features that live on many pages and
     would only restate site traffic, i.e. prefix-only features);
-  - used: distinct users who fired one of its action events (user-initiated events only);
+  - used: distinct users who fired one of its action events (user-initiated events only), on one of its
+    pages when it has pages — the same action fired elsewhere (the home page runs the wizard query too) is
+    not this feature's use, and "used" stays a part of the "reached" it is divided by;
   - use rate = used / reached, events per user who used it.
 Maintainers are left out with `customEvent:internal != "1"` (apps/web `?internal=1`); while that dimension
 is not registered in GA4 a filtered probe fails where the unfiltered one answers, so the whole report runs
@@ -136,13 +138,15 @@ def build(ex, property_id: str, end: str, features_doc: dict | None = None) -> R
     threshold = int(doc.get("low_use_acting_users", 5))
     n_low = int(doc.get("low_use_windows", WINDOWS))
     for name, f in doc["features"].items():
-        used = run(_in_list("eventName", f["events"]), ["totalUsers", "eventCount"])
+        page = _page_filter(f["pages"], []) if f.get("pages") else None   # prefix-only: would restate traffic
+        acts = _in_list("eventName", f["events"])
+        # a page feature's action counts on its own pages only: '/' also fires wizard_submit, /wizard example_click
+        used = run(acts if page is None else {"andGroup": {"expressions": [page, acts]}}, ["totalUsers", "eventCount"])
         if used is None:
             rep.unavailable.append(name)
             continue
         reached = None
-        if f.get("pages"):                        # prefix-only features would restate site traffic
-            page = _page_filter(f["pages"], [])
+        if page is not None:
             got = run({"andGroup": {"expressions": [page, _in_list("eventName", ["page_view"])]}}, ["totalUsers", "eventCount"])
             reached = None if got is None else [int(w[0]) for w in got]
         users = [int(w[0]) for w in used]
