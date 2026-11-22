@@ -80,7 +80,12 @@ test("preview self-fetch uses the deployment bypass only for its own API origin"
     assert.deepEqual(serverApiHeaders("https://preview.example.vercel.app/api"), { "x-vercel-protection-bypass": "test-only-secret" });
     assert.equal(serverApiHeaders("https://production.example.com/api"), undefined);
     assert.equal(serverApiHeaders("https://preview.example.vercel.app/other"), undefined);
+    // Since 2026-11-22 production also reads its OWN deployment (lib/server-snapshot.test.ts): the header goes
+    // to that origin only, still never to the alias or another host. Development never gets it.
     process.env.VERCEL_ENV = "production";
+    assert.deepEqual(serverApiHeaders("https://preview.example.vercel.app/api"), { "x-vercel-protection-bypass": "test-only-secret" });
+    assert.equal(serverApiHeaders("https://production.example.com/api"), undefined);
+    process.env.VERCEL_ENV = "development";
     assert.equal(serverApiHeaders("https://preview.example.vercel.app/api"), undefined);
   } finally {
     for (const key of keys) {
