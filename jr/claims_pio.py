@@ -246,14 +246,35 @@ def _structural_inputs(resolved: dict) -> list[str]:
                   if o in STRUCTURAL and isinstance(v, str) and "${" in v)
 
 
+def _outside_tree(resolved: dict) -> list[str]:
+    """Anything that would make PlatformIO read outside the pinned tree (review BLOCK on #1998 at 962b24e3): a
+    structural option written as an absolute path or with a `..` segment, or a loaded file that resolves outside
+    the project root. Such a fact would depend on the resolving host's files, not the commit."""
+    root = Path(resolved["root"]).resolve()
+    hits = []
+    for o, v in (resolved.get("platformio_raw") or {}).items():
+        if o in STRUCTURAL and isinstance(v, str):
+            for part in re.split(r"[\n,]", v):
+                part = part.split(";")[0].strip()
+                if part and (os.path.isabs(part) or ".." in Path(part).parts):
+                    hits.append(f"[platformio] {o} = {part}")
+    for rel in resolved.get("loaded") or []:
+        if not (root / rel).resolve().is_relative_to(root):
+            hits.append(f"loaded {rel}")
+    return sorted(hits)
+
+
 def judge(resolved: dict, platform_index) -> tuple[list[dict], list[dict]]:
     """(facts, refusals) for every env. A fact: {env, board_id, platform{spec, package_digest, manifest_digest},
     sections[{name, file, line}]}. A refusal: {env, rule, detail}."""
     facts, refusals = [], []
+    envs = sorted(resolved.get("envs") or {})
     structural = _structural_inputs(resolved)
     if structural:
-        return [], [{"env": env, "rule": "external-input", "detail": "; ".join(structural)[:300]}
-                    for env in sorted(resolved.get("envs") or {})]
+        return [], [{"env": env, "rule": "external-input", "detail": "; ".join(structural)[:300]} for env in envs]
+    outside = _outside_tree(resolved)
+    if outside:
+        return [], [{"env": env, "rule": "outside-tree", "detail": "; ".join(outside)[:300]} for env in envs]
     for env, info in sorted((resolved.get("envs") or {}).items()):
         def refuse(rule, detail=""):
             refusals.append({"env": env, "rule": rule, "detail": detail})

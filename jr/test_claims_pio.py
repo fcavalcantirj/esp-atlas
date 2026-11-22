@@ -166,3 +166,23 @@ def test_an_interpolated_definition_directory_refuses_every_env(tmp_path, opt):
     r = project(tmp_path, f"[platformio]\n{opt} = ${{sysenv.D}}/boards\n\n[env:x]\nplatform = {PIOARDUINO_37}\n"
                           "board = heltec_wifi_kit_32_V3\n")
     assert "external-input" in rules(r, "x")
+
+
+@pytest.mark.parametrize("value", ["/etc/pio/extra.ini", "../outside.ini", "sub/../../outside.ini"])
+def test_a_config_path_outside_the_pinned_tree_refuses_every_env(tmp_path, value):
+    """Review BLOCK on #1998 at 962b24e3: an absolute or ../ path in extra_configs loads files from the resolving
+    host, not from the pinned commit."""
+    proj = tmp_path / "proj"
+    proj.mkdir()
+    (tmp_path / "outside.ini").write_text("[env:x]\nboard = m5stick-c\n", encoding="utf-8")
+    r = project(proj, f"[platformio]\nextra_configs = {value}\n\n[env:x]\nplatform = {PIOARDUINO_37}\n"
+                      "board = heltec_wifi_kit_32_V3\n")
+    facts, _ = cp.judge(r, manifests_for)
+    assert facts == [] and "outside-tree" in rules(r, "x")
+
+
+@pytest.mark.parametrize("opt", ["boards_dir", "core_dir"])
+def test_a_definition_directory_outside_the_tree_refuses_every_env(tmp_path, opt):
+    r = project(tmp_path, f"[platformio]\n{opt} = /opt/somewhere\n\n[env:x]\nplatform = {PIOARDUINO_37}\n"
+                          "board = heltec_wifi_kit_32_V3\n")
+    assert "outside-tree" in rules(r, "x")
