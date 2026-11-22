@@ -76,6 +76,11 @@ def sections_of(env):
     return seen
 out = {"loaded": [os.path.relpath(p, root) for p in cfg._parsed], "envs": {},
        "platformio_raw": {o: raw("platformio", o) for o in (P.options("platformio") if P.has_section("platformio") else [])},
+       # where each structural option the project SETS actually points after PlatformIO's own expansion (~, env,
+       # interpolation): judged against the tree, not by spelling (review BLOCK on #1998 at 52737665)
+       "platformio_eff": {o: cfg.get("platformio", o, None) for o in ("extra_configs", "boards_dir", "core_dir",
+                          "platforms_dir", "packages_dir", "workspace_dir")
+                          if P.has_section("platformio") and P.has_option("platformio", o)},
        "boards_dir": cfg.get("platformio", "boards_dir", None), "core_dir": cfg.get("platformio", "core_dir", None)}
 for env in cfg.envs():
     sec = "env:" + env
@@ -258,6 +263,15 @@ def _outside_tree(resolved: dict) -> list[str]:
                 part = part.split(";")[0].strip()
                 if part and (os.path.isabs(part) or ".." in Path(part).parts):
                     hits.append(f"[platformio] {o} = {part}")
+    for o, v in (resolved.get("platformio_eff") or {}).items():
+        for item in (v if isinstance(v, list) else [v]):
+            item = str(item or "").strip()
+            if not item:
+                continue
+            target = Path(os.path.expanduser(item)) if item.startswith("~") else Path(item)
+            target = (target if target.is_absolute() else root / target).resolve()
+            if not target.is_relative_to(root):
+                hits.append(f"[platformio] {o} resolves to {target}")
     for rel in resolved.get("loaded") or []:
         if not (root / rel).resolve().is_relative_to(root):
             hits.append(f"loaded {rel}")

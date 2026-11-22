@@ -210,3 +210,19 @@ def test_the_real_fixture_yields_exactly_these_counts(nds):
     facts, refusals = cp.judge(nds, manifests_for)
     assert sorted(f["env"] for f in facts) == ["heltecdemoapa102", "heltecv3demo"]
     assert dict(collections.Counter(r["rule"] for r in refusals)) == {"identity-override": 25, "unknown-definition": 34}
+
+
+@pytest.mark.parametrize("opt, value", [("extra_configs", "~/pio/extra.ini"), ("boards_dir", "~/boards"),
+                                        ("core_dir", "~/.platformio-x")])
+def test_a_home_relative_path_is_outside_the_tree(tmp_path, opt, value):
+    """Review BLOCK on #1998 at 52737665: PlatformIO expands ~ to the resolving host's home. Judged by where the
+    option actually resolves after PlatformIO's own expansion, not by its spelling."""
+    r = project(tmp_path, f"[platformio]\n{opt} = {value}\n\n[env:x]\nplatform = {PIOARDUINO_37}\n"
+                          "board = heltec_wifi_kit_32_V3\n")
+    assert "outside-tree" in rules(r, "x")
+
+
+def test_a_relative_structural_path_inside_the_tree_is_fine(tmp_path):
+    r = project(tmp_path, f"[platformio]\nboards_dir = custom_boards\n\n[env:x]\nplatform = {PIOARDUINO_37}\n"
+                          "board = heltec_wifi_kit_32_V3\n")
+    assert "outside-tree" not in rules(r, "x")
