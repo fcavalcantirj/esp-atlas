@@ -205,6 +205,27 @@ def test_an_auto_merged_change_to_the_prs_catalog_file_is_refused(tmp_path):
     assert r["status"] == "skipped" and r["why"] == f"catalog file changed by the merge: {path}"
 
 
+def test_the_prs_own_topics_yield_row_survives_the_refresh(tmp_path):
+    """2026-11-19 (stall:topics): the tick that produced appends its yield row in its own PR, so a jr-review
+    PR conflicts on docs/telemetry/yield.jsonl; taking main's copy there dropped the only row saying the lane
+    produced (#1828 lost 2026-11-18T07:00Z, #1875 lost 2026-11-19T07:00Z). The refresh keeps main's rows and
+    adds the PR's rows main lacks."""
+    path = "docs/telemetry/yield.jsonl"
+
+    def row(tick, stage, produced=0):
+        return json.dumps({"produced": produced, "stage": stage, "tick": tick, "units": 2}, sort_keys=True) + "\n"
+
+    seed = row("2026-11-19T05:00Z", "admit_topics")
+    clone, head = _repo(tmp_path, seed_extra={path: seed},
+                        pr_extra={path: seed + row("2026-11-19T07:00Z", "admit_topics", produced=2)},
+                        main_extra={path: seed + row("2026-11-19T08:00Z", "admit_topics")})
+    r = review_refresh.refresh(_pr(head), git=_git(clone), gh=_gh(), now=NOW)
+    assert r["status"] == "refreshed", r
+    _sh(clone, "fetch", "-q", "origin")
+    got = _sh(clone, "show", f"origin/jr/tick-x:{path}") + "\n"
+    assert got == seed + row("2026-11-19T07:00Z", "admit_topics", produced=2) + row("2026-11-19T08:00Z", "admit_topics")
+
+
 def _yield_row(tick, stage, produced=0):
     return json.dumps({"tick": tick, "stage": stage, "units": 2, "produced": produced}, sort_keys=True) + "\n"
 
