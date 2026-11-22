@@ -2507,7 +2507,7 @@
    "branch": "jr/research-c404a55544c49f7f",
    "term": "esp32 tenstar",
    "phase": "research",
-   "state": "reserved",
+   "state": "abandoned",
    "started_on": "2026-11-21",
    "source": "ga4 search_submit (unknown word)",
    "linked_work": [],
@@ -2529,6 +2529,15 @@
      "prs": []
     },
     "reserved_by": "jr/demand_run.py"
+   },
+   "last_attempt_on": "2026-11-21",
+   "resolution": {
+    "status": "abandoned",
+    "reason": "Not catalog content: 'tenstar' is TENSTAR ROBOT, an AliExpress store brand that resells many generic boards (ESP32-S3 SuperMini, ESP32-S3-Zero, ESP32-C3/H2 SuperMini; e.g. https://devices.esphome.io/devices/tenstar-robot-esp32-s3-supermini/), so 'esp32 tenstar' names no one specific board, and the brand has no manufacturer site (tenstar-robot.com, tenstarrobot.com, tenstar.com do not resolve, checked 2026-11-21)",
+    "closed_on": "2026-11-21",
+    "evidence": {
+     "settled_by": "jr/work_record.py"
+    }
    }
   }
  ]
