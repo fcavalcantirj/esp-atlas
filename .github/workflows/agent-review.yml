@@ -61,7 +61,9 @@ jobs:
           python-version: "3.12"
       - name: Install what the reviewer may run (the touched test files)
         if: steps.key.outputs.configured == 'true'
-        run: pip install pyyaml jsonschema requests pytest pytrends httpx pypdf && pip install -e apps/core
+        # the same packages CI's `tests` job installs (validate.yml), so the reviewer can run every Python test a PR
+        # adds, the API's included (2026-11-22: #1993 was BLOCKed only because fastapi was missing here)
+        run: pip install pyyaml jsonschema requests pytest pytrends httpx pypdf && pip install -e apps/core[test] -e apps/api[test] -e apps/cli[test]
       - name: The reviewer's shell can start (socat + bubblewrap for its sandbox)
         # CLAUDE_CODE_SUBPROCESS_ENV_SCRUB below makes every Bash call run in a sandbox, which needs socat and
         # bubblewrap. Without them every command failed and the lane's first run ever (2026-11-19, #1876)
