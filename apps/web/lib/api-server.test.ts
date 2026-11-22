@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { CATALOG_TAG, fetchFirmware, fetchFirmwareList, serverApiHeaders } from "./api-server.ts";
+import { CATALOG_TAG, dataOrThrow, fetchFirmware, fetchFirmwareList, serverApiHeaders } from "./api-server.ts";
 
 function stubFetch(handler: (input: string, init: RequestInit) => Response) {
   const calls: RequestInit[] = [];
@@ -80,7 +80,12 @@ test("preview self-fetch uses the deployment bypass only for its own API origin"
     assert.deepEqual(serverApiHeaders("https://preview.example.vercel.app/api"), { "x-vercel-protection-bypass": "test-only-secret" });
     assert.equal(serverApiHeaders("https://production.example.com/api"), undefined);
     assert.equal(serverApiHeaders("https://preview.example.vercel.app/other"), undefined);
+    // Since 2026-11-22 production also reads its OWN deployment (lib/server-snapshot.test.ts): the header goes
+    // to that origin only, still never to the alias or another host. Development never gets it.
     process.env.VERCEL_ENV = "production";
+    assert.deepEqual(serverApiHeaders("https://preview.example.vercel.app/api"), { "x-vercel-protection-bypass": "test-only-secret" });
+    assert.equal(serverApiHeaders("https://production.example.com/api"), undefined);
+    process.env.VERCEL_ENV = "development";
     assert.equal(serverApiHeaders("https://preview.example.vercel.app/api"), undefined);
   } finally {
     for (const key of keys) {
@@ -89,4 +94,12 @@ test("preview self-fetch uses the deployment bypass only for its own API origin"
       else process.env[key] = value;
     }
   }
+});
+
+test("dataOrThrow hands a detail page its data and throws on anything else, so ISR never stores a degraded render", () => {
+  assert.deepEqual(dataOrThrow({ status: "ok", data: { results: [] } }, "Recipes"), { results: [] });
+  assert.throws(() => dataOrThrow({ status: "error", message: "The operation was aborted due to timeout" }, "Recipes"), {
+    message: "Recipes unavailable: The operation was aborted due to timeout",
+  });
+  assert.throws(() => dataOrThrow({ status: "not_found" }, "Recipes"), { message: "Recipes unavailable: not found" });
 });

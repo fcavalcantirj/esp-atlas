@@ -1,0 +1,278 @@
+name: agent-review
+
+# The independent exact-head review of a code pull request (docs/REVIEW-CONTRACT.md) has two lanes
+# (owner, 2026-11-18: "subscription and api as fallback"):
+#   - PRIMARY: the runner's coding delegate on the Claude subscription, `jr/agent_review.py once` (hourly on
+#     the runner, not in this file). It posts the verdict as ONE comment starting with the marker
+#     `<!-- agent-review verdict -->`.
+#   - FALLBACK (this file's `agent-review` job): the Claude Code CLI run directly (`claude -p`) with the
+#     repository secret ANTHROPIC_API_KEY, ONLY for a PR the runner labelled `review-fallback` because its
+#     lane was down (no subscription token, usage limit, auth failure), at most a few a day. It posts the
+#     same comment. NEVER through `anthropics/claude-code-action`: Anthropic bills the Action as Claude Code,
+#     which the plan's monthly API credit does not pay for (see the review step).
+# The `code-canary` job runs on every marker comment, whichever lane wrote it: PASS at exactly the PR's
+# current head + every required check green + both switches on + at most one agent merge an hour ->
+# `gh pr merge --auto --match-head-commit <head>`; BLOCK -> label needs-human. Nobody waits for anyone.
+
+on:
+  pull_request:
+    types: [labeled, synchronize]
+  issue_comment:
+    types: [created]
+  # The hourly catch-up, started by the runner after its reviews: the code canary sweeps every open PR that
+  # has a verdict for its current head. No other job runs on this event.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  agent-review:
+    # The API lane: only the runner's `review-fallback` label starts it, never a push.
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.label.name == 'review-fallback' &&
+      !startsWith(github.head_ref, 'jr/tick-') &&
+      !startsWith(github.head_ref, 'jr/research-') &&
+      github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    # this job runs the PR's code (its tests, pip install): it holds NO write token; the verdict leaves only as a
+    # job output and a separate job posts it (4th review of #1809, 2026-11-19)
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      verdict: ${{ steps.review.outputs.structured_output }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}   # review the exact head the verdict names, not the merge ref
+          persist-credentials: false
+      - name: Is the fallback reviewer configured?
+        id: key
+        run: |
+          if [ -z "${{ secrets.ANTHROPIC_API_KEY }}" ]; then echo "configured=false" >> "$GITHUB_OUTPUT"; echo "no ANTHROPIC_API_KEY secret: the API lane cannot review; the PR waits for the subscription lane"; else echo "configured=true" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/setup-python@v5
+        if: steps.key.outputs.configured == 'true'
+        with:
+          python-version: "3.12"
+      - name: Install what the reviewer may run (the touched test files)
+        if: steps.key.outputs.configured == 'true'
+        # the same packages CI's `tests` job installs (validate.yml), so the reviewer can run every Python test a PR
+        # adds, the API's included (2026-11-22: #1993 was BLOCKed only because fastapi was missing here)
+        run: pip install pyyaml jsonschema requests pytest pytrends httpx pypdf && pip install -e apps/core[test] -e apps/api[test] -e apps/cli[test]
+      - name: The reviewer's shell can start (socat + bubblewrap for its sandbox)
+        # CLAUDE_CODE_SUBPROCESS_ENV_SCRUB below makes every Bash call run in a sandbox, which needs socat and
+        # bubblewrap. Without them every command failed and the lane's first run ever (2026-11-19, #1876)
+        # posted a BLOCK that was about the runner, not the PR. This step fails the job instead: no verdict
+        # leaves, the post job releases the label, and the subscription lane reviews the PR.
+        if: steps.key.outputs.configured == 'true'
+        run: |
+          # the package mirror blinks (two live runs in a row: "Failed to fetch … socat … Resource temporarily
+          # unavailable"); when all three attempts fail, `command -v socat` below fails the job
+          for attempt in 1 2 3; do
+            sudo apt-get update -qq && sudo apt-get install -y -qq -o Acquire::Retries=3 socat bubblewrap && break
+            sleep 15
+          done
+          # ubuntu 24.04 confines unprivileged user namespaces, which bubblewrap needs
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          command -v socat
+          bwrap --ro-bind / / --unshare-net true
+      - uses: actions/setup-node@v4
+        if: steps.key.outputs.configured == 'true'
+        with:
+          node-version: "22"
+      - name: Install the Claude Code CLI the reviewer runs on (an exact version)
+        if: steps.key.outputs.configured == 'true'
+        run: npm install -g @anthropic-ai/claude-code@2.1.329
+      - name: Review the exact head against docs/REVIEW-CONTRACT.md
+        # `claude -p` run DIRECTLY, never `anthropics/claude-code-action`. Billing, not taste (2026-11-20): the
+        # account's money is the plan's monthly API credit, which covers "Claude API, Claude Managed Agents, the
+        # Claude Agent SDK, and playground" and NOT Claude Code
+        # (https://platform.claude.com/docs/en/about-claude/api-credits-for-subscribers). Anthropic's help article
+        # 17154008: "API credits cover `claude -p` and the Claude Agent SDK when you run them yourself with an API
+        # key from your linked Claude Console organization, because that usage is billed as Agent SDK usage" and
+        # "Runs started by the Claude Code GitHub Action ... count as Claude Code usage, so API credits don't cover
+        # them, even with `-p`". Measured: through the Action every review was refused in under a second with
+        # `billing_error` "Credit balance is too low" (Nov 19 and 20) while $199.95 of credit sat unused and a
+        # plain API call with the same key answered 200.
+        if: steps.key.outputs.configured == 'true'
+        id: review
+        timeout-minutes: 25
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_CODE_SUBPROCESS_ENV_SCRUB: "1"   # the PR's tests never see a credential (5th review of #1809)
+          # the job's own read-only token, for the reviewer's `gh pr diff/view/checks` (5th review of #1809)
+          GH_TOKEN: ${{ github.token }}
+          PROMPT: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            HEAD: ${{ github.event.pull_request.head.sha }}
+
+            You are the independent reviewer defined in docs/REVIEW-CONTRACT.md (read it first, follow it
+            exactly; docs/ops/REVIEW-PROMPT.md is the same task as the runner's delegate gets). The PR branch
+            is checked out at HEAD. Read the whole diff with `gh pr diff`, read the PR body with `gh pr view`,
+            match every [TEST] and [REAL] claim, run only the test files the diff adds or changes with
+            `python3 -m pytest <files> -q` (PYTHONPATH=apps/core/src). A changed test file under apps/web/
+            (TypeScript) is READ, not run: the required check `tests` runs the web suite at this head before
+            anything merges; look at `gh pr checks` and treat only a FAILED `tests` as a finding, never
+            "could not run it". Answer with the structured
+            verdict whose `head` is exactly HEAD. Never comment, edit, commit, push, merge or label anything:
+            the workflow posts your verdict.
+        run: |
+          # the result lands in a fresh directory whose path no child process is told
+          out="$(mktemp -d)/review-result.json"
+          set +e
+          claude -p "$PROMPT" \
+            --model claude-opus-5-5 \
+            --max-turns 40 \
+            --allowedTools "Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr checks:*),Bash(python3 -m pytest:*),Bash(PYTHONPATH=apps/core/src python3 -m pytest:*),Read,Grep,Glob" \
+            --json-schema '{"type":"object","required":["verdict","head","findings","checked"],"properties":{"verdict":{"type":"string","enum":["PASS","BLOCK"]},"head":{"type":"string"},"findings":{"type":"array","items":{"type":"object","required":["file","summary","failure"],"properties":{"file":{"type":"string"},"line":{"type":"integer"},"summary":{"type":"string"},"failure":{"type":"string"}}}},"checked":{"type":"array","items":{"type":"string"}}}}' \
+            --output-format json < /dev/null > "$out" 2> "$out.stderr"
+          echo "claude exit code: $?"
+          set -e
+          tail -c 1500 "$out.stderr" || true
+          # The verdict leaves as the step output `structured_output`, one line of JSON, written LAST and ALWAYS
+          # (empty when there is none), so nothing written to the output file earlier can stand in for it. What
+          # the run cost and why it failed are printed, so a refusal is readable without a second run.
+          python3 - "$out" <<'PY'
+          import json
+          import os
+          import sys
+
+          result = {}
+          try:
+              data = json.loads(open(sys.argv[1], encoding="utf-8").read())
+              if isinstance(data, list):
+                  data = next((m for m in reversed(data) if isinstance(m, dict) and m.get("type") == "result"), {})
+              result = data if isinstance(data, dict) else {}
+          except (OSError, ValueError) as exc:
+              print("review result unreadable:", exc.__class__.__name__)
+          keys = ("subtype", "is_error", "terminal_reason", "api_error_status", "num_turns", "duration_ms", "total_cost_usd")
+          print("review result:", json.dumps({k: result[k] for k in keys if k in result}))
+          if result.get("is_error"):
+              print("review error text:", str(result.get("result") or "")[:300])
+          verdict = result.get("structured_output")
+          line = json.dumps(verdict, separators=(",", ":")) if isinstance(verdict, dict) and not result.get("is_error") else ""
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+              fh.write("structured_output=" + line + "\n")
+          sys.exit(0 if line else 1)
+          PY
+
+  agent-review-post:
+    # posts the API lane's verdict with MAIN's code in a fresh job: no file the reviewed PR wrote or ran is here.
+    # Runs even when the review produced no verdict, to release the fallback label (else neither lane reviews the PR)
+    needs: agent-review
+    if: always() && needs.agent-review.result != 'skipped'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # main's TIP, not base.sha (main as it was when the PR's head was last synchronized: a day old on
+          # PRs opened the day before, measured 2026-11-19)
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: No verdict came back — release the fallback label so the runner lane can pick the PR up again
+        if: needs.agent-review.outputs.verdict == ''
+        env:
+          GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label review-fallback
+      - name: Post the verdict as the marker comment (api lane) and release the fallback label
+        if: needs.agent-review.outputs.verdict != ''
+        env:
+          GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
+          VERDICT_JSON: ${{ needs.agent-review.outputs.verdict }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python3 jr/agent_review.py comment --pr "$PR_NUMBER" --lane api
+
+  disarm-on-push:
+    # a new head is a new review: any auto-merge a canary queued for the old head is switched off and the
+    # agent-pass label removed, so nothing merges a commit no reviewer saw (6th review of #1809, 2026-11-19:
+    # GitHub cancels auto-merge only on pushes by users WITHOUT write access)
+    # Jr's own AUTO-routed tick PR (bookkeeping, no jr-review label) keeps the auto-merge the bot requested: a
+    # push to it is the bot's own refresh or the chores' merge of main, and disarming it would strand the PR
+    # until the tick aborts on "a Jr tick PR has been open > 3 h".
+    if: >-
+      github.event_name == 'pull_request' && github.event.action == 'synchronize' &&
+      !(startsWith(github.head_ref, 'jr/tick-') && !contains(github.event.pull_request.labels.*.name, 'jr-review'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Disarm auto-merge and drop agent-pass on the new head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.head_ref }}   # via env, never pasted into the shell
+          REPO: ${{ github.repository }}
+        run: |
+          gh pr merge "$PR_NUMBER" --repo "$REPO" --disable-auto || true
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label agent-pass || true
+          # needs-human is about a verdict at the old head (a BLOCK, or a PASS a person must merge). On a new
+          # head nobody has been asked anything yet; the canary sets it again if the new verdict says so.
+          # Not on a demand PR: there the demand canary sets it for a quote that FAILED, and when quotes is
+          # still red at the new head the canary is skipped and nothing would set it again.
+          case "$PR_BRANCH" in
+            jr/research-*) ;;
+            *) gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label needs-human || true ;;
+          esac
+
+  code-canary:
+    # The click, on every marker comment (either lane): PASS at exactly the PR's current head + every
+    # required check green + both switches on + at most one agent-merged PR an hour -> merge --auto at the
+    # exact head. BLOCK -> label needs-human.
+    # Every run then SWEEPS the other open PRs that have a verdict for their current head (2026-11-19: the
+    # hourly cap said "waits for the next run" and there was none; a pending run in this concurrency group
+    # is replaced by a newer one; the first canary run ever crashed). A dispatch is a sweep and nothing else.
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '<!-- agent-review verdict -->'))
+    concurrency:
+      group: code-canary   # one at a time, so two runs never both see the hourly cap free
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write     # only to start validate on main after a merge (last step)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # code_canary imports demand_canary -> check_quotes -> esp_atlas_core (yaml): without this the job died on
+      # `import yaml` the first time it ever ran (2026-11-19)
+      - run: pip install httpx pyyaml pypdf
+      - name: Decide on the newest verdict for the PR's current head and, when allowed, request the merge
+        if: github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
+          JR_CODE_AUTOMERGE: ${{ vars.JR_CODE_AUTOMERGE }}
+        run: python3 scripts/code_canary.py --pr ${{ github.event.issue.number }} --from-comments
+      - name: Sweep - the same decision for every other open PR with a verdict for its current head
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
+          JR_CODE_AUTOMERGE: ${{ vars.JR_CODE_AUTOMERGE }}
+        run: python3 scripts/code_canary.py --sweep
+      - name: main gets its CI even when this job's token merged (a workflow-token push starts no workflow)
+        # 2026-11-19: #1799, the first PR the machine merged, left main's new head with zero runs. Dispatch is
+        # the documented exception.
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/validate_main.py

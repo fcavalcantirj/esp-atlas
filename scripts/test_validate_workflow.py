@@ -149,4 +149,105 @@ def test_the_quotes_job_installs_its_readers_before_the_check(jobs):
 
 def test_the_quotes_checkout_has_full_history_for_the_base_diff(jobs):
     checkout = next(s for s in jobs["quotes"]["steps"] if str(s.get("uses", "")).startswith("actions/checkout"))
+# --- the demand-guard job (scripts/demand_guard.py, 2026-11-17): a demand PR changes only what it says ---
+
+DEMAND_GUARD = "scripts/demand_guard.py"
+
+
+def _demand_guard_step(jobs):
+    steps = _steps_running(jobs["demand-guard"], DEMAND_GUARD)
+    assert len(steps) == 1, "the demand-guard job must run the guard exactly once"
+    return steps[0]
+
+
+def test_the_demand_guard_runs_only_on_demand_pull_requests(jobs):
+    assert _demand_guard_step(jobs)
+    cond = jobs["demand-guard"].get("if", "")
+    assert "github.event_name == 'pull_request'" in cond and "startsWith(github.head_ref, 'jr/research-')" in cond
+
+
+def test_the_demand_guard_gets_the_pr_url_and_full_history_and_nothing_swallows_its_exit(jobs):
+    step = _demand_guard_step(jobs)
+    assert step.get("env", {}).get("PR_URL") == "${{ github.event.pull_request.html_url }}"
+    assert "continue-on-error" not in step and "continue-on-error" not in jobs["demand-guard"]
+    assert not SHELL_OPERATORS.search(step["run"]), step["run"]
+    checkout = next(s for s in jobs["demand-guard"]["steps"] if str(s.get("uses", "")).startswith("actions/checkout"))
     assert checkout.get("with", {}).get("fetch-depth") == 0
+
+
+# --- the demand-canary job (scripts/demand_canary.py, 2026-11-17): the merge click, as a job ----------
+
+CANARY = "scripts/demand_canary.py"
+
+
+def _canary_step(jobs):
+    steps = _steps_running(jobs["demand-canary"], CANARY)
+    assert len(steps) == 1
+    return steps[0]
+
+
+def test_the_canary_needs_every_machine_check_and_both_switches(jobs):
+    job = jobs["demand-canary"]
+    assert set(job["needs"]) >= {"schema", "tests", "jr-tests", "quotes", "demand-guard", "jr-pr-guard", "g2-guard", "ledger-guard"}
+    cond = job["if"]
+    assert "startsWith(github.head_ref, 'jr/research-')" in cond and "vars." not in cond   # the script enforces the kill
+    assert job["permissions"] == {"contents": "write", "pull-requests": "write", "actions": "write"}
+
+
+def test_the_canary_merges_at_the_exact_head_it_was_given(jobs):
+    step = _canary_step(jobs)
+    assert '--head "$PR_HEAD"' in step["run"] and step["env"]["PR_HEAD"] == "${{ github.event.pull_request.head.sha }}"
+    assert '--pr "$PR_NUMBER"' in step["run"] and step["env"]["PR_NUMBER"] == "${{ github.event.pull_request.number }}"
+    assert step["env"]["JR_DEMAND_AUTOMERGE"] == "${{ vars.JR_DEMAND_AUTOMERGE }}"
+    assert "secrets.ESPATLAS_JR_TOKEN || github.token" in step["env"]["GH_TOKEN"]
+    assert "continue-on-error" not in step and not SHELL_OPERATORS.search(step["run"]), step["run"]
+
+
+def test_nothing_needs_the_canary(jobs):
+    assert not any("demand-canary" in (j.get("needs") or []) for j in jobs.values())
+
+
+# --- receipt-guard + tick-canary (2026-11-17): a review-routed tick PR merges on its receipts ----------
+
+def test_the_receipt_guard_runs_on_tick_pull_requests_only_with_full_history(jobs):
+    job = jobs["receipt-guard"]
+    assert "startsWith(github.head_ref, 'jr/tick-')" in job["if"] and "github.event_name == 'pull_request'" in job["if"]
+    step = next(s for s in job["steps"] if "scripts/receipt_guard.py" in str(s.get("run", "")))
+    assert "continue-on-error" not in step and not SHELL_OPERATORS.search(step["run"])
+    checkout = next(s for s in job["steps"] if str(s.get("uses", "")).startswith("actions/checkout"))
+    assert checkout["with"]["fetch-depth"] == 0
+
+
+def test_the_tick_canary_needs_the_receipt_guard_and_every_machine_check_and_both_switches(jobs):
+    job = jobs["tick-canary"]
+    assert set(job["needs"]) >= {"schema", "tests", "jr-tests", "receipt-guard", "jr-pr-guard", "g2-guard", "ledger-guard"}
+    assert "startsWith(github.head_ref, 'jr/tick-')" in job["if"] and "vars." not in job["if"]
+    assert job["permissions"] == {"contents": "write", "pull-requests": "write", "actions": "write"}
+    step = next(s for s in job["steps"] if "scripts/tick_canary.py" in str(s.get("run", "")))
+    assert '--head "$PR_HEAD"' in step["run"] and step["env"]["PR_HEAD"] == "${{ github.event.pull_request.head.sha }}"
+    assert step["env"]["JR_TICK_AUTOMERGE"] == "${{ vars.JR_TICK_AUTOMERGE }}"
+    assert not any("tick-canary" in (j.get("needs") or []) for j in jobs.values())
+
+
+
+# --- 3rd review of #1809 (2026-11-19): a canary decides with MAIN's code; the PR is only data in pr/ --------
+
+def test_both_canaries_run_mains_code_against_the_pr_as_data(jobs):
+    for name, script in (("demand-canary", "demand_canary.py"), ("tick-canary", "tick_canary.py")):
+        checkouts = [s for s in jobs[name]["steps"] if "actions/checkout" in str(s.get("uses", ""))]
+        trusted = [c for c in checkouts if (c.get("with") or {}).get("path") == "trusted"]
+        pr = [c for c in checkouts if (c.get("with") or {}).get("path") == "pr"]
+        # main's tip: base.sha is main at the PR's last head sync, a day old on older PRs (2026-11-19)
+        assert trusted and trusted[0]["with"]["ref"] == "${{ github.event.repository.default_branch }}", name
+        assert pr and len(checkouts) == 2, name
+        assert all(c["with"].get("persist-credentials") is False for c in checkouts), name
+        run = next(s["run"] for s in jobs[name]["steps"] if script in str(s.get("run", "")))
+        assert run.startswith(f"python3 trusted/scripts/{script} --repo pr "), run
+
+
+
+def test_the_receipt_guard_job_only_reports_it_never_turns_a_tick_pr_red(jobs):
+    # 2026-11-19: "not eligible on receipts alone" exited 1 -> a red X and a failure email on every tick PR that
+    # is simply waiting for a person (#1828, 3 red runs). The tick canary recomputes eligibility itself.
+    step = next(s for s in jobs["receipt-guard"]["steps"] if "scripts/receipt_guard.py" in str(s.get("run", "")))
+    assert "--report-only" in step["run"]

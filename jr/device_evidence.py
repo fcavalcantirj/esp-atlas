@@ -53,6 +53,7 @@ import re
 from dataclasses import dataclass, field
 from functools import cached_property
 
+import board_alias
 import derive
 import esp_image
 import image_sandbox
@@ -164,6 +165,10 @@ class _Hit:
     kind: str
     url: str
     why: str
+    # The build targets the cited file names, in file order: [{kind, token, url}] — a platformio
+    # `board =` per env, a sketch fqbn's board, an ESP-IDF target chip. What the gate already read,
+    # returned so a board can be derived from it at zero extra calls (board_from_targets).
+    targets: tuple = ()
 
 
 @dataclass
@@ -295,7 +300,14 @@ def _platformio_hit(repo: _Repo, path: str) -> tuple[str, int] | None:
     sections = derive.merge_ini(files)
     hits = [(order[opt["file"]], opt["line"], opt["file"]) for opts in sections.values() for key, opt in opts.items()
             if key == "platform" and any("espressif32" in v.lower() for v in derive._interpolate(opt["values"], sections))]
-    return (min(hits)[2], min(hits)[1]) if hits else None
+    if not hits:
+        return None
+    boards = sorted((order.get(opt["file"], 0), opt["line"], opt["file"], v)
+                    for sec, opts in sections.items() if sec.startswith("env:")
+                    for key, opt in opts.items() if key == "board"
+                    for v in derive._interpolate(opt["values"], sections) if v)
+    targets = tuple({"kind": "platformio", "token": v.strip().lower(), "url": repo.cite(f, ln)} for _o, ln, f, v in boards)
+    return (min(hits)[2], min(hits)[1], targets)
 
 
 def _platformio(repo: _Repo) -> _Hit | None:
@@ -306,8 +318,8 @@ def _platformio(repo: _Repo) -> _Hit | None:
             continue
         where, why = repo.place(p), f"platformio.ini platform espressif32 ({hit[0]})"
         if where == OWN:
-            return _Hit(ESP_TARGET, "platformio", repo.cite(*hit), why)
-        held = held or _Hit(NEEDS_REVIEW, "platformio", repo.cite(*hit), _not_own(where, why))
+            return _Hit(ESP_TARGET, "platformio", repo.cite(hit[0], hit[1]), why, hit[2])
+        held = held or _Hit(NEEDS_REVIEW, "platformio", repo.cite(hit[0], hit[1]), _not_own(where, why))
     return held
 
 
@@ -382,8 +394,9 @@ def _idf_project(repo: _Repo) -> _Hit | None:
             continue
         target = _idf_target(repo, _dir(p))
         if target:
-            return _Hit(ESP_TARGET, "idf_project", repo.cite(target[0], target[1]),
-                        f"ESP-IDF project ({p}) targeting {target[2]} ({target[0]})")
+            url = repo.cite(target[0], target[1])
+            return _Hit(ESP_TARGET, "idf_project", url, f"ESP-IDF project ({p}) targeting {target[2]} ({target[0]})",
+                        ({"kind": "idf_project", "token": target[2].lower(), "url": url},))
         return _Hit(NEEDS_REVIEW, "idf_project", repo.cite(p, line),
                     "ESP-IDF project.cmake but no ESP target stated (sdkconfig.defaults CONFIG_IDF_TARGET, "
                     "idf_component.yml targets, dependencies.lock target)")
@@ -487,7 +500,10 @@ def _arduino(repo: _Repo) -> _Hit | None:
             continue
         mine, where = [s for s in built if s in own], _board_place(repo, p)
         if mine and where == OWN:
-            return _Hit(ESP_TARGET, "arduino_sketch", repo.cite(p, line), f"Arduino sketch {mine[0]} built for an ESP board ({p})")
+            url = repo.cite(p, line)
+            fqbn = _ESP_FQBN.search(text.split("\n")[line - 1])
+            targets = ({"kind": "arduino_sketch", "token": fqbn.group(0).split(":", 2)[2].lower(), "url": url},) if fqbn else ()
+            return _Hit(ESP_TARGET, "arduino_sketch", url, f"Arduino sketch {mine[0]} built for an ESP board ({p})", targets)
         if where == OWN:
             where = _sketch_place(repo, built[0])
         held = held or _Hit(NEEDS_REVIEW, "arduino_sketch", repo.cite(p, line),
@@ -543,7 +559,26 @@ def _listing(owner_repo: str, ref: str, calls: _Calls, notes: list[str]) -> tupl
 
 def _result(ok, verdict, calls, notes, hit: _Hit | None = None, ambiguous=()) -> dict:
     return {"ok": ok, "verdict": verdict, "kind": hit.kind if hit else None, "url": hit.url if hit else None,
-            "calls": calls.n, "notes": notes, "ambiguous": [{"kind": a.kind, "url": a.url, "why": a.why} for a in ambiguous]}
+            "calls": calls.n, "notes": notes, "ambiguous": [{"kind": a.kind, "url": a.url, "why": a.why} for a in ambiguous],
+            "targets": [dict(t) for t in (hit.targets if hit and ok else ())]}
+
+
+def board_from_targets(result: dict, boards: dict) -> tuple[str | None, dict | None]:
+    """(catalogued board, the signal that named it) from a check result's `targets`: the first target,
+    in file order, that board_alias.resolve_token maps to a board in `boards` (atlas_boards). A chip-only
+    target (`esp32s3`, `esp32dev`'s generic module) is a chip, not a board: never a board here, no devkit
+    is guessed. (None, None) when nothing resolves. The signal is shaped like a derive signal, for the
+    first recipe's citation: the build file and line that names the board."""
+    for t in result.get("targets") or []:
+        token = str(t.get("token") or "")
+        if not token or board_alias.chip_only(token):
+            continue
+        r = board_alias.resolve_token(token, boards=boards)
+        atlas_id = (r or {}).get("atlas_id")
+        if atlas_id and atlas_id in boards:
+            return atlas_id, {"rank": 1, "kind": t.get("kind"), "token": token, "url": t.get("url"),
+                              "soc": boards[atlas_id].get("soc"), "line": None, "extra": {}}
+    return None, None
 
 
 def check(owner_repo: str, *, api=None, raw=None, fetch=None, ref: str | None = None, max_calls: int = MAX_CALLS) -> dict:

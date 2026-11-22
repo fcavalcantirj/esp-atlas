@@ -443,3 +443,55 @@ def test_an_exhausted_call_cap_with_nothing_found_is_unknown():
     api, raw, fetch, _ = fake_repo(tree=many, files={p: "[env:x]\nplatform = atmelavr\n" for p in many}, releases=[])
     res = dev.check("o/r", api=api, raw=raw, fetch=fetch, ref="main", max_calls=4)
     assert res["ok"] is None and res["verdict"] is None
+
+
+# --- the targets a build file names (2026-11-17): the board tokens the gate already read -----------
+# The admission scorer rejected generic-chip firmware `no_board_evidence` although its platformio.ini
+# said `board = esp32-s3-devkitc-1`, a catalogued Espressif devkit (project_aura 797 stars,
+# esp32-c3-adblock 3597). The gate reads those files anyway; it now returns what they target, so a
+# board can be derived from them at zero extra calls (jr/stage_admit, jr/drain).
+
+def test_platformio_targets_list_every_env_board_in_file_order_with_a_citation():
+    ini = ("[env]\nframework = arduino\n\n[env:devkit]\nplatform = espressif32\nboard = esp32-s3-devkitc-1\n\n"
+           "[env:mini]\nplatform = espressif32\nboard = lolin_s3_mini\n")
+    res, _ = check(tree=["platformio.ini", "src/main.cpp"], files={"platformio.ini": ini})
+    assert res["ok"] is True
+    assert res["targets"] == [
+        {"kind": "platformio", "token": "esp32-s3-devkitc-1", "url": "https://github.com/o/r/blob/main/platformio.ini#L6"},
+        {"kind": "platformio", "token": "lolin_s3_mini", "url": "https://github.com/o/r/blob/main/platformio.ini#L10"}]
+
+
+def test_sketch_yaml_target_is_the_fqbn_board():
+    res, _ = check(tree=["Sketch/Sketch.ino", "Sketch/sketch.yaml"], files={"Sketch/sketch.yaml": ESP_SKETCH_YAML})
+    assert res["ok"] is True and len(res["targets"]) == 1
+    assert res["targets"][0]["kind"] == "arduino_sketch" and res["targets"][0]["url"] == res["url"]
+    assert res["targets"][0]["token"] == ESP_SKETCH_YAML.split(":esp32:")[1].split()[0]
+
+
+def test_idf_target_is_the_chip_only_and_a_miss_has_no_targets():
+    res, _ = check(tree=IDF_TREE + ["sdkconfig.defaults"],
+                   files={"CMakeLists.txt": IDF_CMAKE, "sdkconfig.defaults": "CONFIG_IDF_TARGET=\"esp32s3\"\n"})
+    assert res["targets"] == [{"kind": "idf_project", "token": "esp32s3", "url": "https://github.com/o/r/blob/main/sdkconfig.defaults#L1"}]
+    miss, _ = check(tree=WARBLE_TREE, files={}, releases=[])
+    assert miss["ok"] is False and miss["targets"] == []
+
+
+def test_board_from_targets_takes_the_first_target_that_is_a_catalogued_board():
+    import board_alias
+    boards = board_alias.atlas_boards(Path(__file__).resolve().parent.parent)
+    res = {"targets": [{"kind": "platformio", "token": "esp32dev", "url": "u1"},                # not a catalogued board
+                       {"kind": "platformio", "token": "esp32-s3-devkitc-1", "url": "u2"},
+                       {"kind": "platformio", "token": "lolin_s3_mini", "url": "u3"}]}
+    board, signal = dev.board_from_targets(res, boards)
+    assert board == "esp32-s3-devkitc-1"
+    assert signal == {"rank": 1, "kind": "platformio", "token": "esp32-s3-devkitc-1", "url": "u2",
+                      "soc": "esp32-s3", "line": None, "extra": {}}
+
+
+def test_board_from_targets_never_turns_a_chip_into_a_board():
+    import board_alias
+    boards = board_alias.atlas_boards(Path(__file__).resolve().parent.parent)
+    assert dev.board_from_targets({"targets": [{"kind": "idf_project", "token": "esp32s3", "url": "u"}]}, boards) == (None, None)
+    assert dev.board_from_targets({"targets": [{"kind": "platformio", "token": "esp32dev", "url": "u"}]}, boards) == (None, None)
+    assert dev.board_from_targets({"targets": []}, boards) == (None, None)
+    assert dev.board_from_targets({}, boards) == (None, None)

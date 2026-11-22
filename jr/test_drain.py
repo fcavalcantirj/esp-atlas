@@ -13,6 +13,7 @@ Run: cd jr && python3 -m pytest test_drain.py -v
 """
 from __future__ import annotations
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -841,4 +842,114 @@ def test_run_drain_skips_a_candidate_already_proposed_in_an_injected_ledger(tmp_
 
     assert report["prefiltered"] == 0        # blocked at prefilter, before any (fake) network fetch
     assert report["authored"] == []
+    assert not (tools.FIRMWARE_DIR / FIXTURE_ID).exists()
+
+
+# ─────────────────────────── a build-file board in the topics path (2026-11-17) ───────────────────────────
+
+def _targets_evidence(*tokens, kind="platformio"):
+    calls = []
+
+    def evidence(owner_repo, ref):
+        calls.append((owner_repo, ref))
+        return {"ok": True, "verdict": "esp_target", "kind": kind, "url": f"https://github.com/{owner_repo}/blob/main/platformio.ini#L4",
+                "calls": 3, "notes": [], "ambiguous": [],
+                "targets": [{"kind": kind, "token": t, "url": f"https://github.com/{owner_repo}/blob/main/platformio.ini#L4"} for t in tokens]}
+    return evidence, calls
+
+
+def test_score_candidates_takes_the_board_from_the_build_file_when_the_prose_names_none():
+    entry = {"name": "Air Quality Station", "description": None, "category": None,
+             "github": "https://github.com/c/aura", "download": 0}
+    meta = _fake_meta(full_name="c/aura", stars=797, description="ESP32-S3 air-quality station with LVGL UI, MQTT, Home Assistant")
+    evidence, calls = _targets_evidence("esp32-s3-devkitc-1")
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta, evidence=evidence)
+    assert skipped == [] and len(scored) == 1
+    assert scored[0]["record"]["board"] == "esp32-s3-devkitc-1" and scored[0]["record"]["chip"] == "esp32-s3"
+    assert len(calls) == 1                                                  # the gate ran once for both purposes
+
+
+def test_score_candidates_keeps_no_board_evidence_when_the_build_file_names_only_a_chip():
+    entry = {"name": "Any Station", "description": None, "category": None,
+             "github": "https://github.com/c/any", "download": 0}
+    meta = _fake_meta(full_name="c/any", stars=90, description="ESP32 station")
+    evidence, _ = _targets_evidence("esp32dev")
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta, evidence=evidence)
+    assert scored == [] and skipped[0]["reason"].startswith("no_board_evidence")
+
+
+# --- a topic-stage recipe carries the evidence check's receipt (2026-11-21) ----------------------------------
+# The drain wrote every recipe as "the repo lists X as a supported device" with no evidence check and no
+# receipt: the receipt guard refused all of them (E1 "no evidence receipt"), four tick PRs waited three days
+# and Jr closed them. Run live, the same check passed three (lilygo-t-deck x esp32-template, fennek,
+# pisces-moon-os) and FAILED one (adafruit-qt-py-esp32-s2 x xmas-tree: the source never names the board).
+
+def _gate(verdict, board=None, why="named: the source names m5cardputer"):
+    def gate(b, owner_repo, catalog):
+        if verdict is None:                                   # the upstream could not be read
+            return b, None, []
+        if verdict == "FAIL":
+            return None, "", [(b, f"evidence check v4: {why}")]
+        return board or b, f"v4 {verdict} — {why}", []
+    return gate
+
+
+def _recipe_fm(board="m5cardputer"):
+    return tools._frontmatter(tools.REPO / "data" / "recipes" / f"{board}__{FIXTURE_ID}" / "recipe.md")
+
+
+def test_a_recipe_that_passes_the_evidence_check_carries_its_receipt(tmp_atlas):
+    authored, dropped = drain.author_selected(_fixture_selected(), existing_ids=set(), gate=_gate("PASS"))
+    assert authored == [FIXTURE_ID] and dropped == []
+    import receipt_guard
+    assert receipt_guard.receipt_of(_recipe_fm()) == ("4", "PASS")       # what the tick canary's guard reads
+
+
+def test_a_recipe_the_evidence_check_fails_is_never_written(tmp_atlas):
+    authored, dropped = drain.author_selected(_fixture_selected(), existing_ids=set(),
+                                              gate=_gate("FAIL", why="named: the source never names m5cardputer"))
+    assert authored == [] and dropped[0]["reason"] == "evidence_check: named: the source never names m5cardputer"
+    assert not (tools.FIRMWARE_DIR / FIXTURE_ID).exists()
+
+
+def test_an_uncertain_check_is_written_with_its_doubt_so_a_reviewer_reads_it(tmp_atlas):
+    drain.author_selected(_fixture_selected(), existing_ids=set(), gate=_gate("UNCERTAIN", why="sibling: generic"))
+    import receipt_guard
+    assert receipt_guard.receipt_of(_recipe_fm()) == ("4", "UNCERTAIN")
+
+
+def test_an_unreadable_upstream_writes_the_recipe_as_before_without_a_receipt(tmp_atlas):
+    authored, _ = drain.author_selected(_fixture_selected(), existing_ids=set(), gate=_gate(None))
+    assert authored == [FIXTURE_ID] and "notes" not in _recipe_fm()
+
+
+def test_the_check_can_move_the_edge_to_a_sibling_of_the_same_chip(tmp_atlas):
+    authored, _ = drain.author_selected(_fixture_selected(), existing_ids=set(), gate=_gate("PASS", board="m5cardputer-adv"))
+    assert authored == [FIXTURE_ID] and _recipe_fm("m5cardputer-adv")["board"] == "m5cardputer-adv"
+    assert not (tools.REPO / "data" / "recipes" / f"m5cardputer__{FIXTURE_ID}").exists()
+
+
+def test_the_default_gate_is_the_receipt_guards_own_live_check(tmp_atlas, monkeypatch):
+    import receipt_guard
+    seen = []
+    def sources(owner_repo, **kw):
+        seen.append(owner_repo)
+        return {"description": "Firmware for the M5Stack Cardputer", "readme": "", "platformio": "", "assets": ""}
+    monkeypatch.setattr(receipt_guard, "live_sources", sources)
+    authored, _ = drain.author_selected(_fixture_selected(), existing_ids=set())
+    assert seen == ["octocat/hello-world"] and authored == [FIXTURE_ID]          # GitHub slugs are case-blind
+    assert receipt_guard.receipt_of(_recipe_fm())[1] == "PASS"
+    monkeypatch.setattr(receipt_guard, "live_sources", lambda *a, **k: (_ for _ in ()).throw(receipt_guard.Unreadable("x")))
+    shutil.rmtree(tools.FIRMWARE_DIR / FIXTURE_ID)
+    shutil.rmtree(tools.REPO / "data" / "recipes" / f"m5cardputer__{FIXTURE_ID}")
+    assert drain.author_selected(_fixture_selected(), existing_ids=set())[0] == [FIXTURE_ID]
+    assert "notes" not in _recipe_fm()
+
+
+def test_a_moved_edge_on_a_board_of_another_chip_is_dropped(tmp_atlas):
+    assert tools.board_soc("m5stick-c") != tools.board_soc("m5cardputer")
+    authored, dropped = drain.author_selected(_fixture_selected(), existing_ids=set(), gate=_gate("PASS", board="m5stick-c"))
+    assert authored == [] and dropped[0]["reason"].startswith("chip_family_mismatch")
     assert not (tools.FIRMWARE_DIR / FIXTURE_ID).exists()

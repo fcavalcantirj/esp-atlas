@@ -276,7 +276,12 @@ def test_the_default_pipeline_opens_one_candidate_with_its_source_and_window(tmp
     monkeypatch.setattr(demand, "_pull_live", _live(REALISTIC_GA4))
     demand.mine(send_telegram=False, demand_dir=tmp_path)
     queue = _queue(tmp_path)
-    assert list(queue) == ["es3c28p"]
+    # 2026-11-21: the three Tenstar searches got generic results, not an empty page; "tenstar esp32-s3" pairs
+    # an ESP32 word with a word no catalog entry carries, so they are one research candidate too
+    assert list(queue) == ["es3c28p", "tenstar"]
+    t = queue["tenstar"]
+    assert (t["searches"], t["zero_result_searches"], t["intake"], t["missing_words"]) == (3, 0, "unknown_word", ["tenstar"])
+    assert t["source"] == rq.UNKNOWN_WORD_SOURCE and t["window"] == WINDOW
     c = queue["es3c28p"]
     assert c["source"] == "ga4 search_empty"
     assert c["window"] == WINDOW

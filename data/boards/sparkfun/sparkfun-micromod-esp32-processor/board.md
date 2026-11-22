@@ -38,6 +38,13 @@ notes:
 getting_started: https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide
 images:
   pinout: https://cdn.sparkfun.com/assets/learn_tutorials/1/2/0/8/MicroModESP32ProcessorBoard_a.png
+platformio_definitions:
+- id: sparkfun_esp32micromod
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 3f9e7b10763a35475c56c2539bd7650cfe6ce068480a798b3ae244389d8a3aff
+- id: sparkfun_esp32micromod
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: d9c777fcf3961cad56a6cdbe1b1d1eb7de5a546fa7920fe570ae3d359e5a63cc
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-micromod-esp32-processor.html
@@ -63,6 +70,12 @@ sources:
 - field: images.pinout
   url: https://cdn.sparkfun.com/assets/learn_tutorials/1/2/0/8/MicroModESP32ProcessorBoard_a.png
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/sparkfun_esp32micromod.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/sparkfun_esp32micromod.json
+  verified: '2026-11-22'
 ---
 
 # SparkFun MicroMod ESP32 Processor

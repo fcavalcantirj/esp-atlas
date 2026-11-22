@@ -36,10 +36,12 @@ from pathlib import Path
 _JR_DIR = Path(__file__).resolve().parent
 if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
+import board_alias  # noqa: E402
 import device_evidence  # noqa: E402
 import forks  # noqa: E402
 import ledger  # noqa: E402
 import tools  # noqa: E402
+import writers  # noqa: E402
 from scorer import FORK_FLOOR, NOISE_TOKENS, STAR_FLOOR, clears_popularity_floor, score_entry  # noqa: E402
 
 MAX_PER_CATEGORY = 4
@@ -181,11 +183,22 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
                             "reason": f"repo_unresolved: {meta.get('error') if meta else 'no metadata'}"})
             continue
         result = score_entry(e, meta, catalogued_repos, catalogued_tokens)
+        owner_repo = _owner_repo(gh)
+        pre_ev = None
+        if result["decision"] != "authored" and result["reason"].startswith("no_board_evidence"):
+            # A build-file board (2026-11-17): the prose names no catalogued board, but the repo's own
+            # platformio.ini / sketch.yaml may. The gate below reads those files anyway: run it now, take
+            # the first catalogued board its targets name (a chip is never one), score again with it as
+            # the hint, and reuse the result below — one gate run, zero extra calls.
+            pre_ev = (evidence or default_device_evidence)(owner_repo, meta.get("default_branch"))
+            if pre_ev.get("ok"):
+                built_board, _signal = device_evidence.board_from_targets(pre_ev, board_alias.atlas_boards(Path(tools.REPO)))
+                if built_board:
+                    result = score_entry(e, meta, catalogued_repos, catalogued_tokens, board_hint=built_board)
         if result["decision"] != "authored":
             skipped.append({"name": e.get("name"), "github": gh, "reason": result["reason"]})
             continue
         rec = result["record"]
-        owner_repo = _owner_repo(gh)
         stars, forks_count = meta.get("stars") or 0, meta.get("forks") or 0
 
         if resolve_source is not None:
@@ -221,7 +234,10 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
                             "stars": stars, "forks": forks_count})
             continue
         authored_repo = _owner_repo(rec["url"])
-        ev = (evidence or default_device_evidence)(authored_repo, meta.get("default_branch") if authored_repo == owner_repo else None)
+        if pre_ev is not None and authored_repo == owner_repo:
+            ev = pre_ev
+        else:
+            ev = (evidence or default_device_evidence)(authored_repo, meta.get("default_branch") if authored_repo == owner_repo else None)
         if not ev.get("ok"):
             skip = {"name": e.get("name"), "github": gh, "reason": device_evidence.reject_reason(ev),
                     "firmware_id": rec["id"], "repo": authored_repo}
@@ -300,8 +316,27 @@ def _cleanup(firmware_id: str) -> None:
         shutil.rmtree(rdir, ignore_errors=True)
 
 
+def live_evidence_gate(board: str, owner_repo: str, catalog: dict) -> tuple[str | None, str | None, list]:
+    """(board to write or None, receipt or None, refusals) for one topic-stage edge: the receipt guard's OWN
+    live check (scripts/receipt_guard.live_sources: the repo's description, README, root platformio.ini and
+    release asset names) through writers.evidence_gate, the gate stage_admit runs (SPEC-jr-review-routing.md
+    §7). So a recipe the drain writes carries the receipt the tick canary's guard re-checks. An upstream that
+    cannot be read is no verdict: the board comes back with no receipt (the recipe is written as before and
+    waits for a reviewer)."""
+    scripts = str(_JR_DIR.parent / "scripts")
+    if scripts not in sys.path:
+        sys.path.insert(0, scripts)
+    import receipt_guard  # noqa: E402  (scripts/, imported late: it imports jr/ itself)
+    try:
+        sources = receipt_guard.live_sources(owner_repo)
+    except Exception:  # noqa: BLE001 — Unreadable or a transport error: no verdict, never a refusal
+        return board, None, []
+    return writers.evidence_gate(board, sources, catalog)
+
+
 def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
-                    today: str | None = None, authored_candidates: list | None = None) -> tuple[list[str], list[dict]]:
+                    today: str | None = None, authored_candidates: list | None = None,
+                    gate=None) -> tuple[list[str], list[dict]]:
     """Author each selected candidate as firmware + recipe via the SAME tools.
     author_firmware_and_recipes() the old LLM loop used, then immediately run_guard() it — a
     record that reds the guard is rolled back (never left half-written) and reported with why,
@@ -319,8 +354,15 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
     ONLY live at admission and so was invisible to the offline per-tick guard, making an
     editorial-home-only candidate re-discovered and re-rejected every tick forever.
     `authored_candidates`, when given, collects each authored candidate object itself.
+    Every edge first passes `gate` (default live_evidence_gate, 2026-11-21): FAIL is never written
+    (`evidence_check: <why>`), a sibling of the same chip replaces the board, and PASS or UNCERTAIN is written
+    with its receipt in the recipe's notes ("Evidence check v4 PASS — …"), the line the tick canary's receipt
+    guard reads. Before this the drain wrote "the repo lists X as a supported device" with no check: the guard
+    refused every such recipe and Jr closed its own tick PRs after three days.
     Returns (authored_ids, dropped: [{id, reason}])."""
     existing_ids = set(tools.catalogued_firmware_ids()) if existing_ids is None else set(existing_ids)
+    gate = gate or live_evidence_gate
+    catalog = None
     authored: list[str] = []
     dropped: list[dict] = []
     for s in selected:
@@ -329,13 +371,27 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
         if fid in existing_ids:
             dropped.append({"id": fid, "reason": f"id_already_catalogued: '{fid}' already exists"})
             continue
+        catalog = board_alias.atlas_boards(tools.REPO) if catalog is None else catalog
+        target, receipt, refusals = gate(rec["board"], _owner_repo(rec["url"]), catalog)
+        if target is None:
+            why = refusals[0][1].split(": ", 1)[-1] if refusals else "refused"
+            dropped.append({"id": fid, "reason": f"evidence_check: {why}"})
+            continue
+        if target != rec["board"]:
+            if tools.board_soc(target) != tools.board_soc(rec["board"]):
+                dropped.append({"id": fid, "reason": f"chip_family_mismatch: evidence moved the edge to '{target}'"})
+                continue
+            rec = dict(rec, board=target)
+        notes = ({rec["board"]: f"{rec['name']} names this board in its repository (description, README, root "
+                                f"platformio.ini or release assets); not verified on hardware. Evidence check {receipt}."}
+                 if receipt else None)
         body = s.get("description") or f"{rec['name']} — {rec['category']} firmware for the {rec['board']}."
         result = tools.author_firmware_and_recipes(
             firmware_id=fid, name=rec["name"], url=rec["url"], category=rec["category"],
             boards=[rec["board"]], body=body, capabilities=rec.get("capabilities"),
             maintainer=rec.get("maintainer"),
             stars=s.get("stars"), forks=s.get("forks"), downloads=s.get("download"),
-            homepage=s.get("homepage"), today=today,
+            homepage=s.get("homepage"), today=today, notes=notes,
         )
         if "error" in result:
             dropped.append({"id": fid, "reason": f"author_error: {result['error']}"})

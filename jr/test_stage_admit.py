@@ -879,3 +879,43 @@ def test_admit_writes_the_original_too_when_the_readme_names_both(root, monkeypa
     assert res.admitted == 1
     assert (root / "data/recipes/m5cardputer-adv__area/recipe.md").exists()
     assert (root / "data/recipes/m5cardputer__area/recipe.md").exists()
+
+
+# --- a build-file board for every candidate (2026-11-17), not only submissions -------------------
+# Generic-chip firmware ("ESP32-S3 air-quality station") names no board in prose, but its own
+# platformio.ini says `board = esp32-s3-devkitc-1`, a catalogued Espressif devkit. The device-build
+# evidence gate reads that file anyway; admit now takes the board from the targets it returns.
+
+AURA_INI = "[env:aura]\nplatform = espressif32\nframework = arduino\nboard = esp32-s3-devkitc-1\n"
+GENERIC_INI = "[env:any]\nplatform = espressif32\nframework = arduino\nboard = esp32dev\n"
+
+
+def _ini_raw(ini):
+    return lambda url: ini if url.endswith("/platformio.ini") else None
+
+
+def _pio_tree():
+    return {"tree": [{"path": "platformio.ini", "type": "blob"}, {"path": "src/main.cpp", "type": "blob"}], "truncated": False}
+
+
+def test_a_candidate_naming_no_board_is_admitted_on_its_platformio_board(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Project Aura", "https://github.com/c/aura", category=None)])
+    metas = {"repos/c/aura": _meta("c/aura", stars=797, description="ESP32-S3 air-quality station with LVGL UI, MQTT, Home Assistant", rid=61),
+             "repos/c/aura/git/trees/main?recursive=1": _pio_tree()}
+    ctx, asked = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0))
+    res = stage_admit.run(ctx, budget=3, raw=_ini_raw(AURA_INI))
+    assert res.admitted == 1 and "data/firmware/aura/firmware.md" in res.paths, res.summary
+    recipe = (root / "data/recipes/esp32-s3-devkitc-1__aura/recipe.md").read_text()
+    assert "platformio.ini#L4" in recipe                                   # the build file line is the citation
+    assert asked.count("repos/c/aura/git/trees/main?recursive=1") == 1      # the gate ran once, not twice
+    assert "aura: board esp32-s3-devkitc-1 from platformio" in res.summary
+
+
+def test_a_build_file_naming_only_a_generic_target_is_still_no_board_evidence(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Any Station", "https://github.com/c/any", category=None)])
+    metas = {"repos/c/any": _meta("c/any", stars=90, description="ESP32 station", rid=62),
+             "repos/c/any/git/trees/main?recursive=1": _pio_tree()}
+    ctx, _ = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0))
+    res = stage_admit.run(ctx, budget=3, raw=_ini_raw(GENERIC_INI))
+    assert res.admitted == 0 and res.rejects.get("no_board_evidence") == 1
+    assert not (root / "data/firmware/any").exists()

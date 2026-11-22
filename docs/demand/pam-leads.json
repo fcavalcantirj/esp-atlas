@@ -1,7 +1,7 @@
 {
  "version": 1,
  "source": "pam_feed",
- "checked_at": "2026-11-17T11:15:31.248373Z",
+ "checked_at": "2026-11-22T11:15:32.492374Z",
  "feeds": {
   "products": {
    "url": "https://pamfinds.com/api/products.json",
@@ -914,8 +914,10 @@
     ]
    },
    "fingerprint": "e4bf3b30e2f4ee930ce296178887c84aee63d253e51b30f9ddcfc263759f7e5b",
-   "matches": [],
-   "status": "potential_identity_gap"
+   "matches": [
+    "heltec-wifi-lora-32-v4"
+   ],
+   "status": "possible_match"
   },
   {
    "source_id": "lilygo-t-beam-supreme",
@@ -997,8 +999,10 @@
     ]
    },
    "fingerprint": "2665070be54d411ea0f30ecbdbe6e863a71cffa1ecc9fcfbdc1630517fa4a170",
-   "matches": [],
-   "status": "potential_identity_gap"
+   "matches": [
+    "lilygo-t-beam-supreme"
+   ],
+   "status": "possible_match"
   },
   {
    "source_id": "lilygo-t-deck",
@@ -1296,8 +1300,10 @@
     ]
    },
    "fingerprint": "292953c4751a5960ddd7458d3df2c5c09caa1ab0a37d51ddb3fe6d383092a8b6",
-   "matches": [],
-   "status": "potential_identity_gap"
+   "matches": [
+    "sparkfun-thing-plus-esp32-s3"
+   ],
+   "status": "possible_match"
   },
   {
    "source_id": "xiao-esp32s3",

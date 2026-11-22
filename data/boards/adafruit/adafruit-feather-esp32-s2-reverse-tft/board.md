@@ -43,6 +43,13 @@ notes:
 getting_started: https://learn.adafruit.com/esp32-s2-reverse-tft-feather
 images:
   pinout: https://cdn-learn.adafruit.com/assets/assets/000/139/947/medium800/adafruit_products_Adafruit_Reverse_TFT_Feather_ESP32-S2_Pinout.png?1758743307
+platformio_definitions:
+- id: adafruit_feather_esp32s2_reversetft
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 03775908184665adbdf820f6aaaabf21f4734a14d473c45b5b613e768cb816eb
+- id: adafruit_feather_esp32s2_reversetft
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: a39fc57abf2387f13719726bd867f0d95bb512b57c6782cc23670774a71094cd
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5345
@@ -62,6 +69,12 @@ sources:
 - field: images.pinout
   url: https://cdn-learn.adafruit.com/assets/assets/000/139/947/medium800/adafruit_products_Adafruit_Reverse_TFT_Feather_ESP32-S2_Pinout.png?1758743307
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/adafruit_feather_esp32s2_reversetft.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/adafruit_feather_esp32s2_reversetft.json
+  verified: '2026-11-22'
 ---
 
 # Adafruit ESP32-S2 Reverse TFT Feather

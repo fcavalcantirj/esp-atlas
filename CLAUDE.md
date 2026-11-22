@@ -94,7 +94,18 @@ reviewed PR; the matching `JR_*` variable set to `0` is the instant kill; every 
   (adopt, validate, link, attempt, settle, retry, check); it refuses any state the broker would defer on. Never
   edit those two JSON files by hand. A live receipt without a PR gets two UTC days of work; from the third it
   is exhausted (never resumed or launched, no longer holds its class) until a human settles or `retry`s it,
-  and `work_record.py launch-state <key>` is the one launch rule for the operator's launcher.
+  and `work_record.py launch-state <key>` is the one launch rule for the operator's launcher. **Review of a
+  demand PR is the machine's** (2026-11-17): the `quotes` job (every quoted span on a cited page),
+  `demand-guard` (the PR changes exactly what its work item says) and the `demand-canary` job that merges at
+  the exact head when both switches allow (`jr/autonomy.json` + repo variable `JR_DEMAND_AUTOMERGE`, see
+  `DEPLOY.md` "Jr's merge switches"); a person audits after the fact and holds the kill switch. A
+  **review-routed tick PR** merges the same way when every recipe it adds carries a PASS evidence receipt
+  that `receipt-guard` re-verifies on the live upstream (`tick-canary`, four a day, `tick_automerge` +
+  `JR_TICK_AUTOMERGE`). **Code PRs** get the same exact-head review from the agent reviewer
+  (`docs/REVIEW-CONTRACT.md`): the runner's subscription delegate first (`jr/agent_review.py`, hourly), the
+  API lane in `.github/workflows/agent-review.yml` only as a capped fallback when that lane is down; the
+  verdict is one marker comment, and the code canary merges on a PASS (`code_automerge` +
+  `JR_CODE_AUTOMERGE`, one an hour); a BLOCK is labelled `needs-human`.
 - **Jr's tick never re-proposes what a tick PR already holds** (`jr/pending_prs.py`, §6 of
   `SPEC-jr-review-routing.md`): an OPEN tick PR holds every firmware it touches; a tick PR **closed
   unmerged is a 30-day veto of everything it proposed**. Disposing of duplicate tick PRs therefore means

@@ -101,6 +101,14 @@ M5STACK_DOC_PATHS: dict[str, str] = {
     "m5nanoc6": "core/M5NanoC6",
     "m5stamp-c3": "core/Stamp_C3",
     "m5stamp-s3": "core/StampS3",
+    # Boards admitted after this map was written (incident 214785f8dec6), each path taken from the
+    # board's already-cited source URL and fetched live 2026-11-19. m5stack-fire / m5stick-cplus
+    # stay unmapped: their PinMap section leads with an IMU axis diagram / the schematic, which
+    # extract_images_m5stack would write as the pinout.
+    "m5stack-core": "core/basic",
+    "m5stack-core-aws": "core/core2_for_aws",
+    "m5stack-cores3-se": "products/sku/K128-SE",
+    "m5stick-c": "core/m5stickc",
 }
 
 M5STACK_DOC_BASE = "https://docs.m5stack.com/en"
@@ -146,6 +154,8 @@ ADAFRUIT_DOC_PATHS: dict[str, str] = {
     "adafruit-qt-py-esp32-c3": "adafruit-qt-py-esp32-c3-wifi-dev-board",
     "adafruit-qt-py-esp32-s2": "adafruit-qt-py-esp32-s2",
     "adafruit-qt-py-esp32-s3": "adafruit-qt-py-esp32-s3",
+    # Admitted later; slug from the board's already-cited guide URL, fetched live 2026-11-19.
+    "adafruit-pycamera-s3": "adafruit-memento-camera-board",
 }
 
 ADAFRUIT_DOC_BASE = "https://learn.adafruit.com"
@@ -248,6 +258,10 @@ SEEED_DOC_URLS = {
     "xiao-esp32c3": "https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/",
     "xiao-esp32c6": "https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/",
     "xiao-esp32s3": "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/",
+    # Admitted later; each the board's already-cited wiki page, fetched live 2026-11-19 (the Sense
+    # is documented on the XIAO ESP32S3 page).
+    "xiao-esp32c5": "https://wiki.seeedstudio.com/xiao_esp32c5_getting_started/",
+    "xiao-esp32s3-sense": "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/",
 }
 
 

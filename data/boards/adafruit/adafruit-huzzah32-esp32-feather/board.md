@@ -48,6 +48,13 @@ images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/001/641/medium800/thumb.jpg
   pinout: https://cdn-learn.adafruit.com/assets/assets/000/133/601/medium800/wireless_Adafruit_HUZZAH32_ESP32_Feather_Pinout.png?1731518773
 usb_serial: other
+platformio_definitions:
+- id: featheresp32
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 58bb31b5a672e20426aa0d322258eb23adf77af63a8bd6d03429b7e3af7c93fd
+- id: featheresp32
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 6e3df720b99a42eb5d29e8f0c9f9b7b2599f4e82794132a7b1c3afa430b1c14c
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/3591
@@ -79,6 +86,12 @@ sources:
 - field: images.pinout
   url: https://cdn-learn.adafruit.com/assets/assets/000/133/601/medium800/wireless_Adafruit_HUZZAH32_ESP32_Feather_Pinout.png?1731518773
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/featheresp32.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/featheresp32.json
+  verified: '2026-11-22'
 ---
 
 # Adafruit HUZZAH32 – ESP32 Feather Board

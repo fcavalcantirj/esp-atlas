@@ -12,6 +12,7 @@ import { flashOpenPlan, flashPanelContent, inBrowserRail, installBlocked, type F
 import { flashMethodLabel } from "@/lib/format";
 import { hostOf } from "@/lib/analytics";
 import { downloadModeView, type DownloadMode } from "@/lib/troubleshooter";
+import { elapsedBucket, flashOutcome, isInstallDialogFor } from "@/lib/flash-outcome";
 
 // The Flash Wizard's per-recipe action (SPEC-wizard "The Flash Wizard" + P2b).
 // Opening the panel decides the rail: the manifest URL is preflighted and only a
@@ -171,6 +172,28 @@ export default function FlashAction({
     setPreflight({ kind: "handoff", reason: handoffReason(recipe, handoff, failure) });
   }
 
+  // The flash's real outcome (lib/flash-outcome): esp-web-tools' dialog closes with a bubbling `closed`
+  // event and still holds its last flash state. Listen only while this recipe's rail is ready, and only for
+  // the dialog opened on this recipe's manifest.
+  const connectedAt = useRef<number | null>(null);
+  const readyManifest = phase.kind === "ready" ? phase.manifestUrl : null;   // the vetted content, never the raw state
+  useEffect(() => {
+    if (!readyManifest) return;
+    const onClosed = (event: Event) => {
+      const el = event.target as Parameters<typeof isInstallDialogFor>[0];
+      if (!isInstallDialogFor(el, readyManifest)) return;
+      const outcome = flashOutcome(el);
+      const started = connectedAt.current;
+      connectedAt.current = null;
+      track("flash_outcome", {
+        recipe_id: recipe.id, method, result: outcome.result, stage: outcome.stage, chip: outcome.chip,
+        elapsed: started === null ? undefined : elapsedBucket(Date.now() - started),
+      });
+    };
+    document.addEventListener("closed", onClosed);
+    return () => document.removeEventListener("closed", onClosed);
+  }, [readyManifest, recipe.id, method]);
+
   // A <details> toggled open before hydration never fires onToggle: catch up on mount.
   useEffect(() => {
     if (detailsRef.current?.open && preflight.kind === "closed") void open();
@@ -284,7 +307,10 @@ export default function FlashAction({
                 className="btn btn--primary btn--flash"
                 disabled={!consent}
                 aria-describedby={consentId}
-                onClick={() => track("flash_connect", { recipe_id: recipe.id })}
+                onClick={() => {
+                  connectedAt.current = Date.now();
+                  track("flash_connect", { recipe_id: recipe.id });
+                }}
               >
                 Connect and flash
               </button>

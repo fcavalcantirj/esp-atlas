@@ -44,6 +44,13 @@ download_mode:
 getting_started: https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/
 images:
   pinout: https://files.seeedstudio.com/wiki/SeeedStudio-XIAO-ESP32C6/img/XIAO_ESP32-C6_front_pinout.png
+platformio_definitions:
+- id: seeed_xiao_esp32c6
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: ba620fd044b9d6020e8e62dc8c79a9f9b3a77f2b5dd9fe020e3a2049d3dd7426
+- id: seeed_xiao_esp32c6
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 84c855ebb4f032b951e4e97b1fb5212f2de08f6be7b88ef69d3cda0cec397056
 sources:
 - field: '*'
   url: https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/
@@ -69,6 +76,12 @@ sources:
 - field: images.pinout
   url: https://files.seeedstudio.com/wiki/SeeedStudio-XIAO-ESP32C6/img/XIAO_ESP32-C6_front_pinout.png
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/seeed_xiao_esp32c6.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/seeed_xiao_esp32c6.json
+  verified: '2026-11-22'
 ---
 
 # Seeed Studio XIAO ESP32C6

@@ -493,7 +493,10 @@ def test_scorer_and_unresolved_skips_are_remembered_with_their_ttl(root, monkeyp
     monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
     metas = {
         "n/old": _meta("n/old", archived=True, description="A Cardputer tool", rid=201),
-        "n/vague": _meta("n/vague", description="a thing", rid=202),
+        # a library, not firmware: a scorer skip no build file can rescue (since 2026-11-17 a repo whose
+        # prose names no board takes its board from its build file, and this test tree's fake
+        # sketch.yaml names the Cardputer for every repo)
+        "n/vague": dict(_meta("n/vague", description="a thing", rid=202), has_library_manifest=True),
     }
     monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(metas))
 
@@ -541,7 +544,8 @@ def test_a_remembered_skip_is_scored_again_after_its_ttl(root, monkeypatch):
     import stage_admit
     entries = [_topic_entry("Vague Thing", "https://github.com/n/vague", "a thing")]
     monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
-    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta({"n/vague": _meta("n/vague", description="a thing", rid=202)}))
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(
+        {"n/vague": dict(_meta("n/vague", description="a thing", rid=202), has_library_manifest=True)}))   # a scorer skip (library)
     stage_admit_topics.run(_ctx(root), budget=1)
     later = NOW + timedelta(days=memory.SEEN_TTL_DAYS + 1)
     memory.expire(path=root / "jr" / "proposed_ledger.json", now=later)

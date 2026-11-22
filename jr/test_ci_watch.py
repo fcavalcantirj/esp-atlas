@@ -377,14 +377,14 @@ def test_watch_turns_two_red_tick_prs_into_one_incident_with_both_images(tmp_pat
     assert rec["context"]["red_image"] == "ubuntu-26.04 20261101.186.1"
     assert rec["context"]["green_image"] == "ubuntu-24.04 20261101.360.1"
     assert rec["context"]["first_red_number"] == 1677
-    assert len(gh.calls) <= 8, gh.calls
+    assert len(gh.calls) <= 9, gh.calls      # +1: merged heal PRs beyond the newest 12
     assert not any(c[:2] == ("run", "rerun") for c in gh.calls)
 
 
 def test_watch_on_a_green_ci_costs_at_most_four_calls_and_fetches_no_log(tmp_path):
     gh = github(tick_concl=("SUCCESS", "SUCCESS"))
     out = cw.watch(gh, "o/r", cw.Store(tmp_path / "i.json"), NOW)
-    assert out["verdict"] == "none" and len(gh.calls) <= 4, gh.calls
+    assert out["verdict"] == "none" and len(gh.calls) <= 5, gh.calls     # +1: merged heal PRs beyond the newest 12
     assert not any("logs" in " ".join(c) for c in gh.calls)
 
 
@@ -419,11 +419,18 @@ def resolved_again(store, times, start_day=12):
     return rec
 
 
-def test_the_same_break_a_third_time_needs_a_human_and_is_never_dispatched(tmp_path):
+def test_the_same_break_a_third_time_is_given_up_not_parked_on_a_person(tmp_path):
+    # 2026-11-19, owner: "what else does this project need". The third time used to be `needs_human`: Jr stopped
+    # and waited. It now gives up by itself, says so once, and does not look at that break again for a week.
     store = cw.Store(tmp_path / "i.json")
     third = resolved_again(store, 3)
-    assert third["state"] == "needs_human" and third["id"].endswith("-3")
+    assert third["state"] == "abandoned" and third["id"].endswith("-3")
     assert store.claim("2026-11-14T10:00:00+00:00") is None
+    assert "abandoned" not in cw.LIVE and "needs_human" not in {r["state"] for r in store._load()["incidents"].values()}
+    assert any("gave up" in m and "Nothing waits on you" in m for m in store.nudges())
+    assert store.record(incident(), "2026-11-16T09:00:00+00:00") is None          # still the same week: not again
+    fresh = store.record(incident(), "2026-11-22T09:00:00+00:00")                 # a week later it is a new break
+    assert fresh["state"] == "open" and fresh["id"].endswith("-4")
 
 
 def test_at_most_three_dispatches_without_a_human_ack_then_halt_until_ack(tmp_path):
@@ -439,14 +446,64 @@ def test_at_most_three_dispatches_without_a_human_ack_then_halt_until_ack(tmp_pa
     assert store.claim("2026-11-14T13:00:00+00:00") is not None
 
 
-def test_a_dispatch_with_no_pr_after_the_stall_window_is_stalled_not_retried(tmp_path):
+def test_the_pause_after_three_fruitless_dispatches_ends_by_itself_on_the_next_utc_day(tmp_path):
+    store = cw.Store(tmp_path / "i.json")
+    for n in range(5):
+        log = RED_1200.replace("no_host_file_is_there_to_read", f"case_{n}")
+        store.record(cw.evaluate([red(2, log), red(1, log), green("main", None)], REQUIRED), NOW)
+    for d in ("2026-11-12T10:00:00+00:00", "2026-11-12T11:00:00+00:00", "2026-11-13T10:00:00+00:00"):
+        assert store.claim(d)
+    assert store.claim("2026-11-14T10:00:00+00:00") is None and store.claim("2026-11-14T23:00:00+00:00") is None
+    assert store._load()["halted"] is True
+    assert store.claim("2026-11-15T00:30:00+00:00") is not None                   # nobody ran `ack`
+    data = store._load()
+    assert data["halted"] is False and data["auto_since_ack"] == 1
+
+
+def test_a_pause_written_by_the_older_code_without_its_day_still_ends(tmp_path):
+    # review BLOCK of #1901: main wrote `halted: True` with no `halted_day`; defaulting the missing day to
+    # "today" made the pause last for ever. The runner read 2 of 3 dispatches when this was written.
+    store = cw.Store(tmp_path / "i.json")
+    for n in range(2):
+        log = RED_1200.replace("no_host_file_is_there_to_read", f"case_{n}")
+        store.record(cw.evaluate([red(2, log), red(1, log), green("main", None)], REQUIRED), NOW)
+    data = store._load()
+    data.update(halted=True, auto_since_ack=3)                                    # the older code's pause
+    store._save(data)
+    assert store.claim("2026-11-20T10:00:00+00:00") is not None
+    after = store._load()
+    assert after["halted"] is False and after["auto_since_ack"] == 1
+
+
+def test_a_pause_with_nothing_left_to_claim_still_ends_on_the_next_day(tmp_path):
+    store = cw.Store(tmp_path / "i.json")
+    for n in range(3):
+        log = RED_1200.replace("no_host_file_is_there_to_read", f"case_{n}")
+        store.record(cw.evaluate([red(2, log), red(1, log), green("main", None)], REQUIRED), NOW)
+    for d in ("2026-11-12T10:00:00+00:00", "2026-11-12T11:00:00+00:00", "2026-11-13T10:00:00+00:00"):
+        assert store.claim(d)
+    data = store._load()
+    data.update(halted=True, halted_day="2026-11-13")
+    store._save(data)
+    assert store.claim("2026-11-14T10:00:00+00:00") is None                       # nothing waiting
+    assert store._load()["halted"] is False
+
+
+def test_a_dispatch_with_no_pr_after_the_stall_window_is_tried_once_more_a_day_later_then_given_up(tmp_path):
     store = cw.Store(tmp_path / "i.json")
     rec = store.record(incident(), NOW)
     store.claim("2026-11-12T18:00:00+00:00")
     assert store.progress({}, "2026-11-12T21:00:00+00:00") == []
     assert store.progress({}, "2026-11-12T22:30:00+00:00") == [rec["id"]]
     assert store.get(rec["id"])["state"] == "stalled"
-    assert store.claim("2026-11-13T10:00:00+00:00") is None
+    assert store.claim("2026-11-13T10:00:00+00:00") is None                       # not within the day
+    store.progress({}, "2026-11-13T23:00:00+00:00")                               # 24 h after it stalled
+    assert store.get(rec["id"])["state"] == "open" and store.get(rec["id"])["retried"] is True
+    assert store.claim("2026-11-14T10:00:00+00:00")["id"] == rec["id"]
+    store.progress({}, "2026-11-14T15:00:00+00:00")                               # the second try produced nothing
+    assert store.get(rec["id"])["state"] == "abandoned"
+    store.progress({}, "2026-11-16T15:00:00+00:00")
+    assert store.get(rec["id"])["state"] == "abandoned" and store.claim("2026-11-16T16:00:00+00:00") is None
 
 
 def test_a_heal_pr_on_the_incident_branch_moves_it_to_pr_opened(tmp_path):
@@ -468,7 +525,7 @@ def test_every_state_change_nudges_once_and_a_repeat_hour_nudges_nothing(tmp_pat
     store.claim(NOW)
     assert any("dispatched" in m for m in store.nudges())
     store.progress({}, "2026-11-13T00:00:00+00:00")
-    assert any("stalled" in m and "human" in m for m in store.nudges())
+    assert any("stalled" in m and "once more" in m for m in store.nudges())
 
 
 def test_the_halt_nudges_once_with_the_ack_command(tmp_path):
@@ -478,10 +535,10 @@ def test_the_halt_nudges_once_with_the_ack_command(tmp_path):
         store.record(cw.evaluate([red(2, log), red(1, log), green("main", None)], REQUIRED), NOW)
     for d in ("2026-11-12T10:00:00+00:00", "2026-11-12T11:00:00+00:00", "2026-11-13T10:00:00+00:00", "2026-11-14T10:00:00+00:00"):
         store.claim(d)
-    halts = [m for m in store.nudges() if "halted" in m]
-    assert len(halts) == 1 and "jr/ci_watch.py ack" in halts[0]
-    store.claim("2026-11-15T10:00:00+00:00")
-    assert not any("halted" in m for m in store.nudges())
+    halts = [m for m in store.nudges() if "paused" in m]
+    assert len(halts) == 1 and "resumes by itself" in halts[0] and "jr/ci_watch.py ack" in halts[0]
+    store.claim("2026-11-14T11:00:00+00:00")
+    assert not any("paused" in m for m in store.nudges())
 
 
 # --- a blind watch says so (2026-11-13: 23 silent `unavailable` ticks went unnoticed) ---------------------

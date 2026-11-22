@@ -45,6 +45,13 @@ notes:
 getting_started: https://docs.heltec.org/en/node/esp32/wifi_lora_32/index.html
 images:
   pinout: https://resource.heltec.cn/download/WiFi_LoRa_32_V3/Wi-Fi_LoRa32_V3.2_Pinmap.png
+platformio_definitions:
+- id: heltec_wifi_lora_32_V3
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 1594035ea9e456e33e53841a86968c86709b531ecc9a616bcbfed52ec1b7b88d
+- id: heltec_wifi_lora_32_V3
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 228810e4905eb7ebaf6aeea6617792a6f10a5240d2c127fd68e0444afa360629
 sources:
 - field: '*'
   url: https://heltec.org/project/wifi-lora-32-v3/
@@ -67,6 +74,12 @@ sources:
 - field: images.pinout
   url: https://resource.heltec.cn/download/WiFi_LoRa_32_V3/Wi-Fi_LoRa32_V3.2_Pinmap.png
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/heltec_wifi_lora_32_V3.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/heltec_wifi_lora_32_V3.json
+  verified: '2026-11-22'
 ---
 
 # WiFi LoRa 32 (V3)

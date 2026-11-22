@@ -65,7 +65,7 @@ def _number_in(route: str) -> int:
 
 
 def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None, repos=None, pages=None, heads=None,
-        counts=None, sources=None):
+        counts=None, sources=None, bases=None):
     """`files`: PR number -> every changed path, served by `gh api …/pulls/<n>/files --paginate`
     in REST pages of 100 printed back to back, as gh prints them (`pages`: PR number -> the pages served
     instead, as a PR edited mid-listing serves them). `gh api …/pulls/<n>` answers head sha `oid<n>`
@@ -75,13 +75,19 @@ def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None, repos
     `repos`: owner/repo -> the id `gh api repos/<owner/repo>` answers (redirects followed; None or
     absent: the call fails); by default the ids the served ledgers record. `sources`: (head oid, firmware
     id) -> the owner/repo the firmware.md committed there names (absent: no such file); by default
-    the repo each served ledger records."""
+    the repo each served ledger records. `bases`: head oid -> the merge-base sha `gh api …/compare/<base>...<head>`
+    answers (absent: the call fails)."""
     repos = _ledger_repos(ledgers) if repos is None else repos
     sources = _ledger_sources(ledgers) if sources is None else sources
 
     def gh(*a):
         if calls is not None:
             calls.append(a)
+        if a[:1] == ("api",) and len(a) == 2 and "/compare/" in a[1]:
+            head = a[1].split("...")[-1]
+            sha = (bases or {}).get(head)
+            return SimpleNamespace(returncode=0 if sha else 1, stderr="" if sha else "HTTP 404",
+                                   stdout=json.dumps({"merge_base_commit": {"sha": sha}}) if sha else "")
         if a[:1] == ("api",) and len(a) == 2 and a[1].count("/") == 2 and "/pulls/" not in a[1]:
             asked = a[1].removeprefix("repos/").lower()                         # GitHub ignores the case
             rid = next((r for name, r in repos.items() if name.lower() == asked), None)
@@ -711,7 +717,11 @@ def test_a_ledger_repo_that_is_no_plain_owner_and_name_is_never_asked_for_and_is
     calls = []
     idx = _load(_gh([], calls=calls, ledgers={"oid1500": led}, repos={}), [_pr(1500, LEGACY_FILES)])
     assert not idx.complete and any("#1500" in g and "oldtool" in g for g in idx.gaps), idx.gaps
-    assert not [c for c in calls if c[:1] == ("api",) and len(c) == 2 and "/pulls/" not in c[1]]
+    # the malformed name is never sent to GitHub; the merge-base read of our own repository (stale-record
+    # check, 2026-11-18) names no ledger repo
+    asked = [c for c in calls if c[:1] == ("api",) and len(c) == 2 and "/pulls/" not in c[1]]
+    assert all(c[1].startswith(f"repos/{SLUG}/compare/") for c in asked), asked
+    assert not [c for c in asked if "user" in c[1] or "n/.." in c[1]]
 
 
 def test_the_pr_lists_ask_for_the_author_and_whether_the_head_is_a_fork():

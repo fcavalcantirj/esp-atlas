@@ -153,6 +153,18 @@ repeat:
 - **The launcher `seen/drained` ledger** — every `fid` of the 2,487, so the backlog only shrinks.
 - **Seed health** — which seeds are productive vs noisy.
 
+**A catalogued firmware's id belongs to its own source (2026-11-18).** Firmware ids are name slugs, so a
+namesake fork derives the same id as a catalogued firmware. Measured on main that day: 9 catalogued ids held
+a decision about another repository (a rejected or expired fork, or a fork the catalog was later pointed
+away from) and 14 had no record at all; `wled`'s fork record aborted four hourly ticks in a row through the
+pending-PR identity check. Every tick now runs `memory.reconcile_catalogued` after `reconcile_removed`:
+each catalogued firmware gets a `merged` record of the repository its `firmware.md` `url:` names, and
+another repository's record under that id moves, unchanged but without its repo_id, to
+`repo-note:<owner/repo>`, where it keeps that repository decided. A human veto and an open proposal are
+never touched; nothing is deleted (the ledger guard stays green). `memory._write` backfills a missing
+repo_id on a refused write only from the same repository, so a fork's refused decision can no longer
+stamp the fork's id on the catalogued record.
+
 ---
 
 ## 7. Channels

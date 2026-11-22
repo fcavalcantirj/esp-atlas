@@ -4,55 +4,311 @@
   "title": "ESP Atlas Recipe",
   "description": "One board x one firmware, the atomic 'what runs on what'. First-class entity like `brand`: never indexed into the queryable parts table, never a /search or /wizard result. `chip_family` must equal the referenced board's `soc`. See SPEC-wizard.md.",
   "type": "object",
-  "required": ["id", "type", "board", "firmware", "status", "chip_family", "sources"],
+  "required": [
+    "id",
+    "type",
+    "board",
+    "firmware",
+    "status",
+    "chip_family",
+    "sources"
+  ],
   "additionalProperties": false,
   "properties": {
     "id": {
-      "type": "string", "pattern": "^[a-z0-9-]+__[a-z0-9-]+$",
+      "type": "string",
+      "pattern": "^[a-z0-9-]+__[a-z0-9-]+$",
       "description": "matches the data/recipes/<id>/ folder, <board>__<firmware>"
     },
-    "type": { "const": "recipe" },
-    "board": { "type": "string", "description": "id of the board (must exist in data/boards/**)" },
-    "firmware": { "type": "string", "description": "id of the firmware (must exist in data/firmware/)" },
-    "status": { "enum": ["known-good", "reported", "unverified", "declared", "broken"] },
-    "chip_family": { "type": "string", "description": "must equal the referenced board's soc" },
-    "firmware_version": { "type": "string" },
+    "type": {
+      "const": "recipe"
+    },
+    "board": {
+      "type": "string",
+      "description": "id of the board (must exist in data/boards/**)"
+    },
+    "firmware": {
+      "type": "string",
+      "description": "id of the firmware (must exist in data/firmware/)"
+    },
+    "status": {
+      "enum": [
+        "known-good",
+        "reported",
+        "unverified",
+        "declared",
+        "broken",
+        "build-target"
+      ]
+    },
+    "chip_family": {
+      "type": "string",
+      "description": "must equal the referenced board's soc"
+    },
+    "firmware_version": {
+      "type": "string"
+    },
     "flash": {
-      "type": "object", "additionalProperties": false,
-      "not": { "required": ["bin_url", "parts"] },
+      "type": "object",
+      "additionalProperties": false,
+      "not": {
+        "required": [
+          "bin_url",
+          "parts"
+        ]
+      },
       "properties": {
-        "method": { "enum": ["esp-web-tools", "release-bin", "m5burner", "web-flasher"] },
-        "manifest_url": { "type": "string", "format": "uri" },
-        "bin_url": { "type": "string", "format": "uri" },
-        "offset": { "type": "string" },
+        "method": {
+          "enum": [
+            "esp-web-tools",
+            "release-bin",
+            "m5burner",
+            "web-flasher"
+          ]
+        },
+        "manifest_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "bin_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "offset": {
+          "type": "string"
+        },
         "parts": {
-          "type": "array", "minItems": 1,
+          "type": "array",
+          "minItems": 1,
           "description": "A multi-part image (e.g. bootloader, partition table, boot_app0, app), each written at its OWN offset and never merged: a merged image fills the gaps between parts (where NVS usually lives) with 0xFF. Emitted in order as the generated manifest's parts[], each via the same-origin proxy as `&part=<index>` (esp_atlas_core.flash). Mutually exclusive with `bin_url`. Cite-or-omit per part, checked by esp_atlas_core.validate: a sources[] entry with field `flash.parts[<i>].url` whose url IS that part's url (the binary itself, same convention as `flash.bin_url`), and one with field `flash.parts[<i>].offset` pointing where the offset is stated.",
           "items": {
-            "type": "object", "required": ["url", "offset"], "additionalProperties": false,
+            "type": "object",
+            "required": [
+              "url",
+              "offset"
+            ],
+            "additionalProperties": false,
             "properties": {
-              "url": { "type": "string", "format": "uri" },
-              "offset": { "type": "string", "pattern": "^0x[0-9a-fA-F]+$", "description": "hex string, e.g. '0x10000' (never a bare decimal, which reads ambiguously)" }
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "offset": {
+                "type": "string",
+                "pattern": "^0x[0-9a-fA-F]+$",
+                "description": "hex string, e.g. '0x10000' (never a bare decimal, which reads ambiguously)"
+              }
             }
           }
         },
-        "env": { "type": "string" },
-        "partition": { "type": "string" }
+        "env": {
+          "type": "string"
+        },
+        "partition": {
+          "type": "string"
+        }
       }
     },
-    "verified_by": { "type": "string" },
-    "verified_at": { "type": "string", "format": "date" },
-    "notes": { "type": "string" },
+    "verified_by": {
+      "type": "string"
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string"
+    },
     "sources": {
-      "type": "array", "minItems": 1,
+      "type": "array",
+      "minItems": 1,
       "items": {
-        "type": "object", "required": ["field", "url", "verified"], "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "field",
+          "url",
+          "verified"
+        ],
+        "additionalProperties": false,
         "properties": {
-          "field": { "type": "string" },
-          "url": { "type": "string", "format": "uri" },
-          "verified": { "type": "string", "format": "date" }
+          "field": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "verified": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    },
+    "claim": {
+      "description": "Jr's configuration fact (status build-target only): at commit `sha`, PlatformIO `platformio_version` resolves env `env` of `repo` to the board option `board_id`. Re-proved by scripts/check_claims.py; never a 'runs on' claim.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "repo",
+        "sha",
+        "env",
+        "board_id",
+        "platformio_version",
+        "platform",
+        "files",
+        "sections"
+      ],
+      "properties": {
+        "kind": {
+          "const": "pio-env"
+        },
+        "repo": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "slug",
+            "id"
+          ],
+          "properties": {
+            "slug": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+            },
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "env": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.+-]+$"
+        },
+        "board_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.+-]+$"
+        },
+        "platformio_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "platform": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "spec",
+            "package_digest",
+            "manifest_digest"
+          ],
+          "properties": {
+            "spec": {
+              "type": "string",
+              "minLength": 1
+            },
+            "package_digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "manifest_digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "blob"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "blob": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              }
+            }
+          }
+        },
+        "sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "file",
+              "line"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "file": {
+                "type": "string",
+                "minLength": 1
+              },
+              "line": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
         }
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "build-target"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "claim"
+        ],
+        "not": {
+          "required": [
+            "flash"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "claim"
+        ]
+      },
+      "then": {
+        "properties": {
+          "status": {
+            "const": "build-target"
+          }
+        }
+      }
+    }
+  ]
 }

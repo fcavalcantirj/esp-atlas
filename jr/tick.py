@@ -179,7 +179,9 @@ def hourly_stages(split: dict) -> list:
     fw = int(split.get("firmware") or 0)
     if bf:
         import stage_backfill
-        out.append(lambda ctx, n=bf: stage_backfill.run(ctx, budget=n))
+        backfill = lambda ctx, n=bf: stage_backfill.run(ctx, budget=n)   # noqa: E731
+        backfill.firmware_free = True     # writes data/boards only; never reads a firmware hold
+        out.append(backfill)
     if fw:
         import stage_admit
         import stage_boardmap
@@ -276,10 +278,7 @@ SUPERSEDED_COMMENT = ("Superseded by later Jr ticks. This PR only touched tick b
                       "the jr/tick.py preflight.")
 
 
-def _list_open_prs(gh) -> list | None:
-    """Every open PR with its age, mergeability, labels and changed files, or None when the query
-    itself fails — fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not
-    open another. The files feed jr/pending_prs.py: what an open tick PR holds is never staged again."""
+def _list_open_prs_once(gh) -> list | None:
     p = gh("pr", "list", "--state", "open", "--limit", str(OPEN_PR_LIMIT),
            "--json", f"number,createdAt,headRefName,mergeable,labels,{pending_prs.PR_LIST_FIELDS}")
     if getattr(p, "returncode", 1) != 0:
@@ -289,6 +288,17 @@ def _list_open_prs(gh) -> list | None:
     except json.JSONDecodeError:
         return None
     return [pr for pr in prs if isinstance(pr, dict)] if isinstance(prs, list) else None
+
+
+def _list_open_prs(gh) -> list | None:
+    """Every open PR with its age, mergeability, labels and changed files, or None when the query
+    itself fails — fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not
+    open another. The files feed jr/pending_prs.py: what an open tick PR holds is never staged again.
+    GitHub computes `mergeable` lazily (2026-11-19: the first listing after main moved read UNKNOWN for 17 of
+    25 PRs, so review_refresh never saw #1835/#1836 conflicting for 14 h): a listing with UNKNOWN in it is
+    read again, a bounded number of times (jr/chores.list_settled). A failed re-read keeps the first answer."""
+    import chores
+    return chores.list_settled(lambda: _list_open_prs_once(gh), lambda pr: pr.get("mergeable") == "UNKNOWN")
 
 
 def _pr_age_hours(pr: dict, now: datetime) -> float | None:
@@ -376,6 +386,32 @@ def default_stall_watcher(stall: dict | None, yields: dict | None, stages: list,
     state = Path(os.environ["JR_HEAL_STATE"]) if os.environ.get("JR_HEAL_STATE") else ci_watch.DEFAULT_STATE
     return ci_watch.stall_watch(ci_watch.Store(state), stall, yields, now.isoformat(), dry_run=dry_run,
                                 stages=stages, rejects=rejects)
+
+
+def default_abort_watcher(reason: str | None, now: datetime, dry_run: bool) -> dict:
+    """The abort watch (SPEC-jr-self-heal.md §1c): the same runner-local incident store as the CI watch."""
+    state = Path(os.environ["JR_HEAL_STATE"]) if os.environ.get("JR_HEAL_STATE") else ci_watch.DEFAULT_STATE
+    return ci_watch.abort_watch(ci_watch.Store(state), reason, now.isoformat(), dry_run=dry_run)
+
+
+def _note_abort_watch(r: report.TickReport) -> None:
+    w = r.abort_watch
+    if not w:
+        return
+    if w.get("status") != "ok":
+        r.warnings.append(f"abort watch unavailable: {w.get('why')}")
+        return
+    for i in w.get("incidents") or []:
+        r.warnings.append(f"abort incident {i}: the same abort twice in a row; the heal delegate gets it")
+    for i in w.get("resolved") or []:
+        r.warnings.append(f"abort incident {i} resolved")
+
+def default_chores_runner(gh, now: datetime, dry_run: bool) -> dict:
+    """The chores (SPEC-jr-self-heal.md §1d): the same runner-local incident store as the CI watch."""
+    import chores
+    state = Path(os.environ["JR_HEAL_STATE"]) if os.environ.get("JR_HEAL_STATE") else ci_watch.DEFAULT_STATE
+    slug = os.environ.get("JR_REPO_SLUG") or "fcavalcantirj/esp-atlas"
+    return chores.run(gh, ci_watch.Store(state), now.isoformat(), slug=slug, dry_run=dry_run)
 
 
 def _note_stall_watch(r: report.TickReport) -> None:
@@ -487,6 +523,33 @@ def _owner_repo_from_url(url: str) -> str:
     So the ledger's by_repo key aligns with the drain's ledger.is_blocked(repo=...) lookup."""
     fn = (url or "").strip().rstrip("/").replace("https://github.com/", "").lower()
     return "/".join(fn.split("/")[:2])
+
+
+def _github_repo_id(gh, repo: str) -> int | None:
+    """GitHub's numeric id for owner/repo (a rename's redirect followed), or None. Best-effort: any failure,
+    including a spent budget, answers None and the reconciliation decides nothing for that record."""
+    try:
+        p = gh("api", f"repos/{repo}")
+        meta = json.loads(getattr(p, "stdout", "") or "") if getattr(p, "returncode", 1) == 0 else None
+    except Exception:  # noqa: BLE001
+        return None
+    return meta["id"] if isinstance(meta, dict) and type(meta.get("id")) is int else None
+
+
+def _catalog_sources(firmware_dir: Path) -> dict[str, str]:
+    """{firmware id: owner/repo} for every data/firmware/<id>/firmware.md whose `url:` is a GitHub
+    repository, keyed as _owner_repo_from_url keys it. An unreadable record names no source."""
+    from esp_atlas_core import frontmatter
+    out = {}
+    for md in sorted(Path(firmware_dir).glob("*/firmware.md")):
+        try:
+            fm, _ = frontmatter.parse_frontmatter_text(md.read_text())
+        except Exception:  # noqa: BLE001 — one bad record must not stop the reconciliation
+            continue
+        url = str((fm or {}).get("url") or "")
+        if url.startswith("https://github.com/") and len(_owner_repo_from_url(url).split("/")) == 2:
+            out[md.parent.name] = _owner_repo_from_url(url)
+    return out
 
 
 def _pr_firmware_repo(gh, repo_slug, head_ref, fid) -> str | None:
@@ -645,7 +708,9 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              ci_watcher: Callable | None = None,
              stall_watcher: Callable | None = None,
              admit_watcher: Callable | None = None,
-             refresher: Callable | None = None) -> report.TickReport:
+             abort_watcher: Callable | None = None,
+             refresher: Callable | None = None,
+             chores_runner: Callable | None = None) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
     budget = budget or Budget()
@@ -679,6 +744,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         # Before any close: the decisions every open tick PR committed (memory.carry_decisions, step 3).
         open_pr_ledgers, carry_warnings = _open_pr_ledgers(gh_c, slug, tick_prs)
         r.warnings += carry_warnings
+        open_pr_yield, yield_warnings = yield_ledger.open_pr_rows(gh_c, slug, tick_prs)   # a producing tick's row
+        r.warnings += yield_warnings                                                       # waits in its review PR
         superseded, stuck = _triage_tick_prs(gh_c, tick_prs, now, stale_pr_hours)
         for pr in superseded:
             if dry_run:
@@ -692,7 +759,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         if pending is None:
             raise TickAbort("gh pr list --state closed failed (cannot see which firmware a Jr PR holds)")
         if not pending.complete:
-            raise TickAbort("pending-PR inventory incomplete, nothing staged or published: " + "; ".join(pending.gaps))
+            # Degraded, not aborted (2026-11-18: one firmware's identity gap in #1839 stopped every lane for
+            # four ticks). What could act on an unverified hold is skipped below: every stage not declared
+            # `firmware_free`, open-PR hydration and the decision carry. GitHub unreadable stays an abort.
+            r.degraded = ("pending-PR inventory incomplete, firmware stages skipped: " + "; ".join(pending.gaps))
+            r.warnings.append(f"degraded: {r.degraded}")
         protection = publish.protection_status(slug, gh=gh_c)
         if not protection.ok:
             if dry_run:
@@ -729,16 +800,17 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         #     the stages enforce the budget. memory.record_proposed already refuses to downgrade
         #     a merged or permanently-rejected record.
         try:
-            r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug, pending=pending,
-                                                open_prs=tick_prs)
+            if not r.degraded:          # degraded: the open PRs' content is exactly what failed to verify
+                r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug, pending=pending,
+                                                    open_prs=tick_prs)
         except Exception as e:  # noqa: BLE001
             r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")
         # 3b'. carry the TTL'd decisions open tick PRs committed (read in the preflight, before any
         #     close): a jr-review PR waiting for the owner, or a superseded bookkeeping PR, must not
         #     hold admit's progress off main — they ride this tick's PR. Best-effort like hydration.
         try:
-            r.carried = [{"pr": ref, "id": fid}
-                         for ref, fid in memory.carry_decisions(open_pr_ledgers, path=ledger_path, now=now)]
+            r.carried = [] if r.degraded else [{"pr": ref, "id": fid}
+                                               for ref, fid in memory.carry_decisions(open_pr_ledgers, path=ledger_path, now=now)]
         except Exception as e:  # noqa: BLE001
             r.warnings.append(f"open-PR decision carry failed: {type(e).__name__}: {e}")
         # 3c. owner-review decisions (SPEC-jr-review-routing.md §5): every target an open or closed
@@ -758,8 +830,13 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         # catalogued on GitHub but not yet in this worktree: treat what reconcile_prs just
         # settled as catalogued, or it would be rejected as "removed from catalog".
         removed = memory.reconcile_removed(catalogued | set(settled["merged"]), path=ledger_path, now=now)
+        # 3d. every catalogued firmware's id belongs to its own source (2026-11-18): a namesake fork's
+        #     decision under that id moves to its repo note, so no tick PR aborts on a borrowed identity.
+        owned = memory.reconcile_catalogued(_catalog_sources(root / "data" / "firmware"), path=ledger_path, now=now,
+                                            resolve_id=lambda r: _github_repo_id(gh_c, r))
         counts = {"expired": len(expired), "merged": len(settled["merged"]) + len(merged),
-                  "rejected": len(settled["rejected"]), "removed": len(removed)}
+                  "rejected": len(settled["rejected"]), "removed": len(removed),
+                  "catalogued": len(owned["added"]) + len(owned["moved"]) + len(owned["renamed"])}
         purge = bool(settled["merged"] or merged or removed)
         if dry_run:
             r.memory = {}
@@ -825,9 +902,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             steer_cfg, steer_warnings = steering.load(root)
             r.warnings += steer_warnings
             ycfg = steer_cfg["yield"]
+            carried_yield = []
             try:
-                r.yields = yield_ledger.lane_yield(yield_ledger.read_rows(root / yield_ledger.RELPATH), now,
-                                                   ycfg["window_ticks"])
+                main_rows = yield_ledger.read_rows(root / yield_ledger.RELPATH)
+                carried_yield = yield_ledger.rows_missing(main_rows, open_pr_yield)
+                r.yields = yield_ledger.lane_yield(main_rows + carried_yield, now, ycfg["window_ticks"])
             except Exception as e:  # noqa: BLE001 — a report/steer step must never abort the tick
                 r.yields = None
                 r.warnings.append(f"yield ledger unreadable: {type(e).__name__}: {e}")
@@ -860,6 +939,13 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             r.warnings.append(r.review_capped)
             stages = keep
 
+        # 5c. degraded (pending-PR inventory incomplete): only stages declared `firmware_free` run; unsure ->
+        #     the stage could act on an unverified hold and is skipped.
+        if r.degraded:
+            keep = [s for s in stages if getattr(s, "firmware_free", False) is True]
+            r.warnings.append(f"degraded: skipped {len(stages) - len(keep)} firmware stage(s)")
+            stages = keep
+
         # 6. stages
         ctx = TickContext(root=root, ledger_path=ledger_path, now=now, gh=gh_c, git=git,
                           budget=budget, dry_run=dry_run, env=env, pending=pending)
@@ -885,6 +971,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             try:
                 rows = yield_ledger.rows_for_tick(r.stages, r.split, now, calls=budget.calls,
                                                   seconds=budget.elapsed(), units_topics=TOPICS_PER_TICK)
+                rows += yield_ledger.rows_missing(rows, carried_yield)     # the open PRs' rows ride this commit
                 if rows and not dry_run:
                     yield_ledger.append_rows(root / yield_ledger.RELPATH, rows)
                     if yield_ledger.RELPATH not in r.extra_paths:
@@ -956,6 +1043,15 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             _release_tick_lock(lock)
         r.budget = budget.summary()
 
+    # 8b. abort watch (SPEC-jr-self-heal.md §1c): the same abort twice in a row is an incident for the heal
+    #     delegate; a completed tick resolves it. Never changes the tick's outcome.
+    if abort_watcher is not None:
+        try:
+            r.abort_watch = abort_watcher(r.aborted or r.degraded or None, now, dry_run) or {}
+        except Exception as e:  # noqa: BLE001
+            r.abort_watch = {"status": "unavailable", "why": f"{type(e).__name__}: {e}"}
+        _note_abort_watch(r)
+
     # 9. keep Jr's own review PRs mergeable (jr/review_refresh.py, SPEC-jr-review-routing.md §8): after the
     #    tick's own worktree is gone, refresh at most REFRESH_MAX of its CONFLICTING jr-review PRs. Each
     #    refresh decides its own limits and skips with a reason; a failure warns, never aborts the tick.
@@ -966,16 +1062,32 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                 r.refreshed.append(refresher(pr, git=git, gh=gh_c, now=now, dry_run=dry_run))
             except Exception as e:  # noqa: BLE001
                 r.warnings.append(f"review PR refresh #{pr.get('number')} failed: {type(e).__name__}: {e}")
+    # 10. chores (jr/chores.py, SPEC-jr-self-heal.md §1d): what a person did on open PRs — a conflict or an
+    #     agent BLOCK becomes a PR-fix incident, cleared ones resolve, a daily digest names what still needs
+    #     a human. Runs after an abort too (the PRs need it most then); never changes the tick's outcome.
+    if chores_runner is not None:
+        try:
+            r.chores = chores_runner(gh_c, now, dry_run) or {}
+        except Exception as e:  # noqa: BLE001
+            r.chores = {"status": "unavailable", "why": f"{type(e).__name__}: {e}"}
+        if r.chores.get("status") != "ok":
+            r.warnings.append(f"chores unavailable: {r.chores.get('why')}")
+        for i in r.chores.get("recorded") or []:
+            r.warnings.append(f"chore incident {i} recorded")
+        for w in r.chores.get("warnings") or []:
+            r.warnings.append(str(w))
     line = report.render_line(r)
     print(line)
     review_opened = (r.publish or {}).get("route") == review_routing.REVIEW
-    if telegram and not dry_run and notifier is not None and (r.aborted or r.needs_human or review_opened):
+    if telegram and not dry_run and notifier is not None and (r.aborted or r.degraded or r.needs_human or review_opened):
         try:
             notifier(line)
         except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
             pass
     if telegram and not dry_run and notifier is not None:
-        for nudge in ((r.ci_watch or {}).get("nudges") or []) + ((r.stall_watch or {}).get("nudges") or []) + ((r.admit_progress or {}).get("nudges") or []):
+        for nudge in ((r.ci_watch or {}).get("nudges") or []) + ((r.stall_watch or {}).get("nudges") or []) \
+                + ((r.admit_progress or {}).get("nudges") or []) + ((r.abort_watch or {}).get("nudges") or []) \
+                + ((r.chores or {}).get("nudges") or []) + ([r.chores["digest"]] if (r.chores or {}).get("digest") else []):
             try:
                 notifier(nudge)
             except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
@@ -1030,7 +1142,8 @@ def main(argv=None) -> int:
                  stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge,
                  lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None,
                  ci_watcher=default_ci_watcher, stall_watcher=default_stall_watcher, admit_watcher=default_admit_watcher,
-                 refresher=review_refresh.refresh)
+                 abort_watcher=default_abort_watcher, refresher=review_refresh.refresh,
+                 chores_runner=default_chores_runner)
     return 1 if r.aborted else 0
 
 

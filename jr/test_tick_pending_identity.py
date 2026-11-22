@@ -249,7 +249,7 @@ def test_a_forged_marker_keeps_the_real_repository_held_and_never_holds_the_clai
     assert _owners_of(sim, OTHER_ID) <= {"fmtcheck"}, "the forged id was written into a ledger"
 
 
-def test_a_conflicting_marker_aborts_the_tick_before_anything_is_written(sim, catalog):
+def test_a_conflicting_marker_degrades_the_tick_and_writes_no_firmware_nor_the_forged_id(sim, catalog):
     pr = _admit_first(sim, catalog, OLDTOOL, "oldtool", REPO_ID)
     pr["body"] += "\n" + pending_prs.render_identity([{"kind": "firmware", "id": "oldtool",
                                                         "url": "https://github.com/n/oldtool", "repo_id": OTHER_ID}])
@@ -259,10 +259,11 @@ def test_a_conflicting_marker_aborts_the_tick_before_anything_is_written(sim, ca
     sim.serve("n/fmtcheck", OTHER_ID)
     sim.git_calls.clear()
     r = sim.tick(T0 + timedelta(hours=1))
-    assert "incomplete" in r.aborted and f"#{pr['number']}" in r.aborted and "identity marker" in r.aborted, r.aborted
-    assert r.paths == [] and len(sim.prs) == prs_before and sim.main == main_before
-    assert not [c for c in sim.git_calls if c[:2] == ("worktree", "add")], "a worktree (and its ledger) was written"
-    assert _owners_of(sim, OTHER_ID) == set()
+    assert not r.aborted and f"#{pr['number']}" in r.degraded and "identity marker" in r.degraded, (r.aborted, r.degraded)
+    assert r.stages == [] and not [p for p in r.paths if p.startswith(("data/firmware/", "data/recipes/"))], r.paths
+    assert {k for k in set(sim.main) | set(main_before) if sim.main.get(k) != main_before.get(k)} <= {"jr/proposed_ledger.json"} and not [f for x in sim.prs[prs_before:] for f in x["files"]
+                                            if str(f).startswith(("data/firmware/", "data/recipes/"))]
+    assert _owners_of(sim, OTHER_ID) == set()                                  # the forged id is in no ledger
 
 
 def test_a_markerless_pr_is_verified_from_its_committed_ledger_across_a_rename(sim, catalog):

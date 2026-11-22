@@ -79,6 +79,10 @@ usb_serial: native-usb-serial-jtag
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html
 images:
   photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/_images/esp32-p4-function-ev-board-isometric_v1.5.2.png
+platformio_definitions:
+- id: esp32-p4-evboard
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 3ea208ff313739a724e032cdccc0a9be44ec760e19f301b3fa319079f9ca6575
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html
@@ -116,6 +120,9 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-p4-evboard.json
   verified: '2026-11-14'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/esp32-p4-evboard.json
+  verified: '2026-11-22'
 ---
 
 # ESP32-P4-Function-EV-Board

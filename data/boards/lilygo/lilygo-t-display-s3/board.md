@@ -39,6 +39,13 @@ getting_started: https://lilygo.cc/products/t-display-s3
 images:
   photo: https://lilygo.cc/cdn/shop/files/H569_03.jpg
   pinout: https://raw.githubusercontent.com/Xinyuan-LilyGO/T-Display-S3/main/image/T-DISPLAY-S3.jpg
+platformio_definitions:
+- id: lilygo-t-display-s3
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: d9fe90c0e4768e121cd849ab218e91b0f98309504ae8edfc9c4f1d7c60830a7a
+- id: lilygo-t-display-s3
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: dc87dc7fa6359e16e05564a7f0271f671fc6cadb66821f2f54ca9be15de94e37
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-display-s3
@@ -61,6 +68,12 @@ sources:
 - field: images.pinout
   url: https://raw.githubusercontent.com/Xinyuan-LilyGO/T-Display-S3/main/image/T-DISPLAY-S3.jpg
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/lilygo-t-display-s3.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/lilygo-t-display-s3.json
+  verified: '2026-11-22'
 ---
 
 # T-Display-S3

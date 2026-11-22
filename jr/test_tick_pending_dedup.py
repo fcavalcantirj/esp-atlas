@@ -305,15 +305,21 @@ def test_a_tick_blind_to_closed_prs_fails_closed_and_opens_nothing(sim):
     assert len(sim.prs) == 1 and r.paths == []
 
 
-# --- an inventory that may miss a hold stages and publishes NOTHING ------------------------------------
+# --- an inventory that may miss a hold stages and publishes no FIRMWARE (degraded, 2026-11-18: it used to
+#     abort the whole tick; now only stages declared firmware_free run, and nothing is copied out of open PRs)
 
 PADDING = [f"src/parser/rule_{i:03d}.c" for i in range(100)]      # files GitHub lists before the firmware's
 
 
+FIRMWARE_PATHS = ("data/firmware/", "data/recipes/")
+
+
 def _nothing_staged_or_published(sim, r, prs_before):
-    assert not [c for c in sim.git_calls if c[:2] == ("worktree", "add")], "aborted after the worktree"
-    assert r.paths == [] and r.stages == [], (r.paths, r.stages)
-    assert len(sim.prs) == prs_before and not [c for c in sim.calls if c[:2] == ("pr", "create")]
+    assert not r.aborted and r.degraded.startswith("pending-PR inventory incomplete"), (r.aborted, r.degraded)
+    assert r.stages == [], r.stages                                          # no firmware stage ran
+    assert not [p for p in r.paths if p.startswith(FIRMWARE_PATHS)], r.paths
+    published = [f for pr in sim.prs[prs_before:] for f in pr["files"]]
+    assert not [f for f in published if str(f).startswith(FIRMWARE_PATHS)], published
 
 
 def test_a_complete_inventory_still_stages_normally(sim):
@@ -322,19 +328,19 @@ def test_a_complete_inventory_still_stages_normally(sim):
     _first_tick(sim)
 
 
-def test_a_closed_pr_list_cut_at_its_limit_stages_and_publishes_nothing(sim, monkeypatch):
+def test_a_closed_pr_list_cut_at_its_limit_stages_and_publishes_no_firmware(sim, monkeypatch):
     sim.add_pr(1401, "feat/old-parser", ["src/parser/ast.c"], state="CLOSED")
     monkeypatch.setattr(pending_prs, "CLOSED_PR_LIMIT", 1)                  # an older veto may be past it
     r = sim.tick(T0)
-    assert "incomplete" in r.aborted and "closed" in r.aborted, r.aborted
+    assert "closed" in r.degraded, r.degraded
     _nothing_staged_or_published(sim, r, 1)
 
 
-def test_an_open_pr_list_cut_at_its_limit_stages_and_publishes_nothing(sim, monkeypatch):
+def test_an_open_pr_list_cut_at_its_limit_stages_and_publishes_no_firmware(sim, monkeypatch):
     sim.add_pr(1400, "feat/lexer", ["src/lexer/tokens.c"])                  # unrelated, but it fills the list
     monkeypatch.setattr(tick, "OPEN_PR_LIMIT", 1)                           # an open tick PR may be past it
     r = sim.tick(T0)
-    assert "incomplete" in r.aborted and "open" in r.aborted, r.aborted
+    assert "open" in r.degraded, r.degraded
     _nothing_staged_or_published(sim, r, 1)
 
 
@@ -355,13 +361,13 @@ def test_a_101st_changed_file_is_read_whole_and_still_holds_its_firmware(sim):
     assert any(c[:2] == ("api", f"repos/o/r/pulls/{pr['number']}/files?per_page=100") for c in sim.calls)
 
 
-def test_a_101_file_pr_that_cannot_be_read_whole_stages_and_publishes_nothing(sim):
+def test_a_101_file_pr_that_cannot_be_read_whole_stages_and_publishes_no_firmware(sim):
     pr = _first_tick(sim)
     _pad(sim, pr, PADDING)
     sim.files_rc = 1
     sim.calls.clear(), sim.git_calls.clear()
     r = sim.tick(T0 + timedelta(hours=1))
-    assert "incomplete" in r.aborted and f"#{pr['number']}" in r.aborted, r.aborted
+    assert f"#{pr['number']}" in r.degraded, r.degraded
     _nothing_staged_or_published(sim, r, 1)
 
 

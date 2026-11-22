@@ -142,3 +142,21 @@ test("the article still says what it is about, as a plain Thing", () => {
   const article = graph.find((n) => n["@type"] === "TechArticle") as { about?: Record<string, unknown> };
   assert.deepEqual(article.about, { "@type": "Thing", name: "ESP32-S3" });
 });
+
+// applicationCategory must be one of Google's application types, not the catalog's internal category
+// (2026-11-18: live pages carried "multi", "pentest", "mesh"). The internal value stays visible as
+// applicationSubCategory, so nothing the record says is lost.
+test("firmware applicationCategory is a Google application type; the catalog category becomes the subcategory", () => {
+  const cases: [string | null | undefined, string][] = [
+    ["pentest", "SecurityApplication"], ["badusb", "SecurityApplication"], ["mesh", "CommunicationApplication"],
+    ["home", "HomeApplication"], ["display", "MultimediaApplication"], ["multi", "UtilitiesApplication"],
+    ["something-new", "UtilitiesApplication"], [undefined, "UtilitiesApplication"],
+  ];
+  for (const [category, expected] of cases) {
+    const fw = { ...CIRCUITPYTHON, category } as Firmware;
+    const app = (firmwareGraph(fw, [], PARTS)["@graph"] as Record<string, unknown>[]).find((n) => n["@type"] === "SoftwareApplication")!;
+    assert.equal(app.applicationCategory, expected, String(category));
+    if (category) assert.equal(app.applicationSubCategory, category);
+    else assert.equal("applicationSubCategory" in app, false);
+  }
+});

@@ -144,9 +144,14 @@ main was forgotten the same way.
   branch and `mergedAt` are re-checked client-side. An open PR wins over an older veto.
 - **Merged → nothing held**: the firmware is catalogued on main and the ledger reconciles it.
 - **Unreadable → the tick aborts** before the worktree (fail closed, like every preflight query).
-- **Incomplete → the tick aborts too**, naming the gap: an index that may miss a hold is as blind
-  as an unreadable one, so no content stage runs and nothing is published (no admit, topics,
-  boardmap, recipe or popularity write). Incomplete means any of: the open list returned
+- **Incomplete → the tick is degraded** (2026-11-18; it aborted until then), naming the gap: an index
+  that may miss a hold is as blind as an unreadable one for anything that touches firmware, so no
+  stage runs unless it is declared `firmware_free` (today only board backfill, which writes
+  `data/boards` and never reads a hold), and nothing is copied out of open PRs (no open-PR hydration,
+  no decision carry: their committed content is what failed to verify). No admit, topics, boardmap,
+  recipe or popularity write happens. Reconciliation from main, telemetry and the backfill still run
+  and publish. Measured cost of the old rule: one firmware's gap in #1839 stopped every lane for four
+  hours. The degraded reason goes to the abort watch (`SPEC-jr-self-heal.md` §1c). Incomplete means any of: the open list returned
   `OPEN_PR_LIMIT` PRs, the closed list returned `CLOSED_PR_LIMIT` PRs (both may be cut), or a held
   tick PR's file list cannot be shown whole. `gh pr list --json files` carries at most the first
   100 files of a PR, so both lists also ask for `changedFiles`; a tick PR whose `files` count is
@@ -174,6 +179,18 @@ main was forgotten the same way.
     marker that agrees still covers the rename. A PR without a marker (one older than it, like
     growth PRs #1511/#1513) is verified the same way, else matched by slug. A PR that does not
     change the ledger is not read: its ids stay unknown.
+  - **The ledger id binds only to the held firmware.md's own source** (R2i): the `firmware.md`
+    committed at the same head names a repository, and GitHub must answer that repository with the
+    ledger's `repo_id`; otherwise it is a gap. **Exception, a record the PR never wrote**
+    (2026-11-18): the ledger at #1839's head still carried a September record under the reused id
+    `wled` for a rejected fork (`toshihiromakuuchi/wled`, 846066903, `expired`), while the held
+    `data/firmware/wled/firmware.md` names `wled/WLED` (76990209); four hourly ticks aborted. A
+    record that fails the binding but is byte-identical in the ledger at the PR's merge base with
+    its base branch (`gh api repos/<slug>/compare/<base>...<head>` → `merge_base_commit`), for a
+    firmware whose `firmware.md` source at the merge base is the same as at the head, is history, not
+    this PR's claim: the hold takes the id GitHub answers for that source. A record or a source the PR
+    changed keeps the strict rule (no commit on the PR chooses the identity); an unreadable merge
+    base, base ledger or source stays a gap.
   - **An ambiguous marker fails closed.** On a tick PR that holds a firmware, a body that opens
     `jr-identity` more than once (a forged, duplicate or unclosed marker), whose marker is
     unreadable, or that names one firmware twice is a gap (a PR that holds nothing decides nothing): the index is incomplete and the tick aborts before its worktree — nothing is
@@ -216,6 +233,10 @@ the mapping mistake it is checking for. The rules, each one tested on the real c
   followed by a library or SDK word ("M5Cardputer Arduino library", "… SDK", "… component") is a
   software reference, not the device (rules v3, 2026-11-16: an ADV-only README's library link had
   PASSed the original Cardputer in tick #1747, and the gate's reverse-sibling step wrote that edge).
+  A parenthetical attached directly to the sibling's name that adds nothing with a conjunction
+  ("Cardputer-ADV (Cardputer v1.1)") glosses the sibling; it is not a mention of the original (rules v4,
+  2026-11-19: m5-crystal builds only `[env:cardputer-adv]` and v3 PASSed `m5cardputer` on that gloss in
+  tick #1828). "(and the original Cardputer)" / "(also Cardputer v1.1)" still add it.
 - **sibling:** the source names a more specific sibling of the claimed board (Cardputer **ADV**
   for `m5cardputer`, Stick**C Plus2** for a StickC, a product built on a carrier module) and never
   the claimed board on its own → `FAIL`.
@@ -254,8 +275,77 @@ GitHub answers; `jr/fixtures/autoreview/replay-metrics.json`):
 the labelled history: every wrong edge preserved in `jr/overrides/*__edges.json` (42 at the time
 of writing) must come out `FAIL` or `UNCERTAIN`, and the edges both blind audits of 2026-11-15
 agreed are correct must come out `PASS` or `UNCERTAIN`. A false `PASS` on a known-wrong edge blocks
-phase 2. Phase 2 (a separate change) lets the tick auto-merge one fully passing review PR a day,
-at its exact head, with a kill switch and the review cap kept.
+phase 2.
+
+**Phase 2: the tick canary (2026-11-17).** Two CI jobs on every `jr/tick-*` pull request:
+- `receipt-guard` (`scripts/receipt_guard.py`): eligible on receipts alone when every recipe the PR ADDS
+  carries a `PASS` receipt (E1) that holds AGAIN when the checker is re-run here on the live upstream —
+  the firmware repo's description, README, root `platformio.ini`, release asset names (E2); the PR edits no
+  existing record and deletes nothing under `data/` (E3); it adds at least one recipe (E4). A stale or
+  misstated receipt cannot merge. An upstream that does not answer is no verdict (exit 2).
+- `tick-canary` (`scripts/tick_canary.py`, needs schema, tests, jr-tests, receipt-guard, jr-pr-guard,
+  g2-guard, ledger-guard): when `jr/autonomy.json` has `tick_automerge: true` (a reviewed PR) AND the
+  repository variable `JR_TICK_AUTOMERGE` is not `0` (the kill switch), the PR carries `jr-review`, no
+  fewer than `DAILY_CAP` review-routed tick PRs merged today (UTC; **one a day** until 2026-11-21, **four**
+  since: Jr opened about 3.3 a day and one a day let the queue grow until the tick yielded nothing for 24
+  ticks; the first three canary merges were audited correct), and the receipt guard says eligible, it
+  requests `gh pr merge --auto --match-head-commit <head>`: the merge lands only when every required check
+  is green at exactly that head. The routing itself does not change: the PR is still labelled `jr-review`
+  and the review cap still holds; the canary is the reader. A PR the guard refuses (an edit to an existing
+  record, an UNCERTAIN receipt, a receipt the live upstream no longer supports) waits for the agent
+  reviewer or a person. A person audits the first five canary merges after the fact and holds the switch.
+- **Every recipe Jr writes carries its receipt (2026-11-21).** The topic stage's drain
+  (`jr/drain.author_selected`) wrote "the repo lists X as a supported device" with no evidence check, so the
+  receipt guard refused all of them (E1) and Jr closed four tick PRs after 72 h. The drain now runs the
+  guard's own live check (`drain.live_evidence_gate`: `scripts/receipt_guard.live_sources` through
+  `writers.evidence_gate`, the gate `stage_admit` runs). FAIL is never written; a sibling of the same chip
+  replaces the board; PASS and UNCERTAIN are written with "Evidence check v… <verdict> — <why>" in the notes.
+  An upstream that cannot be read writes the recipe as before, with no receipt, for a reviewer. Run live on
+  the four stuck recipes: esp32-template, fennek and pisces-moon-os on the T-Deck PASS; xmas-tree on the
+  QT Py S2 FAILS (the source never names that board) and would not have been proposed.
+
+### 7b. Code pull requests: the agent reviewer and the code canary (2026-11-17, lanes 2026-11-18)
+
+Every other pull request — Jr's code, the operators' code — used to wait for a person's exact-head
+review (43 merges a week). `docs/REVIEW-CONTRACT.md` writes that review down. **Two lanes run it, the owner's
+rule "subscription and api as fallback":**
+
+- **Subscription lane (primary).** `jr/agent_review.py once`, an hourly job on the runner, calls the same
+  coding delegate the demand executor and the CI heal use (Claude subscription, no API key, read-only:
+  `--no-ship --no-merge`) on the next open code PR whose current head has no verdict (a PR already reviewed at an earlier head
+  first, then the oldest update), in a detached
+  worktree at that head, with `docs/ops/REVIEW-PROMPT.md` as the task. The agent writes the structured
+  verdict `{verdict: PASS|BLOCK, head, findings, checked}` to a file outside the repo; the runner posts it as
+  ONE PR comment beginning with `<!-- agent-review verdict -->` (lane `subscription`). Not for `jr/tick-*`,
+  `jr/research-*`, `jr/heal-*` or drafts.
+- **API lane (fallback).** Only when the delegate's own answer says the lane is DOWN (no
+  `CLAUDE_CODE_OAUTH_TOKEN`, usage limit, 401/403/429), the runner labels that PR `review-fallback` — at most
+  `FALLBACK_PER_DAY` (3) a UTC day, counted in the runner's state — and `.github/workflows/agent-review.yml`
+  (trigger: that label) runs the Claude Code CLI directly (`claude -p`, an exact version; never
+  `anthropics/claude-code-action`, which Anthropic bills as Claude Code, a product the plan's monthly API
+  credit does not pay for: 2026-11-20) with `ANTHROPIC_API_KEY`, tools limited to
+  `gh pr diff`, `gh pr view`, reading the checkout and running the touched test files, then posts the same
+  comment (lane `api`) and removes the label. BUSY (the delegate's lock is held) is not down: the PR waits an
+  hour. Without the secret the fallback job says so and the PR waits for the subscription lane.
+- **The code canary** (`scripts/code_canary.py`, workflow trigger: a marker comment on a PR) reads the newest
+  verdict comment naming the PR's current head, whichever lane wrote it, then: C1 `jr/autonomy.json`
+  `code_automerge: true`, C2 repository variable `JR_CODE_AUTOMERGE` not `0`, C3 a PASS naming THIS head
+  (another sha is no verdict), C4 at most one agent-merged PR an hour (label `agent-pass`), C5 `gh pr merge
+  --auto --match-head-commit <head>`, landing only when every required check is green there. A BLOCK labels
+  the PR `needs-human` with the findings already in the comment; the author's next push is a new review;
+  nobody waits.
+- **An armed merge that cannot land never holds the hour (2026-11-20).** A merge requested with `--auto`
+  counts as the hour's merge for as long as the PR stays open, and GitHub never merges a PR that conflicts
+  with its base. #1851 (PASS, armed 03:14Z, conflicting) held the cap for every other reviewed PR until a
+  person disarmed it at 07:55Z. So: C4b, a PR whose `mergeable` is `CONFLICTING` is never armed (GitHub
+  computes that lazily, so `UNKNOWN` is asked again, three reads); and the hourly sweep takes back (auto-merge
+  off, label dropped) an armed merge that conflicts or that was armed more than an hour ago and is still open.
+  The one taken back for its age is decided again by the next sweep, not the same one, so it cannot take the
+  hour it just gave back. A merge that could not be taken back still counts.
+
+This is the one place an LLM sits in the loop, and it decides nothing the catalog shows: a wrong PASS is
+caught by the same after-the-fact audit as a wrong human approval, and the switch turns it off in one
+command. The action's agent mode is documented as experimental; the primary lane does not depend on it.
 
 ### 8. Jr keeps its own review PRs mergeable (2026-11-15)
 
@@ -273,7 +363,10 @@ decisions that existed only in the PR.
 - every conflicted path is bookkeeping (`review_routing.is_bookkeeping`); a content conflict is left
   for a person;
 - the ledger becomes `memory.merge_pr_ledger(main, merge base, PR head)`: main's, plus every record the PR
-  changed under `carry_decisions`' rules, plus the PR's own proposals; every other bookkeeping file is
+  changed under `carry_decisions`' rules, plus the PR's own proposals; `docs/telemetry/yield.jsonl` is
+  main's rows plus every row the PR has and main lacks, keyed by (tick, stage), main's row on a shared key
+  (`yield_ledger.merge_text`: taking main's file erased the review PR's own tick, i.e. every producing
+  tick, and raised a false `stall:firmware`, incident 0cf1acb95f79, 2026-11-19); every other bookkeeping file is
   main's (a PR's own `jr/board_cooldown.json` entries are dropped and re-derived the next time that board
   fails, as for a superseded bookkeeping PR). `scripts/ledger_guard.py` must be green against main, and every catalog file the PR changed must
   be byte-identical to its head (a silent auto-merge into a reviewed file is refused);

@@ -144,17 +144,23 @@ star is that none of this needs a person, so each becomes a CI job a PR must pas
   (timeout, bot wall, 429, 5xx, unparsable PDF) and no readable page holds it — the sources-live rule:
   a server that will not answer is never evidence against a citation. Only FAIL fails the job. A YAML
   scalar merely written with double quotes is not a quote (values are read after `yaml.safe_load`).
-- **`demand-guard`** (next): on a `jr/research-*` PR, the receipt named by `Demand work: <KEY>` is
-  `linked` to this PR and nothing else in the two demand files changed; the ids added under
+- **`demand-guard`** (`scripts/demand_guard.py`, `jr/research-*` pull requests): the queue candidate `<KEY>` (from the
+  branch name) is `linked` to exactly this PR and nothing else in the two demand files changed; the ids added under
   `data/boards/**` are exactly its `expected_ids`, no `forbidden_id` appears in the diff, and the demand
-  files changed only in `chore(demand):` commits.
-- **Canary auto-merge** (after both): a `jr/research-*` PR with every required job green, `quotes` with
-  no FAIL and no INCONCLUSIVE on the new record, `jr/autonomy.json` `demand_automerge` true and the repo
-  variable `JR_DEMAND_AUTOMERGE` not `0`, is marked ready and merged at its exact head, at most one per
-  UTC day; the 11:15Z `catalog_part` verification stays the recorded outcome. INCONCLUSIVE re-checks
-  itself on the next run; a FAIL closes the PR with the quote named and the receipt goes back to the
-  executor for a re-research. A person audits after the fact and holds the kill switch; nobody waits
-  for one.
+  files changed only in `chore(demand):` commits. A refresh of the branch is not such a change: a two-parent
+  merge of main whose `docs/demand` equals git's automatic merge of its parents is not counted (2026-11-19);
+  a merge with anything typed into those files, a hand-resolved conflict included, is.
+- **Canary auto-merge** (`scripts/demand_canary.py`, job `demand-canary`): on a `jr/research-*` PR, when
+  every job it needs is green (schema, tests, jr-tests, quotes, demand-guard, jr-pr-guard, g2-guard,
+  ledger-guard), `jr/autonomy.json` has `demand_automerge: true` (turned on by a reviewed PR) AND the
+  repository variable `JR_DEMAND_AUTOMERGE` is not `0` (the kill switch, no PR needed), the quotes check
+  re-run on the changed records has no FAIL and no INCONCLUSIVE, and no other `jr/research-*` PR merged
+  today (UTC), the job marks the PR ready and requests `gh pr merge --auto --match-head-commit <head>`: the
+  merge lands only when every required check is green at exactly that head. A quote FAIL gets a PR comment
+  naming the quote and the label `needs-human`; the receipt stays live, so the executor's next attempt
+  fixes it (re-read the page, quote as written or omit). An INCONCLUSIVE page is re-checked on the next
+  run. The 11:15Z `catalog_part` verification stays the recorded outcome. A person audits after the fact
+  (the first five canary merges at their exact heads) and holds the kill switch; nobody waits for one.
 
 ### Verification must match the actual defect
 
