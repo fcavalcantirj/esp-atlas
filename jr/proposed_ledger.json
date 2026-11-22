@@ -2397,12 +2397,13 @@
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "cardputersshclient": {
+      "expired_at": "2026-11-22T01:00:35.388334+00:00",
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "cardputersshclient",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "minkleee/cardputersshclient",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "cardputertiltjump": {
@@ -3815,7 +3816,7 @@
       "pr_ref": "#1969",
       "repo": "tesa-klebeband/esp32-deauther",
       "status": "proposed",
-      "timestamp": "2026-11-22T00:00:34.216342+00:00"
+      "timestamp": "2026-11-22T01:00:35.388334+00:00"
     },
     "esp32-dragon-radar": {
       "expires": "2026-12-06T21:00:55.650872+00:00",
@@ -4149,7 +4150,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-22T00:00:34.216342+00:00"
+      "timestamp": "2026-11-22T01:00:35.388334+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -5029,12 +5030,13 @@
       "timestamp": "2026-11-15T21:00:31.486348+00:00"
     },
     "i-r-s": {
+      "expired_at": "2026-11-22T01:00:35.388334+00:00",
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "i-r-s",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "zorikos3/i.r.s.",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "ibutton-firmware-for-m5-stickc-plus2": {
@@ -5143,12 +5145,13 @@
       "timestamp": "2026-11-18T08:00:31.492566+00:00"
     },
     "infiltra-firmware": {
+      "expired_at": "2026-11-22T01:00:35.388334+00:00",
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "infiltra-firmware",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "pawneemilitia/infiltra-firmware",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "inkos": {
@@ -5431,12 +5434,13 @@
       "timestamp": "2026-11-15T18:00:31.614867+00:00"
     },
     "lab-mini-os": {
+      "expired_at": "2026-11-22T01:00:35.388334+00:00",
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "lab-mini-os",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "io-nji/lab_mini_os",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "lamp-from-m5cardputer": {
@@ -6098,12 +6102,13 @@
       "timestamp": "2026-11-15T08:00:31.415117+00:00"
     },
     "launcher-1897200000000000202": {
+      "expired_at": "2026-11-22T01:00:35.388334+00:00",
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "launcher-1897200000000000202",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000000202",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "launcher-1897200000000000207": {
@@ -6457,12 +6462,13 @@
       "timestamp": "2026-11-15T06:00:32.532426+00:00"
     },
     "launcher-1897200000000000471": {
+      "expired_at": "2026-11-22T01:00:35.388334+00:00",
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "launcher-1897200000000000471",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000000471",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "launcher-1897200000000000475": {
@@ -7680,12 +7686,13 @@
       "timestamp": "2026-11-15T07:00:31.352637+00:00"
     },
     "launcher-1897200000000001307": {
+      "expired_at": "2026-11-22T01:00:35.388334+00:00",
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "launcher-1897200000000001307",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001307",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "launcher-1897200000000001329": {
@@ -9024,12 +9031,13 @@
       "timestamp": "2026-11-15T12:00:31.921339+00:00"
     },
     "launcher-1897200000000002332": {
+      "expired_at": "2026-11-22T01:00:35.388334+00:00",
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "launcher-1897200000000002332",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'slot machine user:molfar'",
       "repo": "launcher:1897200000000002332",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "launcher-1897200000000002335": {
@@ -9234,12 +9242,13 @@
       "timestamp": "2026-11-16T04:00:31.943499+00:00"
     },
     "launcher-1897200000000002476": {
+      "expired_at": "2026-11-22T01:00:35.388334+00:00",
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "launcher-1897200000000002476",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'echostt user:m5stack'",
       "repo": "launcher:1897200000000002476",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "launcher-1897200000000002521": {
@@ -9590,12 +9599,13 @@
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "launcher-1897200000000002776": {
+      "expired_at": "2026-11-22T01:00:35.388334+00:00",
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "launcher-1897200000000002776",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002776",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "launcher-1897200000000002795": {
@@ -10387,12 +10397,13 @@
       "timestamp": "2026-11-08T23:00:55.209139+00:00"
     },
     "launcher-1897200000000003423": {
+      "expired_at": "2026-11-22T01:00:35.388334+00:00",
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "launcher-1897200000000003423",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'tetris user:macsbug'",
       "repo": "launcher:1897200000000003423",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "launcher-1897200000000003424": {
@@ -17544,7 +17555,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-22T00:00:34.216342+00:00"
+      "timestamp": "2026-11-22T01:00:35.388334+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -24746,12 +24757,13 @@
       "timestamp": "2026-11-21T07:00:32.173066+00:00"
     },
     "teenygpstestbed-c2": {
+      "expired_at": "2026-11-22T01:00:35.388334+00:00",
       "expires": "2026-11-22T00:00:55.378741+00:00",
       "id": "teenygpstestbed-c2",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "beakes/teenygpstestbed_c2",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "termputer": {
@@ -25747,7 +25759,7 @@
       "pr_ref": "#1895",
       "repo": "designer2k2/xmas-tree",
       "status": "proposed",
-      "timestamp": "2026-11-22T00:00:34.216342+00:00"
+      "timestamp": "2026-11-22T01:00:35.388334+00:00"
     },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
