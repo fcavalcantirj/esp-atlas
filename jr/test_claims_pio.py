@@ -133,3 +133,19 @@ def test_an_unrelated_external_option_does_not_refuse_the_env(tmp_path):
     r = project(tmp_path, f"[common]\nupload = ${{sysenv.PORT}}\n\n[env:x]\nplatform = {PIOARDUINO_37}\n"
                           "board = heltec_wifi_kit_32_V3\nupload_port = ${common.upload}\n")
     assert "external-input" not in rules(r, "x")
+
+
+def test_an_external_input_reached_through_the_platformio_section_is_refused(tmp_path):
+    """Review BLOCK on #1998 at e190640f: the same bypass through ${platformio.description}."""
+    r = project(tmp_path, f"[platformio]\ndescription = ${{sysenv.SUFFIX}}\n\n[env:x]\nplatform = {PIOARDUINO_37}\n"
+                          "board = heltec_wifi_kit_32_V3${platformio.description}\n")
+    assert "external-input" in rules(r, "x")
+
+
+def test_a_reference_the_check_cannot_inspect_refuses_the_env(tmp_path):
+    """Close the class: a reference into a section or option missing from the raw values is not skipped."""
+    r = project(tmp_path, f"[env:x]\nplatform = {PIOARDUINO_37}\nboard = heltec_wifi_kit_32_V3${{nowhere.suffix}}\n\n"
+                          f"[env:ok]\nplatform = {PIOARDUINO_37}\nboard = heltec_wifi_kit_32_V3\n")
+    assert rules(r, "x") & {"external-input", "unresolvable"}            # PlatformIO itself refuses a missing section
+    facts, _ = cp.judge(r, manifests_for)
+    assert [f["env"] for f in facts] == ["ok"]                           # and one bad env never hides the others

@@ -71,7 +71,7 @@ def sections_of(env):
             v = raw(s, o) or ""
             import re
             for m in re.finditer(r"\$\{([^}.:]+(?::[^}.]+)?)\.[^}]+\}", v):
-                if m.group(1) not in ("sysenv", "this", "platformio"):
+                if m.group(1) not in ("sysenv", "this"):
                     todo.append(m.group(1))
     return seen
 out = {"loaded": [os.path.relpath(p, root) for p in cfg._parsed], "envs": {},
@@ -83,7 +83,11 @@ for env in cfg.envs():
             return cfg.get(sec, o, None)
         except Exception as e:
             return {"error": str(e)}
-    names = [k for k, _v in cfg.items(env=env)]
+    try:
+        names = [k for k, _v in cfg.items(env=env)]
+    except Exception as e:                    # one env PlatformIO cannot resolve never hides the others
+        out["envs"][env] = {"error": str(e)[:300]}
+        continue
     contrib = sections_of(env)
     out["envs"][env] = {
         "board": eff("board"), "platform": eff("platform"),
@@ -196,9 +200,15 @@ def _external(env_info: dict) -> list[str]:
         if _EXTERNAL.search(val):
             hits.append(f"[{sec}] {opt} = {val}")
         for ref_sec, ref_opt in _ANY_REF.findall(val):
-            if ref_sec in ("sysenv", "platformio"):
+            if ref_sec == "sysenv":
+                continue                       # already a hit: _EXTERNAL matched this value
+            target = (own if ref_sec == "this" else ref_sec, ref_opt)
+            if target[1] not in (raw.get(target[0]) or {}):
+                # a reference this check cannot inspect is never assumed harmless (review BLOCKs on #1998:
+                # ${common.suffix}, then ${platformio.description})
+                hits.append(f"[{sec}] {opt} references ${{{ref_sec}.{ref_opt}}}, which cannot be inspected")
                 continue
-            todo.append((own if ref_sec == "this" else ref_sec, ref_opt))
+            todo.append(target)
     return sorted(hits)
 
 
@@ -231,6 +241,8 @@ def judge(resolved: dict, platform_index) -> tuple[list[dict], list[dict]]:
     for env, info in sorted((resolved.get("envs") or {}).items()):
         def refuse(rule, detail=""):
             refusals.append({"env": env, "rule": rule, "detail": detail})
+        if info.get("error"):
+            refuse("unresolvable", info["error"]); continue
         board, spec = info.get("board"), info.get("platform")
         if isinstance(spec, dict) or isinstance(board, dict):
             refuse("unresolvable", json.dumps({"board": board, "platform": spec})[:200]); continue
