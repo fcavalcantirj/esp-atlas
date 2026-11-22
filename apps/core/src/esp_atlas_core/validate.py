@@ -155,6 +155,18 @@ def _check_recipe_part_sources(fm):
     return errors
 
 
+def _check_platformio_definitions_cited(fm):
+    """Cite-or-omit for a board's `platformio_definitions` (Jr redesign plan, 2026-11-22): the list is the only link
+    from a build-target fact to the board, so it needs a sources[] entry with field 'platformio_definitions'."""
+    if not fm.get("platformio_definitions"):
+        return []
+    fields = {s.get("field") for s in fm.get("sources") or [] if isinstance(s, dict)}
+    if "platformio_definitions" in fields:
+        return []
+    return ["platformio_definitions has no source (add a sources[] entry with field 'platformio_definitions' "
+            "pointing at each definition's manifest at its pinned platform version)"]
+
+
 def validate_frontmatter(fm, kind, ids=None):
     """Validate one record's frontmatter dict against schema/<kind>.schema.json and
     inheritance references. There is no folder here, so id/brand-vs-folder is not checked
@@ -176,6 +188,8 @@ def validate_frontmatter(fm, kind, ids=None):
     errors.extend(_check_inheritance(fm, kind, known_ids() if ids is None else ids))
     if kind == "recipe":
         errors.extend(_check_recipe_part_sources(fm))
+    if kind == "board":
+        errors.extend(_check_platformio_definitions_cited(fm))
     return {"ok": not errors, "errors": errors}
 
 
