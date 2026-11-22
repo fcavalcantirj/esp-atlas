@@ -1,7 +1,7 @@
 {
  "version": 1,
  "source": "pam_feed",
- "checked_at": "2026-11-20T11:15:31.091318Z",
+ "checked_at": "2026-11-22T11:15:32.492374Z",
  "feeds": {
   "products": {
    "url": "https://pamfinds.com/api/products.json",
@@ -1300,8 +1300,10 @@
     ]
    },
    "fingerprint": "292953c4751a5960ddd7458d3df2c5c09caa1ab0a37d51ddb3fe6d383092a8b6",
-   "matches": [],
-   "status": "potential_identity_gap"
+   "matches": [
+    "sparkfun-thing-plus-esp32-s3"
+   ],
+   "status": "possible_match"
   },
   {
    "source_id": "xiao-esp32s3",

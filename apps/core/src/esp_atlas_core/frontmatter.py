@@ -68,14 +68,51 @@ def parse_frontmatter(path):
     return fm, body
 
 
+QUARANTINE_FILE = "quarantine.json"
+
+
+def _quarantined_recipes(root):
+    """The recipe ids data/quarantine.json hides: an empty set when the file is absent (nothing quarantined),
+    None when it exists but cannot be read as {"version": 1, "recipes": {id: entry}, ...} (fail closed)."""
+    path = Path(root) / QUARANTINE_FILE
+    if not path.exists():
+        return set()
+    try:
+        import json
+        doc = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    if not isinstance(doc, dict) or doc.get("version") != 1 or not isinstance(doc.get("recipes"), dict):
+        return None
+    return set(doc["recipes"])
+
+
+def _served(root, files):
+    """What the SERVING process exposes (Jr redesign plan, 2026-11-22): every record except the quarantined
+    recipes. An unreadable quarantine file hides every build-target fact (fail closed) and nothing else."""
+    hidden = _quarantined_recipes(root)
+    out = []
+    for kind, path in files:
+        if kind == "recipe":
+            if hidden is None:
+                fm, _body = parse_frontmatter(path)
+                if isinstance(fm, dict) and fm.get("status") == "build-target":
+                    continue
+            elif path.parent.name in hidden:
+                continue
+        out.append((kind, path))
+    return out
+
+
 def iter_data_files(data_dir=None):
     """Yield (type, Path) for every data/**/*.md file, type in {soc, module, board,
-    brand, firmware, recipe}."""
+    brand, firmware, recipe}. In the serving process (ESP_ATLAS_IMMUTABLE_DATA=1) the recipes that
+    data/quarantine.json hides are left out; Jr, validators and checkers (no flag) see every record."""
     root = Path(data_dir) if data_dir is not None else DATA_DIR
     if _immutable():
         key = str(root)
         if key not in _FILES:
-            _FILES[key] = [(t, p) for t, pattern in DATA_PATTERNS.items() for p in sorted(root.glob(pattern))]
+            _FILES[key] = _served(root, [(t, p) for t, pattern in DATA_PATTERNS.items() for p in sorted(root.glob(pattern))])
         yield from _FILES[key]
         return
     for content_type, pattern in DATA_PATTERNS.items():
