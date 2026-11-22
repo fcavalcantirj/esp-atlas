@@ -39,7 +39,7 @@ export function AtlasRecipe({ recipe, catalog }: { recipe: Recipe; catalog: Atla
     <p className={styles.eyebrow}>Exact recipe / {recipe.id}</p>
     <h3>{board?.name ?? recipe.board} <span aria-hidden="true">×</span> {firmware?.name ?? recipe.firmware}</h3>
     <TrustTierBadge status={recipe.status} />
-    <p>{tierClaim(recipe.status, board?.name ?? recipe.board)}</p>
+    <p>{tierClaim(recipe.status, board?.name ?? recipe.board, recipe.claim)}</p>
     {caveat ? <p className={styles.caveat}>{caveat}</p> : null}
     {recipe.verified_at ? <p className={styles.muted}>Verification recorded {recipe.verified_at}{recipe.verified_by ? ` by ${recipe.verified_by}` : ""}.</p> : null}
     {recipe.firmware_version ? <p>Recorded version: <code>{recipe.firmware_version}</code></p> : null}
