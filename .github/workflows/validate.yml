@@ -80,6 +80,8 @@ jobs:
         run: pip install pyyaml jsonschema requests pytest pytrends
       - name: Install the pinned ESP image parser (jr/esp_image.py; esptool's image module only)
         run: pip install -r jr/requirements-image.txt
+      - name: Install the pinned PlatformIO (jr/claims_pio.py resolves envs with PlatformIO's own ProjectConfig)
+        run: pip install -r jr/requirements-claims.txt
       - name: Install core (jr and scripts import esp_atlas_core)
         run: pip install -e apps/core
       - name: Can this runner build the image sandbox? (bwrap + unprivileged user namespaces)
