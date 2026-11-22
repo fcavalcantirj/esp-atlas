@@ -71,6 +71,68 @@ def test_dead_and_stalled_lanes_from_the_measured_shape():
     assert yl.summary(y) == "yield backfill 0/72u firmware 24/72u topics 0/48u (24 ticks)"
 
 
+# --- rows an open tick PR holds (stall:topics, 2026-11-19) ---------------------------------------------
+# A tick that produced opens a jr-review PR and its yield row waits there with it; main's ledger only ever
+# saw the silent ticks, so topics read 0/48u while #1828, #1875 and #1895 had authored 4 records.
+
+import pending_prs  # noqa: E402
+from publish import JR_LOGIN  # noqa: E402
+
+READ = ("api", "-H", pending_prs.RAW_MEDIA)
+
+
+def _text(rows):
+    return "".join(json.dumps(r, sort_keys=True) + "\n" for r in rows)
+
+
+def _pr(n, files=(yl.RELPATH,), **kw):
+    return {"number": n, "headRefName": f"jr/tick-x-{n}", "headRefOid": f"oid{n}", "files": [{"path": f} for f in files],
+            "author": {"login": JR_LOGIN}, "isCrossRepository": False, **kw}
+
+
+def _gh(answers):
+    calls = []
+
+    def gh(*a):
+        calls.append(a)
+        for n, text in answers.items():
+            if a == READ + (f"repos/o/r/contents/{yl.RELPATH}?ref=oid{n}",):
+                return type("P", (), {"returncode": 0 if text is not None else 1, "stdout": text or ""})()
+        return type("P", (), {"returncode": 1, "stdout": ""})()
+    gh.calls = calls
+    return gh
+
+
+def test_rows_missing_keeps_what_main_has_and_adds_only_the_ticks_it_lacks():
+    main = ledger(3)
+    held = yl.rows_for_tick(stages(topics=1), SPLIT, NOW - timedelta(hours=5), units_topics=2)
+    pr_copy = [dict(r, produced=7) for r in main] + held                        # main's own rows, as a stale PR copy
+    assert yl.rows_missing(main, pr_copy) == held
+    assert yl.rows_missing(main, held + held) == held                           # first copy wins, never doubled
+
+
+def test_open_pr_rows_read_each_eligible_prs_ledger_at_its_pinned_head():
+    held = yl.rows_for_tick(stages(topics=1), SPLIT, NOW - timedelta(hours=5), units_topics=2)
+    prs = [_pr(1895), _pr(1894, files=("jr/proposed_ledger.json",)), {**_pr(6), "isCrossRepository": True},
+           {**_pr(7), "author": {"login": "someone"}}]
+    gh = _gh({1895: _text(held), 6: _text(ledger(1, topics=9)), 7: _text(ledger(1, topics=9))})
+    rows, warnings = yl.open_pr_rows(gh, "o/r", prs)
+    assert rows == held and warnings == []
+    assert gh.calls == [READ + (f"repos/o/r/contents/{yl.RELPATH}?ref=oid1895",)]   # one read; foreign and fork PRs never
+
+
+def test_an_unreadable_open_pr_ledger_is_a_warning_never_an_abort():
+    rows, warnings = yl.open_pr_rows(_gh({1: None}), "o/r", [_pr(1), _pr(2, headRefOid=None)])
+    assert rows == [] and len(warnings) == 2 and "#1" in warnings[0] and "#2" in warnings[1]
+
+
+def test_a_gh_that_raises_is_a_warning_too():
+    def gh(*a):
+        raise RuntimeError("budget spent")
+    rows, warnings = yl.open_pr_rows(gh, "o/r", [_pr(1)])
+    assert rows == [] and warnings == ["open-PR yield rows from #1 unreadable: RuntimeError: budget spent"]
+
+
 def test_merging_two_copies_keeps_every_row_once_and_mains_row_on_a_shared_key():
     main = (json.dumps({"tick": "2026-11-18T08:00Z", "stage": "admit", "produced": 0}) + "\n"
             + json.dumps({"tick": "2026-11-18T05:00Z", "stage": "admit", "produced": 0, "src": "main"}) + "\n")
