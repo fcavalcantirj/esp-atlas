@@ -186,3 +186,27 @@ def test_a_definition_directory_outside_the_tree_refuses_every_env(tmp_path, opt
     r = project(tmp_path, f"[platformio]\n{opt} = /opt/somewhere\n\n[env:x]\nplatform = {PIOARDUINO_37}\n"
                           "board = heltec_wifi_kit_32_V3\n")
     assert "outside-tree" in rules(r, "x")
+
+
+@pytest.mark.parametrize("where", ["boards/heltec_wifi_kit_32_V3.json", "extra.ini", "deep/a/b/link"])
+def test_any_symlink_in_the_tree_refuses_every_env(tmp_path, where):
+    """Review BLOCK on #1998 at 7a58563a: a symlink (even dangling) pointing outside the pinned tree can decide
+    which definition loads. The plan's rule, literally: a symlink anywhere refuses the project."""
+    proj = tmp_path / "proj"
+    proj.mkdir()
+    (tmp_path / "evil.json").write_text("{}", encoding="utf-8")
+    link = proj / where
+    link.parent.mkdir(parents=True, exist_ok=True)
+    link.symlink_to(tmp_path / "evil.json")
+    r = project(proj, f"[env:x]\nplatform = {PIOARDUINO_37}\nboard = heltec_wifi_kit_32_V3\n")
+    facts, _ = cp.judge(r, manifests_for)
+    assert facts == [] and "outside-tree" in rules(r, "x")
+
+
+def test_the_real_fixture_yields_exactly_these_counts(nds):
+    """The PR body's [TEST] numbers, asserted (review finding on #1998): NightDriverStrip at 971c066b with the two
+    fixture manifests gives 2 facts, 25 identity-override and 34 unknown-definition refusals."""
+    import collections
+    facts, refusals = cp.judge(nds, manifests_for)
+    assert sorted(f["env"] for f in facts) == ["heltecdemoapa102", "heltecv3demo"]
+    assert dict(collections.Counter(r["rule"] for r in refusals)) == {"identity-override": 25, "unknown-definition": 34}

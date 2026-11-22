@@ -261,6 +261,13 @@ def _outside_tree(resolved: dict) -> list[str]:
     for rel in resolved.get("loaded") or []:
         if not (root / rel).resolve().is_relative_to(root):
             hits.append(f"loaded {rel}")
+    # any symlink, dangling or not (review BLOCK on #1998 at 7a58563a): it can point a definition or config
+    # outside the pinned tree, and Path.is_file() is False for a dangling one
+    for dirpath, dirnames, filenames in os.walk(root, followlinks=False):
+        for name in dirnames + filenames:
+            p = Path(dirpath) / name
+            if p.is_symlink():
+                hits.append(f"symlink {p.relative_to(root)}")
     return sorted(hits)
 
 
