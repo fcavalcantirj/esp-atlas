@@ -1,4 +1,4 @@
-import type { Recipe } from "./api.ts";
+import type { Recipe, RecipeClaim } from "./api.ts";
 
 // What each trust tier actually asserts (SPEC-wizard "Trust tiers") — the flash
 // panel says this in words so "validated" never means more than the record does.
@@ -13,7 +13,17 @@ const TIER_CLAIM: Record<string, (board: string) => string> = {
   broken: (board) => `Broken on ${board} — known incompatible, or regressed at a version.`,
 };
 
-export function tierClaim(status: string, board: string): string {
+/** The build-target line is owner-approved copy (2026-11-22). It names the commit and env only from the
+ * record's own claim and never says "runs on": the fact is configuration, not a build or a hardware test. */
+function buildTargetClaim(board: string, claim?: Pick<RecipeClaim, "sha" | "env"> | null): string {
+  const where = claim?.sha && claim?.env
+    ? ` at commit ${claim.sha.slice(0, 7)} selects this board's definition (env ${claim.env}).`
+    : " selects this board's definition.";
+  return `Build target for ${board}: the project's PlatformIO config${where} Configuration only: not built or tested on hardware.`;
+}
+
+export function tierClaim(status: string, board: string, claim?: Pick<RecipeClaim, "sha" | "env"> | null): string {
+  if (status === "build-target") return buildTargetClaim(board, claim);
   return (TIER_CLAIM[status] ?? ((b: string) => `${status} on ${b}.`))(board);
 }
 

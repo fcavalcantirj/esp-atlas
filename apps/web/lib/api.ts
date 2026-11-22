@@ -155,7 +155,18 @@ export interface Firmware {
   readme_en?: string;
 }
 
-export type RecipeStatus = "known-good" | "reported" | "declared" | "unverified" | "broken";
+export type RecipeStatus = "known-good" | "reported" | "declared" | "unverified" | "build-target" | "broken";
+
+/** A build-target recipe's configuration fact (Jr redesign plan, 2026-11-22): at commit `sha`, PlatformIO
+ * `platformio_version` resolves env `env` of `repo` to the board option `board_id`. Never a "runs on" claim. */
+export interface RecipeClaim {
+  kind: string;
+  repo: { slug: string; id: number };
+  sha: string;
+  env: string;
+  board_id: string;
+  platformio_version: string;
+}
 
 export interface RecipeFlash {
   method: string | null;
@@ -181,6 +192,8 @@ export interface Recipe {
   verified_at: string | null;
   notes: string | null;
   sources: SourceEntry[];
+  /** Present only on status "build-target". */
+  claim?: RecipeClaim | null;
 }
 
 export type PartType = "soc" | "module" | "board";
