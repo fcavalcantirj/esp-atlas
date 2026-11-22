@@ -3872,7 +3872,7 @@
       "pr_ref": "#1969",
       "repo": "tesa-klebeband/esp32-deauther",
       "status": "proposed",
-      "timestamp": "2026-11-22T16:00:34.465660+00:00"
+      "timestamp": "2026-11-22T17:00:33.310065+00:00"
     },
     "esp32-dragon-radar": {
       "expires": "2026-12-06T21:00:55.650872+00:00",
@@ -6563,12 +6563,13 @@
       "timestamp": "2026-11-15T11:00:32.244008+00:00"
     },
     "launcher-1897200000000000484": {
+      "expired_at": "2026-11-22T17:00:33.310065+00:00",
       "expires": "2026-11-22T17:00:31.529719+00:00",
       "id": "launcher-1897200000000000484",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'factory code user:kawacci'",
       "repo": "launcher:1897200000000000484",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-1897200000000000486": {
@@ -6934,12 +6935,13 @@
       "timestamp": "2026-11-15T08:00:31.415117+00:00"
     },
     "launcher-1897200000000000798": {
+      "expired_at": "2026-11-22T17:00:33.310065+00:00",
       "expires": "2026-11-22T17:00:31.529719+00:00",
       "id": "launcher-1897200000000000798",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'paperboys3 user:zephray'",
       "repo": "launcher:1897200000000000798",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-1897200000000000799": {
@@ -7922,12 +7924,13 @@
       "timestamp": "2026-11-15T16:00:31.979974+00:00"
     },
     "launcher-1897200000000001408": {
+      "expired_at": "2026-11-22T17:00:33.310065+00:00",
       "expires": "2026-11-22T17:00:31.529719+00:00",
       "id": "launcher-1897200000000001408",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'control rgb 8encoder sprite user:redstarwizard'",
       "repo": "launcher:1897200000000001408",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-1897200000000001416": {
@@ -8247,12 +8250,13 @@
       "timestamp": "2026-11-16T03:00:32.040222+00:00"
     },
     "launcher-1897200000000001645": {
+      "expired_at": "2026-11-22T17:00:33.310065+00:00",
       "expires": "2026-11-22T17:00:31.529719+00:00",
       "id": "launcher-1897200000000001645",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001645",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-1897200000000001647": {
@@ -8310,12 +8314,13 @@
       "timestamp": "2026-11-08T21:00:55.166276+00:00"
     },
     "launcher-1897200000000001682": {
+      "expired_at": "2026-11-22T17:00:33.310065+00:00",
       "expires": "2026-11-22T17:00:31.529719+00:00",
       "id": "launcher-1897200000000001682",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'chatoffgrid user:gabrielwlucio'",
       "repo": "launcher:1897200000000001682",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-1897200000000001686": {
@@ -8675,12 +8680,13 @@
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-1897200000000001900": {
+      "expired_at": "2026-11-22T17:00:33.310065+00:00",
       "expires": "2026-11-22T17:00:31.529719+00:00",
       "id": "launcher-1897200000000001900",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'flipper zero user:andri4ik'",
       "repo": "launcher:1897200000000001900",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-1897200000000001912": {
@@ -10450,12 +10456,13 @@
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
     },
     "launcher-1897200000000003367": {
+      "expired_at": "2026-11-22T17:00:33.310065+00:00",
       "expires": "2026-11-22T17:00:31.529719+00:00",
       "id": "launcher-1897200000000003367",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000003367",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-1897200000000003383": {
@@ -12506,12 +12513,13 @@
       "timestamp": "2026-11-16T08:00:31.910120+00:00"
     },
     "launcher-CFWa657f6c4ff37fc27e3067e4285a4c": {
+      "expired_at": "2026-11-22T17:00:33.310065+00:00",
       "expires": "2026-11-22T17:00:31.529719+00:00",
       "id": "launcher-CFWa657f6c4ff37fc27e3067e4285a4c",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:cfwa657f6c4ff37fc27e3067e4285a4c",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-CFWace5d456ffacb5dee0acc18cb92a9": {
@@ -13191,12 +13199,13 @@
       "timestamp": "2026-11-16T15:00:33.094076+00:00"
     },
     "lorachat-for-as923": {
+      "expired_at": "2026-11-22T17:00:33.310065+00:00",
       "expires": "2026-11-22T17:00:31.529719+00:00",
       "id": "lorachat-for-as923",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "kwonbowon/lorachat-for-as923",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "lorachat-m5-stickc-2": {
@@ -24171,7 +24180,7 @@
       "pr_ref": "#1985",
       "repo": "takmashhido/sectrustkey",
       "status": "proposed",
-      "timestamp": "2026-11-22T16:00:34.465660+00:00"
+      "timestamp": "2026-11-22T17:00:33.310065+00:00"
     },
     "seed-phrase-checker": {
       "expired_at": "2026-11-07T08:00:55.079521+00:00",
@@ -26312,7 +26321,7 @@
       "pr_ref": "#1895",
       "repo": "designer2k2/xmas-tree",
       "status": "proposed",
-      "timestamp": "2026-11-22T16:00:34.465660+00:00"
+      "timestamp": "2026-11-22T17:00:33.310065+00:00"
     },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
