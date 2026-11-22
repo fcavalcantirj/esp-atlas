@@ -40,6 +40,13 @@ download_mode:
     138.0 x 93.0 x 10.5 mm Gross Weight 7.5 g Operation Enter Download Mode To enter
     download mode, press and hold the G0 button on the Stamp-S3 before powering on,
     then release it after power is applied
+platformio_definitions:
+- id: m5stack-stamps3
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 78bd1c66432a3e10fee1e13f4cb0a7aa08bfb0c787072dba76f460aef1df8f68
+- id: m5stack-stamps3
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: a9294787f4312fef1219992ec933a963b6591549398d705a03653aac8c8b5fb2
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/stamps3
@@ -68,6 +75,12 @@ sources:
 - field: download_mode
   url: https://docs.m5stack.com/en/core/StampS3
   verified: '2026-09-13'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/m5stack-stamps3.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/m5stack-stamps3.json
+  verified: '2026-11-22'
 ---
 
 # Stamp-S3

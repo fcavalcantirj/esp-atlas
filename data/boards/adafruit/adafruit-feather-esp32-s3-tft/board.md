@@ -43,6 +43,13 @@ notes:
 getting_started: https://learn.adafruit.com/adafruit-esp32-s3-tft-feather
 images:
   pinout: https://cdn-learn.adafruit.com/assets/assets/000/114/042/medium800/adafruit_products_FS3TFT_pinouts.jpg?1660074679
+platformio_definitions:
+- id: adafruit_feather_esp32s3_tft
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: da4d373c6a84e03dda7a5527b75c5b0d9097635feadde76059a57e2fd110b949
+- id: adafruit_feather_esp32s3_tft
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: eb4258d1833befa10ae1618361896c1e837129d0d29a7347be6a604b7ad15b01
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5483
@@ -65,6 +72,12 @@ sources:
 - field: images.pinout
   url: https://cdn-learn.adafruit.com/assets/assets/000/114/042/medium800/adafruit_products_FS3TFT_pinouts.jpg?1660074679
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/adafruit_feather_esp32s3_tft.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/adafruit_feather_esp32s3_tft.json
+  verified: '2026-11-22'
 ---
 
 # Adafruit ESP32-S3 TFT Feather

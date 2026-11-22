@@ -65,6 +65,13 @@ images:
   photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c61/_images/esp32-c61-devkitc-1-isometric.png
   pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c61/_images/esp32-c61-devkitc-1-pin-layout-v2.png
 usb_serial: usb-uart-bridge-unspecified
+platformio_definitions:
+- id: esp32-c61-devkitc1
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 50cd920550fa6bf98bf54f282984c007bba38e012ad1860dfff4f24c960e6932
+- id: esp32-c61-devkitc1-n8r2
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 7cf3fc1f3451f716e10eefde495741428a00e88200c7e34f0e321a9ba0fbf0cc
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c61/esp32-c61-devkitc-1/user_guide.html
@@ -93,6 +100,12 @@ sources:
 - field: usb_serial
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c61/esp32-c61-devkitc-1/user_guide.html
   verified: '2026-09-10'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/esp32-c61-devkitc1.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/esp32-c61-devkitc1-n8r2.json
+  verified: '2026-11-22'
 ---
 
 # ESP32-C61-DevKitC-1

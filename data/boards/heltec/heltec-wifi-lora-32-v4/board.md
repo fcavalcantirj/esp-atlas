@@ -94,6 +94,10 @@ notes:
 getting_started: https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/
 images:
   pinout: https://resource.heltec.cn/download/WiFi_LoRa_32_V4/Pinmap/V4_pinmap.png
+platformio_definitions:
+- id: heltec_wifi_lora_32_V4
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: da570fbdb4596a1d606906d97bd571a6758dd27209772981dfc28ef66acf08f8
 sources:
 - field: '*'
   url: https://heltec.org/project/wifi-lora-32-v4/
@@ -161,6 +165,9 @@ sources:
 - field: images.pinout
   url: https://resource.heltec.cn/download/WiFi_LoRa_32_V4/Pinmap/V4_pinmap.png
   verified: '2026-11-18'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/heltec_wifi_lora_32_V4.json
+  verified: '2026-11-22'
 ---
 
 # WiFi LoRa 32 (V4)

@@ -49,6 +49,13 @@ notes:
 getting_started: https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide
 images:
   pinout: https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/top-annotated.jpg
+platformio_definitions:
+- id: esp32thing
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 0e0bd119410de212dd71b63060a4444de421c0c1df5dfa14008f4ea7bbdd55e6
+- id: esp32thing
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 7d4592bf6433281d277b9a68ea67920319062a5dc02fb77f78f4ba27c856468d
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-esp32-thing.html
@@ -83,6 +90,12 @@ sources:
 - field: images.pinout
   url: https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/top-annotated.jpg
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/esp32thing.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/esp32thing.json
+  verified: '2026-11-22'
 ---
 
 # SparkFun ESP32 Thing

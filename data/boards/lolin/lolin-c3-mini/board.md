@@ -39,6 +39,13 @@ notes:
 getting_started: https://www.wemos.cc/en/latest/c3/c3_mini.html
 images:
   pinout: https://www.wemos.cc/en/latest/_images/c3_mini_v2.1.0_2_16x16.jpg
+platformio_definitions:
+- id: lolin_c3_mini
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: d89af69b97f495c1225b5d2d02fac575b74f28eeac18c7ebe32532d03dcb6c7c
+- id: lolin_c3_mini
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: a98e2cf1a4478ba3d07a5f54cc942aa70b637425469c0e1fcec10ee2c2ee9220
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/c3/c3_mini.html
@@ -58,6 +65,12 @@ sources:
 - field: images.pinout
   url: https://www.wemos.cc/en/latest/_images/c3_mini_v2.1.0_2_16x16.jpg
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/lolin_c3_mini.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/lolin_c3_mini.json
+  verified: '2026-11-22'
 ---
 
 # LOLIN C3 mini

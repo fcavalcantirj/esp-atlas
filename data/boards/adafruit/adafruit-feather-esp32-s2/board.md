@@ -44,6 +44,13 @@ notes:
   soc.reserved_pins (strapping 0/45/46, input_only 46, usb_flash_tied 19/20) are
   among the exposed pads, and NeoPixel/I2C_POWER/NEOPIXEL_POWER sit on
   GPIO21/33, off-header -- so 20 - 0 = 20'
+platformio_definitions:
+- id: adafruit_feather_esp32s2
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 57de2e469d9406d75c2619b4ebe6a289f519c909505d31467a599f211bde604f
+- id: adafruit_feather_esp32s2
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: c5d0e94803574df5e13c27192c846c3920679cbaee304500df796d57b8b57d4f
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5000
@@ -60,6 +67,12 @@ sources:
 - field: images.pinout
   url: https://cdn-learn.adafruit.com/assets/assets/000/110/677/medium800/adafruit_products_Adafruit_Feather_ESP32-S2_Pinout.png?1649709383
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/adafruit_feather_esp32s2.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/adafruit_feather_esp32s2.json
+  verified: '2026-11-22'
 ---
 
 # Adafruit ESP32-S2 Feather

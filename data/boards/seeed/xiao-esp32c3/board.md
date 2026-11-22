@@ -50,6 +50,13 @@ download_mode:
 getting_started: https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/
 images:
   pinout: https://files.seeedstudio.com/wiki/XIAO_WiFi/XIAO_ESP32-C3_front_pinout.png
+platformio_definitions:
+- id: seeed_xiao_esp32c3
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 181938af2955a0cb0e2660f8adc16d153d1b4775144d9412aba8e6da7c8d5982
+- id: seeed_xiao_esp32c3
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 44046a0c33490133e7fdc118a18b8d0b2bce34743033b5c6c4dfc7e47951b8fd
 sources:
 - field: '*'
   url: https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/
@@ -78,6 +85,12 @@ sources:
 - field: images.pinout
   url: https://files.seeedstudio.com/wiki/XIAO_WiFi/XIAO_ESP32-C3_front_pinout.png
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/seeed_xiao_esp32c3.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/seeed_xiao_esp32c3.json
+  verified: '2026-11-22'
 ---
 
 # Seeed Studio XIAO ESP32C3

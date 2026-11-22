@@ -40,6 +40,13 @@ getting_started: https://docs.m5stack.com/en/core/AtomS3
 images:
   photo: https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/products/core/AtomS3/4.webp
   pinout: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/472/C123_PinMap_01.jpg
+platformio_definitions:
+- id: m5stack-atoms3
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: f506d34839aead33f9bf75be5c9f49a1c0b98d6d0bc8ed75bd853e4b6e0bb233
+- id: m5stack-atoms3
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: df41eb1418353a1b99ecc39afd94c14535a947b2a755798b0701606651535664
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/AtomS3
@@ -62,6 +69,12 @@ sources:
 - field: images
   url: https://docs.m5stack.com/en/core/AtomS3
   verified: '2026-09-11'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/m5stack-atoms3.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/m5stack-atoms3.json
+  verified: '2026-11-22'
 ---
 
 # AtomS3

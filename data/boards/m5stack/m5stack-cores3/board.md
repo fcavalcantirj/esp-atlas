@@ -49,6 +49,13 @@ download_mode:
   mode: manual
   steps: Independent POWER and RESET (RST) buttons are located on the side; long-pressing
     the RESET button enters download mode via a self-built delay circuit
+platformio_definitions:
+- id: m5stack-cores3
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: f0848c635078adc859ebd063fe873d75d69cc24a16e4c288768c71a9fd7cf802
+- id: m5stack-cores3
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 16ae995715056cf12b84ca1668c348e390fffbf73e5230f979cd75c00b5b4298
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/CoreS3
@@ -65,6 +72,12 @@ sources:
 - field: download_mode
   url: https://docs.m5stack.com/en/core/CoreS3
   verified: '2026-09-13'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/m5stack-cores3.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/m5stack-cores3.json
+  verified: '2026-11-22'
 ---
 
 # CoreS3
