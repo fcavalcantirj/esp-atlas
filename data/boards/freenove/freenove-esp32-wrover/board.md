@@ -25,6 +25,13 @@ notes:
 getting_started: https://docs.freenove.com/projects/fnk0060/en/latest/
 images:
   pinout: https://raw.githubusercontent.com/Freenove/Freenove_ESP32_WROVER_Board/main/ESP32_Pinout_V3.0.png
+platformio_definitions:
+- id: freenove_esp32_wrover
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 9dc89702b75afb7b2eb39382ab87d8962dcc6480eba8a139db7fb6d4b13f35ea
+- id: freenove_esp32_wrover
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 3758b9bbdfe97e61e7bb2309db0b0f0cfa58476522b1aadfa41adc20d3736916
 sources:
 - field: '*'
   url: https://github.com/Freenove/Freenove_ESP32_WROVER_Board
@@ -50,6 +57,12 @@ sources:
 - field: images.pinout
   url: https://raw.githubusercontent.com/Freenove/Freenove_ESP32_WROVER_Board/main/ESP32_Pinout_V3.0.png
   verified: '2026-11-17'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/freenove_esp32_wrover.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/freenove_esp32_wrover.json
+  verified: '2026-11-22'
 ---
 
 # Freenove ESP32-WROVER

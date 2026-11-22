@@ -60,6 +60,13 @@ download_mode:
 getting_started: https://learn.sparkfun.com/tutorials/esp32-thing-plus-hookup-guide
 images:
   pinout: https://docs.sparkfun.com/SparkFun_Thing_Plus_ESP32_WROOM_C/img/hookup_guide/graphical_datasheet.jpg
+platformio_definitions:
+- id: sparkfun_esp32s2_thing_plus_c
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: c0415538fc9fe3ac284908d5167d853aaee54439610a0d6d94433dd4fadc5b54
+- id: sparkfun_esp32s2_thing_plus_c
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 9d3776e459bfe35915fcc7a261812e7327c4a4726b86fe5000780c8cefc48462
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-thing-plus-esp32-wroom-usb-c.html
@@ -100,6 +107,12 @@ sources:
 - field: images.pinout
   url: https://docs.sparkfun.com/SparkFun_Thing_Plus_ESP32_WROOM_C/img/hookup_guide/graphical_datasheet.jpg
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/sparkfun_esp32s2_thing_plus_c.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/sparkfun_esp32s2_thing_plus_c.json
+  verified: '2026-11-22'
 ---
 
 # SparkFun Thing Plus - ESP32 WROOM (USB-C)

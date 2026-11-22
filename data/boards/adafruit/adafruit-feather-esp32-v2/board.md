@@ -46,6 +46,13 @@ getting_started: https://learn.adafruit.com/adafruit-esp32-feather-v2
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/544/medium800/FV2_top_angle.jpg
   pinout: https://cdn-learn.adafruit.com/assets/assets/000/123/406/medium800/adafruit_products_Adafruit_ESP32_Feather_V2_Pinout.png?1691707257
+platformio_definitions:
+- id: adafruit_feather_esp32_v2
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: f9496dc954326859dbf83865c14585c0d5da2a3ea80e862663c883d75c5116e6
+- id: adafruit_feather_esp32_v2
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 42a4da14dcca1ffef07020ba065b0b6bca251a803e34a07196b6707b78b3d94e
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5400
@@ -71,6 +78,12 @@ sources:
 - field: images.pinout
   url: https://cdn-learn.adafruit.com/assets/assets/000/123/406/medium800/adafruit_products_Adafruit_ESP32_Feather_V2_Pinout.png?1691707257
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/adafruit_feather_esp32_v2.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/adafruit_feather_esp32_v2.json
+  verified: '2026-11-22'
 ---
 
 # Adafruit ESP32 Feather V2

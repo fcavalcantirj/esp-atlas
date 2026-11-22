@@ -85,6 +85,13 @@ notes:
   RT9080 enable, 46 the WS2812, 19/20 the USB-C port, all onboard), so no subtraction
   applies: 21 - 0 = 21'
 getting_started: https://docs.sparkfun.com/SparkFun_Thing_Plus_ESP32-S3/
+platformio_definitions:
+- id: sparkfun_esp32s3_thing_plus
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 338527a1ad69af6d41dd50a1539ca5ae9719a31f51affcd088548a9df9672af8
+- id: sparkfun_esp32s3_thing_plus
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 97f4c7e9294325d566b7e344c260a241b07df02790f4f515e3e0063c3bc12382
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html
@@ -146,6 +153,12 @@ sources:
 - field: getting_started
   url: https://docs.sparkfun.com/SparkFun_Thing_Plus_ESP32-S3/
   verified: '2026-11-20'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/sparkfun_esp32s3_thing_plus.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/sparkfun_esp32s3_thing_plus.json
+  verified: '2026-11-22'
 ---
 
 # SparkFun Thing Plus - ESP32-S3
