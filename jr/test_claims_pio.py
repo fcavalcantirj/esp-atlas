@@ -119,3 +119,17 @@ def test_ci_and_the_reviewer_install_the_pinned_platformio():
     assert "platformio==6.2.0" in (root / "jr" / "requirements-claims.txt").read_text()
     for wf in ("validate.yml", "agent-review.yml"):
         assert "pip install -r jr/requirements-claims.txt" in (root / ".github" / "workflows" / wf).read_text(), wf
+
+
+def test_an_external_input_reached_through_another_option_is_refused(tmp_path):
+    """Review BLOCK on #1998: ${sysenv.*} reached indirectly (board = ...${common.suffix}, suffix = ${sysenv.X})
+    must be refused like a direct one; the hermetic run would otherwise hide it (SUFFIX unset there)."""
+    r = project(tmp_path, f"[common]\nsuffix = ${{sysenv.SUFFIX}}\n\n[env:x]\nplatform = {PIOARDUINO_37}\n"
+                          "board = heltec_wifi_kit_32_V3${common.suffix}\n")
+    assert "external-input" in rules(r, "x")
+
+
+def test_an_unrelated_external_option_does_not_refuse_the_env(tmp_path):
+    r = project(tmp_path, f"[common]\nupload = ${{sysenv.PORT}}\n\n[env:x]\nplatform = {PIOARDUINO_37}\n"
+                          "board = heltec_wifi_kit_32_V3\nupload_port = ${common.upload}\n")
+    assert "external-input" not in rules(r, "x")

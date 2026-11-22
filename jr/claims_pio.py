@@ -172,14 +172,34 @@ def identity_differences(identity: dict, manifest: dict) -> list[str]:
     return diffs
 
 
+_ANY_REF = re.compile(r"\$\{([^}.]+)\.([^}]+)\}")
+
+
 def _external(env_info: dict) -> list[str]:
-    hits = []
-    for sec, opts in (env_info.get("raw") or {}).items():
-        for opt, val in (opts or {}).items():
-            if (opt in ("board", "platform", "extends") or opt in IDENTITY or opt.startswith(IDENTITY_PREFIX)) \
-                    and isinstance(val, str) and _EXTERNAL.search(val):
-                hits.append(f"[{sec}] {opt} = {val}")
-    return hits
+    """Every env-, time- or caller-dependent interpolation that REACHES board, platform, extends or an identity
+    option: those options in every contributing section, then every option their raw values reference
+    (${section.option}, ${this.option}), transitively. Review BLOCK on #1998: board = X${common.suffix} with
+    suffix = ${sysenv.SUFFIX} must be refused like a direct ${sysenv.*}."""
+    raw = env_info.get("raw") or {}
+    own = (env_info.get("sections") or ["env:?"])[0]
+    todo = [(sec, opt) for sec, opts in raw.items() for opt in (opts or {})
+            if opt in ("board", "platform", "extends") or opt in IDENTITY or opt.startswith(IDENTITY_PREFIX)]
+    seen, hits = set(), []
+    while todo:
+        sec, opt = todo.pop()
+        if (sec, opt) in seen:
+            continue
+        seen.add((sec, opt))
+        val = (raw.get(sec) or {}).get(opt)
+        if not isinstance(val, str):
+            continue
+        if _EXTERNAL.search(val):
+            hits.append(f"[{sec}] {opt} = {val}")
+        for ref_sec, ref_opt in _ANY_REF.findall(val):
+            if ref_sec in ("sysenv", "platformio"):
+                continue
+            todo.append((own if ref_sec == "this" else ref_sec, ref_opt))
+    return sorted(hits)
 
 
 def _order_conflicts(resolved: dict, sections: list[str]) -> list[str]:
