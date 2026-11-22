@@ -11,6 +11,7 @@ the owner what still needs a human. Incidents reach the delegate only through `c
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 from types import SimpleNamespace
@@ -27,6 +28,25 @@ def _the_expiry_never_reaches_git_or_the_network(monkeypatch):
         raise RuntimeError("this test did not stub the tick-PR expiry")
     monkeypatch.setattr(chores, "_fetch_branch", not_stubbed)
     monkeypatch.setattr(chores, "_guard", not_stubbed)
+
+
+def trend_row(date, firmware=170, recipes=348, with_fw=62, zero_fw=59, usb=66):
+    return {"date": date, "firmware_count": firmware, "recipe_count": recipes, "boards_with_firmware": with_fw,
+            "boards_zero_firmware": zero_fw, "board_fields": {"usb_serial": {"count": usb, "pct": 54.5}}}
+
+
+def write_trend(path, rows):
+    import json as _json
+    path.write_text("".join(_json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+    return path
+
+
+@pytest.fixture(autouse=True)
+def _a_growing_catalog_unless_a_test_says_otherwise(monkeypatch, tmp_path):
+    """The daily line reads the catalog's growth from docs/telemetry/data-trend.jsonl. Every test gets a trend
+    that grew by one firmware each day of November, so only the tests about growth see anything else."""
+    rows = [trend_row(f"2026-11-{d:02d}", firmware=150 + d) for d in range(1, 31)]
+    monkeypatch.setattr(chores, "TREND", write_trend(tmp_path / "data-trend.jsonl", rows))
 
 
 NOW = "2026-11-19T12:05:00+00:00"
@@ -884,6 +904,19 @@ def test_a_failure_beside_a_canary_that_ran_reruns_the_canary_not_the_failed_job
     assert gh.acts() == [("api", "-X", "POST", "repos/o/r/actions/jobs/950/rerun")]
 
 
+def test_the_fix_prompt_tells_the_agent_how_to_correct_a_pr_description_and_to_leave_a_conflict_job_small():
+    # 2026-11-19: 8 PRs were blocked on a future check tagged [REAL] in their description, and #1840 was blocked
+    # again after its code fix because the description still told the old mechanism. The fix agent could push
+    # commits but had no way to change a description, so those blocks could never clear.
+    prompt = (Path(chores.__file__).resolve().parent.parent / "docs" / "ops" / "HEAL-PROMPT.md").read_text()
+    section = prompt[prompt.index("## When `INCIDENT.context.check` starts with `conflict:`"):]
+    assert "`PR_DESCRIPTION`" in section and "the relay replaces" in section
+    assert "`[REAL]` only on something already observed" in section
+    assert "git commit --allow-empty" in section                       # a verdict is tied to the head
+    assert "do not refactor or split files" in section                 # the 516-line split the relay refused
+    assert "Never create a virtualenv" in prompt and "`PYTHON`" in prompt   # /tmp filled up and reviews stopped
+
+
 # --- Jr never parks a PR on a person (2026-11-19) ----------------------------------------------------------------
 
 def _third_block(tmp_path, branch):
@@ -1058,3 +1091,93 @@ def test_jrs_queued_tick_prs_are_shown_but_are_not_waiting_on_a_person(tmp_path)
     line = _day(_store(tmp_path), Gh(prs, merged=merged_jr("espatlas-jr")), 19)
     assert "self-sufficient 1/7 days" in line and "nothing of Jr's waits on a person" in line
     assert "Jr's own queue: 2 open (oldest #1827, 74 h)" in line
+
+
+# --- the tick says so when the backup reviewer answers nothing (2026-11-19) ---------------------------------------
+
+def test_a_backup_reviewer_that_gave_no_verdict_today_is_a_warning_in_the_chores_output(tmp_path):
+    state = tmp_path / "agent-review.json"
+    state.write_text(json.dumps({"fallback_empty": {"day": "2026-11-19", "prs": [1840, 1843]}}))
+    line = chores.review_lane_warning(NOW, state)
+    assert "#1840, #1843" in line and "NO verdict today" in line and "credit" in line
+    assert chores.review_lane_warning("2026-11-20T12:05:00+00:00", state) is None       # yesterday's is not today's
+    assert chores.review_lane_warning(NOW, tmp_path / "missing.json") is None
+    state.write_text("not json")
+    assert chores.review_lane_warning(NOW, state) is None
+
+
+def test_the_chores_carry_that_warning(tmp_path, monkeypatch):
+    monkeypatch.setattr(chores, "review_lane_warning", lambda now, state_path=None: "the backup reviewer … NO verdict today")
+    out = chores.run(Gh([]), _store(tmp_path), NOW, slug="o/r")
+    assert out["warnings"] == ["the backup reviewer … NO verdict today"]
+    monkeypatch.setattr(chores, "review_lane_warning", lambda now, state_path=None: None)
+    assert chores.run(Gh([]), _store(tmp_path / "b"), NOW, slug="o/r")["warnings"] == []
+
+
+def test_the_tick_line_carries_the_chores_warnings(tmp_path):
+    from test_tick import git_ok, gh_ok, run
+
+    def chores_runner(gh, now, dry_run):
+        return {"status": "ok", "recorded": [], "warnings": ["the backup reviewer was asked and gave NO verdict today (#1840)"]}
+    r = run(git=git_ok(tmp_path), gh=gh_ok(rate="120"), chores_runner=chores_runner, notifier=lambda m: None)
+    assert any("backup reviewer was asked and gave NO verdict" in w for w in r.warnings)
+
+
+# --- a self-sufficient day is a day the catalog grew (2026-11-21) -----------------------------------------------
+# Nov 20 counted 36 merges by Jr, none by a person, nothing waiting: by the old rule a good day. Every one of those
+# merges was bookkeeping (the ledger, telemetry); the catalog stayed at 170 firmware / 348 recipes and every lane
+# yielded 0 for 24 ticks. Seven such days would have read SELF-SUFFICIENT with nothing added.
+
+def _clean():
+    return Gh([], merged=merged("espatlas-jr", "github-actions[bot]"))
+
+
+def test_a_day_the_catalog_did_not_grow_is_not_self_sufficient(tmp_path, monkeypatch):
+    monkeypatch.setattr(chores, "TREND", write_trend(tmp_path / "t.jsonl", [trend_row("2026-11-18"), trend_row("2026-11-19")]))
+    store = _store(tmp_path)
+    line = _day(store, _clean(), 19)
+    assert "catalog did not grow (2026-11-18→2026-11-19)" in line and "self-sufficient 0/7 days" in line
+    row = store._load()["scoreboard"][-1]
+    assert row["ok"] is False and row["grew"] == 0 and row["by_person"] == 0 and row["waiting"] == 0
+
+
+def test_any_new_firmware_recipe_board_or_filled_board_field_is_growth(tmp_path, monkeypatch):
+    for i, change in enumerate((dict(firmware=171), dict(recipes=349), dict(zero_fw=60),
+                                dict(with_fw=63, zero_fw=58, recipes=349), dict(usb=67))):
+        monkeypatch.setattr(chores, "TREND", write_trend(tmp_path / f"t{i}.jsonl",
+                                                         [trend_row("2026-11-18"), trend_row("2026-11-19", **change)]))
+        (tmp_path / f"s{i}").mkdir()
+        store = _store(tmp_path / f"s{i}")
+        line = _day(store, _clean(), 19)
+        assert "self-sufficient 1/7 days" in line and "catalog +" in line, change
+
+
+def test_growth_is_measured_up_to_todays_trend_row_and_a_missing_or_broken_trend_proves_nothing(tmp_path, monkeypatch):
+    cases = {
+        "no trend row for 2026-11-19": [trend_row("2026-11-17"), trend_row("2026-11-18", firmware=171)],
+        "fewer than two trend rows": [trend_row("2026-11-19")],
+        "catalog growth unreadable": None,
+    }
+    for i, (says, rows) in enumerate(cases.items()):
+        path = tmp_path / f"t{i}.jsonl"
+        if rows is None:
+            path.write_text("{not json\n", encoding="utf-8")
+        else:
+            write_trend(path, rows)
+        monkeypatch.setattr(chores, "TREND", path)
+        line = _day(_store(tmp_path / f"s{i}"), _clean(), 19)
+        assert says in line and "self-sufficient 0/7 days" in line, says
+    monkeypatch.setattr(chores, "TREND", tmp_path / "absent.jsonl")
+    assert "self-sufficient 0/7 days" in _day(_store(tmp_path / "s9"), _clean(), 19)
+
+
+def test_a_catalog_that_shrank_is_not_growth(tmp_path, monkeypatch):
+    monkeypatch.setattr(chores, "TREND", write_trend(tmp_path / "t.jsonl", [trend_row("2026-11-18"), trend_row("2026-11-19", recipes=347)]))
+    line = _day(_store(tmp_path), _clean(), 19)
+    assert "catalog -1 (2026-11-18→2026-11-19)" in line and "self-sufficient 0/7 days" in line
+
+
+def test_the_growth_rule_reads_the_newest_row_per_day_in_date_order(tmp_path, monkeypatch):
+    rows = [trend_row("2026-11-19", firmware=172), trend_row("2026-11-18"), trend_row("2026-11-19", firmware=171)]
+    monkeypatch.setattr(chores, "TREND", write_trend(tmp_path / "t.jsonl", rows))     # an appended re-run of the 19th
+    assert "catalog +1 (2026-11-18→2026-11-19)" in _day(_store(tmp_path), _clean(), 19)

@@ -1,7 +1,8 @@
 import Link from "next/link";
+import ConsentResetButton from "@/components/ConsentResetButton";
 import TrackedLink from "@/components/TrackedLink";
 import { agentsUrl, contributingUrl, dataFolderUrl, discussionsUrl, issuesUrl, licenseUrl, repoUrl } from "@/lib/github";
-import { SITE_NAME } from "@/lib/site";
+import { GA_ID, SITE_NAME } from "@/lib/site";
 
 const API_DOCS_PATH = "/api/docs";
 const LLMS_TXT_PATH = "/llms.txt";
@@ -67,7 +68,15 @@ export default function SiteFooter() {
             {" · "}Code: <TrackedLink href={licenseUrl()} linkType="license">MIT</TrackedLink>
           </span>
           <span>Flash &amp; verify need a Chromium browser (Chrome, Edge).</span>
-          <span>Uses Google Analytics to learn how people search for parts.</span>
+          <span>
+            Uses Google Analytics to learn how people search for parts.
+            {GA_ID && (
+              <>
+                {" "}
+                <ConsentResetButton />
+              </>
+            )}
+          </span>
         </div>
       </div>
     </footer>

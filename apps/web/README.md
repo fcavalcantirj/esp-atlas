@@ -89,6 +89,7 @@ Events:
 | `help_tip_open`, `advanced_filters_toggle` | `field` · `panel, open` |
 | `theme_change`, `font_size_change` | `theme` · `scale, direction` |
 | `outbound_click` | `link_type (source\|github_edit\|github_view\|github_repo\|contributing\|agents\|issues\|new_issue\|discussions\|license\|data_folder\|llms_txt\|api_docs), host, part_id?, field?` |
+| `firmware_search` | `has_query, filters (how many), sort, result_count` — once per searched or filtered `/firmware` list shown; never the words typed |
 | `api_error`, `not_found` | `endpoint, status` · `path` |
 | `atlas_lens_select`, `atlas_inspect`, `atlas_recipe_inspect`, `atlas_handoff`, `atlas_search`, `atlas_lookup`, `atlas_error` | `lens` · `record_id, record_type, lens` · `recipe_id, tier, lens` · `record_id, record_type` · `q_length` · `lens, q_length, result_count, outcome` · `stage, outcome, lens` |
 

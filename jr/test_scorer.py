@@ -765,3 +765,112 @@ def test_score_entry_genuine_firmware_still_authored_with_no_library_signal(desc
        "nemo-slug", "ghostesp-compound", "deauther-compound"])
 def test_purpose_keywords_rogue_and_nemo_match_only_whole_words(name, description, expected):
     assert scorer._category_from_purpose(name, description, None) == expected
+
+
+# ─────────── the catalog's own vocabulary (jr/board_names, 2026-11-17) ───────────
+# device_map.py covered 14 of 118 catalogued boards, all M5Stack: a Heltec, LilyGO or Espressif-devkit
+# firmware that named its board in its own description was still `no_board_evidence`. score_entry now
+# falls back to the catalog vocabulary over name + description + GitHub topics + README title.
+
+def _plain_repo_meta(full_name, description, topics=None, stars=60):
+    return {"full_name": full_name, "fork": False, "source_full_name": None, "stars": stars, "id": 4242,
+            "description": description, "topics": topics or [], "readme_title": None, "readme_body": None,
+            "license": "MIT"}
+
+
+def test_score_entry_admits_a_heltec_board_named_in_the_description():
+    entry = {"name": "LoRa Wireless Tracker", "description": None, "category": None,
+             "github": "https://github.com/jh/lorawirelesstracker", "download": 0}
+    res = score_entry(entry, _plain_repo_meta("jh/lorawirelesstracker", "Heltec Wireless Tracker (Makerfocus) ESP32/Oled/GNSS/Lora"), set(), set())
+    assert res["decision"] == "authored", res
+    assert res["record"]["board"] == "heltec-wireless-tracker" and res["record"]["chip"] == "esp32-s3"
+
+
+@pytest.mark.parametrize("name, description, topics", [
+    # #1797 third review. "Quasar" is invented on purpose (a real sibling may be catalogued tomorrow).
+    ("tbeam-quasar-mesh", "Mesh node for the LilyGO T-Beam Quasar", ["lilygo", "lora"]),
+    ("ethkit", "Modbus gateway for any ESP32 Ethernet kit like the WT32-ETH01", ["esp32", "ethernet"]),
+    ("quasar", "lilygo t-beam quasar tracker", ["t-beam-quasar", "lilygo-t-beam-quasar"]),          # topics carry the suffix too
+])
+def test_score_entry_never_authors_a_catalogued_board_for_an_unknown_sibling_or_an_english_phrase(name, description, topics):
+    entry = {"name": name, "description": None, "category": None, "github": f"https://github.com/x/{name}", "download": 0}
+    res = score_entry(entry, _plain_repo_meta(f"x/{name}", description, topics=topics), set(), set())
+    assert res["decision"] == "skip" and "no_board_evidence" in res["reason"], res
+
+
+@pytest.mark.parametrize("name, description, base", [
+    # the reviewer's own inputs: real products that are not the catalogued board their name starts with
+    ("tbeam-supreme-mesh", "Mesh node for the LilyGO T-Beam Supreme", "lilygo-t-beam"),             # ESP32-S3, not the ESP32 T-Beam
+    ("subghz-scan", "Sub-GHz scanner firmware for the LilyGO T-Embed CC1101", "lilygo-t-embed"),
+    ("long-dash", "Dashboard for the LilyGO T-Display S3 Long", "lilygo-t-display-s3"),
+])
+def test_score_entry_never_authors_the_base_board_for_a_real_sibling(name, description, base):
+    """Skipped while the sibling is uncatalogued; authored as the sibling itself, with its own chip, once it is."""
+    entry = {"name": name, "description": None, "category": None, "github": f"https://github.com/x/{name}", "download": 0}
+    res = score_entry(entry, _plain_repo_meta(f"x/{name}", description, topics=["lilygo"]), set(), set())
+    if res["decision"] == "authored":
+        assert res["record"]["board"].startswith(base + "-"), res
+        assert res["record"]["chip"] == scorer.tools.board_soc(res["record"]["board"])
+    else:
+        assert "no_board_evidence" in res["reason"], res
+
+
+def test_score_entry_reads_each_text_on_its_own_never_the_end_of_one_glued_to_the_next():
+    """cryptspeak/m5uploader: "... Not affiliated with M5Stack" + topic "cardputer" is not the M5Stack Cardputer."""
+    entry = {"name": "uploader", "description": None, "category": None, "github": "https://github.com/c/uploader", "download": 0}
+    meta = _plain_repo_meta("c/uploader", "Minimal M5Burner replacement. Not affiliated with M5Stack",
+                            topics=["cardputer", "esptool", "m5burner"])
+    assert score_entry(entry, meta, set(), set())["decision"] == "skip"
+    meta = _plain_repo_meta("c/uploader", "Minimal M5Burner replacement.", topics=["m5stack-cardputer", "esptool"])
+    res = score_entry(entry, meta, set(), set())
+    assert res["decision"] == "authored" and res["record"]["board"] == "m5cardputer", res
+
+
+def test_score_entry_reads_the_repo_s_github_topics_as_the_author_s_own_words():
+    entry = {"name": "Knobby", "description": None, "category": None, "github": "https://github.com/q/knobby", "download": 0}
+    meta = _plain_repo_meta("q/knobby", "A little Spotify remote to remind you that there's a lot of music out there.",
+                            topics=["arduino", "esp32", "esp32-s3", "lilygo", "lilygo-tdisplay-s3", "music"])
+    res = score_entry(entry, meta, set(), set())
+    assert res["decision"] == "authored" and res["record"]["board"] == "lilygo-t-display-s3", res
+
+
+def test_score_entry_never_guesses_between_two_named_boards():
+    entry = {"name": "Homething", "description": None, "category": None, "github": "https://github.com/l/homething", "download": 0}
+    meta = _plain_repo_meta("l/homething", "Wifi Smart Home Remotes that run on ESPHome", topics=["m5stickc", "m5stickcplus"])
+    res = score_entry(entry, meta, set(), set())
+    assert res["decision"] == "skip" and res["reason"] == "ambiguous_board: names m5stick-c, m5stick-cplus"
+
+
+def test_score_entry_still_rejects_a_substring_that_only_looks_like_a_board():
+    entry = {"name": "std-training", "description": None, "category": None, "github": "https://github.com/esp-rs/std-training", "download": 0}
+    meta = _plain_repo_meta("esp-rs/std-training", "Embedded Rust on Espressif training material.",
+                            topics=["esp32", "esp32-c3", "rust-embedded", "rustlang", "training"])
+    res = score_entry(entry, meta, set(), set())
+    assert res["decision"] == "skip" and res["reason"].startswith("no_board_evidence")
+
+
+@pytest.mark.parametrize("description, topics", [
+    ("Weather station for the LilyGO T5 4.7 inch E-Paper S3", ["lilygo", "epaper", "esp32s3"]),
+    ("CrowPanel ESP32 E-Paper S3 HMI weather display", ["esp32s3", "epaper"]),
+    ("a tiny S3 board that shows the weather", ["esp32s3"]),
+], ids=["lilygo-t5-epaper", "crowpanel-epaper", "tiny-s3-phrase"])
+def test_score_entry_never_authors_a_board_from_a_generic_phrase(description, topics):
+    """#1797 review: "E-Paper S3" named the M5Stack PaperS3 (same esp32-s3, so the SOC cross-check
+    passed) and the firmware of an uncatalogued LilyGO board was authored as m5stack-papers3."""
+    entry = {"name": "T5 Weather", "description": None, "category": None, "github": "https://github.com/x/t5-weather", "download": 0}
+    res = score_entry(entry, _plain_repo_meta("x/t5-weather", description, topics=topics), set(), set())
+    assert res["decision"] == "skip" and res["reason"].startswith("no_board_evidence"), res
+
+
+@pytest.mark.parametrize("name, description, topics", [
+    ("wrover-cam", "Camera web streamer for the ESP32-WROVER module with PSRAM", ["esp32", "camera"]),
+    ("coreink-clock", "E-paper clock for the M5Stack Core Ink", ["m5stack", "epaper"]),
+    ("tdisplay-pro-remote", "Spotify remote for the LilyGO T-Display S3 Pro", ["lilygo", "esp32s3"]),
+], ids=["wrover-module", "core-ink-sibling", "t-display-s3-pro-sibling"])
+def test_score_entry_never_authors_a_module_or_an_uncatalogued_sibling_as_a_catalogued_board(name, description, topics):
+    """#1797 second review: "ESP32-WROVER" (a generic Espressif module, the Freenove board's catalog
+    name) was authored as freenove-esp32-wrover; "M5Stack Core Ink" as m5stack-core and "LilyGO
+    T-Display S3 Pro" as lilygo-t-display-s3 — uncatalogued siblings, same chip each time."""
+    entry = {"name": name, "description": None, "category": None, "github": f"https://github.com/x/{name}", "download": 0}
+    res = score_entry(entry, _plain_repo_meta(f"x/{name}", description, topics=topics), set(), set())
+    assert res["decision"] == "skip" and res["reason"].startswith("no_board_evidence"), res

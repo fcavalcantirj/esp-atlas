@@ -118,17 +118,38 @@ under the same limits (no `data/**`, no `docs/demand/**`, no test deletion or sk
 - **`conflict:`** — GitHub reports the PR conflicting with `main`. Merge `origin/main` into the branch
   (never rebase, never force) and resolve every conflict so that BOTH sides' intent survives: the PR's
   change and what `main` changed meanwhile. A file both sides only added to (two CI jobs, two test blocks,
-  two switches) keeps both additions, each verbatim. Change no behaviour beyond the resolution. Run the
+  two switches) keeps both additions, each verbatim. Change no behaviour beyond the resolution: the merge
+  and its resolution are the whole job. If your own tooling then objects to something `main` brought in
+  (a file that is large on `main`, a style rule), say so in BODY and stop; do not refactor or split files
+  (2026-11-19: a 6-line resolution grew a 516-line file split, and the relay refused all of it). Run the
   tests of every file you touched and the suites of the PR's own files; quote the counts in BODY.
 - **`review-fix:`** — the agent review BLOCKed the PR at `pr_head`; `evidence.findings` lists why. Fix
   exactly those findings at their cause, with a RED test first where a finding is a behaviour, and nothing
   else. A finding you measure to be wrong is answered in BODY with the evidence, not "fixed". The agent
   review judges your new head; the third BLOCK on the same PR goes to a human.
+  **A finding about the PR description** (its file reads `PR body` / `PR #n body`, or it says a `[TEST]` or
+  `[REAL]` claim does not hold) is fixed in the description, not in BODY: the launcher gives you the current
+  description as the file `PR_DESCRIPTION` (see "This run"). Edit that file in place and the relay replaces
+  the PR description with it after your push. Rules for it: `[REAL]` only on something already observed, with
+  where and when; a check still to be made after merge or deploy is written as a plan with no `[REAL]` tag
+  ("Acceptance (to observe after deploy)"); `[TEST]` only on a test that is in the diff or the tree and that
+  you ran; a local measurement is called a measurement; when your code fix changed how the PR works, the
+  description says the new mechanism. Remove a claim only when it is false, never to make the review easier.
+  When nothing but the description needs fixing, commit with `git commit --allow-empty` (subject
+  `chore: PR description corrected, no code change`): the verdict is tied to the head, so without a new
+  head the PR is never reviewed again.
 - **`ci-fix:`** — a required check (`evidence.check`) is red on this code PR at `pr_head`, after one rerun and
   with `main` merged in; `evidence.failed` / `evidence.assertion` / `evidence.log_excerpt` say where. Reproduce
   the failing node on the PR's head, fix the PR's code at the cause (RED first if it is behaviour), never by
   deleting, skipping or loosening a test unless the test itself is wrong (then `Assertion changed:` in BODY).
 - Never close, merge, retitle or relabel the PR; never touch another PR's branch.
+
+## The machine you run on
+
+Run every test with the interpreter named `PYTHON` in "This run": pytest and the test dependencies CI installs
+are in it. Never create a virtualenv, and never write under `/tmp`: it is a small RAM disk shared with every
+other job (2026-11-19: leftover virtualenvs of ~320 MB each filled it, and no review could start). Scratch
+files go in the `scratch` directory beside INCIDENT, which the launcher owns.
 
 ## When `INCIDENT.context.check` starts with `pr-red:` (a Jr catalog PR is red; fix MAIN)
 

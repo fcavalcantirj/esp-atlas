@@ -1,0 +1,46 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-11-21",
+ "notes": [],
+ "ref": "main",
+ "repo": "konsumer/cardbuddy",
+ "resolved": {
+  "boards": [
+   "m5cardputer"
+  ],
+  "socs": [],
+  "unresolved": [
+   "cardbuddy"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "cardbuddy.bin",
+    "release": "v0.1.4"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardbuddy",
+   "url": "https://github.com/konsumer/cardbuddy/releases/download/v0.1.4/cardbuddy.bin"
+  },
+  {
+   "extra": {
+    "env": "cardputer",
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
+   },
+   "kind": "platformio",
+   "line": 12,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/konsumer/cardbuddy/blob/main/platformio.ini#L12"
+  }
+ ]
+}

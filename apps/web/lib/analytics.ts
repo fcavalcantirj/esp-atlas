@@ -46,6 +46,7 @@ export type EventName =
   | "shelf_see_all"
   // /firmware browse surface (SPEC-firmware-ordering.md / SPEC-firmware-popularity.md).
   | "firmware_sort"
+  | "firmware_search"
   | "reveal_more"
   // Flash Wizard (SPEC-wizard P2b): panel opened, rail decided, consent, connect click.
   | "flash_open"

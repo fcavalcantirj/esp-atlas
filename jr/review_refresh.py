@@ -7,8 +7,8 @@ only inside these limits (owner + reviewer, 2026-11-15):
   - every commit on it is the bot's (a human commit after the bot's is never touched);
   - the head is still the one the tick listed;
   - the conflict is in bookkeeping files only (the ledger, the board cooldown, docs/telemetry);
-  - the ledger becomes memory.merge_pr_ledger(main, merge base, PR head), the yield ledger main's rows plus
-    the PR's own (its tick's row is the only proof the lane produced), every other bookkeeping file main's;
+  - the ledger becomes memory.merge_pr_ledger(main, merge base, PR head), docs/telemetry/yield.jsonl
+    main's rows plus the PR's own (yield_ledger.merge_text), every other bookkeeping file main's;
     scripts/ledger_guard.py is green against main; every catalog file the PR changed is byte-identical
     to its head;
   - the result is a merge commit ON TOP of the PR head, pushed without force (fast-forward only).
@@ -103,12 +103,11 @@ def refresh(pr: dict, *, git, gh, now: datetime, dry_run: bool = False) -> dict:
                 merged = memory.merge_pr_ledger(main_doc, json.loads(_show(git, f"{base}:{LEDGER}") or "{}"),
                                                 json.loads(_show(git, f"{head}:{LEDGER}") or "{}"), now=now)
                 (wt / LEDGER).write_text(json.dumps(merged, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            elif path == yield_ledger.RELPATH:      # append-only rows: the PR's own tick must reach main
+                (wt / path).write_text(yield_ledger.merge_text(_show(git, f"origin/main:{path}") or "",
+                                                               _show(git, f"{head}:{path}") or ""), encoding="utf-8")
             else:
                 g("checkout", "origin/main", "--", path)
-                if path == yield_ledger.RELPATH:      # main's rows + the PR's own: its tick's row is the lane's yield
-                    yield_ledger.append_rows(wt / path, yield_ledger.rows_missing(
-                        yield_ledger.read_rows(wt / path),
-                        yield_ledger.parse_rows(_show(git, f"{head}:{path}"))))
             g("add", "--", path)
         if merged is not None and _ledger_guard().check(main_doc, merged):
             g("merge", "--abort")

@@ -126,7 +126,13 @@ BLOCK waiting for a person, stacked PRs retargeted by hand. Now:
   PRs (`jr/tick-*`, `jr/research-*`, `jr/heal-*`) in the last 24 h, none of Jr's own PRs waits (`needs-human`,
   or open a day), and no incident is stuck (`needs_human`, stalled, a halted heal). People merging and holding
   their own PRs is ordinary work: the line shows it ("people's own: N merged, M open (K blocked by review)"),
-  and it never breaks a day. Seven such days in a row is the claim "self-sufficient", and nothing less is.
+  and it never breaks a day. **And the catalog grew** (2026-11-21): the day's row in
+  `docs/telemetry/data-trend.jsonl` is larger than the newest row before it, counting firmware, recipes,
+  boards and filled board fields (`chores.catalog_growth`). Nov 20 had 36 merges by Jr, none by a person and
+  nothing waiting, yet every one was bookkeeping and every lane yielded 0 for 24 ticks; by merges alone it was a
+  good day. No trend row for the day, or an unreadable file, proves nothing, so the day is not self-sufficient.
+  The line says "catalog +N (yesterday→today)" or "catalog did not grow". Seven such days in a row is the claim
+  "self-sufficient", and nothing less is.
 
 ### 1e. A canary that said "not now" is asked again (2026-11-19)
 
@@ -154,7 +160,7 @@ refused, or cut short by the tick's call budget is never sent twice in a day; it
 ### 1f. Jr's own tick PRs never wait for a person (2026-11-19)
 
 A review-routed tick PR merges by itself when `scripts/receipt_guard.py` vouches for every recipe it adds (the
-tick canary, one a day). One the guard cannot vouch for used to sit open until a person read it (four of them,
+tick canary, four a day since 2026-11-21). One the guard cannot vouch for used to sit open until a person read it (four of them,
 25 to 38 hours old, on Nov 19). `jr/chores.py expire_tick_prs`, every tick: a `jr/tick-*` PR labelled
 `jr-review`, open 72 h (`EXPIRE_HOURS`), is checked by the same guard once more (branch fetched, live
 upstream); when it still cannot vouch for it, Jr closes the PR with the guard's reasons, at most two a tick,

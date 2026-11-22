@@ -2,7 +2,7 @@
 
 Status: the task text `jr/agent_review.py` hands the runner's coding delegate for one code pull request
 (docs/REVIEW-CONTRACT.md is the contract; this is how you carry it out). The API lane's workflow
-(`.github/workflows/agent-review.yml`) gives `anthropics/claude-code-action` the same contract with its own
+(`.github/workflows/agent-review.yml`) gives `claude -p` the same contract with its own
 inline prompt (no "This run" block: that lane writes no verdict file).
 
 ## Inputs (environment)

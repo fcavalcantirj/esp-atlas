@@ -134,3 +134,81 @@ def test_no_soc_skip_is_not_cooled_because_no_source_was_tried(tmp_path, monkeyp
     res = _tick(tmp_path, T0)
     assert board_cooldown.RELPATH not in res.paths
     assert "cooled" not in res.summary
+
+
+# ── an unmapped board's cooldown lifts once its resolver is mapped (incident 214785f8dec6) ──
+
+def _fake_unreachable(calls, monkeypatch):
+    """backfill_board as it reports a board whose vendor doc did not resolve: `url` is the last
+    candidate it tried, None when the resolver had no candidate at all."""
+    def fake_bb(path, data_root, fetch, today, write=True):
+        bid = path.parent.name
+        calls.append(bid)
+        url = (board_backfill.VENDOR_DOC_RESOLVERS["m5stack"](bid, "esp32") or [None])[-1]
+        return {"board_id": bid, "status": "skipped", "reason": "doc-unreachable", "url": url,
+                "field_reasons": {"getting_started": {"vendor": "doc_unreachable"}}}
+    monkeypatch.setattr(board_backfill, "backfill_board", fake_bb)
+
+
+def test_record_keeps_the_doc_url_that_was_tried(tmp_path):
+    path = tmp_path / "board_cooldown.json"
+    store = board_cooldown.load(path)
+    board_cooldown.record(store, "b1", "doc-unreachable", {}, now=T0, url="https://x/1")
+    board_cooldown.record(store, "b2", "doc-unreachable", {}, now=T0)
+    board_cooldown.save(store, path, now=T0)
+    by_board = json.loads(path.read_text())["by_board"]
+    assert by_board["b1"]["url"] == "https://x/1"
+    assert by_board["b2"]["url"] is None
+
+
+def test_unmapped_board_is_retried_as_soon_as_its_resolver_is_mapped(tmp_path, monkeypatch):
+    import board_doc_resolvers
+    from test_stage_backfill import _mk_brand_boards
+    _mk_brand_boards(tmp_path, "m5stack", ["m5x"])
+    calls: list = []
+    _fake_unreachable(calls, monkeypatch)
+
+    _tick(tmp_path, T0)                                   # no doc URL for m5x: tried nothing
+    _tick(tmp_path, T0 + dt.timedelta(hours=1))
+    assert calls == ["m5x"]                               # still unmapped: stays cooled
+
+    monkeypatch.setitem(board_doc_resolvers.M5STACK_DOC_PATHS, "m5x", "core/X")
+    _tick(tmp_path, T0 + dt.timedelta(hours=2))
+    assert calls == ["m5x", "m5x"]                        # mapped: the cooldown lifts
+
+
+def test_mapped_board_whose_doc_failed_stays_cooled(tmp_path, monkeypatch):
+    import board_doc_resolvers
+    from test_stage_backfill import _mk_brand_boards
+    _mk_brand_boards(tmp_path, "m5stack", ["m5x"])
+    monkeypatch.setitem(board_doc_resolvers.M5STACK_DOC_PATHS, "m5x", "core/X")
+    calls: list = []
+    _fake_unreachable(calls, monkeypatch)
+
+    _tick(tmp_path, T0)                                   # its doc URL was tried and failed
+    res = _tick(tmp_path, T0 + dt.timedelta(hours=1))
+    assert calls == ["m5x"]
+    assert "cooling 1" in res.summary
+
+
+def test_legacy_record_without_url_is_retried_once_then_waits(tmp_path, monkeypatch):
+    """A record written before `url` existed cannot say whether a URL was tried: a board whose
+    resolver yields one is retried once, then re-cooled with the URL and waits out its cooldown."""
+    import board_doc_resolvers
+    from test_stage_backfill import _mk_brand_boards
+    _mk_brand_boards(tmp_path, "m5stack", ["m5x"])
+    monkeypatch.setitem(board_doc_resolvers.M5STACK_DOC_PATHS, "m5x", "core/X")
+    path = tmp_path / board_cooldown.RELPATH
+    store = board_cooldown.load(path)
+    board_cooldown.record(store, "m5x", "doc-unreachable", {}, now=T0 - dt.timedelta(days=1))
+    del store["by_board"]["m5x"]["url"]
+    board_cooldown.save(store, path, now=T0)
+    calls: list = []
+    _fake_unreachable(calls, monkeypatch)
+
+    _tick(tmp_path, T0)
+    res = _tick(tmp_path, T0 + dt.timedelta(hours=1))
+    assert calls == ["m5x"]
+    assert "cooling 1" in res.summary
+    assert board_cooldown.load(path)["by_board"]["m5x"]["url"] == \
+        board_backfill.VENDOR_DOC_RESOLVERS["m5stack"]("m5x", "esp32")[-1]

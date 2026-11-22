@@ -205,7 +205,7 @@ def test_an_auto_merged_change_to_the_prs_catalog_file_is_refused(tmp_path):
     assert r["status"] == "skipped" and r["why"] == f"catalog file changed by the merge: {path}"
 
 
-def test_the_prs_own_yield_rows_survive_the_refresh(tmp_path):
+def test_the_prs_own_topics_yield_row_survives_the_refresh(tmp_path):
     """2026-11-19 (stall:topics): the tick that produced appends its yield row in its own PR, so a jr-review
     PR conflicts on docs/telemetry/yield.jsonl; taking main's copy there dropped the only row saying the lane
     produced (#1828 lost 2026-11-18T07:00Z, #1875 lost 2026-11-19T07:00Z). The refresh keeps main's rows and
@@ -224,3 +224,23 @@ def test_the_prs_own_yield_rows_survive_the_refresh(tmp_path):
     _sh(clone, "fetch", "-q", "origin")
     got = _sh(clone, "show", f"origin/jr/tick-x:{path}") + "\n"
     assert got == seed + row("2026-11-19T07:00Z", "admit_topics", produced=2) + row("2026-11-19T08:00Z", "admit_topics")
+
+
+def _yield_row(tick, stage, produced=0):
+    return json.dumps({"tick": tick, "stage": stage, "units": 2, "produced": produced}, sort_keys=True) + "\n"
+
+
+def test_the_prs_own_yield_rows_survive_the_refresh(tmp_path):
+    """2026-11-19 (stall:firmware, incident 0cf1acb95f79): a refresh took main's yield.jsonl, so the rows of
+    the PR's own tick — the boardmap recipes it is the review PR for — never reached main, and the firmware
+    lane read 0 produced over 24 ticks while it had produced 9 recipes in 7 of them."""
+    seed = _yield_row("2026-11-18T05:00Z", "boardmap")
+    pr_row = _yield_row("2026-11-18T06:00Z", "boardmap", produced=1)
+    main_row = _yield_row("2026-11-18T08:00Z", "boardmap")
+    clone, head = _repo(tmp_path, seed_extra={"docs/telemetry/yield.jsonl": seed},
+                        pr_extra={"docs/telemetry/yield.jsonl": seed + pr_row},
+                        main_extra={"docs/telemetry/yield.jsonl": seed + main_row})
+    r = review_refresh.refresh(_pr(head), git=_git(clone), gh=_gh(), now=NOW)
+    assert r["status"] == "refreshed", r
+    _sh(clone, "fetch", "-q", "origin")
+    assert _sh(clone, "show", "origin/jr/tick-x:docs/telemetry/yield.jsonl") + "\n" == seed + pr_row + main_row

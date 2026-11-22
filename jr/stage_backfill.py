@@ -77,7 +77,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
     for path in boards:
         if attempted >= budget:
             break
-        if board_cooldown.is_cooling(cooldown, path.parent.name, ctx.now):
+        if _is_cooling(cooldown, path, data_root, ctx.now):
             cooling += 1
             continue  # every source failed for it recently; no fetch spent
         if ctx.budget.remaining_calls() < CALLS_PER_BOARD or ctx.budget.remaining_seconds() < SECONDS_PER_BOARD:
@@ -108,7 +108,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
         if entry.get("needs_review") or entry.get("reason") in COOLDOWN_REASONS:
             reason = entry.get("reason") or "needs-review"
             board_cooldown.record(cooldown, path.parent.name, reason,
-                                  entry.get("field_reasons") or {}, now=ctx.now)
+                                  entry.get("field_reasons") or {}, now=ctx.now, url=entry.get("url"))
             if ctx.dry_run:
                 would_write.append({"path": board_cooldown.RELPATH, "field": f"by_board.{path.parent.name}",
                                     "value": reason})
@@ -129,6 +129,27 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
     return tick.StageResult("backfill", paths=paths, summary=summary, needs_human=needs_human,
                             would_write=would_write, produced=0 if ctx.dry_run else filled,
                             counts={"filled": filled, "skipped": skipped, "cooled": cooled, "cooling": cooling})
+
+
+def _is_cooling(cooldown: dict, path, data_root, now) -> bool:
+    """A board cooled because its vendor resolver had NO doc URL for it fetched no vendor doc: like
+    a no-soc skip, it is fixed by an edit (mapping it), so its cooldown lifts once the resolver
+    yields a URL. Any other cooled board waits out its cooldown."""
+    board_id = path.parent.name
+    if not board_cooldown.is_cooling(cooldown, board_id, now):
+        return False
+    rec = cooldown["by_board"][board_id]
+    if rec.get("reason") != "doc-unreachable" or rec.get("url"):
+        return True
+    return not _doc_candidates(path, data_root)
+
+
+def _doc_candidates(path, data_root) -> list[str]:
+    """The vendor doc URLs board_backfill.backfill_board would try for this board."""
+    fm, _ = board_backfill.parse_frontmatter(path)
+    resolver = board_backfill.VENDOR_DOC_RESOLVERS.get(fm.get("brand") or path.parent.parent.name)
+    soc = board_backfill.resolve_soc(fm, data_root) if resolver else None
+    return resolver(fm.get("id") or path.parent.name, soc) if soc else []
 
 
 def _with_corroboration(line: str, entry: dict) -> str:

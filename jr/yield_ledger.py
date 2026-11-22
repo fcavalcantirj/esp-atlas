@@ -56,7 +56,7 @@ def read_rows(path: Path) -> list[dict]:
 
 
 def parse_rows(text: str | None) -> list[dict]:
-    """read_rows on the file's text (a copy committed at another ref)."""
+    """Every well-formed row of a yield.jsonl text, in order; a corrupt line is skipped."""
     rows = []
     for line in (text or "").splitlines():
         line = line.strip()
@@ -80,7 +80,7 @@ def append_rows(path: Path, rows: list[dict]) -> list[dict]:
     kept.sort(key=lambda r: (r["tick"], r["stage"]))
     p.parent.mkdir(parents=True, exist_ok=True)
     tmp = p.with_name(p.name + ".tmp")
-    tmp.write_text("".join(json.dumps(r, sort_keys=True, ensure_ascii=False) + "\n" for r in kept), encoding="utf-8")
+    tmp.write_text(_render(kept), encoding="utf-8")
     tmp.replace(p)
     return kept
 
@@ -117,6 +117,19 @@ def open_pr_rows(gh, slug: str, prs: list) -> tuple[list[dict], list[str]]:
         except Exception as e:  # noqa: BLE001 — one PR's copy must never abort the tick
             warnings.append(f"open-PR yield rows from #{n} unreadable: {type(e).__name__}: {e}")
     return rows, warnings
+
+
+def merge_text(main: str, pr: str) -> str:
+    """The yield.jsonl a PR refreshed against main carries (jr/review_refresh.py): main's rows plus every
+    PR row main lacks — the PR's own tick — keyed by (tick, stage), main's row on a shared key, sorted.
+    Taking main's file alone erased the producing ticks' rows (incident 0cf1acb95f79, 2026-11-19)."""
+    rows = {(r["tick"], r["stage"]): r for r in parse_rows(pr)}
+    rows.update({(r["tick"], r["stage"]): r for r in parse_rows(main)})
+    return _render([rows[k] for k in sorted(rows)])
+
+
+def _render(rows: list[dict]) -> str:
+    return "".join(json.dumps(r, sort_keys=True, ensure_ascii=False) + "\n" for r in rows)
 
 
 def lane_yield(rows: list[dict], now: datetime, window_ticks: int) -> dict:

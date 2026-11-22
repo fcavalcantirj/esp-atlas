@@ -5,8 +5,9 @@ Persisted the way Jr's other decisions are (jr/memory.py): a committed JSON file
 records carry an ISO-8601 UTC `timestamp` and `expires`, shipped in the tick's pathspec so the
 decision travels with the PR that explains it. One record per board:
 
-    {"by_board": {"<board_id>": {"board", "reason", "field_reasons", "timestamp", "expires"}}}
+    {"by_board": {"<board_id>": {"board", "reason", "field_reasons", "url", "timestamp", "expires"}}}
 
+`url` is the vendor doc URL the board's last attempt tried, None when its resolver had none.
 A record whose `expires` has passed no longer blocks; save() drops it. Naive datetimes are UTC.
 """
 from __future__ import annotations
@@ -50,10 +51,10 @@ def is_cooling(store: dict, board_id: str, now: datetime | None = None) -> bool:
 
 
 def record(store: dict, board_id: str, reason: str, field_reasons: dict,
-           now: datetime | None = None) -> None:
+           now: datetime | None = None, url: str | None = None) -> None:
     now = _aware(now)
     store["by_board"][board_id] = {
-        "board": board_id, "reason": reason, "field_reasons": field_reasons or {},
+        "board": board_id, "reason": reason, "field_reasons": field_reasons or {}, "url": url,
         "timestamp": now.isoformat(),
         "expires": (now + timedelta(days=COOLDOWN_DAYS)).isoformat(),
     }

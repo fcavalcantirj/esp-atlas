@@ -125,12 +125,14 @@ def sort_by_mode(records, mode):
     return sort_by_popularity(records)
 
 
-def list_firmware():
+def list_firmware(recipes=None):
     """Every seeded firmware record's frontmatter, plus `boards`: the number of
     recipes targeting it. Computed in one pass over `list_recipes()` via a
     `Counter` keyed by recipe firmware id -- not an O(n^2) `recipes_for_firmware`
-    call per record."""
-    board_counts = Counter(r["firmware"] for r in list_recipes() if r.get("firmware"))
+    call per record. A caller that already holds `list_recipes()` passes it, so the
+    recipe files are not parsed a second time."""
+    recipes = list_recipes() if recipes is None else recipes
+    board_counts = Counter(r["firmware"] for r in recipes if r.get("firmware"))
     return [{**fm, "boards": board_counts.get(fm["id"], 0)} for fm in _records("firmware")]
 
 

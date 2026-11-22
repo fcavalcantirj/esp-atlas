@@ -3,9 +3,12 @@
 Hand-curated from `data/boards/*/*/board.md` (see tools.board_soc for the ground-truth chip
 lookup this feeds). Ordered list of (regex, board_id): first match wins, so more specific
 patterns (StickC **Plus2**) are listed before looser ones. Deliberately does NOT map a bare
-"StickC Plus" (no "2") or a bare "Core" (no "2"/"S3") to anything — those variants are not
-catalogued (only m5stick-cplus2 and m5stack-core2/m5stack-cores3 exist), and guessing would
-repeat the exact wrong-chip class of bug this map exists to kill (DECISION-LOG.md #71).
+"StickC Plus" (no "2") or a bare "Core" (no "2"/"S3") to anything — when this map was written those
+variants were not catalogued, and guessing would repeat the exact wrong-chip class of bug this map
+exists to kill (DECISION-LOG.md #71). Since 2026-11-17 the scorer falls back to jr/board_names.py,
+the catalog's OWN vocabulary over data/boards (m5stick-cplus, m5stack-core and every non-M5Stack board
+included), with whole-word matching and "exactly one board or nothing"; this map stays first for the
+M5Stack sibling rules it spells out precisely (Cardputer vs Cardputer-Adv, Plus2 vs Plus).
 """
 from __future__ import annotations
 import re

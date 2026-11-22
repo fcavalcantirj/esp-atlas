@@ -75,7 +75,7 @@ next push starts a new review. A person audits merged PRs after the fact and hol
 - **Fallback: GitHub Actions with the API key**, only when the primary lane reports it is DOWN (no
   subscription token, usage limit, auth failure). The runner then labels that PR `review-fallback`, at most
   three a UTC day; the label triggers `.github/workflows/agent-review.yml`, which runs
-  `anthropics/claude-code-action` with `ANTHROPIC_API_KEY` for that PR alone and posts the same comment (lane
+  the Claude Code CLI directly (`claude -p`) with `ANTHROPIC_API_KEY` for that PR alone and posts the same comment (lane
   `api`), then removes the label. A busy delegate is not a down lane: the PR waits an hour.
 - **The verdict comment is the one source of truth**: the code canary reads the newest marker comment naming
   the PR's current head, whichever lane wrote it. A later push needs a new comment.

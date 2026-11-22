@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """The tick canary: a review-routed tick PR whose every added recipe holds its PASS receipt merges itself
-(scripts/tick_canary.py). SPEC-jr-review-routing.md §7, phase 2: "one fully passing review PR a day, at
-its exact head, with a kill switch and the review cap kept."
+(scripts/tick_canary.py). SPEC-jr-review-routing.md §7, phase 2: fully passing review PRs at their exact
+head, with a kill switch and a daily cap (one a day at first; four since 2026-11-21, see DAILY_CAP).
 
   T1  `jr/autonomy.json` has `tick_automerge: true` (a reviewed PR turns it on);
   T2  the repository variable JR_TICK_AUTOMERGE is not "0" (the instant kill switch);
   T3  the branch is `jr/tick-*` and the PR carries the `jr-review` label (an AUTO-routed tick PR merges
       itself already; this canary is for the ones that used to wait for a person);
-  T4  no other `jr-review` tick PR merged today (UTC): at most ONE a day (DAILY_CAP);
+  T4  fewer than DAILY_CAP `jr-review` tick PRs merged today (UTC);
   T5  scripts/receipt_guard.py says the PR is eligible on its receipts alone: every added recipe carries a
       PASS receipt that holds on the live upstream, no existing record edited, nothing deleted;
   T6  then `gh pr merge --merge --auto --match-head-commit <head>`: the merge lands only when every
@@ -32,7 +32,12 @@ import receipt_guard  # noqa: E402
 
 FLAG, VARIABLE = "tick_automerge", "JR_TICK_AUTOMERGE"
 BRANCH_PREFIX, LABEL = "jr/tick-", "jr-review"
-DAILY_CAP = 1
+# One a day at first (2026-11-17). 2026-11-21: Jr opened 10 review-routed tick PRs over Nov 18-20 (about 3.3 a
+# day) and one merged a day, so the queue only grew and the tick, which never re-proposes what an open PR
+# holds, yielded nothing for 24 ticks. The first three canary merges (#1835, #1836, #1860) were audited
+# against their upstreams and are correct. Four a day drains the queue; every merge still needs every added
+# recipe's receipt to hold on the live upstream, and JR_TICK_AUTOMERGE=0 stops it.
+DAILY_CAP = 4
 TICK_SCOPE = ("data/", "jr/proposed_ledger.json", "jr/board_cooldown.json", "docs/telemetry/")
 Unreadable = demand_canary.Unreadable
 
@@ -89,7 +94,7 @@ def decide(*, pr: int, head: str, branch: str, base: str, repo_slug: str, today:
     if dry_run:
         say(f"T6 dry run: would request merge --auto --match-head-commit {head}")
         return "dry_run"
-    gh("pr", "merge", str(pr), "--repo", repo_slug, "--merge", "--auto", "--match-head-commit", head)
+    demand_canary.request_merge(gh, repo_slug, pr, head)
     say(f"T6 #{pr} merge requested at exact head {head} (lands when every required check is green there)")
     return "merge_requested"
 
