@@ -3871,7 +3871,7 @@
       "pr_ref": "#1969",
       "repo": "tesa-klebeband/esp32-deauther",
       "status": "proposed",
-      "timestamp": "2026-11-22T13:00:36.028613+00:00"
+      "timestamp": "2026-11-22T14:00:34.142620+00:00"
     },
     "esp32-dragon-radar": {
       "expires": "2026-12-06T21:00:55.650872+00:00",
@@ -7471,12 +7471,13 @@
       "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-1897200000000001165": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "launcher-1897200000000001165",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'roverc joyc control master user:m5stack'",
       "repo": "launcher:1897200000000001165",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "launcher-1897200000000001166": {
@@ -7666,12 +7667,13 @@
       "timestamp": "2026-11-15T23:00:31.847601+00:00"
     },
     "launcher-1897200000000001244": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "launcher-1897200000000001244",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'kwind iot live wind user:kwindapp'",
       "repo": "launcher:1897200000000001244",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "launcher-1897200000000001253": {
@@ -7822,12 +7824,13 @@
       "timestamp": "2026-11-16T10:00:32.342729+00:00"
     },
     "launcher-1897200000000001375": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "launcher-1897200000000001375",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'epub reader user:juicecultus'",
       "repo": "launcher:1897200000000001375",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "launcher-1897200000000001379": {
@@ -7930,12 +7933,13 @@
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-1897200000000001418": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "launcher-1897200000000001418",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'timercamaliyun user:m5stack'",
       "repo": "launcher:1897200000000001418",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "launcher-1897200000000001421": {
@@ -8342,21 +8346,23 @@
       "timestamp": "2026-11-15T23:00:31.847601+00:00"
     },
     "launcher-1897200000000001727": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "launcher-1897200000000001727",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001727",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "launcher-1897200000000001728": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "launcher-1897200000000001728",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'm5stacktab5musicboxen user:ayama'",
       "repo": "launcher:1897200000000001728",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "launcher-1897200000000001729": {
@@ -8979,12 +8985,13 @@
       "timestamp": "2026-11-15T22:00:31.751655+00:00"
     },
     "launcher-1897200000000002190": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "launcher-1897200000000002190",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'chat gpt user:biba0807'",
       "repo": "launcher:1897200000000002190",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "launcher-1897200000000002195": {
@@ -9493,12 +9500,13 @@
       "timestamp": "2026-11-22T07:00:33.373089+00:00"
     },
     "launcher-1897200000000002638": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "launcher-1897200000000002638",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'uiflow2 nesso user:m5stack'",
       "repo": "launcher:1897200000000002638",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "launcher-1897200000000002655": {
@@ -9679,12 +9687,13 @@
       "timestamp": "2026-11-15T22:00:31.751655+00:00"
     },
     "launcher-1897200000000002771": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "launcher-1897200000000002771",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002771",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "launcher-1897200000000002776": {
@@ -10842,12 +10851,13 @@
       "timestamp": "2026-11-16T07:00:31.998433+00:00"
     },
     "launcher-2105774133775572994": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "launcher-2105774133775572994",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2105774133775572994",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "launcher-2106018668317384706": {
@@ -15577,12 +15587,13 @@
       "timestamp": "2026-11-22T05:00:34.103182+00:00"
     },
     "m5stickradio": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "m5stickradio",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "arturockpk/m5stickradio.git",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "m5sticks3-gps-gnss-monitor": {
@@ -17183,12 +17194,13 @@
       "timestamp": "2026-11-16T00:00:31.813641+00:00"
     },
     "orbit-drum": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "orbit-drum",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "unizersion/orbit-drum.git",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "orca-one": {
@@ -18076,12 +18088,13 @@
       "timestamp": "2026-11-15T11:00:32.244008+00:00"
     },
     "purple": {
+      "expired_at": "2026-11-22T14:00:34.142620+00:00",
       "expires": "2026-11-22T14:00:31.673907+00:00",
       "id": "purple",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "rlee203/purple.git",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "purplx": {
@@ -24134,7 +24147,7 @@
       "pr_ref": "#1985",
       "repo": "takmashhido/sectrustkey",
       "status": "proposed",
-      "timestamp": "2026-11-22T13:00:36.028613+00:00"
+      "timestamp": "2026-11-22T14:00:34.142620+00:00"
     },
     "seed-phrase-checker": {
       "expired_at": "2026-11-07T08:00:55.079521+00:00",
@@ -26275,7 +26288,7 @@
       "pr_ref": "#1895",
       "repo": "designer2k2/xmas-tree",
       "status": "proposed",
-      "timestamp": "2026-11-22T13:00:36.028613+00:00"
+      "timestamp": "2026-11-22T14:00:34.142620+00:00"
     },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
