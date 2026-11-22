@@ -49,13 +49,6 @@ getting_started: https://learn.adafruit.com/adafruit-matrixportal-s3
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/849/medium800thumb/5778-06.gif
   pinout: https://cdn-learn.adafruit.com/assets/assets/000/140/086/medium800/led_matrices_Adafruit_Matrix_Portal_S3_PrettyPins.jpg?1759351254
-platformio_definitions:
-- id: adafruit_matrixportal_esp32s3
-  platform_package: platformio/espressif32@8.0.0
-  manifest_digest: 4b053f8c822fb4a786a9c8c8f16674943b689978072595765be7eb88b8d686b2
-- id: adafruit_matrixportal_esp32s3
-  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
-  manifest_digest: f3e312ca8a3dc8991cc35dffdde324af9df40023d45358fe3144cb755ebd3a4b
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5778
@@ -84,12 +77,6 @@ sources:
 - field: images.pinout
   url: https://cdn-learn.adafruit.com/assets/assets/000/140/086/medium800/led_matrices_Adafruit_Matrix_Portal_S3_PrettyPins.jpg?1759351254
   verified: '2026-09-30'
-- field: platformio_definitions
-  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/adafruit_matrixportal_esp32s3.json
-  verified: '2026-11-22'
-- field: platformio_definitions
-  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/adafruit_matrixportal_esp32s3.json
-  verified: '2026-11-22'
 ---
 
 # Adafruit MatrixPortal S3

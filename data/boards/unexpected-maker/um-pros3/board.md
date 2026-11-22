@@ -46,13 +46,6 @@ usb_serial: native-usb-serial-jtag
 getting_started: https://esp32s3.com/pros3.html
 images:
   pinout: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/ProS3_Pin_Reference.png
-platformio_definitions:
-- id: um_pros3
-  platform_package: platformio/espressif32@8.0.0
-  manifest_digest: 815421d3af62387464d681e4f365fc13ea27bfab9d0fdaaa031070a38ea2e464
-- id: um_pros3
-  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
-  manifest_digest: 77e36215fc135d92969e812fd7dfdad6f5c0f5c93589aacf3748398f1e32ac7b
 sources:
 - field: '*'
   url: https://unexpectedmaker.com/shop/pros3
@@ -81,12 +74,6 @@ sources:
 - field: images.pinout
   url: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/ProS3_Pin_Reference.png
   verified: '2026-09-30'
-- field: platformio_definitions
-  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/um_pros3.json
-  verified: '2026-11-22'
-- field: platformio_definitions
-  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/um_pros3.json
-  verified: '2026-11-22'
 ---
 
 # Unexpected Maker ProS3

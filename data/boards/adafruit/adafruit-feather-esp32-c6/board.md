@@ -43,13 +43,6 @@ notes:
 getting_started: https://learn.adafruit.com/adafruit-esp32-c6-feather
 images:
   pinout: https://cdn-learn.adafruit.com/assets/assets/000/139/939/medium800/adafruit_products_Adafruit_Feather_ESP32-C6_PrettyPins_2.png?1758739123
-platformio_definitions:
-- id: adafruit_feather_esp32c6
-  platform_package: platformio/espressif32@8.0.0
-  manifest_digest: d6d5a023ab61c727fc00a4eda74399e2a93d8ca65b9176ed4bc9af6b50110c63
-- id: adafruit_feather_esp32c6
-  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
-  manifest_digest: e74770f8bdf039a0fb5af00dc17a3b29a99d506f1efe04ae0572bf54ec08bb1b
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5933
@@ -72,12 +65,6 @@ sources:
 - field: images.pinout
   url: https://cdn-learn.adafruit.com/assets/assets/000/139/939/medium800/adafruit_products_Adafruit_Feather_ESP32-C6_PrettyPins_2.png?1758739123
   verified: '2026-09-30'
-- field: platformio_definitions
-  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/adafruit_feather_esp32c6.json
-  verified: '2026-11-22'
-- field: platformio_definitions
-  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/adafruit_feather_esp32c6.json
-  verified: '2026-11-22'
 ---
 
 # Adafruit ESP32-C6 Feather

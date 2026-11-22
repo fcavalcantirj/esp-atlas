@@ -48,13 +48,6 @@ usb_serial: native-usb-serial-jtag
 getting_started: https://esp32s3.com/feathers3.html
 images:
   pinout: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/FeatherS3_Pin_Reference.png
-platformio_definitions:
-- id: um_feathers3
-  platform_package: platformio/espressif32@8.0.0
-  manifest_digest: 4235ae0a0639bb34a7cc45c340c6334f5022a61f2afa173cdd92040f029763dd
-- id: um_feathers3
-  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
-  manifest_digest: 10af11c6b76a872b222dcee7c4cb0f366f5c187c58d6d0f0908ca09e0ea7167b
 sources:
 - field: '*'
   url: https://unexpectedmaker.com/shop/feathers3
@@ -83,12 +76,6 @@ sources:
 - field: images.pinout
   url: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/FeatherS3_Pin_Reference.png
   verified: '2026-09-30'
-- field: platformio_definitions
-  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/um_feathers3.json
-  verified: '2026-11-22'
-- field: platformio_definitions
-  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/um_feathers3.json
-  verified: '2026-11-22'
 ---
 
 # Unexpected Maker FeatherS3

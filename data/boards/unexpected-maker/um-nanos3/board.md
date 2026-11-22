@@ -33,13 +33,6 @@ usb_serial: native-usb-serial-jtag
 getting_started: https://esp32s3.com/nanos3.html
 images:
   pinout: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/NanoS3_Pin_Reference.png
-platformio_definitions:
-- id: um_nanos3
-  platform_package: platformio/espressif32@8.0.0
-  manifest_digest: e1280b18fcdfca58e6e6075df75dee7ac7e8088214650b3d4f3c514d496a5815
-- id: um_nanos3
-  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
-  manifest_digest: 79a2c5c93481473d5bcf148c6b957cb393c6ca3b83d8a9fa5208769a4aefdaa7
 sources:
 - field: '*'
   url: https://unexpectedmaker.com/shop/nanos3
@@ -65,12 +58,6 @@ sources:
 - field: images.pinout
   url: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/NanoS3_Pin_Reference.png
   verified: '2026-09-30'
-- field: platformio_definitions
-  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/um_nanos3.json
-  verified: '2026-11-22'
-- field: platformio_definitions
-  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/um_nanos3.json
-  verified: '2026-11-22'
 ---
 
 # Unexpected Maker NanoS3

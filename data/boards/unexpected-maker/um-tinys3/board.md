@@ -36,13 +36,6 @@ usb_serial: native-usb-serial-jtag
 getting_started: https://esp32s3.com/tinys3.html
 images:
   pinout: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/TinyS3_Pin_Reference.png
-platformio_definitions:
-- id: um_tinys3
-  platform_package: platformio/espressif32@8.0.0
-  manifest_digest: 815253505e2b1a1b8f4de183092d95258433a2e177ab4e4d70e9e62af0fd3fe1
-- id: um_tinys3
-  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
-  manifest_digest: 7e1e58059444620da4119547d717f4beeca400de6ae36da03ea2a112311268a0
 sources:
 - field: '*'
   url: https://unexpectedmaker.com/shop/tinys3
@@ -68,12 +61,6 @@ sources:
 - field: images.pinout
   url: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/TinyS3_Pin_Reference.png
   verified: '2026-09-30'
-- field: platformio_definitions
-  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/um_tinys3.json
-  verified: '2026-11-22'
-- field: platformio_definitions
-  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/um_tinys3.json
-  verified: '2026-11-22'
 ---
 
 # Unexpected Maker TinyS3

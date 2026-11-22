@@ -38,13 +38,6 @@ getting_started: https://docs.m5stack.com/en/core/ATOM%20Lite
 images:
   photo: https://static-cdn.m5stack.com/resource/docs/products/core/ATOM Lite/img-b87e8051-87c6-41d7-a710-eb27f62eb785.webp
   pinout: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/673/C008_PinMap_01.jpg
-platformio_definitions:
-- id: m5stack-atom
-  platform_package: platformio/espressif32@8.0.0
-  manifest_digest: 9a0750a8c6164f6751249a32b24ca8b250bc888d0345aebad5200a23b8019247
-- id: m5stack-atom
-  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
-  manifest_digest: 1b725ad594afe6aabded3997506954095cf883e66f78530bf0bdd1a277815971
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/ATOM%20Lite
@@ -70,12 +63,6 @@ sources:
 - field: images
   url: https://docs.m5stack.com/en/core/ATOM%20Lite
   verified: '2026-09-11'
-- field: platformio_definitions
-  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/m5stack-atom.json
-  verified: '2026-11-22'
-- field: platformio_definitions
-  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/m5stack-atom.json
-  verified: '2026-11-22'
 ---
 
 # Atom-Lite

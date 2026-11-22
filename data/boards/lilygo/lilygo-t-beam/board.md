@@ -44,13 +44,6 @@ notes:
 getting_started: https://lilygo.cc/products/t-beam
 images:
   photo: https://lilygo.cc/cdn/shop/files/Q408-LILYGO-T-Beam_6.jpg
-platformio_definitions:
-- id: ttgo-t-beam
-  platform_package: platformio/espressif32@8.0.0
-  manifest_digest: 1d69e2a6f121aefea8427911660acc45a3d7aec45c44098cfed28b8679f25297
-- id: ttgo-t-beam
-  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
-  manifest_digest: f95626428598768321686560f9cb2059eb523ea84936c20a658ab1def7c0ad56
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-beam
@@ -76,12 +69,6 @@ sources:
 - field: images
   url: https://lilygo.cc/products/t-beam
   verified: '2026-09-12'
-- field: platformio_definitions
-  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/ttgo-t-beam.json
-  verified: '2026-11-22'
-- field: platformio_definitions
-  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/ttgo-t-beam.json
-  verified: '2026-11-22'
 ---
 
 # T-Beam

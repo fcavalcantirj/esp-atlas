@@ -49,13 +49,6 @@ notes:
 getting_started: https://wiki.dfrobot.com/dfr0478
 images:
   pinout: https://dfimg.dfrobot.com/62fba4cb025a892c98c6da64/wikien/555ad7fa66fecc61fe288e251ac267ce_0x0.png.webp
-platformio_definitions:
-- id: firebeetle32
-  platform_package: platformio/espressif32@8.0.0
-  manifest_digest: 283bf71fe7424b698f0cac831afdbc5ad7a44265ade72e8bda7387a29b7539b9
-- id: firebeetle32
-  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
-  manifest_digest: 0e44ddb1ec1aef14498f8991837860475cd4b8bb0db324d3386e4847ded9e97a
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr0478/
@@ -84,12 +77,6 @@ sources:
 - field: images.pinout
   url: https://dfimg.dfrobot.com/62fba4cb025a892c98c6da64/wikien/555ad7fa66fecc61fe288e251ac267ce_0x0.png.webp
   verified: '2026-09-30'
-- field: platformio_definitions
-  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/firebeetle32.json
-  verified: '2026-11-22'
-- field: platformio_definitions
-  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/firebeetle32.json
-  verified: '2026-11-22'
 ---
 
 # DFRobot FireBeetle ESP32

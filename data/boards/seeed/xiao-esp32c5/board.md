@@ -50,10 +50,6 @@ notes:
   vendor-stated; verify before treating as exact.'
 - 'io.power_out OMITTED: the C5 page states no 3V3 output-current figure (no Specifications
   power row and no "you can draw NmA" narrative).'
-platformio_definitions:
-- id: seeed_xiao_esp32c5
-  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
-  manifest_digest: eb269efd466c5e6460b894705ade27bf821e0a7842d5e0c8b2772ae877d7bf7f
 sources:
 - field: '*'
   url: https://wiki.seeedstudio.com/xiao_esp32c5_getting_started/
@@ -73,9 +69,6 @@ sources:
 - field: images.pinout
   url: https://files.seeedstudio.com/wiki/XIAO_ESP32C5/Getting_started/XIAO_ESP32-C5_front_pinout.png
   verified: '2026-09-30'
-- field: platformio_definitions
-  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/seeed_xiao_esp32c5.json
-  verified: '2026-11-22'
 ---
 
 # Seeed Studio XIAO ESP32C5
