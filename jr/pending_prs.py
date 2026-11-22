@@ -229,9 +229,23 @@ def _when(ts) -> datetime | None:
     return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
 
 
+TIMEOUT_LABEL, TIMEOUT_MARKER = "jr-timeout", "<!-- jr-data-merge timeout -->"
+COORDINATOR_LOGINS = ("github-actions", "app/github-actions")
+
+
+def coordinator_timeout(pr: dict) -> bool:
+    """scripts/data_merge.py closed this PR as a timeout (a re-queue, not a rejection): the `jr-timeout` label AND
+    the marker comment posted by the workflow itself. A person adding the label or pasting the marker is not it."""
+    labels = {str((l or {}).get("name")) for l in pr.get("labels") or []}
+    return TIMEOUT_LABEL in labels and any(
+        TIMEOUT_MARKER in str((c or {}).get("body") or "") and ((c or {}).get("author") or {}).get("login") in COORDINATOR_LOGINS
+        for c in pr.get("comments") or [])
+
+
 def _veto_until(pr: dict, now: datetime) -> datetime | None:
-    """When a closed tick PR's veto lapses, or None when it is no live veto (merged, undated, lapsed)."""
-    if pr.get("mergedAt"):
+    """When a closed tick PR's veto lapses, or None when it is no live veto (merged, undated, lapsed, or a
+    coordinator timeout)."""
+    if pr.get("mergedAt") or coordinator_timeout(pr):
         return None
     closed = _when(pr.get("closedAt"))
     if closed is None:
@@ -283,7 +297,7 @@ def list_closed_tick_prs(gh, now: datetime) -> list | None:
     since = (now - timedelta(days=VETO_TTL_DAYS)).date().isoformat()
     p = gh("pr", "list", "--state", "closed", "--limit", str(CLOSED_PR_LIMIT),
            "--search", f"is:unmerged closed:>={since}",
-           "--json", f"number,headRefName,closedAt,mergedAt,{PR_LIST_FIELDS}")
+           "--json", f"number,headRefName,closedAt,mergedAt,labels,comments,{PR_LIST_FIELDS}")
     if getattr(p, "returncode", 1) != 0:
         return None
     try:
