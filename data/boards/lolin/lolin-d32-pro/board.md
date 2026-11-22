@@ -54,6 +54,13 @@ notes:
 getting_started: https://www.wemos.cc/en/latest/d32/d32_pro.html
 images:
   pinout: https://www.wemos.cc/en/latest/_images/d32_pro_v2.0.0_1_16x16.jpg
+platformio_definitions:
+- id: lolin_d32_pro
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: aef7fef9bf0aa2f23a19668a0283ed594a5ff73cc661712581ea52573849ef3f
+- id: lolin_d32_pro
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 48b1508f89df12edf086a745107f380c5345e6f700b18b3fc4466964de7261b4
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/d32/d32_pro.html
@@ -82,6 +89,12 @@ sources:
 - field: images.pinout
   url: https://www.wemos.cc/en/latest/_images/d32_pro_v2.0.0_1_16x16.jpg
   verified: '2026-09-30'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/lolin_d32_pro.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/lolin_d32_pro.json
+  verified: '2026-11-22'
 ---
 
 # LOLIN D32 Pro

@@ -73,6 +73,13 @@ download_mode:
   mode: manual
   steps: Holding down Boot and then pressing EN initiates Firmware Download mode for
     downloading firmware through the serial port
+platformio_definitions:
+- id: pico32
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 695a81be380a89a2625d30d9b60cef56994b5fdfc480ee159792742bf7222870
+- id: pico32
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: c76d54202495c336bc8c57ec7f67f80a242192a94344d138cb03a5cd60d44063
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-pico-kit/user_guide.html
@@ -101,6 +108,12 @@ sources:
 - field: download_mode
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-pico-kit/user_guide.html
   verified: '2026-09-10'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/pico32.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/pico32.json
+  verified: '2026-11-22'
 ---
 
 # ESP32-PICO-KIT

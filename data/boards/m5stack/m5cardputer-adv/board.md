@@ -70,6 +70,10 @@ notes:
 getting_started: https://docs.m5stack.com/en/core/Cardputer-Adv
 images:
   photo: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1178/Cardputer-Adv_01.webp
+platformio_definitions:
+- id: m5stack-cardputer
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: ac1db7d8761e5706fb4d1b08106007bfd381c34438a5e4d26a52152b5117b64c
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/Cardputer-Adv
@@ -110,6 +114,9 @@ sources:
 - field: images
   url: https://docs.m5stack.com/en/core/Cardputer-Adv
   verified: '2026-11-14'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/m5stack-cardputer.json
+  verified: '2026-11-22'
 ---
 
 # Cardputer-Adv

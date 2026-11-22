@@ -1,0 +1,3 @@
+# jr/claims_pio.py: build-target facts are PlatformIO's own config semantics, at this exact version
+# (claim.platformio_version records it; the trusted checker runs the same version).
+platformio==6.2.0

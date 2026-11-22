@@ -1,0 +1,35 @@
+name: jr-data-merge
+# The one serialized merger of Jr's data PRs (scripts/data_merge.py; Jr redesign plan, step 6). Level-triggered:
+# every run re-reads the open jr-data / jr-quarantine PRs and main, so a replaced or cancelled run loses nothing.
+# DRY RUN for now: it only prints its decisions (read-only token). A later reviewed PR adds --apply and write
+# permissions once the shadow run and the owner-approved branch protection (strict up-to-date + required claims)
+# are in place.
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [validate]
+    types: [completed]
+concurrency:
+  group: jr-data-merge
+  cancel-in-progress: false
+permissions:
+  contents: read
+  pull-requests: read
+  checks: read
+jobs:
+  decide:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Decide every labelled data PR (dry run)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JR_TICK_AUTOMERGE: ${{ vars.JR_TICK_AUTOMERGE }}
+        run: python3 scripts/data_merge.py

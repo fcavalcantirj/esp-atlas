@@ -47,6 +47,13 @@ images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/494/medium800/QTESP_top_angle.jpg
   pinout: https://cdn-learn.adafruit.com/assets/assets/000/107/478/medium800/adafruit_products_QTESP_pinouts_guide.jpg?1640105584
 usb_serial: other
+platformio_definitions:
+- id: adafruit_qtpy_esp32s2
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: 95a53ce38c73412d4d87f5517d0d4a134056b7b636f70b446c0b2932fa251c88
+- id: adafruit_qtpy_esp32s2
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: cc7677e99e52574a43e4f99e71305574e9dda4b475177364b802176debc0c3ed
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5325
@@ -72,6 +79,12 @@ sources:
 - field: usb_serial
   url: https://learn.adafruit.com/adafruit-qt-py-esp32-s2
   verified: '2026-10-03'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/adafruit_qtpy_esp32s2.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/adafruit_qtpy_esp32s2.json
+  verified: '2026-11-22'
 ---
 
 # Adafruit QT Py ESP32-S2

@@ -64,6 +64,13 @@ notes:
 - 'Board recovery: Arduino''s bootloader is entered by double-tapping the reset button
   right after power-up (datasheet §14.5).'
 getting_started: https://docs.arduino.cc/hardware/nano-esp32/
+platformio_definitions:
+- id: arduino_nano_esp32
+  platform_package: platformio/espressif32@8.0.0
+  manifest_digest: ed523c66e93802a9c197c64efe81dbeb4a450a4bb66c5dd56394485f714c5378
+- id: arduino_nano_esp32
+  platform_package: https://github.com/pioarduino/platform-espressif32/releases/download/61.04.00/platform-espressif32.zip
+  manifest_digest: 18955a11e5ae9a8482ad84d3c5ea2da727c5261495f591fdf9de41f7c494013f
 sources:
 - field: '*'
   url: https://docs.arduino.cc/hardware/nano-esp32/
@@ -92,6 +99,12 @@ sources:
 - field: getting_started
   url: https://docs.arduino.cc/hardware/nano-esp32/
   verified: '2026-11-10'
+- field: platformio_definitions
+  url: https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/arduino_nano_esp32.json
+  verified: '2026-11-22'
+- field: platformio_definitions
+  url: https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/arduino_nano_esp32.json
+  verified: '2026-11-22'
 ---
 
 # Nano ESP32
