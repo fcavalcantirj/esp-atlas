@@ -115,3 +115,16 @@ def test_quarantine_prs_have_their_own_scope_and_no_fact_limits():
     assert decide(p=q, s=ok)["action"] == "merge"
     bad = state(files=[{"path": "data/quarantine.json", "status": "modified"}, {"path": "data/recipes/b__f/recipe.md", "status": "removed"}])
     assert decide(p=q, s=bad)["action"] == "skip"
+
+
+def test_the_workflow_installs_what_the_script_imports():
+    """2026-11-23: every jr-data-merge run since #2007 failed with No module named 'yaml': the workflow ran the
+    script without installing its imports. The workflow must install them before running it."""
+    import yaml
+    from pathlib import Path
+    wf = yaml.safe_load((Path(__file__).resolve().parent.parent / ".github" / "workflows" / "jr-data-merge.yml").read_text())
+    steps = wf["jobs"]["decide"]["steps"]
+    run_at = next(i for i, s in enumerate(steps) if "scripts/data_merge.py" in str(s.get("run", "")))
+    installs = " ".join(str(s.get("run", "")) for s in steps[:run_at])
+    for need in ("pyyaml", "jsonschema", "-e apps/core"):
+        assert need in installs, need
