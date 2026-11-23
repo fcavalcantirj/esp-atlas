@@ -5,6 +5,6 @@
   "code_automerge": true,
   "stall_dispatch": true,
   "pr_fix_dispatch": true,
-  "build_target_shadow": false,
+  "build_target_shadow": true,
   "build_target_automerge": false
 }
