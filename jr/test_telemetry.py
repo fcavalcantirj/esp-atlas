@@ -508,6 +508,18 @@ def test_the_digest_carries_the_feature_usage_section_and_survives_its_failure(m
     msg = _run_digest(monkeypatch, tmp_path, _fake_ex([]))
     assert "*Feature usage* — unavailable (RuntimeError: GA4 down)" in msg and "*Top search demand*" in msg
 
+
+def test_the_feature_usage_failure_line_escapes_the_error_text_for_telegram_markdown(monkeypatch, tmp_path):
+    """Review BLOCK on #1842 at d1097f6: notify.send_telegram sends parse_mode "Markdown", where a lone
+    underscore in the error text opens italics that never close and Telegram rejects the whole digest."""
+    import feature_usage
+    def bad_config(ex, prop, end):
+        raise ValueError("feature 'home_ask' has no action events in *x* `y` [z")
+    monkeypatch.setattr(feature_usage, "build", bad_config)
+    msg = _run_digest(monkeypatch, tmp_path, _fake_ex([]))
+    assert ("*Feature usage* — unavailable "
+            "(ValueError: feature 'home\\_ask' has no action events in \\*x\\* \\`y\\` \\[z)") in msg.splitlines()
+
 # --- the junk rule judges every city × source segment, never a search or AI channel (2026-11-18) -----------
 # Measured before the change (GA4, 2026-10-20..11-16): the Direct-only, whole-source rule removed 24 of 682
 # sessions while Ashburn / Singapore / The Dalles / Council Bluffs / Beijing direct segments (0 engaged, avg
