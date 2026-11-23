@@ -3874,7 +3874,7 @@
       "pr_ref": "#1969",
       "repo": "tesa-klebeband/esp32-deauther",
       "status": "proposed",
-      "timestamp": "2026-11-23T15:00:33.714568+00:00"
+      "timestamp": "2026-11-23T16:00:33.423041+00:00"
     },
     "esp32-dragon-radar": {
       "expires": "2026-12-06T21:00:55.650872+00:00",
@@ -6671,12 +6671,13 @@
       "timestamp": "2026-11-14T16:00:55.104121+00:00"
     },
     "launcher-1897200000000000550": {
+      "expired_at": "2026-11-23T16:00:33.423041+00:00",
       "expires": "2026-11-23T16:00:31.784586+00:00",
       "id": "launcher-1897200000000000550",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bpm2midi user:fauxstor'",
       "repo": "launcher:1897200000000000550",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-1897200000000000568": {
@@ -7930,12 +7931,13 @@
       "timestamp": "2026-11-16T01:00:31.941223+00:00"
     },
     "launcher-1897200000000001385": {
+      "expired_at": "2026-11-23T16:00:33.423041+00:00",
       "expires": "2026-11-23T16:00:31.784586+00:00",
       "id": "launcher-1897200000000001385",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'badgeos user:zhuzhe'",
       "repo": "launcher:1897200000000001385",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-1897200000000001387": {
@@ -8007,12 +8009,13 @@
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-1897200000000001416": {
+      "expired_at": "2026-11-23T16:00:33.423041+00:00",
       "expires": "2026-11-23T16:00:31.784586+00:00",
       "id": "launcher-1897200000000001416",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'rain chamber user:andjiang'",
       "repo": "launcher:1897200000000001416",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-1897200000000001418": {
@@ -9161,12 +9164,13 @@
       "timestamp": "2026-11-22T08:00:33.362264+00:00"
     },
     "launcher-1897200000000002254": {
+      "expired_at": "2026-11-23T16:00:33.423041+00:00",
       "expires": "2026-11-23T16:00:31.784586+00:00",
       "id": "launcher-1897200000000002254",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002254",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-1897200000000002266": {
@@ -9179,12 +9183,13 @@
       "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "launcher-1897200000000002272": {
+      "expired_at": "2026-11-23T16:00:33.423041+00:00",
       "expires": "2026-11-23T16:00:31.784586+00:00",
       "id": "launcher-1897200000000002272",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'module13 pps user:m5stack'",
       "repo": "launcher:1897200000000002272",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-1897200000000002276": {
@@ -10230,12 +10235,13 @@
       "timestamp": "2026-11-22T03:00:33.646310+00:00"
     },
     "launcher-1897200000000003071": {
+      "expired_at": "2026-11-23T16:00:33.423041+00:00",
       "expires": "2026-11-23T16:00:31.784586+00:00",
       "id": "launcher-1897200000000003071",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'relativity toys user:andjiang'",
       "repo": "launcher:1897200000000003071",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-1897200000000003076": {
@@ -10500,12 +10506,13 @@
       "timestamp": "2026-11-15T13:00:31.808604+00:00"
     },
     "launcher-1897200000000003251": {
+      "expired_at": "2026-11-23T16:00:33.423041+00:00",
       "expires": "2026-11-23T16:00:31.784586+00:00",
       "id": "launcher-1897200000000003251",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'three body problem user:andjiang'",
       "repo": "launcher:1897200000000003251",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-1897200000000003268": {
@@ -10546,12 +10553,13 @@
       "timestamp": "2026-11-16T00:00:31.813641+00:00"
     },
     "launcher-1897200000000003279": {
+      "expired_at": "2026-11-23T16:00:33.423041+00:00",
       "expires": "2026-11-23T16:00:31.784586+00:00",
       "id": "launcher-1897200000000003279",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'chessclock pro rel gio user:gabrielwlucio'",
       "repo": "launcher:1897200000000003279",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-1897200000000003286": {
@@ -11284,12 +11292,13 @@
       "timestamp": "2026-11-14T14:00:56.621804+00:00"
     },
     "launcher-2111778955439984641": {
+      "expired_at": "2026-11-23T16:00:33.423041+00:00",
       "expires": "2026-11-23T16:00:31.784586+00:00",
       "id": "launcher-2111778955439984641",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'm5cores3 nfc inspector rfid user:zytorx'",
       "repo": "launcher:2111778955439984641",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-2111813107178622978": {
@@ -12714,12 +12723,13 @@
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-CFWace5d456ffacb5dee0acc18cb92a9": {
+      "expired_at": "2026-11-23T16:00:33.423041+00:00",
       "expires": "2026-11-23T16:00:31.784586+00:00",
       "id": "launcher-CFWace5d456ffacb5dee0acc18cb92a9",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'factory user:lilygo'",
       "repo": "launcher:cfwace5d456ffacb5dee0acc18cb92a9",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-CFWacf45acfce792fbbc9bc7218c8f42": {
@@ -24548,7 +24558,7 @@
       "pr_ref": "#1985",
       "repo": "takmashhido/sectrustkey",
       "status": "proposed",
-      "timestamp": "2026-11-23T15:00:33.714568+00:00"
+      "timestamp": "2026-11-23T16:00:33.423041+00:00"
     },
     "seed-phrase-checker": {
       "expired_at": "2026-11-07T08:00:55.079521+00:00",
