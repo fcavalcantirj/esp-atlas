@@ -3873,7 +3873,7 @@
       "pr_ref": "#1969",
       "repo": "tesa-klebeband/esp32-deauther",
       "status": "proposed",
-      "timestamp": "2026-11-23T05:00:33.279655+00:00"
+      "timestamp": "2026-11-23T06:00:33.922939+00:00"
     },
     "esp32-dragon-radar": {
       "expires": "2026-12-06T21:00:55.650872+00:00",
@@ -6893,12 +6893,13 @@
       "timestamp": "2026-11-21T05:00:32.251837+00:00"
     },
     "launcher-1897200000000000741": {
+      "expired_at": "2026-11-23T06:00:33.922939+00:00",
       "expires": "2026-11-23T06:00:32.710404+00:00",
       "id": "launcher-1897200000000000741",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000000741",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T06:00:32.710404+00:00"
     },
     "launcher-1897200000000000742": {
@@ -7016,12 +7017,13 @@
       "timestamp": "2026-11-15T09:00:31.430360+00:00"
     },
     "launcher-1897200000000000855": {
+      "expired_at": "2026-11-23T06:00:33.922939+00:00",
       "expires": "2026-11-23T06:00:32.710404+00:00",
       "id": "launcher-1897200000000000855",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'stopwatchxiaozhi voice assistant user:m5stack'",
       "repo": "launcher:1897200000000000855",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T06:00:32.710404+00:00"
     },
     "launcher-1897200000000000856": {
@@ -7776,12 +7778,13 @@
       "timestamp": "2026-11-21T05:00:32.251837+00:00"
     },
     "launcher-1897200000000001289": {
+      "expired_at": "2026-11-23T06:00:33.922939+00:00",
       "expires": "2026-11-23T06:00:32.710404+00:00",
       "id": "launcher-1897200000000001289",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'ffg bruce remix11 user:sl1ght'",
       "repo": "launcher:1897200000000001289",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T06:00:32.710404+00:00"
     },
     "launcher-1897200000000001301": {
@@ -7906,12 +7909,13 @@
       "timestamp": "2026-11-22T05:00:34.103182+00:00"
     },
     "launcher-1897200000000001396": {
+      "expired_at": "2026-11-23T06:00:33.922939+00:00",
       "expires": "2026-11-23T06:00:32.710404+00:00",
       "id": "launcher-1897200000000001396",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001396",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T06:00:32.710404+00:00"
     },
     "launcher-1897200000000001398": {
@@ -9159,12 +9163,13 @@
       "timestamp": "2026-11-22T06:00:34.928059+00:00"
     },
     "launcher-1897200000000002314": {
+      "expired_at": "2026-11-23T06:00:33.922939+00:00",
       "expires": "2026-11-23T06:00:32.710404+00:00",
       "id": "launcher-1897200000000002314",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'zigbee ncp module gateway user:m5stack'",
       "repo": "launcher:1897200000000002314",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T06:00:32.710404+00:00"
     },
     "launcher-1897200000000002318": {
@@ -9207,12 +9212,13 @@
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
     "launcher-1897200000000002335": {
+      "expired_at": "2026-11-23T06:00:33.922939+00:00",
       "expires": "2026-11-23T06:00:32.710404+00:00",
       "id": "launcher-1897200000000002335",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002335",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T06:00:32.710404+00:00"
     },
     "launcher-1897200000000002338": {
@@ -10008,12 +10014,13 @@
       "timestamp": "2026-11-22T06:00:34.928059+00:00"
     },
     "launcher-1897200000000002954": {
+      "expired_at": "2026-11-23T06:00:33.922939+00:00",
       "expires": "2026-11-23T06:00:32.710404+00:00",
       "id": "launcher-1897200000000002954",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002954",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T06:00:32.710404+00:00"
     },
     "launcher-1897200000000002955": {
@@ -11270,12 +11277,13 @@
       "timestamp": "2026-11-22T09:00:33.493208+00:00"
     },
     "launcher-2113453725203111937": {
+      "expired_at": "2026-11-23T06:00:33.922939+00:00",
       "expires": "2026-11-23T06:00:32.710404+00:00",
       "id": "launcher-2113453725203111937",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2113453725203111937",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T06:00:32.710404+00:00"
     },
     "launcher-2113542725980987393": {
@@ -11483,12 +11491,13 @@
       "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "launcher-2119809185456234497": {
+      "expired_at": "2026-11-23T06:00:33.922939+00:00",
       "expires": "2026-11-23T06:00:32.710404+00:00",
       "id": "launcher-2119809185456234497",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'goop user:crackulator'",
       "repo": "launcher:2119809185456234497",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-16T06:00:32.710404+00:00"
     },
     "launcher-2119809553573519361": {
@@ -24452,7 +24461,7 @@
       "pr_ref": "#1985",
       "repo": "takmashhido/sectrustkey",
       "status": "proposed",
-      "timestamp": "2026-11-23T05:00:33.279655+00:00"
+      "timestamp": "2026-11-23T06:00:33.922939+00:00"
     },
     "seed-phrase-checker": {
       "expired_at": "2026-11-07T08:00:55.079521+00:00",
