@@ -1,8 +1,10 @@
 {
-  "_about": "Jr's own switches. Each flag is turned on by a reviewed PR to this file; the matching repository or runner variable (JR_DEMAND_AUTOMERGE, JR_TICK_AUTOMERGE, JR_CODE_AUTOMERGE, JR_STALL_DISPATCH, JR_PR_FIX_DISPATCH) set to 0 is the instant kill switch that needs no PR. Both must allow before a canary merges anything or the heal launcher is handed a stall or PR-fix incident (SPEC-jr-self-heal.md §5, §1d).",
+  "_about": "Jr's own switches. Each flag is turned on by a reviewed PR to this file; the matching repository or runner variable (JR_DEMAND_AUTOMERGE, JR_TICK_AUTOMERGE, JR_CODE_AUTOMERGE, JR_STALL_DISPATCH, JR_PR_FIX_DISPATCH) set to 0 is the instant kill switch that needs no PR. Both must allow before a canary merges anything or the heal launcher is handed a stall or PR-fix incident (SPEC-jr-self-heal.md \u00a75, \u00a71d). build_target_shadow lets jr/build_targets.py publish build-target facts in jr-data PRs (env JR_BUILD_TARGETS=0 kills it); build_target_automerge lets scripts/data_merge.py merge them (env JR_TICK_AUTOMERGE=0 kills it). Both stay false through the 3-day shadow (Jr redesign plan, steps 8-9).",
   "demand_automerge": true,
   "tick_automerge": true,
   "code_automerge": true,
   "stall_dispatch": true,
-  "pr_fix_dispatch": true
+  "pr_fix_dispatch": true,
+  "build_target_shadow": false,
+  "build_target_automerge": false
 }
