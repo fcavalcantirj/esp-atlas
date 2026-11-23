@@ -28,6 +28,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      # data_merge imports demand_canary, which reads frontmatter through esp_atlas_core (yaml, jsonschema).
+      # 2026-11-23: without this step every run since #2007 failed (ModuleNotFoundError: No module named 'yaml').
+      - name: Install what scripts/data_merge.py imports
+        run: pip install pyyaml jsonschema httpx pypdf && pip install -e apps/core
       - name: Decide every labelled data PR (dry run)
         env:
           GH_TOKEN: ${{ github.token }}
