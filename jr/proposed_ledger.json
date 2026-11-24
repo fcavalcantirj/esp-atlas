@@ -3884,7 +3884,7 @@
       "pr_ref": "#1969",
       "repo": "tesa-klebeband/esp32-deauther",
       "status": "proposed",
-      "timestamp": "2026-11-24T10:00:38.886743+00:00"
+      "timestamp": "2026-11-24T11:00:33.734333+00:00"
     },
     "esp32-dragon-radar": {
       "expires": "2026-12-06T21:00:55.650872+00:00",
@@ -3955,6 +3955,22 @@
           "repo": "androidcrypto/esp32_heltec_wireless_stick_v3_i2c_spi_interfaces",
           "status": "rejected",
           "timestamp": "2026-11-21T09:00:32.125358+00:00"
+        },
+        {
+          "expires": "2027-01-20T09:02:35+00:00",
+          "id": "esp32-heltec-wireless-stick-v3-i2c-spi-i",
+          "pr_ref": null,
+          "reason": "needs_review_target: owner review raised in #1956",
+          "repo": "androidcrypto/esp32_heltec_wireless_stick_v3_i2c_spi_interfaces",
+          "review": {
+            "evidence": null,
+            "evidence_rev": null,
+            "outcome": "open",
+            "pr_ref": "#1956",
+            "raised_at": "2026-11-21T09:02:35+00:00"
+          },
+          "status": "rejected",
+          "timestamp": "2026-11-21T09:02:35+00:00"
         }
       ],
       "id": "esp32-heltec-wireless-stick-v3-i2c-spi-i",
@@ -3964,7 +3980,7 @@
       "review": {
         "evidence": null,
         "evidence_rev": null,
-        "outcome": "open",
+        "outcome": "closed",
         "pr_ref": "#1956",
         "raised_at": "2026-11-21T09:02:35+00:00"
       },
@@ -11803,12 +11819,13 @@
       "timestamp": "2026-11-16T13:00:32.318887+00:00"
     },
     "launcher-2122545120110657537": {
+      "expired_at": "2026-11-24T11:00:33.734333+00:00",
       "expires": "2026-11-24T11:00:31.753985+00:00",
       "id": "launcher-2122545120110657537",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2122545120110657537",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-17T11:00:31.753985+00:00"
     },
     "launcher-2122558170192625665": {
@@ -11832,21 +11849,23 @@
       "timestamp": "2026-11-17T08:00:31.747262+00:00"
     },
     "launcher-2122590750057119746": {
+      "expired_at": "2026-11-24T11:00:33.734333+00:00",
       "expires": "2026-11-24T11:00:31.753985+00:00",
       "id": "launcher-2122590750057119746",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2122590750057119746",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-17T11:00:31.753985+00:00"
     },
     "launcher-2122601783576444930": {
+      "expired_at": "2026-11-24T11:00:33.734333+00:00",
       "expires": "2026-11-24T11:00:31.753985+00:00",
       "id": "launcher-2122601783576444930",
       "pr_ref": null,
       "reason": "no_source_repo: no searchable name tokens or owner",
       "repo": "launcher:2122601783576444930",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-17T11:00:31.753985+00:00"
     },
     "launcher-2122756958639308802": {
@@ -24849,7 +24868,7 @@
       "pr_ref": "#1985",
       "repo": "takmashhido/sectrustkey",
       "status": "proposed",
-      "timestamp": "2026-11-24T10:00:38.886743+00:00"
+      "timestamp": "2026-11-24T11:00:33.734333+00:00"
     },
     "seed-phrase-checker": {
       "expired_at": "2026-11-07T08:00:55.079521+00:00",
