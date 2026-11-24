@@ -3884,7 +3884,7 @@
       "pr_ref": "#1969",
       "repo": "tesa-klebeband/esp32-deauther",
       "status": "proposed",
-      "timestamp": "2026-11-24T08:00:32.975441+00:00"
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "esp32-dragon-radar": {
       "expires": "2026-12-06T21:00:55.650872+00:00",
@@ -4986,6 +4986,14 @@
       "status": "seen",
       "timestamp": "2026-11-19T09:00:33.766355+00:00"
     },
+    "heltecos": {
+      "expires": "2026-12-24T09:00:33.074536+00:00",
+      "id": "heltecos",
+      "pr_ref": null,
+      "repo": "grimworld/heltecos",
+      "status": "seen",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
+    },
     "hermes-gadget-sdk": {
       "expires": "2026-12-14T21:00:55.045531+00:00",
       "id": "hermes-gadget-sdk",
@@ -6015,14 +6023,13 @@
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
     },
     "launcher-1897200000000000106": {
-      "expired_at": "2026-11-22T06:00:34.928059+00:00",
-      "expires": "2026-11-22T04:00:34.403128+00:00",
+      "expires": "2026-12-01T09:00:33.074536+00:00",
       "id": "launcher-1897200000000000106",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'timercamrtsp user:m5stack'",
       "repo": "launcher:1897200000000000106",
-      "status": "expired",
-      "timestamp": "2026-11-15T04:00:34.403128+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "launcher-1897200000000000109": {
       "expired_at": "2026-11-23T18:00:33.135636+00:00",
@@ -7736,14 +7743,13 @@
       "timestamp": "2026-11-21T19:01:00.686047+00:00"
     },
     "launcher-1897200000000001222": {
-      "expired_at": "2026-11-22T06:00:34.928059+00:00",
-      "expires": "2026-11-22T04:00:34.403128+00:00",
+      "expires": "2026-12-01T09:00:33.074536+00:00",
       "id": "launcher-1897200000000001222",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'uiflow2 stamplc user:m5stack'",
       "repo": "launcher:1897200000000001222",
-      "status": "expired",
-      "timestamp": "2026-11-15T04:00:34.403128+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "launcher-1897200000000001234": {
       "expired_at": "2026-11-22T12:00:35.461522+00:00",
@@ -8175,14 +8181,13 @@
       "timestamp": "2026-11-22T04:00:33.436471+00:00"
     },
     "launcher-1897200000000001485": {
-      "expired_at": "2026-11-23T02:00:34.080689+00:00",
-      "expires": "2026-11-23T02:00:31.729728+00:00",
+      "expires": "2027-02-22T09:00:33.074536+00:00",
       "id": "launcher-1897200000000001485",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (asrygkzerobr); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001485",
-      "status": "expired",
-      "timestamp": "2026-11-16T02:00:31.729728+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "launcher-1897200000000001508": {
       "expires": "2026-11-29T03:00:33.646310+00:00",
@@ -8661,14 +8666,13 @@
       "timestamp": "2026-11-21T19:01:00.686047+00:00"
     },
     "launcher-1897200000000001806": {
-      "expired_at": "2026-11-23T15:00:33.714568+00:00",
-      "expires": "2026-11-23T15:00:33.094076+00:00",
+      "expires": "2026-12-01T09:00:33.074536+00:00",
       "id": "launcher-1897200000000001806",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'orb chaos classic mode user:coreymillia'",
       "repo": "launcher:1897200000000001806",
-      "status": "expired",
-      "timestamp": "2026-11-16T15:00:33.094076+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "launcher-1897200000000001816": {
       "expires": "2026-11-29T07:00:33.373089+00:00",
@@ -9421,14 +9425,13 @@
       "timestamp": "2026-11-15T15:00:31.835014+00:00"
     },
     "launcher-1897200000000002393": {
-      "expired_at": "2026-11-22T03:00:33.646310+00:00",
-      "expires": "2026-11-22T03:00:32.103528+00:00",
+      "expires": "2027-02-22T09:00:33.074536+00:00",
       "id": "launcher-1897200000000002393",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (ru1e7ik); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002393",
-      "status": "expired",
-      "timestamp": "2026-11-15T03:00:32.103528+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "launcher-1897200000000002396": {
       "expired_at": "2026-11-23T07:00:33.518845+00:00",
@@ -9904,14 +9907,13 @@
       "timestamp": "2026-11-15T22:00:31.751655+00:00"
     },
     "launcher-1897200000000002771": {
-      "expired_at": "2026-11-22T14:00:34.142620+00:00",
-      "expires": "2026-11-22T14:00:31.673907+00:00",
+      "expires": "2027-02-22T09:00:33.074536+00:00",
       "id": "launcher-1897200000000002771",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (e00e0); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002771",
-      "status": "expired",
-      "timestamp": "2026-11-15T14:00:31.673907+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "launcher-1897200000000002776": {
       "expires": "2027-02-20T09:00:33.493208+00:00",
@@ -10308,14 +10310,13 @@
       "timestamp": "2026-11-16T16:00:31.784586+00:00"
     },
     "launcher-1897200000000003076": {
-      "expired_at": "2026-11-22T03:00:33.646310+00:00",
-      "expires": "2026-11-22T03:00:32.103528+00:00",
+      "expires": "2027-02-22T09:00:33.074536+00:00",
       "id": "launcher-1897200000000003076",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (thehappycat); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000003076",
-      "status": "expired",
-      "timestamp": "2026-11-15T03:00:32.103528+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "launcher-1897200000000003082": {
       "expired_at": "2026-11-22T19:00:33.953275+00:00",
@@ -10782,14 +10783,13 @@
       "timestamp": "2026-11-16T10:00:32.342729+00:00"
     },
     "launcher-1897200000000003435": {
-      "expired_at": "2026-11-22T06:00:34.928059+00:00",
-      "expires": "2026-11-22T04:00:34.403128+00:00",
+      "expires": "2027-02-22T09:00:33.074536+00:00",
       "id": "launcher-1897200000000003435",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (aprilliac); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000003435",
-      "status": "expired",
-      "timestamp": "2026-11-15T04:00:34.403128+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "launcher-1897200000000003439": {
       "expired_at": "2026-11-22T16:00:34.465660+00:00",
@@ -11139,14 +11139,13 @@
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "launcher-2106018668317384706": {
-      "expired_at": "2026-11-23T14:00:52.402353+00:00",
-      "expires": "2026-11-23T14:00:31.914738+00:00",
+      "expires": "2027-02-22T09:00:33.074536+00:00",
       "id": "launcher-2106018668317384706",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (8bitcardputer); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2106018668317384706",
-      "status": "expired",
-      "timestamp": "2026-11-16T14:00:31.914738+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "launcher-2106019566758273025": {
       "expires": "2027-02-20T08:00:33.362264+00:00",
@@ -11197,14 +11196,13 @@
       "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-2106786405184577538": {
-      "expired_at": "2026-11-24T01:00:33.226916+00:00",
-      "expires": "2026-11-24T01:00:31.817229+00:00",
+      "expires": "2027-02-22T09:00:33.074536+00:00",
       "id": "launcher-2106786405184577538",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (cric-10); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2106786405184577538",
-      "status": "expired",
-      "timestamp": "2026-11-17T01:00:31.817229+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "launcher-2106812332383805442": {
       "expires": "2026-11-29T05:00:34.103182+00:00",
@@ -18846,6 +18844,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T00:00:31.739025+00:00"
     },
+    "repo-note:acelot/termtastic": {
+      "expires": "2026-12-24T09:00:33.074536+00:00",
+      "id": "repo-note:acelot/termtastic",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "acelot/termtastic",
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
+    },
     "repo-note:adammelancon/cardputer-iss-tracker": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
       "id": "repo-note:adammelancon/cardputer-iss-tracker",
@@ -19431,6 +19438,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T10:00:34.922574+00:00"
     },
+    "repo-note:brianshea2/meshmap.net": {
+      "expires": "2026-12-24T09:00:33.074536+00:00",
+      "id": "repo-note:brianshea2/meshmap.net",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "brianshea2/meshmap.net",
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
+    },
     "repo-note:byjaps/esp32-max35-tv": {
       "expires": "2026-12-18T14:00:31.448865+00:00",
       "id": "repo-note:byjaps/esp32-max35-tv",
@@ -19493,6 +19509,15 @@
       "repo": "chicagolandmesh/chicagolandmesh.org",
       "status": "rejected",
       "timestamp": "2026-11-18T10:00:31.757324+00:00"
+    },
+    "repo-note:chrismyers2000/meshadv-pi-hat": {
+      "expires": "2026-12-24T09:00:33.074536+00:00",
+      "id": "repo-note:chrismyers2000/meshadv-pi-hat",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "chrismyers2000/meshadv-pi-hat",
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "repo-note:cifertech/esp32-div": {
       "expires": "2026-12-17T13:00:31.835731+00:00",
@@ -20835,6 +20860,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T13:00:31.999065+00:00"
     },
+    "repo-note:irongiu/meshstation": {
+      "expires": "2026-12-24T09:00:33.074536+00:00",
+      "id": "repo-note:irongiu/meshstation",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "irongiu/meshstation",
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
+    },
     "repo-note:itszeeshanrajput/aetherpulse-esp32": {
       "expires": "2026-12-19T04:00:31.893783+00:00",
       "id": "repo-note:itszeeshanrajput/aetherpulse-esp32",
@@ -21798,6 +21832,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T13:00:31.983678+00:00"
     },
+    "repo-note:meshaddicts/meshinfo": {
+      "expires": "2026-12-24T09:00:33.074536+00:00",
+      "id": "repo-note:meshaddicts/meshinfo",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "meshaddicts/meshinfo",
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
+    },
     "repo-note:meshmapper/meshmapper_flutter_app": {
       "expires": "2026-12-17T10:00:32.143438+00:00",
       "id": "repo-note:meshmapper/meshmapper_flutter_app",
@@ -22023,6 +22066,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T01:00:32.420498+00:00"
     },
+    "repo-note:nateyo/heltec-t114-platformio-base": {
+      "expires": "2026-12-24T09:00:33.074536+00:00",
+      "id": "repo-note:nateyo/heltec-t114-platformio-base",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "nateyo/heltec-t114-platformio-base",
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
+    },
     "repo-note:ndom91/crowpanel-homelab-dashboard": {
       "expires": "2026-12-18T16:00:32.097075+00:00",
       "id": "repo-note:ndom91/crowpanel-homelab-dashboard",
@@ -22049,6 +22101,15 @@
       "repo": "next-flip/momentum-firmware",
       "status": "rejected",
       "timestamp": "2026-11-17T13:00:31.835731+00:00"
+    },
+    "repo-note:ni5arga/protestchat": {
+      "expires": "2026-12-24T09:00:33.074536+00:00",
+      "id": "repo-note:ni5arga/protestchat",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "ni5arga/protestchat",
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "repo-note:ninedter/defcon-defense": {
       "expires": "2026-12-17T12:00:31.695549+00:00",
@@ -22401,6 +22462,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T03:00:32.057965+00:00"
     },
+    "repo-note:pdxlocations/contact": {
+      "expires": "2026-12-24T09:00:33.074536+00:00",
+      "id": "repo-note:pdxlocations/contact",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "pdxlocations/contact",
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
+    },
     "repo-note:peacepaul1999/web_flasher_esp32_1.0.0": {
       "expires": "2026-12-22T04:00:33.436471+00:00",
       "id": "repo-note:peacepaul1999/web_flasher_esp32_1.0.0",
@@ -22436,6 +22506,15 @@
       "repo": "petoicamp/opencat-quadruped-robot",
       "status": "rejected",
       "timestamp": "2026-11-18T15:00:31.763832+00:00"
+    },
+    "repo-note:pham-tuan-binh/radio-llm": {
+      "expires": "2026-12-24T09:00:33.074536+00:00",
+      "id": "repo-note:pham-tuan-binh/radio-llm",
+      "pr_ref": null,
+      "reason": "stopword_name: 'radio-llm' names a radio, not a firmware",
+      "repo": "pham-tuan-binh/radio-llm",
+      "status": "rejected",
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "repo-note:phancak/esp32p4c5_board": {
       "expires": "2026-12-19T02:00:32.224989+00:00",
@@ -24770,7 +24849,7 @@
       "pr_ref": "#1985",
       "repo": "takmashhido/sectrustkey",
       "status": "proposed",
-      "timestamp": "2026-11-24T08:00:32.975441+00:00"
+      "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "seed-phrase-checker": {
       "expired_at": "2026-11-07T08:00:55.079521+00:00",
@@ -27141,6 +27220,7 @@
     "abdrakhmanov/smart-rattle": "smart-rattle",
     "abenokobo/pd-camera-m5": "pd-camera-m5",
     "ace-trump-tech/mindpaw": "repo-note:ace-trump-tech/mindpaw",
+    "acelot/termtastic": "repo-note:acelot/termtastic",
     "acidvegas/acid-drop": "acid-drop",
     "acpayers-alt/raising-hell-cardputer": "raising-hell-cardputer",
     "adafruit/circuitpython": "circuitpython",
@@ -27345,6 +27425,7 @@
     "bradmcnally/slowdraw": "slowdraw",
     "brent-a/mcsim": "repo-note:brent-a/mcsim",
     "brian-sheldon/emu-sys": "emu-sys",
+    "brianshea2/meshmap.net": "repo-note:brianshea2/meshmap.net",
     "bruceblay/pocket-radio": "pocket-radio",
     "bruceblay/rill-drums": "rill-drums",
     "bruceblay/rill-mallet": "rill-mallet",
@@ -27396,6 +27477,7 @@
     "chrisdacrunk/little-devhelper": "little-devhelper",
     "chrisdiana/breezybox-cardputer": "breezybox-cardputer",
     "chrisdiana/thumbycraft": "thumbycraft",
+    "chrismyers2000/meshadv-pi-hat": "repo-note:chrismyers2000/meshadv-pi-hat",
     "cifertech/esp32-div": "repo-note:cifertech/esp32-div",
     "ciniml/m5stack_matter_examples": "m5stack-matter-examples",
     "ciniml/openai-realtime-embedded-sdk": "openai-realtime-embedded-sdk",
@@ -27778,6 +27860,7 @@
     "gridgrad/advaita": "advaita",
     "griffithsb/m5stack-webcam": "m5stack-webcam",
     "grimmnorth/departure-board": "repo-note:grimmnorth/departure-board",
+    "grimworld/heltecos": "heltecos",
     "grugnoymeme/flipperzero-badusb": "repo-note:grugnoymeme/flipperzero-badusb",
     "grvmind/xiaozhi-cardputer": "xiaozhi-cardputer",
     "gsurma/jetson": "repo-note:gsurma/jetson",
@@ -27912,6 +27995,7 @@
     "io-nji/lab_mini_os": "lab-mini-os",
     "iodn/android-ir-blaster": "repo-note:iodn/android-ir-blaster",
     "irisihrz": "irisihrz",
+    "irongiu/meshstation": "repo-note:irongiu/meshstation",
     "isalicema/m5-stopwatch-dashboard": "m5-stopwatch-dashboard",
     "isno-open/openprofalux": "openprofalux",
     "isno-open/openrftest": "openrftest",
@@ -29110,6 +29194,7 @@
     "meister5/m5stack-cardputer-adv-gps-tracker": "m5stack-cardputer-adv-gps-tracker",
     "meister5/synthcard": "synthcard",
     "meoker/pagger": "repo-note:meoker/pagger",
+    "meshaddicts/meshinfo": "repo-note:meshaddicts/meshinfo",
     "meshdeck-os/meshdeck": "meshdeck",
     "meshmapper/meshmapper_flutter_app": "repo-note:meshmapper/meshmapper_flutter_app",
     "meshnomad/meshnomad-firmware": "repo-note:meshnomad/meshnomad-firmware",
@@ -29201,6 +29286,7 @@
     "narstybits/macos-duckyscripts": "repo-note:narstybits/macos-duckyscripts",
     "narukara/std-training-zh-cn": "repo-note:narukara/std-training-zh-cn",
     "nasonliu/papers3-weread": "papers3-weread",
+    "nateyo/heltec-t114-platformio-base": "repo-note:nateyo/heltec-t114-platformio-base",
     "ndom91/crowpanel-homelab-dashboard": "repo-note:ndom91/crowpanel-homelab-dashboard",
     "negawatt": "negawatt",
     "neodoggy/bettermochi": "bettermochi",
@@ -29211,6 +29297,7 @@
     "nexodevlab/spectrum48kcardputeradv": "spectrum48kcardputeradv",
     "next-flip/momentum-firmware": "repo-note:next-flip/momentum-firmware",
     "nexus1203/vibsense": "vibsense",
+    "ni5arga/protestchat": "repo-note:ni5arga/protestchat",
     "nikoniko78/paperweathermain": "paperweathermain",
     "ninedter/defcon-defense": "repo-note:ninedter/defcon-defense",
     "nishad2m8/cardputer-games": "cardputer-games",
@@ -29314,6 +29401,7 @@
     "pcbreflux/espressif": "repo-note:pcbreflux/espressif",
     "pdlsurya/esp32-riscv-bare-metal-sdk": "repo-note:pdlsurya/esp32-riscv-bare-metal-sdk",
     "pdrix": "pdrix",
+    "pdxlocations/contact": "repo-note:pdxlocations/contact",
     "peacepaul1999/web_flasher_esp32_1.0.0": "repo-note:peacepaul1999/web_flasher_esp32_1.0.0",
     "pedrominatel/m5stack-capsule-tv-b-gone": "m5stack-capsule-tv-b-gone",
     "peff74/esp32-c3_oled": "repo-note:peff74/esp32-c3_oled",
@@ -29327,6 +29415,7 @@
     "petsven/s3_decibel_meter": "s3-decibel-meter",
     "pfefferle/m5-atoms3-palnagotchi": "m5-atoms3-palnagotchi",
     "pfrankov/codex-microputer-adv": "codex-microputer-adv",
+    "pham-tuan-binh/radio-llm": "repo-note:pham-tuan-binh/radio-llm",
     "phancak/esp32p4c5_board": "repo-note:phancak/esp32p4c5_board",
     "phfbertoleti/placa_lorawan": "repo-note:phfbertoleti/placa_lorawan",
     "phillowcompiler/2048_m5stack": "2048-m5stack",

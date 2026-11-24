@@ -31,8 +31,8 @@ io:
 images:
   pinout: https://files.seeedstudio.com/wiki/SeeedStudio-XIAO-ESP32S3/img/XIAO_ESP32-S3_Sense_front_pinout.png
 notes:
-- '8 MB flash + 8 MB on-chip PSRAM: Specifications table (Sense column) Memory row states
-  "On-chip 8MB PSRAM & 8MB Flash"'
+- '8 MB flash + 8 MB on-chip PSRAM: Specifications table (Sense column) Memory row
+  states "On-chip 8MB PSRAM & 8MB Flash"'
 - 'Sense = XIAO ESP32-S3 + detachable camera + digital (PDM) mic + microSD. Vendor:
   "XIAO ESP32-S3 Sense integrates camera sensor, digital microphone and SD card supporting."'
 - 'camera QUOTED: Specifications table (Sense) Built-in Sensors row states "1x OV3660
@@ -43,30 +43,35 @@ notes:
 - 'mic QUOTED: Built-in Sensors row states "1x Digital Microphone"; Pin Map "Digital
   microphone_CLK GPIO42 PDM clock pin for MIC", "Digital microphone_DATA GPIO41 PDM
   data pin for MIC" (PDM).'
-- 'sd-card QUOTED: Specifications table (Sense) Memory row states "Onboard SD Card Slot,
-  supporting 32GB FAT"'
-- 'dimensions_mm QUOTED: Specifications table (Sense) Dimensions row states "21 x 17.8
-  x 15mm (with expansion board)". (Bare board footprint is 21 x 17.8mm; the 15 mm height
-  is with the Sense expansion board fitted.)'
-- 'usb.connector=usb-c: Specifications table Power(Typ.) row states "Input voltage (Type-C):
-  5V"'
+- 'sd-card QUOTED: Specifications table (Sense) Memory row states "Onboard SD Card
+  Slot, supporting 32GB FAT"'
+- 'dimensions_mm QUOTED: Specifications table (Sense) Dimensions row states "21 x
+  17.8 x 15mm (with expansion board)". (Bare board footprint is 21 x 17.8mm; the 15
+  mm height is with the Sense expansion board fitted.)'
+- 'usb.connector=usb-c: Specifications table Power(Typ.) row states "Input voltage
+  (Type-C): 5V"'
 - U.FL external antenna (Pin Map "U.FL-R-SMT1 ... UFL antenna")
 - 'onboard LiPo charging + charge LED: vendor states "Lithium battery charge management
   capability"; Specifications table lists "1x Charge LED"'
 - 'io.gpio_exposed=11 QUOTED: vendor Specifications table (Sense column) states "11x
   GPIOs (PWM)"'
-- 'io.gpio_free OMITTED: not vendor-stated and not cleanly derivable for the Sense. The
-  expansion board hard-consumes several of the D0-D10 pads -- the onboard microSD uses
-  the SPI bus on D8/D9/D10 (Pin Map quoted: "Onboard SD Card_SCK GPIO7", "Onboard SD
-  Card_MISO GPIO8", "Onboard SD Card Slot_MOSI GPIO9" = D8/D9/D10; plus "Onboard SD
-  Card__CS GPIO21") and the camera/mic attach via the "1x B2B Connector (with 2 additional
-  GPIOs)" -- so the free-pad count depends on whether the expansion board is fitted.
-  Left out rather than guess (SPEC-io-power.md §5.3, when in doubt omit).'
+- 'io.gpio_free OMITTED: not vendor-stated and not cleanly derivable for the Sense.
+  The expansion board hard-consumes several of the D0-D10 pads -- the onboard microSD
+  uses the SPI bus on D8/D9/D10 (Pin Map quoted: "Onboard SD Card_SCK GPIO7", "Onboard
+  SD Card_MISO GPIO8", "Onboard SD Card Slot_MOSI GPIO9" = D8/D9/D10; plus "Onboard
+  SD Card__CS GPIO21") and the camera/mic attach via the "1x B2B Connector (with 2
+  additional GPIOs)" -- so the free-pad count depends on whether the expansion board
+  is fitted. Left out rather than guess (SPEC-io-power.md §5.3, when in doubt omit).'
 - 'io.power_out QUOTED: vendor "Power Pins" section states "3V3 - This is the regulated
   output from the onboard regulator. You can draw 700mA"'
 - 'aka OMITTED: no distinct arduino-esp32 / pioarduino board id for the Sense (boards.txt
   lists XIAO_ESP32S3 / XIAO_ESP32S3_Plus but no Sense; pioarduino has seeed_xiao_esp32s3.json
   but no sense json). The Sense is flashed as the plain XIAO ESP32-S3 target.'
+download_mode:
+  mode: manual
+  steps: When you press and hold the BOOT key while powering up and then press the
+    Reset key once, you can also enter BootLoader mode
+getting_started: https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
 sources:
 - field: '*'
   url: https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
@@ -80,6 +85,12 @@ sources:
 - field: images.pinout
   url: https://files.seeedstudio.com/wiki/SeeedStudio-XIAO-ESP32S3/img/XIAO_ESP32-S3_Sense_front_pinout.png
   verified: '2026-09-30'
+- field: download_mode
+  url: https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
+  verified: '2026-11-24'
+- field: getting_started
+  url: https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
+  verified: '2026-11-24'
 ---
 
 # Seeed Studio XIAO ESP32S3 Sense
