@@ -3884,7 +3884,7 @@
       "pr_ref": "#1969",
       "repo": "tesa-klebeband/esp32-deauther",
       "status": "proposed",
-      "timestamp": "2026-11-24T07:00:33.225443+00:00"
+      "timestamp": "2026-11-24T08:00:32.975441+00:00"
     },
     "esp32-dragon-radar": {
       "expires": "2026-12-06T21:00:55.650872+00:00",
@@ -11814,21 +11814,23 @@
       "timestamp": "2026-11-17T11:00:31.753985+00:00"
     },
     "launcher-2122558170192625665": {
+      "expired_at": "2026-11-24T08:00:32.975441+00:00",
       "expires": "2026-11-24T08:00:31.747262+00:00",
       "id": "launcher-2122558170192625665",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'arduventure black white touch user:gywan94'",
       "repo": "launcher:2122558170192625665",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-17T08:00:31.747262+00:00"
     },
     "launcher-2122586321891311618": {
+      "expired_at": "2026-11-24T08:00:32.975441+00:00",
       "expires": "2026-11-24T08:00:31.747262+00:00",
       "id": "launcher-2122586321891311618",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'rovercpro self test stickcplus user:kur1k0'",
       "repo": "launcher:2122586321891311618",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-17T08:00:31.747262+00:00"
     },
     "launcher-2122590750057119746": {
@@ -24768,7 +24770,7 @@
       "pr_ref": "#1985",
       "repo": "takmashhido/sectrustkey",
       "status": "proposed",
-      "timestamp": "2026-11-24T07:00:33.225443+00:00"
+      "timestamp": "2026-11-24T08:00:32.975441+00:00"
     },
     "seed-phrase-checker": {
       "expired_at": "2026-11-07T08:00:55.079521+00:00",
