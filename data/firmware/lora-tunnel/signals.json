@@ -1,7 +1,7 @@
 {
- "calls": 5,
+ "calls": 8,
  "errors": 0,
- "fetched": "2026-11-16",
+ "fetched": "2026-11-25",
  "notes": [],
  "ref": "main",
  "repo": "valleytechsolutions/LORA-Tunnel",
@@ -12,6 +12,7 @@
    "Cardputer-ADV-LoRa1262-FACTORY-0x0",
    "Cardputer-ADV-LoRa1262-LAUNCHER-APP",
    "Heltec-V4-R8-TFT-HIGH-BAND-FACTORY-0x0",
+   "Heltec-V4-R8-TFT-HIGH-BAND-LAUNCHER-APP",
    "cardputer_adv_lora1262",
    "heltec_v4_r8_tft"
   ]
@@ -19,39 +20,51 @@
  "signals": [
   {
    "extra": {
-    "asset": "LORA-Tunnel-0.5.0-Cardputer-ADV-LoRa1262-FACTORY-0x0.bin",
-    "release": "v0.5.0"
+    "asset": "LORA-Tunnel-0.6.0-Cardputer-ADV-LoRa1262-FACTORY-0x0.bin",
+    "release": "v0.6.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Cardputer-ADV-LoRa1262-FACTORY-0x0",
-   "url": "https://github.com/valleytechsolutions/LORA-Tunnel/releases/download/v0.5.0/LORA-Tunnel-0.5.0-Cardputer-ADV-LoRa1262-FACTORY-0x0.bin"
+   "url": "https://github.com/valleytechsolutions/LORA-Tunnel/releases/download/v0.6.0/LORA-Tunnel-0.6.0-Cardputer-ADV-LoRa1262-FACTORY-0x0.bin"
   },
   {
    "extra": {
-    "asset": "LORA-Tunnel-0.5.0-Cardputer-ADV-LoRa1262-LAUNCHER-APP.bin",
-    "release": "v0.5.0"
+    "asset": "LORA-Tunnel-0.6.0-Cardputer-ADV-LoRa1262-LAUNCHER-APP.bin",
+    "release": "v0.6.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Cardputer-ADV-LoRa1262-LAUNCHER-APP",
-   "url": "https://github.com/valleytechsolutions/LORA-Tunnel/releases/download/v0.5.0/LORA-Tunnel-0.5.0-Cardputer-ADV-LoRa1262-LAUNCHER-APP.bin"
+   "url": "https://github.com/valleytechsolutions/LORA-Tunnel/releases/download/v0.6.0/LORA-Tunnel-0.6.0-Cardputer-ADV-LoRa1262-LAUNCHER-APP.bin"
   },
   {
    "extra": {
-    "asset": "LORA-Tunnel-0.5.0-Heltec-V4-R8-TFT-HIGH-BAND-FACTORY-0x0.bin",
-    "release": "v0.5.0"
+    "asset": "LORA-Tunnel-0.6.0-Heltec-V4-R8-TFT-HIGH-BAND-FACTORY-0x0.bin",
+    "release": "v0.6.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Heltec-V4-R8-TFT-HIGH-BAND-FACTORY-0x0",
-   "url": "https://github.com/valleytechsolutions/LORA-Tunnel/releases/download/v0.5.0/LORA-Tunnel-0.5.0-Heltec-V4-R8-TFT-HIGH-BAND-FACTORY-0x0.bin"
+   "url": "https://github.com/valleytechsolutions/LORA-Tunnel/releases/download/v0.6.0/LORA-Tunnel-0.6.0-Heltec-V4-R8-TFT-HIGH-BAND-FACTORY-0x0.bin"
+  },
+  {
+   "extra": {
+    "asset": "LORA-Tunnel-0.6.0-Heltec-V4-R8-TFT-HIGH-BAND-LAUNCHER-APP.bin",
+    "release": "v0.6.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Heltec-V4-R8-TFT-HIGH-BAND-LAUNCHER-APP",
+   "url": "https://github.com/valleytechsolutions/LORA-Tunnel/releases/download/v0.6.0/LORA-Tunnel-0.6.0-Heltec-V4-R8-TFT-HIGH-BAND-LAUNCHER-APP.bin"
   },
   {
    "extra": {
