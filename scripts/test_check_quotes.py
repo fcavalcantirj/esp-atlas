@@ -223,3 +223,22 @@ def test_known_quotes_come_from_the_record_at_the_merge_base(tmp_path):
     known = cq.base_quotes("main", [tmp_path / "data" / "board.md", tmp_path / "data" / "new.md"], repo=tmp_path)
     assert known[tmp_path / "data" / "board.md"] == {"old drifted span here"}
     assert known[tmp_path / "data" / "new.md"] == set()             # an added record has nothing on main
+
+
+def test_a_pr_that_drops_or_swaps_a_cited_url_gets_no_excuse_for_the_old_spans(tmp_path):
+    """Review BLOCK of #2087: a span is excused only while every URL the record cited on main is still cited.
+    A PR that removes or replaces a source can make an old span fail; that failure is the PR's own."""
+    import subprocess
+    g = lambda *a: subprocess.run(["git", *a], cwd=tmp_path, check=True, capture_output=True, text=True).stdout
+    g("init", "-q", "-b", "main"); g("config", "user.email", "t@t"); g("config", "user.name", "t")
+    (tmp_path / "data").mkdir()
+    rec = tmp_path / "data" / "board.md"
+    rec.write_text('---\nid: x\nnotes: "\\"flash is 8 MB\\""\nsources:\n- field: \'*\'\n  url: https://vendor/a\n---\n')
+    g("add", "."); g("commit", "-qm", "base")
+    g("checkout", "-qb", "pr")
+    rec.write_text('---\nid: x\nnotes: "\\"flash is 8 MB\\""\nsources:\n- field: \'*\'\n  url: https://vendor/b\n---\n')
+    g("add", "."); g("commit", "-qm", "pr")
+    known = cq.base_quotes("main", [rec], repo=tmp_path)
+    assert known[rec] == set()
+    _reports, code = cq.run([rec], fake_fetch({"https://vendor/b": "nothing"}), known=known)
+    assert code == 1

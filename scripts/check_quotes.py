@@ -303,9 +303,10 @@ def changed_records(base: str, repo: Path = REPO) -> list[Path] | None:
 
 
 def base_quotes(base: str, paths: list[Path], repo: Path = REPO) -> dict[Path, set]:
-    """{path: the quoted spans the record carries at the merge base of `base` and HEAD}. A record that does not
-    exist there (added by the branch) knows nothing; any git failure for a path also knows nothing, so its
-    spans are all judged (an unreadable base never excuses a quote)."""
+    """{path: the quoted spans the record carries at the merge base of `base` and HEAD}, only for a record that
+    still cites every URL it cited there. A record that does not exist there (added by the branch), drops or
+    swaps a cited URL, or cannot be read at either end knows nothing, so its spans are all judged (an
+    unreadable base never excuses a quote)."""
     out = {Path(p): set() for p in paths}
     try:
         mb = subprocess.run(["git", "merge-base", base, "HEAD"], cwd=repo, capture_output=True, text=True, timeout=60)
@@ -326,7 +327,15 @@ def base_quotes(base: str, paths: list[Path], repo: Path = REPO) -> dict[Path, s
             fm = yaml.safe_load(show.stdout.split("---", 2)[1]) if show.stdout.startswith("---") else None
         except (yaml.YAMLError, IndexError):
             continue
-        if isinstance(fm, dict):
+        if not isinstance(fm, dict):
+            continue
+        # excused only while every URL the record cited on main is still cited (review BLOCK of #2087): a PR that
+        # drops or swaps a source can make an old span fail, and that failure is the PR's own
+        try:
+            head_fm, _ = parse_frontmatter(Path(p))
+        except Exception:  # noqa: BLE001 — an unreadable head excuses nothing
+            continue
+        if set(cited_urls(fm)) <= set(cited_urls(head_fm or {})):
             out[Path(p)] = set(quotes_in(fm))
     return out
 
