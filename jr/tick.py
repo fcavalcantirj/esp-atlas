@@ -469,7 +469,28 @@ def _stuck_message(pr: dict, hours: float) -> str:
 
 def default_merger(gh, slug: str, pr: dict) -> str:
     """Arm (or, when GitHub says it can merge right now with every required check passed, merge) a tick PR at
-    exactly its listed head, through scripts/demand_canary.request_merge, the one merge helper the canaries use."""
+    exactly its listed head, through scripts/demand_canary.request_merge, the one merge helper the canaries use.
+    First the same gates jr/publish._auto_merge applies when it arms a new PR (review BLOCK of #2091): a file the
+    PR deletes outside data/, branch protection, earned trust. Any of them closed, or unreadable, raises: a PR
+    whose auto-merge was withheld on purpose stays withheld."""
+    n = int(pr["number"])
+    p = gh("api", f"repos/{slug}/pulls/{n}/files", "--paginate")
+    try:
+        files = json.loads(getattr(p, "stdout", "") or "null") if getattr(p, "returncode", 1) == 0 else None
+    except json.JSONDecodeError:
+        files = None
+    if not isinstance(files, list):
+        raise RuntimeError(f"#{n}: changed files unreadable")
+    deleted = [f.get("filename") for f in files if f.get("status") == "removed"
+               and not str(f.get("filename") or "").startswith("data/")]
+    if deleted:
+        raise RuntimeError(f"#{n}: deletions outside data/ ({', '.join(map(str, deleted[:3]))})")
+    protection = publish.protection_status(slug, gh=gh)
+    if not protection.ok:
+        raise RuntimeError(f"#{n}: auto-merge withheld: {protection.reason}")
+    trust = publish.trust_status(gh=gh)
+    if not trust.ok:
+        raise RuntimeError(f"#{n}: auto-merge withheld: {trust.reason}")
     import sys
     scripts = str(Path(__file__).resolve().parent.parent / "scripts")
     if scripts not in sys.path:
@@ -795,6 +816,9 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             for pr in stuck:
                 if (pr.get("mergeable") == "MERGEABLE" and not pr.get("autoMergeRequest")
                         and not review_routing.has_review_label(pr)):
+                    if dry_run:          # review BLOCK of #2091: a dry run writes nothing to GitHub
+                        r.warnings.append(f"would arm auto-merge on stale tick PR #{pr.get('number')}")
+                        continue
                     try:
                         how = merger(gh_c, slug, pr)
                     except Exception as e:  # noqa: BLE001 — not armed: stuck, as before

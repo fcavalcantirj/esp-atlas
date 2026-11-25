@@ -987,18 +987,55 @@ def test_a_stale_pr_already_armed_still_aborts(tmp_path):
     assert asked == [] and r.aborted.startswith("a Jr tick PR has been open > 3 h: #2081")
 
 
-def test_default_merger_arms_or_merges_through_the_canary_helper():
+def _gates_open(monkeypatch, protection=True, trust=True):
+    from types import SimpleNamespace as NS
+    monkeypatch.setattr(tick.publish, "protection_status", lambda slug, gh=None: NS(ok=protection, reason="no rule"))
+    monkeypatch.setattr(tick.publish, "trust_status", lambda gh=None: NS(ok=trust, reason="not earned"))
+
+
+def _files(removed=()):
+    return json.dumps([{"filename": "data/firmware/x/signals.json", "status": "modified"}]
+                      + [{"filename": f, "status": "removed"} for f in removed])
+
+
+def test_default_merger_arms_or_merges_through_the_canary_helper(monkeypatch):
     from types import SimpleNamespace as P
+    _gates_open(monkeypatch)
     calls = []
     def gh_auto(*a):
         calls.append(a)
-        return P(returncode=0, stdout="", stderr="")
+        return P(returncode=0, stdout=_files() if a[0] == "api" else "", stderr="")
     assert tick.default_merger(gh_auto, "o/r", {"number": 2081, "headRefOid": "b" * 40}) == "auto"
-    assert calls[0][:3] == ("pr", "merge", "2081") and "--match-head-commit" in calls[0]
+    merge = [c for c in calls if c[:2] == ("pr", "merge")][0]
+    assert merge[2] == "2081" and "--match-head-commit" in merge
     def gh_clean(*a):
+        if a[0] == "api":
+            return P(returncode=0, stdout=_files(), stderr="")
         if a[:2] == ("pr", "merge") and "--auto" in a:
             return P(returncode=1, stdout="", stderr="Pull request is in clean status")
         if a[:2] == ("pr", "checks"):
             return P(returncode=0, stdout=json.dumps([{"name": "tests", "bucket": "pass"}]), stderr="")
         return P(returncode=0, stdout="", stderr="")
     assert tick.default_merger(gh_clean, "o/r", {"number": 2081, "headRefOid": "b" * 40}) == "merged"
+
+
+@pytest.mark.parametrize("protection,trust,removed", [(False, True, ()), (True, False, ()), (True, True, ("jr/tick.py",))])
+def test_default_merger_keeps_every_publish_gate(monkeypatch, protection, trust, removed):
+    """Review BLOCK of #2091: a PR whose auto-merge publish withheld on purpose is never armed later."""
+    from types import SimpleNamespace as P
+    _gates_open(monkeypatch, protection, trust)
+    merges = []
+    def gh(*a):
+        if a[:2] == ("pr", "merge"):
+            merges.append(a)
+        return P(returncode=0, stdout=_files(removed) if a[0] == "api" else "", stderr="")
+    with pytest.raises(RuntimeError):
+        tick.default_merger(gh, "o/r", {"number": 2081, "headRefOid": "b" * 40})
+    assert merges == []
+
+
+def test_a_dry_run_never_calls_the_merger(tmp_path):
+    asked = []
+    r = run(dry_run=True, git=git_ok(tmp_path), gh=gh_ok(prs=_stale_unarmed()),
+            merger=lambda gh, slug, pr: asked.append(1) or "auto")
+    assert asked == [] and any("would arm auto-merge on stale tick PR #2081" in w for w in r.warnings)
