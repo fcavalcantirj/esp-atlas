@@ -3195,6 +3195,22 @@
           "repo": "arkwnet/cruconmate",
           "status": "rejected",
           "timestamp": "2026-11-22T05:00:34.103182+00:00"
+        },
+        {
+          "expires": "2027-01-21T05:02:59+00:00",
+          "id": "cruconmate",
+          "pr_ref": null,
+          "reason": "needs_review_target: owner review raised in #1985",
+          "repo": "arkwnet/cruconmate",
+          "review": {
+            "evidence": null,
+            "evidence_rev": null,
+            "outcome": "open",
+            "pr_ref": "#1985",
+            "raised_at": "2026-11-22T05:02:59+00:00"
+          },
+          "status": "rejected",
+          "timestamp": "2026-11-22T05:02:59+00:00"
         }
       ],
       "id": "cruconmate",
@@ -3204,7 +3220,7 @@
       "review": {
         "evidence": null,
         "evidence_rev": null,
-        "outcome": "open",
+        "outcome": "closed",
         "pr_ref": "#1985",
         "raised_at": "2026-11-22T05:02:59+00:00"
       },
@@ -24868,9 +24884,10 @@
     "sectrustkey": {
       "id": "sectrustkey",
       "pr_ref": "#1985",
+      "reason": "PR closed unmerged: #1985",
       "repo": "takmashhido/sectrustkey",
-      "status": "proposed",
-      "timestamp": "2026-11-25T06:00:34.153687+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T08:00:38.882004+00:00"
     },
     "seed-phrase-checker": {
       "expired_at": "2026-11-07T08:00:55.079521+00:00",
