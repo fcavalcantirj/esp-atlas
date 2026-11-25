@@ -99,7 +99,17 @@ def _red_required(pr: dict, required: list) -> list[tuple[str, str, str]]:
     return out
 
 
-def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> dict:
+def _main_green(gh, slug: str, check: str) -> bool:
+    """main's newest run of `check` completed successfully. Unreadable or absent → False."""
+    data = ci_watch._json(gh, "api", f"repos/{slug}/commits/main/check-runs?check_name={check}&per_page=20")
+    runs = [r for r in (data or {}).get("check_runs") or [] if r.get("name") == check] if isinstance(data, dict) else []
+    if not runs:
+        return False
+    newest = max(runs, key=lambda r: str(r.get("started_at") or ""))
+    return newest.get("status") == "completed" and newest.get("conclusion") == "success"
+
+
+def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool, now: str | None = None) -> dict:
     """A red required check on any open PR (2026-11-19: tick PR #1828 sat red; ci_watch only declares a tick
     break when the two NEWEST tick PRs fail alike). In order, once per PR and FAILURE (never per head: main
     moves hourly, so per-head memory looped rerun → update → rerun with no incident, review BLOCK of #1857):
@@ -142,6 +152,15 @@ def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> d
             if ukey not in updated and n not in in_flight and _behind_main(gh, slug, head):
                 out["update_branch"].append((n, head))
                 updated[ukey] = head
+                continue
+            # a fix that reached main through ANY PR (2026-11-25: #2084 fixed #2053's red test, no Jr heal merged,
+            # #2053 stayed red and its incident was abandoned): once per PR, failure and UTC day, merge main in
+            # again when main's same check is green there. Daily, so main moving hourly never loops it.
+            gkey = f"{key}:main-green:{ci_watch._utc_day(now)}" if now else None
+            if (gkey and gkey not in updated and n not in in_flight and _behind_main(gh, slug, head)
+                    and _main_green(gh, slug, check)):
+                out["update_branch"].append((n, head))
+                updated[gkey] = head
                 continue
             if content:
                 g = groups.setdefault(fp, {"check": check, "parsed": parsed, "prs": []})
@@ -512,7 +531,7 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
         if prs is None:
             return {"status": "unavailable", "why": "gh pr list failed"}
         wanted = plan(gh, slug, prs)
-        reds = red_prs(gh, slug, prs, store, dry_run)
+        reds = red_prs(gh, slug, prs, store, dry_run, now)
         wanted += reds["verdicts"]
         touched = {n for n, _ in reds["reruns"]} | {n for n, _ in reds["update_branch"]}
         rest = [p for p in prs if p.get("number") not in touched]
