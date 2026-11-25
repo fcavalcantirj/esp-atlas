@@ -172,3 +172,54 @@ def test_main_reads_the_given_paths_with_an_injected_fetch(capsys):
     pages = {u: PREFACE for u in cq.cited_urls(fm)}
     assert cq.main([str(RECORD)], fetch=fake_fetch(pages)) == 0
     assert "✓ PASS" in capsys.readouterr().out
+
+
+# --- a PR is judged on the quotes it adds, not on drift already on main (2026-11-25) ---------------------
+# Measured: 40 quotes on 28 boards already on main FAIL against today's vendor pages (page drift, table and
+# id spans). Every Jr backfill PR that touched one of those boards went red on `quotes` for spans it never
+# wrote and expired unmerged (#1951 ... #1991, #2050, #2052). The approved merge rule (2026-11-21) checks
+# the board fields a PR ADDS; drift already on main stays visible (--all, and in the log) but does not block.
+
+def _record(tmp_path, name, quotes):
+    p = tmp_path / name
+    notes = " ".join(f'\\"{q}\\"' for q in quotes)
+    p.write_text(f'---\nid: x\nname: X\nnotes: "{notes}"\nsources:\n- field: \'*\'\n  url: https://x/\n---\nBody.\n')
+    return p
+
+
+def test_a_quote_already_on_main_that_fails_is_reported_but_does_not_fail_the_pr(tmp_path, capsys):
+    rec = _record(tmp_path, "board.md", ["old drifted span here", "new verified span here"])
+    page = {"https://x/": "page with new verified span here only"}
+    reports, code = cq.run([rec], fake_fetch(page), known={rec: {"old drifted span here"}})
+    out = capsys.readouterr().out
+    assert code == 0 and reports[0].verdict == cq.PASS
+    assert "already on main" in out and "old drifted span here" in out
+
+
+def test_a_new_quote_that_fails_still_fails_the_pr_beside_known_drift(tmp_path):
+    rec = _record(tmp_path, "board.md", ["old drifted span here", "new unverified span"])
+    reports, code = cq.run([rec], fake_fetch({"https://x/": "nothing relevant"}), known={rec: {"old drifted span here"}})
+    assert code == 1 and reports[0].verdict == cq.FAIL
+    assert [q.verdict for q in reports[0].quotes] == [cq.KNOWN, cq.FAIL]
+
+
+def test_without_a_base_every_failing_quote_fails_as_before(tmp_path):
+    rec = _record(tmp_path, "board.md", ["old drifted span here"])
+    _reports, code = cq.run([rec], fake_fetch({"https://x/": "nothing relevant"}))
+    assert code == 1
+
+
+def test_known_quotes_come_from_the_record_at_the_merge_base(tmp_path):
+    import subprocess
+    g = lambda *a: subprocess.run(["git", *a], cwd=tmp_path, check=True, capture_output=True, text=True).stdout
+    g("init", "-q", "-b", "main"); g("config", "user.email", "t@t"); g("config", "user.name", "t")
+    (tmp_path / "data").mkdir()
+    old = _record(tmp_path / "data", "board.md", ["old drifted span here"])
+    g("add", "."); g("commit", "-qm", "base")
+    g("checkout", "-qb", "pr")
+    _record(tmp_path / "data", "board.md", ["old drifted span here", "new verified span here"])
+    (tmp_path / "data" / "new.md").write_text(old.read_text())
+    g("add", "."); g("commit", "-qm", "pr")
+    known = cq.base_quotes("main", [tmp_path / "data" / "board.md", tmp_path / "data" / "new.md"], repo=tmp_path)
+    assert known[tmp_path / "data" / "board.md"] == {"old drifted span here"}
+    assert known[tmp_path / "data" / "new.md"] == set()             # an added record has nothing on main
