@@ -72,3 +72,23 @@ def test_an_unreadable_override_blocks_the_whole_firmware(tmp_path):
     (tmp_path / "jr" / "overrides" / "fw__edges.json").write_text("{not json")
     assert bt.blocked_ids("fw", tmp_path) is None
     assert bt.blocked_ids("other", tmp_path) == set()
+
+
+class _P:
+    def __init__(self, rc, err=""):
+        self.returncode, self.stderr, self.stdout = rc, err, ""
+
+
+def test_label_falls_back_to_rest_when_pr_edit_fails():
+    calls = []
+    def gh(*a):
+        calls.append(a)
+        return _P(1, "GraphQL: something") if a[:2] == ("pr", "edit") else _P(0)
+    ok, why = bt.add_label("https://github.com/o/r/pull/2074", gh)
+    assert ok and why == ""
+    assert calls[1] == ("api", "--method", "POST", "repos/o/r/issues/2074/labels", "-f", "labels[]=jr-data")
+
+
+def test_label_failure_is_reported_not_swallowed():
+    ok, why = bt.add_label("https://github.com/o/r/pull/7", lambda *a: _P(1, "denied"))
+    assert not ok and "pr edit: denied" in why and "REST issues labels: denied" in why

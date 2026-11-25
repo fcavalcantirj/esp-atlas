@@ -72,6 +72,23 @@ def render(board: str, firmware: str, chip_family: str, claim: dict, today: str)
     return rid, "---\n" + yaml.safe_dump(fm, sort_keys=False, allow_unicode=True) + "---\n\n" + body
 
 
+def add_label(pr_url: str, gh, label: str = LABEL) -> tuple[bool, str]:
+    """Put `label` on the PR; (labelled, why-not). `gh pr edit --add-label` (GraphQL) first, then the REST issues
+    endpoint, the same fallback jr/publish.apply_review_label uses. Measured 2026-11-24/25: pr edit failed
+    silently on the runner for #2053 and #2074, so the coordinator never saw either PR."""
+    e = gh("pr", "edit", pr_url, "--add-label", label)
+    if getattr(e, "returncode", 1) == 0:
+        return True, ""
+    why = [f"pr edit: {(getattr(e, 'stderr', '') or '').strip()[:160]}"]
+    m = re.search(r"github\.com/([^/]+/[^/]+)/pull/(\d+)", pr_url)
+    if m:
+        a = gh("api", "--method", "POST", f"repos/{m.group(1)}/issues/{m.group(2)}/labels", "-f", f"labels[]={label}")
+        if getattr(a, "returncode", 1) == 0:
+            return True, ""
+        why.append(f"REST issues labels: {(getattr(a, 'stderr', '') or '').strip()[:160]}")
+    return False, "; ".join(why)
+
+
 def blocked_ids(firmware: str, root: Path):
     """The recipe ids a person removed for `firmware` (jr/overrides/<firmware>__edges.json, current and history,
     via writers.removed_recipes): never written back. None when the override exists but cannot be read; the
@@ -174,6 +191,7 @@ def main(argv=None) -> int:
     print(f"build-targets {'publish' if args.publish else 'dry run'}: {len(picked)} new linked fact(s) from {len(batch)} repo(s)")
     for rid, board, fid, c in picked:
         print(f"    {rid}  (env {c['env']} -> {c['board_id']} @ {c['sha'][:7]})")
+    failed = False
     if args.publish and picked:
         import publish
         wt = publish.add_worktree()
@@ -192,13 +210,16 @@ def main(argv=None) -> int:
                                   branch=f"jr/tick-{stamp}-bt", auto_merge=False)
             print(f"  published: {getattr(res, 'pr_url', res)}")
             if getattr(res, "pr_url", None):
-                publish.default_gh("pr", "edit", res.pr_url, "--add-label", LABEL)
+                ok, why = add_label(res.pr_url, publish.default_gh)
+                print(f"  label {LABEL}: {'added' if ok else 'FAILED: ' + why}")
+                if not ok:
+                    failed = True
         finally:
             publish.remove_worktree(wt)
     if new_cursor:
         state_dir.mkdir(parents=True, exist_ok=True)
         cursor_file.write_text(new_cursor)
-    return 0
+    return 1 if failed else 0      # an unlabelled PR is invisible to jr-data-merge: fail the run so it is reported
 
 
 if __name__ == "__main__":
