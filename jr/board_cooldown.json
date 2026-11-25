@@ -279,6 +279,19 @@
       "timestamp": "2026-11-25T12:00:33.512563+00:00",
       "url": "https://lilygo.cc/products/t-deck"
     },
+    "lilygo-t-display": {
+      "board": "lilygo-t-display",
+      "expires": "2026-12-02T14:00:39.942222+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-25T14:00:39.942222+00:00",
+      "url": "https://lilygo.cc/products/t-display"
+    },
     "lilygo-t-display-s3": {
       "board": "lilygo-t-display-s3",
       "expires": "2026-12-02T13:00:33.432902+00:00",
@@ -309,6 +322,24 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-25T13:00:33.432902+00:00",
       "url": "https://lilygo.cc/products/t-display-s3-amoled"
+    },
+    "lilygo-t-dongle-s3": {
+      "board": "lilygo-t-dongle-s3",
+      "expires": "2026-12-02T14:00:39.942222+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "source_gated"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-25T14:00:39.942222+00:00",
+      "url": "https://lilygo.cc/products/t-dongle-s3"
     },
     "lolin-s3": {
       "board": "lolin-s3",
