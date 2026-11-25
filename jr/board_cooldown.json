@@ -413,6 +413,37 @@
       "timestamp": "2026-11-25T20:00:33.782794+00:00",
       "url": "https://lilygo.cc/products/t5-e-paper-s3-pro"
     },
+    "lolin-c3-mini": {
+      "board": "lolin-c3-mini",
+      "expires": "2026-12-02T21:00:33.420028+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-25T21:00:33.420028+00:00",
+      "url": "https://www.wemos.cc/en/latest/c3/c3_mini.html"
+    },
+    "lolin-d32-pro": {
+      "board": "lolin-d32-pro",
+      "expires": "2026-12-02T21:00:33.420028+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-25T21:00:33.420028+00:00",
+      "url": "https://www.wemos.cc/en/latest/d32/d32_pro.html"
+    },
     "lolin-s3": {
       "board": "lolin-s3",
       "expires": "2026-11-26T01:00:32.121052+00:00",
