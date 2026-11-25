@@ -96,50 +96,9 @@
       "timestamp": "2026-11-22T06:00:34.928059+00:00",
       "url": null
     },
-    "adafruit-qt-py-esp32": {
-      "board": "adafruit-qt-py-esp32",
-      "expires": "2026-11-25T04:00:31.917403+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "doc_unreachable"
-        }
-      },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-18T04:00:31.917403+00:00"
-    },
-    "adafruit-qualia-esp32-s3": {
-      "board": "adafruit-qualia-esp32-s3",
-      "expires": "2026-11-25T04:00:31.917403+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "no_manifest",
-          "vendor": "doc_unreachable"
-        }
-      },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-18T04:00:31.917403+00:00"
-    },
-    "beetle-esp32-c3": {
-      "board": "beetle-esp32-c3",
-      "expires": "2026-11-25T04:00:31.917403+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "no_pattern_match"
-        },
-        "usb_serial": {
-          "boards_txt": "field_absent",
-          "manifest": "no_pattern_match",
-          "vendor": "no_pattern_match"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-18T04:00:31.917403+00:00"
-    },
     "freenove-esp32-wrover": {
       "board": "freenove-esp32-wrover",
-      "expires": "2026-11-24T20:00:31.733970+00:00",
+      "expires": "2026-12-02T09:00:33.578012+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -147,7 +106,8 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-17T20:00:31.733970+00:00"
+      "timestamp": "2026-11-25T09:00:33.578012+00:00",
+      "url": null
     },
     "freenove-fnk0104a": {
       "board": "freenove-fnk0104a",
@@ -213,6 +173,19 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-22T20:00:33.232813+00:00",
       "url": "https://docs.heltec.org/en/node/esp32/wifi_kit_32/index.html"
+    },
+    "heltec-wifi-lora-32-v3": {
+      "board": "heltec-wifi-lora-32-v3",
+      "expires": "2026-12-02T09:00:33.578012+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-25T09:00:33.578012+00:00",
+      "url": "https://docs.heltec.org/en/node/esp32/wifi_lora_32/index.html"
     },
     "heltec-wireless-paper": {
       "board": "heltec-wireless-paper",
@@ -656,20 +629,6 @@
       },
       "reason": "doc-unreachable",
       "timestamp": "2026-11-19T14:00:32.325670+00:00"
-    },
-    "xiao-esp32c6": {
-      "board": "xiao-esp32c6",
-      "expires": "2026-12-01T07:00:33.225443+00:00",
-      "field_reasons": {
-        "usb_serial": {
-          "boards_txt": "field_absent",
-          "manifest": "no_pattern_match",
-          "vendor": "field_absent"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-24T07:00:33.225443+00:00",
-      "url": "https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/"
     },
     "xiao-esp32s3": {
       "board": "xiao-esp32s3",
