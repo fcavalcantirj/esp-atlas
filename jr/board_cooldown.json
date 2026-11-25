@@ -431,6 +431,19 @@
       "timestamp": "2026-11-25T21:00:33.420028+00:00",
       "url": "https://www.wemos.cc/en/latest/c3/c3_mini.html"
     },
+    "lolin-d32": {
+      "board": "lolin-d32",
+      "expires": "2026-12-02T22:00:33.430398+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00",
+      "url": "https://www.wemos.cc/en/latest/d32/d32.html"
+    },
     "lolin-d32-pro": {
       "board": "lolin-d32-pro",
       "expires": "2026-12-02T21:00:33.420028+00:00",
@@ -443,6 +456,24 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-25T21:00:33.420028+00:00",
       "url": "https://www.wemos.cc/en/latest/d32/d32_pro.html"
+    },
+    "lolin-s2-mini": {
+      "board": "lolin-s2-mini",
+      "expires": "2026-12-02T22:00:33.430398+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00",
+      "url": "https://www.wemos.cc/en/latest/s2/s2_mini.html"
     },
     "lolin-s3": {
       "board": "lolin-s3",

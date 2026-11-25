@@ -6760,14 +6760,13 @@
       "timestamp": "2026-11-14T16:00:55.104121+00:00"
     },
     "launcher-1897200000000000550": {
-      "expired_at": "2026-11-23T16:00:33.423041+00:00",
-      "expires": "2026-11-23T16:00:31.784586+00:00",
+      "expires": "2026-12-02T22:00:33.430398+00:00",
       "id": "launcher-1897200000000000550",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bpm2midi user:fauxstor'",
       "repo": "launcher:1897200000000000550",
-      "status": "expired",
-      "timestamp": "2026-11-16T16:00:31.784586+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "launcher-1897200000000000568": {
       "expires": "2026-11-29T08:00:33.362264+00:00",
@@ -7066,14 +7065,13 @@
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
     "launcher-1897200000000000799": {
-      "expired_at": "2026-11-22T11:00:33.528996+00:00",
-      "expires": "2026-11-22T10:00:35.647124+00:00",
+      "expires": "2027-02-23T22:00:33.430398+00:00",
       "id": "launcher-1897200000000000799",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (littlemixy); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000000799",
-      "status": "expired",
-      "timestamp": "2026-11-15T10:00:35.647124+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "launcher-1897200000000000800": {
       "expired_at": "2026-11-22T10:00:33.459315+00:00",
@@ -7714,14 +7712,13 @@
       "timestamp": "2026-11-25T11:00:33.440257+00:00"
     },
     "launcher-1897200000000001196": {
-      "expired_at": "2026-11-22T19:00:33.953275+00:00",
-      "expires": "2026-11-22T19:00:32.749098+00:00",
+      "expires": "2027-02-23T22:00:33.430398+00:00",
       "id": "launcher-1897200000000001196",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (jonathan-2026); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001196",
-      "status": "expired",
-      "timestamp": "2026-11-15T19:00:32.749098+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "launcher-1897200000000001200": {
       "expires": "2026-12-16T06:00:32.710404+00:00",
@@ -8123,14 +8120,13 @@
       "timestamp": "2026-11-16T22:00:32.290880+00:00"
     },
     "launcher-1897200000000001430": {
-      "expired_at": "2026-11-22T11:00:33.528996+00:00",
-      "expires": "2026-11-22T11:00:32.244008+00:00",
+      "expires": "2027-02-23T22:00:33.430398+00:00",
       "id": "launcher-1897200000000001430",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (enderm3); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001430",
-      "status": "expired",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "launcher-1897200000000001435": {
       "expires": "2026-11-28T05:00:32.251837+00:00",
@@ -8349,14 +8345,13 @@
       "timestamp": "2026-11-15T12:00:31.921339+00:00"
     },
     "launcher-1897200000000001579": {
-      "expired_at": "2026-11-23T05:00:33.279655+00:00",
-      "expires": "2026-11-23T05:00:31.772256+00:00",
+      "expires": "2026-12-02T22:00:33.430398+00:00",
       "id": "launcher-1897200000000001579",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'spamtastic massive beacon user:coreymillia'",
       "repo": "launcher:1897200000000001579",
-      "status": "expired",
-      "timestamp": "2026-11-16T05:00:31.772256+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "launcher-1897200000000001583": {
       "expires": "2026-11-29T07:00:33.373089+00:00",
@@ -9036,14 +9031,13 @@
       "timestamp": "2026-11-16T12:00:31.947873+00:00"
     },
     "launcher-1897200000000002059": {
-      "expired_at": "2026-11-21T20:00:58.880248+00:00",
-      "expires": "2026-11-21T20:00:55.786187+00:00",
+      "expires": "2026-12-02T22:00:33.430398+00:00",
       "id": "launcher-1897200000000002059",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'uiflow2 unit c6l user:m5stack'",
       "repo": "launcher:1897200000000002059",
-      "status": "expired",
-      "timestamp": "2026-11-14T20:00:55.786187+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "launcher-1897200000000002063": {
       "expired_at": "2026-11-22T22:00:32.976050+00:00",
@@ -9648,14 +9642,13 @@
       "timestamp": "2026-11-16T07:00:31.998433+00:00"
     },
     "launcher-1897200000000002580": {
-      "expired_at": "2026-11-22T11:00:33.528996+00:00",
-      "expires": "2026-11-22T11:00:32.244008+00:00",
+      "expires": "2026-12-02T22:00:33.430398+00:00",
       "id": "launcher-1897200000000002580",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'timers3folderpusher user:m5stack'",
       "repo": "launcher:1897200000000002580",
-      "status": "expired",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "launcher-1897200000000002584": {
       "expires": "2027-02-18T12:00:31.870191+00:00",
@@ -9772,14 +9765,13 @@
       "timestamp": "2026-11-15T02:00:31.969279+00:00"
     },
     "launcher-1897200000000002664": {
-      "expired_at": "2026-11-22T12:00:35.461522+00:00",
-      "expires": "2026-11-22T12:00:31.921339+00:00",
+      "expires": "2026-12-02T22:00:33.430398+00:00",
       "id": "launcher-1897200000000002664",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'uiflow atomdisplay user:m5stack'",
       "repo": "launcher:1897200000000002664",
-      "status": "expired",
-      "timestamp": "2026-11-15T12:00:31.921339+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "launcher-1897200000000002679": {
       "expired_at": "2026-11-22T20:00:33.232813+00:00",
@@ -10492,14 +10484,13 @@
       "timestamp": "2026-11-21T05:00:32.251837+00:00"
     },
     "launcher-1897200000000003216": {
-      "expired_at": "2026-11-23T08:00:33.447560+00:00",
-      "expires": "2026-11-23T08:00:31.910120+00:00",
+      "expires": "2027-02-23T22:00:33.430398+00:00",
       "id": "launcher-1897200000000003216",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (shmusica); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000003216",
-      "status": "expired",
-      "timestamp": "2026-11-16T08:00:31.910120+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "launcher-1897200000000003219": {
       "expired_at": "2026-11-22T20:00:33.232813+00:00",
@@ -11046,14 +11037,13 @@
       "timestamp": "2026-11-16T14:00:31.914738+00:00"
     },
     "launcher-2105022563020042241": {
-      "expired_at": "2026-11-23T23:00:46.103353+00:00",
-      "expires": "2026-11-23T23:00:31.827862+00:00",
+      "expires": "2027-02-23T22:00:33.430398+00:00",
       "id": "launcher-2105022563020042241",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (xaine); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2105022563020042241",
-      "status": "expired",
-      "timestamp": "2026-11-16T23:00:31.827862+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "launcher-2105271319802552322": {
       "expired_at": "2026-11-23T02:00:34.080689+00:00",
@@ -22567,6 +22557,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T16:00:32.097075+00:00"
     },
+    "repo-note:neoxharsh/esp32-gui-flasher": {
+      "expires": "2026-12-25T22:00:33.430398+00:00",
+      "id": "repo-note:neoxharsh/esp32-gui-flasher",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "neoxharsh/esp32-gui-flasher",
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
+    },
     "repo-note:nerdlang/nerd": {
       "expires": "2026-12-18T15:00:31.763832+00:00",
       "id": "repo-note:nerdlang/nerd",
@@ -23917,6 +23916,33 @@
       "status": "rejected",
       "timestamp": "2026-11-19T15:00:33.556715+00:00"
     },
+    "repo-note:sparkfun/arduino_apollo3": {
+      "expires": "2026-12-25T22:00:33.430398+00:00",
+      "id": "repo-note:sparkfun/arduino_apollo3",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sparkfun/arduino_apollo3",
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
+    },
+    "repo-note:sparkfun/github_tutorial": {
+      "expires": "2026-12-25T22:00:33.430398+00:00",
+      "id": "repo-note:sparkfun/github_tutorial",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sparkfun/github_tutorial",
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
+    },
+    "repo-note:sparkfun/graphiclcd_nokia_5110": {
+      "expires": "2026-12-25T22:00:33.430398+00:00",
+      "id": "repo-note:sparkfun/graphiclcd_nokia_5110",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sparkfun/graphiclcd_nokia_5110",
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
+    },
     "repo-note:sparkfun/hx711-load-cell-amplifier": {
       "expires": "2026-12-17T22:00:32.010942+00:00",
       "id": "repo-note:sparkfun/hx711-load-cell-amplifier",
@@ -23925,6 +23951,42 @@
       "repo": "sparkfun/hx711-load-cell-amplifier",
       "status": "rejected",
       "timestamp": "2026-11-17T22:00:32.010942+00:00"
+    },
+    "repo-note:sparkfun/logic_level_bidirectional": {
+      "expires": "2026-12-25T22:00:33.430398+00:00",
+      "id": "repo-note:sparkfun/logic_level_bidirectional",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sparkfun/logic_level_bidirectional",
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
+    },
+    "repo-note:sparkfun/obd-ii_uart": {
+      "expires": "2026-12-25T22:00:33.430398+00:00",
+      "id": "repo-note:sparkfun/obd-ii_uart",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sparkfun/obd-ii_uart",
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
+    },
+    "repo-note:sparkfun/qwiic_ublox_gps_py": {
+      "expires": "2026-12-25T22:00:33.430398+00:00",
+      "id": "repo-note:sparkfun/qwiic_ublox_gps_py",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: GitHub topics match ['library']",
+      "repo": "sparkfun/qwiic_ublox_gps_py",
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
+    },
+    "repo-note:sparkfun/serial7segmentdisplay": {
+      "expires": "2026-12-25T22:00:33.430398+00:00",
+      "id": "repo-note:sparkfun/serial7segmentdisplay",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sparkfun/serial7segmentdisplay",
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "repo-note:sparkfun/sparkfun-kicad-libraries": {
       "expires": "2026-12-17T22:00:32.010942+00:00",
@@ -23971,6 +24033,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T22:00:32.010942+00:00"
     },
+    "repo-note:sparkfun/sparkfun_tb6612fng_arduino_library": {
+      "expires": "2026-12-25T22:00:33.430398+00:00",
+      "id": "repo-note:sparkfun/sparkfun_tb6612fng_arduino_library",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "sparkfun/sparkfun_tb6612fng_arduino_library",
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
+    },
     "repo-note:sparkfun/sparkfun_ublox_arduino_library": {
       "expires": "2027-02-15T22:00:32.010942+00:00",
       "id": "repo-note:sparkfun/sparkfun_ublox_arduino_library",
@@ -23979,6 +24050,15 @@
       "repo": "sparkfun/sparkfun_ublox_arduino_library",
       "status": "rejected",
       "timestamp": "2026-11-17T22:00:32.010942+00:00"
+    },
+    "repo-note:sparkfun/sparkfun_vl53l1x_arduino_library": {
+      "expires": "2026-12-25T22:00:33.430398+00:00",
+      "id": "repo-note:sparkfun/sparkfun_vl53l1x_arduino_library",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "sparkfun/sparkfun_vl53l1x_arduino_library",
+      "status": "rejected",
+      "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "repo-note:spooks4576/ghost_esp": {
       "expires": "2027-02-13T22:00:31.751655+00:00",
@@ -30010,6 +30090,7 @@
     "ndom91/crowpanel-homelab-dashboard": "repo-note:ndom91/crowpanel-homelab-dashboard",
     "negawatt": "negawatt",
     "neodoggy/bettermochi": "bettermochi",
+    "neoxharsh/esp32-gui-flasher": "repo-note:neoxharsh/esp32-gui-flasher",
     "nerdlang/nerd": "repo-note:nerdlang/nerd",
     "neryjah-del/brucer-lite-esp32doit": "brucer-lite-esp32doit",
     "nescript/cardputer-amiibo": "cardputer-amiibo",
@@ -30403,13 +30484,22 @@
     "spaceangel/cyberwatch": "repo-note:spaceangel/cyberwatch",
     "spacehuhntech/esp8266_deauther": "repo-note:spacehuhntech/esp8266_deauther",
     "spacehuhntech/wifiduck": "repo-note:spacehuhntech/wifiduck",
+    "sparkfun/arduino_apollo3": "repo-note:sparkfun/arduino_apollo3",
+    "sparkfun/github_tutorial": "repo-note:sparkfun/github_tutorial",
+    "sparkfun/graphiclcd_nokia_5110": "repo-note:sparkfun/graphiclcd_nokia_5110",
     "sparkfun/hx711-load-cell-amplifier": "repo-note:sparkfun/hx711-load-cell-amplifier",
+    "sparkfun/logic_level_bidirectional": "repo-note:sparkfun/logic_level_bidirectional",
+    "sparkfun/obd-ii_uart": "repo-note:sparkfun/obd-ii_uart",
+    "sparkfun/qwiic_ublox_gps_py": "repo-note:sparkfun/qwiic_ublox_gps_py",
+    "sparkfun/serial7segmentdisplay": "repo-note:sparkfun/serial7segmentdisplay",
     "sparkfun/sparkfun-kicad-libraries": "repo-note:sparkfun/sparkfun-kicad-libraries",
     "sparkfun/sparkfun_can-bus_arduino_library": "repo-note:sparkfun/sparkfun_can-bus_arduino_library",
     "sparkfun/sparkfun_eagle_settings": "repo-note:sparkfun/sparkfun_eagle_settings",
     "sparkfun/sparkfun_mlx90640_arduino_example": "repo-note:sparkfun/sparkfun_mlx90640_arduino_example",
     "sparkfun/sparkfun_mpu-9250-dmp_arduino_library": "repo-note:sparkfun/sparkfun_mpu-9250-dmp_arduino_library",
+    "sparkfun/sparkfun_tb6612fng_arduino_library": "repo-note:sparkfun/sparkfun_tb6612fng_arduino_library",
     "sparkfun/sparkfun_ublox_arduino_library": "repo-note:sparkfun/sparkfun_ublox_arduino_library",
+    "sparkfun/sparkfun_vl53l1x_arduino_library": "repo-note:sparkfun/sparkfun_vl53l1x_arduino_library",
     "spooks4576/ghost_esp": "repo-note:spooks4576/ghost_esp",
     "spotlighton/moonstation": "moonstation",
     "spreedated/cardcharge": "cardcharge",
