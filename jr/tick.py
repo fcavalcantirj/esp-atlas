@@ -280,7 +280,7 @@ SUPERSEDED_COMMENT = ("Superseded by later Jr ticks. This PR only touched tick b
 
 def _list_open_prs_once(gh) -> list | None:
     p = gh("pr", "list", "--state", "open", "--limit", str(OPEN_PR_LIMIT),
-           "--json", f"number,createdAt,headRefName,mergeable,labels,{pending_prs.PR_LIST_FIELDS}")
+           "--json", f"number,createdAt,headRefName,mergeable,labels,autoMergeRequest,{pending_prs.PR_LIST_FIELDS}")
     if getattr(p, "returncode", 1) != 0:
         return None
     try:
@@ -465,6 +465,23 @@ def _stuck_message(pr: dict, hours: float) -> str:
         else "lists no changed files"
     return (f"a Jr tick PR has been open > {hours:g} h: #{pr.get('number')} ({pr.get('headRefName')})"
             f" · {state} · {touches} — needs a human (closing it rejects its firmware permanently)")
+
+
+def default_merger(gh, slug: str, pr: dict) -> str:
+    """Arm (or, when GitHub says it can merge right now with every required check passed, merge) a tick PR at
+    exactly its listed head, through scripts/demand_canary.request_merge, the one merge helper the canaries use."""
+    import sys
+    scripts = str(Path(__file__).resolve().parent.parent / "scripts")
+    if scripts not in sys.path:
+        sys.path.insert(0, scripts)
+    import demand_canary
+
+    def raising(*args):
+        p = gh(*args)
+        if getattr(p, "returncode", 1) != 0:
+            raise demand_canary.Unreadable((getattr(p, "stderr", "") or "").strip()[:300])
+        return getattr(p, "stdout", "") or ""
+    return demand_canary.request_merge(raising, slug, int(pr["number"]), str(pr["headRefOid"]))
 
 
 def _acquire_tick_lock(path: Path):
@@ -710,6 +727,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              admit_watcher: Callable | None = None,
              abort_watcher: Callable | None = None,
              refresher: Callable | None = None,
+             merger: Callable | None = None,
              chores_runner: Callable | None = None) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
@@ -767,6 +785,24 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                     if res.get("status") in ("refreshed", "would_refresh"):
                         r.warnings.append(f"refreshed stale conflicting tick PR #{pr.get('number')} against main")
                         continue
+                still.append(pr)
+            stuck = still
+        # a stale MERGEABLE auto-route PR whose auto-merge was never armed (2026-11-25, #2081: its publish logged
+        # "gh pr merge --auto failed" and nothing asked again) is armed through the canaries' one merge helper;
+        # only one that cannot be armed, or is armed and still open, is stuck
+        if stuck and merger is not None:
+            still = []
+            for pr in stuck:
+                if (pr.get("mergeable") == "MERGEABLE" and not pr.get("autoMergeRequest")
+                        and not review_routing.has_review_label(pr)):
+                    try:
+                        how = merger(gh_c, slug, pr)
+                    except Exception as e:  # noqa: BLE001 — not armed: stuck, as before
+                        r.warnings.append(f"could not arm stale tick PR #{pr.get('number')}: {e}"[:240])
+                        still.append(pr)
+                        continue
+                    r.warnings.append(f"armed auto-merge on stale tick PR #{pr.get('number')} ({how})")
+                    continue
                 still.append(pr)
             stuck = still
         if stuck:
@@ -1158,7 +1194,7 @@ def main(argv=None) -> int:
                  stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge,
                  lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None,
                  ci_watcher=default_ci_watcher, stall_watcher=default_stall_watcher, admit_watcher=default_admit_watcher,
-                 abort_watcher=default_abort_watcher, refresher=review_refresh.refresh,
+                 abort_watcher=default_abort_watcher, refresher=review_refresh.refresh, merger=default_merger,
                  chores_runner=default_chores_runner)
     return 1 if r.aborted else 0
 

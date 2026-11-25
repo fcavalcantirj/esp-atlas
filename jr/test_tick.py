@@ -950,3 +950,55 @@ def test_a_stale_conflicting_pr_the_refresher_cannot_clear_still_aborts(tmp_path
     refresher = lambda pr, **kw: {"pr": pr["number"], "status": "skipped", "why": "content conflict: data/x.md"}
     r = run(git=git_ok(tmp_path), gh=gh_ok(prs=_stale_conflicting()), refresher=refresher)
     assert r.aborted.startswith("a Jr tick PR has been open > 3 h: #2081")
+
+
+# --- a stale auto-route tick PR whose auto-merge was never armed is armed, not a halt (2026-11-25) --------------
+# Measured: #2081's publish logged "gh pr merge --auto failed" at 11:00Z, so nothing ever merged it; once its
+# conflict was refreshed (19:00Z) it was MERGEABLE but unarmed, and the next tick would abort on it as stale.
+
+def _stale_unarmed(n=2081):
+    old = (NOW - timedelta(hours=8)).isoformat().replace("+00:00", "Z")
+    return json.dumps([{"number": n, "createdAt": old, "headRefName": "jr/tick-20261125-1100", "mergeable": "MERGEABLE",
+                        "headRefOid": "b" * 40, "autoMergeRequest": None, **JR_OWN}])
+
+
+def test_a_stale_mergeable_unarmed_auto_pr_is_armed_and_the_tick_goes_on(tmp_path):
+    asked = []
+    def arm(gh, slug, pr):
+        asked.append(pr["number"])
+        return "auto"
+    r = run(git=git_ok(tmp_path), gh=gh_ok(prs=_stale_unarmed()), merger=arm)
+    assert asked == [2081]
+    assert not (r.aborted or "").startswith("a Jr tick PR has been open")
+    assert any("#2081" in w and "auto-merge" in w for w in r.warnings)
+
+
+def test_a_stale_pr_that_cannot_be_armed_still_aborts(tmp_path):
+    def arm(gh, slug, pr):
+        raise RuntimeError("#2081 can merge now but its required checks are not all passing")
+    r = run(git=git_ok(tmp_path), gh=gh_ok(prs=_stale_unarmed()), merger=arm)
+    assert r.aborted.startswith("a Jr tick PR has been open > 3 h: #2081")
+
+
+def test_a_stale_pr_already_armed_still_aborts(tmp_path):
+    prs = json.loads(_stale_unarmed()); prs[0]["autoMergeRequest"] = {"enabledAt": "x"}
+    asked = []
+    r = run(git=git_ok(tmp_path), gh=gh_ok(prs=json.dumps(prs)), merger=lambda gh, slug, pr: asked.append(1) or "auto")
+    assert asked == [] and r.aborted.startswith("a Jr tick PR has been open > 3 h: #2081")
+
+
+def test_default_merger_arms_or_merges_through_the_canary_helper():
+    from types import SimpleNamespace as P
+    calls = []
+    def gh_auto(*a):
+        calls.append(a)
+        return P(returncode=0, stdout="", stderr="")
+    assert tick.default_merger(gh_auto, "o/r", {"number": 2081, "headRefOid": "b" * 40}) == "auto"
+    assert calls[0][:3] == ("pr", "merge", "2081") and "--match-head-commit" in calls[0]
+    def gh_clean(*a):
+        if a[:2] == ("pr", "merge") and "--auto" in a:
+            return P(returncode=1, stdout="", stderr="Pull request is in clean status")
+        if a[:2] == ("pr", "checks"):
+            return P(returncode=0, stdout=json.dumps([{"name": "tests", "bucket": "pass"}]), stderr="")
+        return P(returncode=0, stdout="", stderr="")
+    assert tick.default_merger(gh_clean, "o/r", {"number": 2081, "headRefOid": "b" * 40}) == "merged"
