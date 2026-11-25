@@ -341,6 +341,42 @@
       "timestamp": "2026-11-25T14:00:39.942222+00:00",
       "url": "https://lilygo.cc/products/t-dongle-s3"
     },
+    "lilygo-t-embed": {
+      "board": "lilygo-t-embed",
+      "expires": "2026-12-02T19:00:34.766806+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "source_gated"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-25T19:00:34.766806+00:00",
+      "url": "https://lilygo.cc/products/t-embed"
+    },
+    "lilygo-t-qt-pro": {
+      "board": "lilygo-t-qt-pro",
+      "expires": "2026-12-02T19:00:34.766806+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "source_gated"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-25T19:00:34.766806+00:00",
+      "url": "https://lilygo.cc/products/t-qt-pro"
+    },
     "lolin-s3": {
       "board": "lolin-s3",
       "expires": "2026-11-26T01:00:32.121052+00:00",
