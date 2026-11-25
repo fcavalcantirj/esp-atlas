@@ -1,5 +1,5 @@
 {
- "count": 2,
+ "count": 3,
  "items": [
   {
    "term": "term512",
@@ -9,19 +9,41 @@
    "source": [
     "gsc_query"
    ],
-   "impressions": 58,
+   "impressions": 62,
    "clicks": 1,
-   "ctr": 0.0172,
-   "position": 8.5,
+   "ctr": 0.0161,
+   "position": 8.6,
    "events": null,
    "zero_result": null,
-   "weight": 48.45,
+   "weight": 52.46,
    "trends_interest": 0,
    "resolved": null,
    "gap": "UNRESOLVED",
    "landing_page": "https://esp-atlas.com/firmware/area512",
    "first_seen": "2026-11-08",
-   "last_seen": "2026-11-23"
+   "last_seen": "2026-11-25"
+  },
+  {
+   "term": "teamnerdminer@getalby.com",
+   "raw_terms": [
+    "teamnerdminer@getalby.com"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 13,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 8.2,
+   "events": null,
+   "zero_result": null,
+   "weight": 10.66,
+   "trends_interest": null,
+   "resolved": null,
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/firmware/nerdminer-v2",
+   "first_seen": "2026-11-25",
+   "last_seen": "2026-11-25"
   },
   {
    "term": "keeloq_mfcodes",
@@ -43,7 +65,7 @@
    "gap": "UNRESOLVED",
    "landing_page": "https://esp-atlas.com/firmware/flipper-zero-esp32-adv",
    "first_seen": "2026-11-03",
-   "last_seen": "2026-11-23"
+   "last_seen": "2026-11-25"
   }
  ]
 }
