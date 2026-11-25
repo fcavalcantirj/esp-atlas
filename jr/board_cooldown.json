@@ -203,6 +203,32 @@
       "timestamp": "2026-11-21T04:00:32.449949+00:00",
       "url": "https://docs.heltec.org/en/node/esp32/wireless_paper/index.html"
     },
+    "heltec-wireless-stick-v3": {
+      "board": "heltec-wireless-stick-v3",
+      "expires": "2026-12-02T10:00:33.219895+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-25T10:00:33.219895+00:00",
+      "url": "https://docs.heltec.org/en/node/esp32/wireless_stick/index.html"
+    },
+    "heltec-wireless-tracker": {
+      "board": "heltec-wireless-tracker",
+      "expires": "2026-12-02T10:00:33.219895+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-25T10:00:33.219895+00:00",
+      "url": "https://docs.heltec.org/en/node/esp32/wireless_tracker/index.html"
+    },
     "lilygo-t-beam-supreme": {
       "board": "lilygo-t-beam-supreme",
       "expires": "2026-11-28T06:00:32.350998+00:00",
