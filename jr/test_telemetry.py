@@ -495,6 +495,31 @@ def test_digest_states_the_undated_horizon_and_the_always_increasing_goal(monkey
     assert not hasattr(telemetry, "TARGET_DATE")
 
 
+
+def test_the_digest_carries_the_feature_usage_section_and_survives_its_failure(monkeypatch, tmp_path):
+    import feature_usage
+    monkeypatch.setattr(feature_usage, "build", lambda ex, prop, end: feature_usage.Report(end=end, rows=[
+        feature_usage.FeatureRow("atlas", [12, 5, 0, 0], [2, 2, 0, 1], [10, 4, 0, 1], low_use=True)]))
+    msg = _run_digest(monkeypatch, tmp_path, _fake_ex([]))
+    assert "*Feature usage*" in msg and "  • atlas — 2 of 12 who reached it (17 %)" in msg
+    def boom(ex, prop, end):
+        raise RuntimeError("GA4 down")
+    monkeypatch.setattr(feature_usage, "build", boom)
+    msg = _run_digest(monkeypatch, tmp_path, _fake_ex([]))
+    assert "*Feature usage* — unavailable (RuntimeError: GA4 down)" in msg and "*Top search demand*" in msg
+
+
+def test_the_feature_usage_failure_line_escapes_the_error_text_for_telegram_markdown(monkeypatch, tmp_path):
+    """Review BLOCK on #1842 at d1097f6: notify.send_telegram sends parse_mode "Markdown", where a lone
+    underscore in the error text opens italics that never close and Telegram rejects the whole digest."""
+    import feature_usage
+    def bad_config(ex, prop, end):
+        raise ValueError("feature 'home_ask' has no action events in *x* `y` [z")
+    monkeypatch.setattr(feature_usage, "build", bad_config)
+    msg = _run_digest(monkeypatch, tmp_path, _fake_ex([]))
+    assert ("*Feature usage* — unavailable "
+            "(ValueError: feature 'home\\_ask' has no action events in \\*x\\* \\`y\\` \\[z)") in msg.splitlines()
+
 # --- the junk rule judges every city × source segment, never a search or AI channel (2026-11-18) -----------
 # Measured before the change (GA4, 2026-10-20..11-16): the Direct-only, whole-source rule removed 24 of 682
 # sessions while Ashburn / Singapore / The Dalles / Council Bluffs / Beijing direct segments (0 engaged, avg

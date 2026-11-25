@@ -22,7 +22,11 @@ def test_the_committed_switch_file_is_the_reviewed_autonomy_state():
     doc = json.loads((REPO / "jr" / "autonomy.json").read_text())
     assert {k: v for k, v in doc.items() if not k.startswith("_")} == {
         "demand_automerge": True, "tick_automerge": True, "code_automerge": True, "stall_dispatch": True,
-        "pr_fix_dispatch": True}
+        "pr_fix_dispatch": True,
+        # 2026-11-23, Jr redesign plan steps 8-9: build-target facts, both OFF through the 3-day shadow; each goes
+        # on only by its own reviewed PR
+        # 2026-11-23: the owner started the 3-day shadow ("Yes, start the shadow"); merging stays off
+        "build_target_shadow": True, "build_target_automerge": False}
     assert cw.stall_dispatch_allowed(REPO / "jr" / "autonomy.json", {}) is True
     assert cw.stall_dispatch_allowed(REPO / "jr" / "autonomy.json", {"JR_STALL_DISPATCH": "0"}) is False   # the kill
 

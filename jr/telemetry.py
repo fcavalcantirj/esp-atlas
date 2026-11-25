@@ -367,6 +367,23 @@ def _growth_lines(denylist: frozenset) -> list:
                        _adjusted_engaged(*cur, denylist), _adjusted_engaged(*prev, denylist))]
 
 
+def _md(text: str) -> str:
+    """Escape what Telegram's legacy Markdown (notify.send_telegram, parse_mode "Markdown") reads as markup,
+    as feature_usage._md does; kept here because the failure line must not depend on importing that module."""
+    return "".join("\\" + c if c in "_*`[" else c for c in text)
+
+
+def _feature_lines() -> list:
+    """The Feature usage section (jr/feature_usage.py) over the completed 28-day window; a failure prints
+    one line saying so, its error text escaped so Telegram still accepts the digest, and never stops it."""
+    try:
+        import feature_usage
+        return feature_usage.lines(feature_usage.build(_ex, GA4_PROPERTY, completed_window(28)[1]))
+    except Exception as e:  # noqa: BLE001 — the digest must still go out
+        error = _md(f"{type(e).__name__}: {str(e)[:120]}")
+        return [f"*Feature usage* — unavailable ({error})"]
+
+
 def weekly_digest(days: int = 7) -> str:
     denylist = load_referral_denylist(REFERRAL_DENYLIST_PATH)   # fail closed before any fetch
     S, E = completed_window(days)
@@ -397,6 +414,7 @@ def weekly_digest(days: int = 7) -> str:
         lines.append("  (no query above the miner's impression floor this week)")
     for r in queries:
         lines.append(f"  • `{r['keys'][0]}` — imp {r.get('impressions')}, pos {round(r.get('position', 0), 1)}")
+    lines += ["", *_feature_lines()]
     msg = "\n".join(lines)
 
     snap = Path(__file__).resolve().parent.parent / "docs" / "telemetry" / f"{E}.md"

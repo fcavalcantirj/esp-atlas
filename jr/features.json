@@ -1,0 +1,18 @@
+{
+  "_about": "The site's features as the weekly Feature usage report counts them (jr/feature_usage.py). A feature is reached by viewing one of its pages and used by firing one of its action events on one of those pages (a prefix-only feature: on any page; user-initiated only; outcomes like flash_handoff are not actions). Adding or renaming a feature is a data edit here; the event names must exist in apps/web/lib/analytics.ts.",
+  "version": 1,
+  "features": {
+    "flash": {"pages": [], "page_prefixes": ["/parts/", "/firmware/"], "events": ["flash_open", "flash_consent", "flash_connect", "flash_outcome"]},
+    "verify": {"pages": [], "page_prefixes": ["/parts/"], "events": ["verify_connect", "monitor_connect"]},
+    "part_pages": {"pages": [], "page_prefixes": ["/parts/"], "events": ["chain_click", "board_flash_cta_click"]},
+    "firmware_index": {"pages": ["/firmware"], "page_prefixes": [], "events": ["firmware_sort", "reveal_more"]},
+    "home_ask": {"pages": ["/"], "page_prefixes": [], "events": ["intent_submit", "guide_submit"]},
+    "examples": {"pages": ["/"], "page_prefixes": [], "events": ["example_click"]},
+    "search": {"pages": ["/", "/wizard"], "page_prefixes": [], "events": ["search_submit"]},
+    "wizard": {"pages": ["/wizard"], "page_prefixes": [], "events": ["wizard_submit", "relax_filter"]},
+    "compare": {"pages": ["/compare"], "page_prefixes": [], "events": ["compare_add", "compare_view"]},
+    "atlas": {"pages": ["/atlas"], "page_prefixes": [], "events": ["atlas_lens_select", "atlas_inspect", "atlas_recipe_inspect", "atlas_lookup", "atlas_search", "atlas_handoff"]}
+  },
+  "low_use_acting_users": 5,
+  "low_use_windows": 4
+}
