@@ -6012,14 +6012,13 @@
       "timestamp": "2026-11-25T11:00:33.440257+00:00"
     },
     "launcher-1897200000000000056": {
-      "expired_at": "2026-11-22T10:00:33.459315+00:00",
-      "expires": "2026-11-22T07:00:31.352637+00:00",
+      "expires": "2026-12-02T20:00:33.782794+00:00",
       "id": "launcher-1897200000000000056",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'yes user:dudupertile'",
       "repo": "launcher:1897200000000000056",
-      "status": "expired",
-      "timestamp": "2026-11-15T07:00:31.352637+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T20:00:33.782794+00:00"
     },
     "launcher-1897200000000000067": {
       "expired_at": "2026-11-23T14:00:52.402353+00:00",
@@ -6079,14 +6078,13 @@
       "timestamp": "2026-11-22T04:00:33.436471+00:00"
     },
     "launcher-1897200000000000103": {
-      "expired_at": "2026-11-23T23:00:46.103353+00:00",
-      "expires": "2026-11-23T23:00:31.827862+00:00",
+      "expires": "2026-12-02T20:00:33.782794+00:00",
       "id": "launcher-1897200000000000103",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'torta cara adv user:gabrielwlucio'",
       "repo": "launcher:1897200000000000103",
-      "status": "expired",
-      "timestamp": "2026-11-16T23:00:31.827862+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T20:00:33.782794+00:00"
     },
     "launcher-1897200000000000106": {
       "expires": "2026-12-01T09:00:33.074536+00:00",
@@ -6906,14 +6904,13 @@
       "timestamp": "2026-11-16T00:00:31.813641+00:00"
     },
     "launcher-1897200000000000644": {
-      "expired_at": "2026-11-22T13:00:36.028613+00:00",
-      "expires": "2026-11-22T13:00:31.808604+00:00",
+      "expires": "2026-12-02T20:00:33.782794+00:00",
       "id": "launcher-1897200000000000644",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'ecowitt weatherstation gadget user:kwindapp'",
       "repo": "launcher:1897200000000000644",
-      "status": "expired",
-      "timestamp": "2026-11-15T13:00:31.808604+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T20:00:33.782794+00:00"
     },
     "launcher-1897200000000000651": {
       "expired_at": "2026-11-23T22:00:33.297030+00:00",
@@ -7359,14 +7356,13 @@
       "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "launcher-1897200000000001006": {
-      "expired_at": "2026-11-23T22:00:33.297030+00:00",
-      "expires": "2026-11-23T22:00:32.290880+00:00",
+      "expires": "2027-02-23T20:00:33.782794+00:00",
       "id": "launcher-1897200000000001006",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (gogrdon); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001006",
-      "status": "expired",
-      "timestamp": "2026-11-16T22:00:32.290880+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T20:00:33.782794+00:00"
     },
     "launcher-1897200000000001007": {
       "expired_at": "2026-11-23T13:00:33.459794+00:00",
@@ -7455,14 +7451,13 @@
       "timestamp": "2026-11-21T19:01:00.686047+00:00"
     },
     "launcher-1897200000000001031": {
-      "expired_at": "2026-11-22T11:00:33.528996+00:00",
-      "expires": "2026-11-22T10:00:35.647124+00:00",
+      "expires": "2027-02-23T20:00:33.782794+00:00",
       "id": "launcher-1897200000000001031",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (pdrix); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001031",
-      "status": "expired",
-      "timestamp": "2026-11-15T10:00:35.647124+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T20:00:33.782794+00:00"
     },
     "launcher-1897200000000001040": {
       "expired_at": "2026-11-23T08:00:33.447560+00:00",
@@ -7657,14 +7652,13 @@
       "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "launcher-1897200000000001171": {
-      "expired_at": "2026-11-22T11:00:33.528996+00:00",
-      "expires": "2026-11-22T11:00:32.244008+00:00",
+      "expires": "2027-02-23T20:00:33.782794+00:00",
       "id": "launcher-1897200000000001171",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (littlemixy); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001171",
-      "status": "expired",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T20:00:33.782794+00:00"
     },
     "launcher-1897200000000001174": {
       "expired_at": "2026-11-22T20:00:33.232813+00:00",
@@ -7957,14 +7951,13 @@
       "timestamp": "2026-11-16T22:00:32.290880+00:00"
     },
     "launcher-1897200000000001339": {
-      "expired_at": "2026-11-22T11:00:33.528996+00:00",
-      "expires": "2026-11-22T11:00:32.244008+00:00",
+      "expires": "2027-02-23T20:00:33.782794+00:00",
       "id": "launcher-1897200000000001339",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (cultlink); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001339",
-      "status": "expired",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T20:00:33.782794+00:00"
     },
     "launcher-1897200000000001346": {
       "expires": "2026-11-29T06:00:34.928059+00:00",
@@ -9029,14 +9022,13 @@
       "timestamp": "2026-11-20T12:00:31.870191+00:00"
     },
     "launcher-1897200000000002040": {
-      "expired_at": "2026-11-22T11:00:33.528996+00:00",
-      "expires": "2026-11-22T10:00:35.647124+00:00",
+      "expires": "2027-02-23T20:00:33.782794+00:00",
       "id": "launcher-1897200000000002040",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (enderm3); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002040",
-      "status": "expired",
-      "timestamp": "2026-11-15T10:00:35.647124+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T20:00:33.782794+00:00"
     },
     "launcher-1897200000000002056": {
       "expired_at": "2026-11-23T12:00:33.378542+00:00",
@@ -9699,14 +9691,13 @@
       "timestamp": "2026-11-16T10:00:32.342729+00:00"
     },
     "launcher-1897200000000002625": {
-      "expired_at": "2026-11-22T11:00:33.528996+00:00",
-      "expires": "2026-11-22T11:00:32.244008+00:00",
+      "expires": "2026-12-02T20:00:33.782794+00:00",
       "id": "launcher-1897200000000002625",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'super questionnaire star user:m5stack'",
       "repo": "launcher:1897200000000002625",
-      "status": "expired",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T20:00:33.782794+00:00"
     },
     "launcher-1897200000000002627": {
       "expired_at": "2026-11-22T20:00:33.232813+00:00",
@@ -10279,14 +10270,13 @@
       "timestamp": "2026-11-15T21:00:31.486348+00:00"
     },
     "launcher-1897200000000003045": {
-      "expired_at": "2026-11-22T06:00:34.928059+00:00",
-      "expires": "2026-11-22T04:00:34.403128+00:00",
+      "expires": "2026-12-02T20:00:33.782794+00:00",
       "id": "launcher-1897200000000003045",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'liuyao ching divination adv user:luffydz'",
       "repo": "launcher:1897200000000003045",
-      "status": "expired",
-      "timestamp": "2026-11-15T04:00:34.403128+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-25T20:00:33.782794+00:00"
     },
     "launcher-1897200000000003053": {
       "expires": "2026-11-29T07:00:33.373089+00:00",
