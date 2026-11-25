@@ -753,6 +753,22 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             else:
                 _close_superseded(gh_c, pr)
                 r.warnings.append(f"closed superseded bookkeeping-only tick PR #{pr.get('number')}")
+        # a stale CONFLICTING PR first goes to the same refresher the jr-review PRs use (bookkeeping-only conflicts,
+        # bot-only commits, catalog files byte-identical); only one it cannot clear is stuck (2026-11-25, #2081)
+        if stuck and refresher is not None:
+            still = []
+            for pr in stuck:
+                if pr.get("mergeable") == "CONFLICTING":
+                    try:
+                        res = refresher(pr, git=git, gh=gh_c, now=now, dry_run=dry_run, any_route=True)
+                    except Exception as e:  # noqa: BLE001 — a refresh failure leaves the PR stuck, as before
+                        res = {"pr": pr.get("number"), "status": "failed", "why": f"{type(e).__name__}: {e}"}
+                    r.refreshed.append(res)
+                    if res.get("status") in ("refreshed", "would_refresh"):
+                        r.warnings.append(f"refreshed stale conflicting tick PR #{pr.get('number')} against main")
+                        continue
+                still.append(pr)
+            stuck = still
         if stuck:
             raise TickAbort(_stuck_message(stuck[0], stale_pr_hours))
         pending = pending_prs.load(gh_c, open_prs, now, slug=slug, open_limit=OPEN_PR_LIMIT)

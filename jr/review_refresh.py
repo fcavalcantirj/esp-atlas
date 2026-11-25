@@ -66,12 +66,14 @@ def _show(git, rev_path: str):
     return _out(p) if _ok(p) else None
 
 
-def refresh(pr: dict, *, git, gh, now: datetime, dry_run: bool = False) -> dict:
+def refresh(pr: dict, *, git, gh, now: datetime, dry_run: bool = False, any_route: bool = False) -> dict:
+    """`any_route`: the tick's preflight also hands over a STALE CONFLICTING auto-route tick PR (2026-11-25, #2081:
+    one halted every tick until a person acted). Every other limit below applies unchanged."""
     n, branch, head = pr.get("number"), pr.get("headRefName"), pr.get("headRefOid")
     out = {"pr": n, "status": "skipped", "why": ""}
     if not pending_prs.eligible(pr):
         return {**out, "why": "not the Jr bot's own tick PR"}
-    if not review_routing.has_review_label(pr):
+    if not any_route and not review_routing.has_review_label(pr):
         return {**out, "why": "not a jr-review PR"}
     if pr.get("mergeable") != "CONFLICTING":
         return {**out, "why": f"mergeable={pr.get('mergeable')}, nothing to refresh"}
