@@ -244,3 +244,11 @@ def test_the_prs_own_yield_rows_survive_the_refresh(tmp_path):
     assert r["status"] == "refreshed", r
     _sh(clone, "fetch", "-q", "origin")
     assert _sh(clone, "show", "origin/jr/tick-x:docs/telemetry/yield.jsonl") + "\n" == seed + pr_row + main_row
+
+
+def test_an_auto_route_tick_pr_is_refreshed_when_the_tick_asks_for_any_route(tmp_path):
+    """2026-11-25, #2081: an auto-route (unlabelled) tick PR conflicted and halted every tick."""
+    clone, head = _repo(tmp_path)
+    assert review_refresh.refresh(_pr(head, labels=()), git=_git(clone), gh=_gh(), now=NOW)["status"] == "skipped"
+    r = review_refresh.refresh(_pr(head, labels=()), git=_git(clone), gh=_gh(), now=NOW, any_route=True)
+    assert r["status"] == "refreshed", r

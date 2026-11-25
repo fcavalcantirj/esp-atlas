@@ -2663,6 +2663,43 @@
      "settled_by": "jr/work_record.py"
     }
    }
+  },
+  {
+   "key": "cd6faa5aa0f3e4e7",
+   "branch": "jr/research-cd6faa5aa0f3e4e7",
+   "term": "teamnerdminer@getalby.com",
+   "phase": "research",
+   "state": "abandoned",
+   "started_on": "2026-11-25",
+   "source": "gsc_query",
+   "linked_work": [],
+   "window": {
+    "start": "2026-10-27",
+    "end": "2026-11-23"
+   },
+   "metrics": {
+    "impressions": 13,
+    "position": 8.2
+   },
+   "provenance": {
+    "snapshot": "docs/demand/2026-11-25.json",
+    "opened_on": "2026-11-25",
+    "status": "new",
+    "remote": {
+     "branch": false,
+     "prs": []
+    },
+    "reserved_by": "jr/demand_run.py"
+   },
+   "last_attempt_on": "2026-11-25",
+   "resolution": {
+    "status": "abandoned",
+    "reason": "Not catalog content: 'teamnerdminer@getalby.com' is the NerdMiner_v2 dev team's Lightning (LN) donation address, not a board — README 'Donations/Project contributions' section, https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/README.md (firmware already catalogued as nerdminer-v2).",
+    "closed_on": "2026-11-25",
+    "evidence": {
+     "settled_by": "jr/work_record.py"
+    }
+   }
   }
  ]
 }

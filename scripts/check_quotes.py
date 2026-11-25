@@ -41,6 +41,8 @@ import sys
 import time
 import unicodedata
 from dataclasses import dataclass, field
+
+import yaml
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -62,7 +64,11 @@ MAX_BYTES = 25 * 1024 * 1024
 USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
 PASS, FAIL, INCONCLUSIVE = "PASS", "FAIL", "INCONCLUSIVE"
-_MARKS = {PASS: "✓", FAIL: "✗", INCONCLUSIVE: "?"}
+# a span that FAILs today but is already in the record on main: drift that predates this PR. Reported, never
+# counted against the PR (the approved merge rule of 2026-11-21 judges the fields a PR adds); `--all` and an
+# explicit path list judge every span as before.
+KNOWN = "KNOWN-DRIFT"
+_MARKS = {PASS: "✓", FAIL: "✗", INCONCLUSIVE: "?", KNOWN: "~"}
 
 # a curly-quoted span ("\u201c...\u201d") is explicit; straight quotes are paired in order (see quotes_in)
 _CURLY = re.compile(r"\u201c([^\u201c\u201d\n]+)\u201d")
@@ -256,8 +262,9 @@ class RecordReport:
         return FAIL if FAIL in vs else (INCONCLUSIVE if INCONCLUSIVE in vs else PASS)
 
 
-def check_record(path: Path, frontmatter: dict, pages: dict[str, Page], fetch) -> RecordReport:
-    """`fetch(url) -> Page` is called once per URL per run (`pages` is the cache across records)."""
+def check_record(path: Path, frontmatter: dict, pages: dict[str, Page], fetch, known: set | None = None) -> RecordReport:
+    """`fetch(url) -> Page` is called once per URL per run (`pages` is the cache across records). A span in
+    `known` (already in this record on main) that would FAIL is reported as KNOWN instead."""
     rel = str(Path(path).resolve().relative_to(REPO)) if Path(path).resolve().is_relative_to(REPO) else str(path)
     report = RecordReport(rel)
     urls = cited_urls(frontmatter)
@@ -274,6 +281,9 @@ def check_record(path: Path, frontmatter: dict, pages: dict[str, Page], fetch) -
             report.quotes.append(QuoteVerdict(q, INCONCLUSIVE, f"not on any readable cited page; unreadable: {why}"))
         elif not urls:
             report.quotes.append(QuoteVerdict(q, FAIL, "the record cites no URL"))
+        elif q in (known or ()):
+            report.quotes.append(QuoteVerdict(q, KNOWN, f"on none of the {len(urls)} cited page(s); already on "
+                                                        "main, not written by this change"))
         else:
             report.quotes.append(QuoteVerdict(q, FAIL, f"on none of the {len(urls)} cited page(s)"))
     return report
@@ -292,12 +302,50 @@ def changed_records(base: str, repo: Path = REPO) -> list[Path] | None:
     return [repo / line for line in p.stdout.split("\n") if line.endswith(".md") and (repo / line).is_file()]
 
 
+def base_quotes(base: str, paths: list[Path], repo: Path = REPO) -> dict[Path, set]:
+    """{path: the quoted spans the record carries at the merge base of `base` and HEAD}, only for a record that
+    still cites every URL it cited there. A record that does not exist there (added by the branch), drops or
+    swaps a cited URL, or cannot be read at either end knows nothing, so its spans are all judged (an
+    unreadable base never excuses a quote)."""
+    out = {Path(p): set() for p in paths}
+    try:
+        mb = subprocess.run(["git", "merge-base", base, "HEAD"], cwd=repo, capture_output=True, text=True, timeout=60)
+    except (subprocess.TimeoutExpired, OSError):
+        return out
+    if mb.returncode != 0:
+        return out
+    for p in paths:
+        rel = Path(p).resolve().relative_to(Path(repo).resolve()).as_posix()
+        try:
+            show = subprocess.run(["git", "show", f"{mb.stdout.strip()}:{rel}"], cwd=repo, capture_output=True,
+                                  text=True, timeout=60)
+        except (subprocess.TimeoutExpired, OSError):
+            continue
+        if show.returncode != 0:
+            continue
+        try:
+            fm = yaml.safe_load(show.stdout.split("---", 2)[1]) if show.stdout.startswith("---") else None
+        except (yaml.YAMLError, IndexError):
+            continue
+        if not isinstance(fm, dict):
+            continue
+        # excused only while every URL the record cited on main is still cited (review BLOCK of #2087): a PR that
+        # drops or swaps a source can make an old span fail, and that failure is the PR's own
+        try:
+            head_fm, _ = parse_frontmatter(Path(p))
+        except Exception:  # noqa: BLE001 — an unreadable head excuses nothing
+            continue
+        if set(cited_urls(fm)) <= set(cited_urls(head_fm or {})):
+            out[Path(p)] = set(quotes_in(fm))
+    return out
+
+
 def default_base() -> str:
     ref = os.environ.get("GITHUB_BASE_REF")
     return f"origin/{ref}" if ref else "origin/main"
 
 
-def run(paths: list[Path], fetch, out=None) -> tuple[list[RecordReport], int]:
+def run(paths: list[Path], fetch, out=None, known: dict | None = None) -> tuple[list[RecordReport], int]:
     out = out or sys.stdout          # resolved at call time, so a test's captured stdout is the one written
     pages: dict[str, Page] = {}
     reports = []
@@ -305,15 +353,16 @@ def run(paths: list[Path], fetch, out=None) -> tuple[list[RecordReport], int]:
         fm, _body = parse_frontmatter(path)
         if not quotes_in(fm):
             continue
-        rep = check_record(path, fm, pages, fetch)
+        rep = check_record(path, fm, pages, fetch, (known or {}).get(Path(path)))
         reports.append(rep)
         print(f"{_MARKS[rep.verdict]} {rep.verdict:12s} {rep.path}", file=out)
         for q in rep.quotes:
             print(f"    {_MARKS[q.verdict]} {q.verdict:12s} {q.where}\n      \"{q.quote}\"", file=out)
-    n = {v: sum(1 for r in reports for q in r.quotes if q.verdict == v) for v in (PASS, FAIL, INCONCLUSIVE)}
+    n = {v: sum(1 for r in reports for q in r.quotes if q.verdict == v) for v in (PASS, FAIL, INCONCLUSIVE, KNOWN)}
     recs = {v: sum(1 for r in reports if r.verdict == v) for v in (PASS, FAIL, INCONCLUSIVE)}
     print(f"\n{len(reports)} record(s) with quotes: {recs[PASS]} pass, {recs[FAIL]} FAIL, {recs[INCONCLUSIVE]} inconclusive; "
-          f"{sum(n.values())} quote(s): {n[PASS]} pass, {n[FAIL]} FAIL, {n[INCONCLUSIVE]} inconclusive; "
+          f"{sum(n.values())} quote(s): {n[PASS]} pass, {n[FAIL]} FAIL, {n[INCONCLUSIVE]} inconclusive"
+          + (f", {n[KNOWN]} failing but already on main (not judged here)" if n[KNOWN] else "") + "; "
           f"{len(pages)} page(s) fetched", file=out)
     return reports, (1 if recs[FAIL] else 0)
 
@@ -328,18 +377,20 @@ def main(argv=None, fetch=None) -> int:
         paths = [p for _kind, p in iter_data_files()]
     elif args.paths:
         paths = [Path(p) for p in args.paths]
-    else:
+    known = None
+    if not args.all and not args.paths:
         paths = changed_records(args.base or default_base())
         if paths is None:
             print("could not take the diff against the base", file=sys.stderr)
             return 2
+        known = base_quotes(args.base or default_base(), paths)
     if fetch is None:
         if httpx is None:
             print("httpx is required to fetch the cited pages", file=sys.stderr)
             return 2
         client = httpx.Client(timeout=TIMEOUT_SECONDS, headers={"User-Agent": USER_AGENT})
         fetch = lambda url: fetch_page(client, url)  # noqa: E731
-    _reports, code = run(paths, fetch)
+    _reports, code = run(paths, fetch, known=known)
     return code
 
 

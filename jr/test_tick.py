@@ -920,3 +920,33 @@ def test_a_failed_re_read_keeps_the_first_listing_and_a_failed_first_read_is_non
         return Proc(returncode=0, stdout=json.dumps([{"number": 1, "mergeable": "UNKNOWN"}])) if n["i"] == 1 else Proc(returncode=1)
     assert tick._list_open_prs(gh) == [{"number": 1, "mergeable": "UNKNOWN"}]
     assert tick._list_open_prs(lambda *a: Proc(returncode=1)) is None
+
+
+# --- a stale CONFLICTING auto-route tick PR is refreshed, not a halt (2026-11-25) ------------------------------
+# Measured: auto-route tick PR #2081 sat behind main under strict protection, conflicted on bookkeeping once the
+# next tick merged, and from 17:00Z every tick aborted "a Jr tick PR has been open > 3 h ... needs a human". The
+# refresher only ever ran for jr-review PRs, and only after a tick that did NOT abort, so nothing in Jr could
+# clear it. Now the preflight hands a stale conflicting PR to the same refresher (its limits unchanged: bot-only
+# commits, bookkeeping conflicts only, catalog files byte-identical) before it declares the PR stuck.
+
+def _stale_conflicting(n=2081):
+    old = (NOW - timedelta(hours=6)).isoformat().replace("+00:00", "Z")
+    return json.dumps([{"number": n, "createdAt": old, "headRefName": "jr/tick-20261125-1100", "mergeable": "CONFLICTING",
+                        "headRefOid": "a" * 40, **JR_OWN}])
+
+
+def test_a_stale_conflicting_auto_pr_that_refreshes_does_not_abort_the_tick(tmp_path):
+    calls = []
+    def refresher(pr, **kw):
+        calls.append((pr["number"], kw.get("any_route")))
+        return {"pr": pr["number"], "status": "refreshed", "why": "2 bookkeeping conflict(s)"}
+    r = run(git=git_ok(tmp_path), gh=gh_ok(prs=_stale_conflicting()), refresher=refresher)
+    assert calls and calls[0] == (2081, True)
+    assert not (r.aborted or "").startswith("a Jr tick PR has been open")
+    assert any(x.get("pr") == 2081 and x.get("status") == "refreshed" for x in r.refreshed)
+
+
+def test_a_stale_conflicting_pr_the_refresher_cannot_clear_still_aborts(tmp_path):
+    refresher = lambda pr, **kw: {"pr": pr["number"], "status": "skipped", "why": "content conflict: data/x.md"}
+    r = run(git=git_ok(tmp_path), gh=gh_ok(prs=_stale_conflicting()), refresher=refresher)
+    assert r.aborted.startswith("a Jr tick PR has been open > 3 h: #2081")

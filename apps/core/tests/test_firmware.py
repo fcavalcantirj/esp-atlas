@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from esp_atlas_core.firmware import (
     boards_key,
     forks_key,
@@ -13,14 +16,16 @@ from esp_atlas_core.firmware import (
 )
 from esp_atlas_core.paths import DATA_DIR
 
-# The trust tiers a recipe may carry (must mirror schema/recipe.schema.json's
-# status enum). `known-good` means the maintainer/an official list names the
-# board, or esp-atlas verified it on real hardware; `reported` is cited but
-# community-sourced; `declared` is extracted from the repo's own board manifest
-# or README device table (provenance-cited, unverified on hardware,
-# SPEC-firmware-board-mapping.md); `unverified` is a plausible build target with
-# no verification; `broken` is a known regression.
-TRUST_TIERS = {"known-good", "reported", "declared", "unverified", "broken"}
+# The trust tiers a recipe may carry, READ from schema/recipe.schema.json's status enum so this test can never
+# drift from the schema again (2026-11-25: a hand copy missed `build-target`, added to the schema in #1993, and
+# turned the first two Jr build-target PRs red). `known-good` means the maintainer/an official list names the
+# board, or esp-atlas verified it on real hardware; `reported` is cited but community-sourced; `declared` is
+# extracted from the repo's own board manifest or README device table (provenance-cited, unverified on hardware,
+# SPEC-firmware-board-mapping.md); `unverified` is a plausible build target with no verification;
+# `build-target` is a machine-proved configuration fact (the project's PlatformIO config selects this board's
+# definition; not built or tested); `broken` is a known regression.
+TRUST_TIERS = set(json.loads((Path(__file__).resolve().parents[3] / "schema" / "recipe.schema.json")
+                             .read_text(encoding="utf-8"))["properties"]["status"]["enum"])
 
 
 def _folder_ids(kind):
@@ -89,6 +94,11 @@ def test_recipes_for_firmware_m5_crystal_is_no_longer_orphaned():
 def test_recipes_for_firmware_rogueduck_is_no_longer_orphaned():
     ids = {r["id"] for r in recipes_for_firmware("rogueduck")}
     assert ids >= {"m5stick-s3__rogueduck"}   # the catalog grows: these exist, more may
+
+
+def test_the_tier_list_is_the_schema_enum_including_build_target():
+    """The hand copy of the tiers missed `build-target` and failed Jr's first build-target PRs (#2053, #2074)."""
+    assert "build-target" in TRUST_TIERS and {"known-good", "reported", "declared", "unverified", "broken"} <= TRUST_TIERS
 
 
 def test_every_recipe_carries_a_valid_trust_tier():
