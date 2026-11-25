@@ -11879,12 +11879,13 @@
       "timestamp": "2026-11-18T08:00:31.492566+00:00"
     },
     "launcher-2122856028905095170": {
+      "expired_at": "2026-11-25T02:00:33.258476+00:00",
       "expires": "2026-11-25T02:00:31.876893+00:00",
       "id": "launcher-2122856028905095170",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'card gcalc original user:halasun'",
       "repo": "launcher:2122856028905095170",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-18T02:00:31.876893+00:00"
     },
     "launcher-2122980972947259394": {
@@ -24869,7 +24870,7 @@
       "pr_ref": "#1985",
       "repo": "takmashhido/sectrustkey",
       "status": "proposed",
-      "timestamp": "2026-11-25T01:00:33.119546+00:00"
+      "timestamp": "2026-11-25T02:00:33.258476+00:00"
     },
     "seed-phrase-checker": {
       "expired_at": "2026-11-07T08:00:55.079521+00:00",
