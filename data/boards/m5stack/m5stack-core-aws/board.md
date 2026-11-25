@@ -6,6 +6,10 @@ name: Core AWS
 soc: esp32
 aka:
 - M5Stack AWS
+usb_serial: ch9102
+getting_started: https://docs.m5stack.com/en/core/core2_for_aws
+images:
+  photo: https://static-cdn.m5stack.com/resource/docs/products/core/core2_for_aws/core2_for_aws_01.webp
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/core2_for_aws
@@ -13,6 +17,15 @@ sources:
 - field: aka
   url: https://github.com/7h30th3r0n3/Evil-M5Project#readme
   verified: '2026-09-21'
+- field: usb_serial
+  url: https://docs.m5stack.com/en/core/core2_for_aws
+  verified: '2026-11-25'
+- field: getting_started
+  url: https://docs.m5stack.com/en/core/core2_for_aws
+  verified: '2026-11-25'
+- field: images
+  url: https://docs.m5stack.com/en/core/core2_for_aws
+  verified: '2026-11-25'
 ---
 
 # Core AWS
