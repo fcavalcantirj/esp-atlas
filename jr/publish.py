@@ -344,6 +344,22 @@ def _err(p) -> str:
     return (getattr(p, "stderr", "") or "").strip()[:120]
 
 
+def _apply_label(pr_url: str, label: str, gh=default_gh, repo_slug: str | None = None) -> tuple[bool, str]:
+    """`gh pr edit --add-label`, then the REST issues endpoint (a different path than pr edit's GraphQL)."""
+    e = gh("pr", "edit", pr_url, "--add-label", label)
+    if _ok(e):
+        return True, ""
+    why = [f"pr edit --add-label: {_err(e)}"]
+    m = re.search(r"/pull/(\d+)", pr_url)
+    if m:
+        a = gh("api", "--method", "POST", f"repos/{repo_slug or '{owner}/{repo}'}/issues/{m.group(1)}/labels",
+               "-f", f"labels[]={label}")
+        if _ok(a):
+            return True, ""
+        why.append(f"REST issues labels: {_err(a)}")
+    return False, "; ".join(why)
+
+
 def apply_review_label(pr_url: str, gh=default_gh, repo_slug: str | None = None) -> tuple[bool, str]:
     """Put the jr-review label on the PR; returns (labelled, why-not). The label is ensured first
     (`label create --force` is idempotent, so a failure there is noted, not fatal — the label may
@@ -372,15 +388,20 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
             repo_slug: str | None = None, needs_human: bool = False,
             protection: ProtectionStatus | None = None, auto_merge: bool = True,
             trust: TrustStatus | None = None, branch: str | None = None,
-            stages: list | None = None) -> PublishResult:
+            stages: list | None = None, include_ledger: bool = True,
+            owner_label: str | None = None) -> PublishResult:
     """Stage `paths` (+ the ledger) in the worktree, commit, push a fresh `jr/tick-…` branch (or
     the caller's `branch`, e.g. the daily demand runner's `jr/demand-…`), open the PR, and request
     auto-merge only when allowed (see the module docstring). `stages` are the tick's stage-result
     dicts, read by review_routing (needs_human, device-evidence review items). Returns a
-    PublishResult; never raises for a normal "nothing to publish" or a refused deletion."""
+    PublishResult; never raises for a normal "nothing to publish" or a refused deletion.
+
+    `include_ledger=False` stages exactly `paths`. `owner_label` names the PR's single owner (root-cause plan step
+    3, 2026-11-26: backfills belong to jr-data-merge): the PR gets that label (REST fallback), is never routed to
+    jr-review and is never armed here."""
     now = now or datetime.now(timezone.utc)
     branch = branch or branch_name(now)
-    pathspec = list(dict.fromkeys([*paths, *memory.staged_paths()]))
+    pathspec = list(dict.fromkeys([*paths, *(memory.staged_paths() if include_ledger else [])]))
 
     # 1. stage exactly the pathspec; nothing else can reach the commit. git aborts the WHOLE add
     #    (rc 128, nothing staged) when one element matches nothing — that must not read as
@@ -419,6 +440,13 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
     if not _ok(pr):
         return PublishResult(False, branch=branch, commit=sha, paths=pathspec, reason="pr create failed")
     pr_url = (getattr(pr, "stdout", "") or "").strip()
+
+    # 5a. an owned PR: its owner decides the merge; no routing, no auto-merge here
+    if owner_label:
+        labelled, why = _apply_label(pr_url, owner_label, gh=gh, repo_slug=repo_slug)
+        return PublishResult(True, branch, sha, pr_url, False, pathspec,
+                             reason=f"owned by {owner_label}" + ("" if labelled else f" · label FAILED ({why})"),
+                             route=f"owner:{owner_label}", labelled=labelled)
 
     # 5. risk routing: a review route is labelled and NEVER auto-merges, labelled or not
     route = review_routing.classify(changes, stages or (), needs_human=needs_human)

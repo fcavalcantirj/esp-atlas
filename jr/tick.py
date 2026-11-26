@@ -66,6 +66,7 @@ from __future__ import annotations
 import argparse
 import fcntl
 import json
+import re
 import os
 import signal
 import subprocess
@@ -467,6 +468,41 @@ def _stuck_message(pr: dict, hours: float) -> str:
             f" · {state} · {touches} — needs a human (closing it rejects its firmware permanently)")
 
 
+_BOARD_MD = re.compile(r"^data/boards/[^/]+/[^/]+/board\.md$")
+BACKFILL_LABEL = "jr-data"
+
+
+def default_backfill_publisher(root: Path, paths: list, *, now, git, gh, slug, protection) -> dict:
+    """Publish the backfilled board files as their own PR (`jr/tick-<stamp>-bf`, label jr-data, no ledger, never
+    armed: jr-data-merge owns the merge), from a fresh worktree at origin/main. One open backfill PR at a time:
+    while one is open, this tick's backfill waits (the same boards are proposed again later, never twice at once)."""
+    p = gh("pr", "list", "--state", "open", "--label", BACKFILL_LABEL, "--json", "headRefName")
+    try:
+        open_bf = [x for x in json.loads(getattr(p, "stdout", "") or "[]") if str(x.get("headRefName", "")).endswith("-bf")]
+    except json.JSONDecodeError:
+        return {"skipped": "open backfill PRs unreadable"}
+    if getattr(p, "returncode", 1) != 0:
+        return {"skipped": "open backfill PRs unreadable"}
+    if open_bf:
+        return {"skipped": f"backfill PR {open_bf[0].get('headRefName')} still open"}
+    wt2 = publish.add_worktree(git)
+    try:
+        for rel in paths:
+            dst = Path(wt2.path) / rel
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            dst.write_bytes((Path(root) / rel).read_bytes())
+        stamp = now.strftime("%Y%m%d-%H%M")
+        res = publish.publish(wt2, list(paths), f"feat(jr): backfill {len(paths)} board(s) {stamp}",
+                              "Board fields backfilled by Jr's resolvers. Re-derived by the trusted `claims` check "
+                              "(backfill kind); merged by jr-data-merge, never by hand.\n",
+                              git=git, gh=gh, now=now, repo_slug=slug, protection=protection,
+                              branch=f"jr/tick-{stamp}-bf", auto_merge=False, include_ledger=False,
+                              owner_label=BACKFILL_LABEL)
+        return res.as_dict()
+    finally:
+        publish.remove_worktree(wt2, git=git)
+
+
 def _acquire_tick_lock(path: Path):
     """An exclusive, non-blocking flock so two real ticks can never overlap (incident 2026-10-09:
     the 23:52 and 00:00 ticks both rewrote the bookkeeping and #785 deadlocked). Returns the open
@@ -710,6 +746,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              admit_watcher: Callable | None = None,
              abort_watcher: Callable | None = None,
              refresher: Callable | None = None,
+             backfill_publisher: Callable | None = None,
              chores_runner: Callable | None = None) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
@@ -1012,6 +1049,21 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                     r.stall_watch = {"status": "unavailable", "why": f"{type(e).__name__}: {e}"}
                 _note_stall_watch(r)
 
+        # 6e. backfills are their own PR, owned by jr-data-merge (root-cause plan step 3, 2026-11-26): the board
+        #     files the backfill stage wrote leave the tick PR (which routed them to jr-review, where nothing
+        #     ever merged them) and go out through `backfill_publisher`; a dry run publishes nothing.
+        bf = [p for st in r.stages if st.get("name") == "backfill" for p in st.get("paths", []) if _BOARD_MD.match(p)]
+        if bf and backfill_publisher is not None:
+            for st in r.stages:
+                if st.get("name") == "backfill":
+                    st["paths"] = [p for p in st.get("paths", []) if p not in bf]
+            if not dry_run:
+                try:
+                    res_bf = backfill_publisher(root, bf, now=now, git=git, gh=gh, slug=slug, protection=protection) or {}
+                    r.warnings.append(f"backfill PR: {res_bf.get('pr_url') or res_bf.get('reason') or res_bf.get('skipped') or 'none'}")
+                except Exception as e:  # noqa: BLE001 — a backfill publish failure never aborts the tick
+                    r.warnings.append(f"backfill publish failed: {type(e).__name__}: {e}")
+
         # 7. guard once (data writes only), 8. publish — when a stage wrote OR memory changed;
         #    a ledger-only tick still ships, or every reconciliation would die with the worktree.
         ledger_changed = (bool(r.review_decisions) or bool(r.carried)
@@ -1159,6 +1211,7 @@ def main(argv=None) -> int:
                  lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None,
                  ci_watcher=default_ci_watcher, stall_watcher=default_stall_watcher, admit_watcher=default_admit_watcher,
                  abort_watcher=default_abort_watcher, refresher=review_refresh.refresh,
+                 backfill_publisher=default_backfill_publisher,
                  chores_runner=default_chores_runner)
     return 1 if r.aborted else 0
 

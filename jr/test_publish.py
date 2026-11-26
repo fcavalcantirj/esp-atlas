@@ -624,3 +624,29 @@ def test_a_stage_needs_review_item_routes_the_pr_to_review():
                           stages=stages)
     assert res.route == "review" and res.labelled and not res.auto_merge
     assert any("z/z" in r for r in res.review_reasons)
+
+
+# --- a PR owned by the data coordinator (root-cause plan step 3, 2026-11-26) ----------------------------------------
+# Backfills go out as their own PR: only the board files, no ledger, labelled jr-data, never routed to jr-review and
+# never armed here (jr-data-merge owns its merge). A label that will not apply is retried through REST.
+
+def test_an_owner_labelled_pr_carries_only_its_paths_no_ledger_no_route_no_auto_merge():
+    git = _git_ok(_z(("M", "data/boards/espressif/esp32-devkitc/board.md")))
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/31\n")})
+    res = publish.publish(WT, ["data/boards/espressif/esp32-devkitc/board.md"], "feat(jr): backfill", "body",
+                          git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=TRUSTED, branch="jr/tick-20260905-0407-bf",
+                          include_ledger=False, owner_label="jr-data")
+    assert norm_calls(git)[0] == ("add", "--", "data/boards/espressif/esp32-devkitc/board.md")
+    assert ("pr", "edit", "https://github.com/o/r/pull/31", "--add-label", "jr-data") in gh.calls
+    assert not any(c[:2] == ("pr", "merge") for c in gh.calls)
+    assert not any("jr-review" in c for c in gh.calls)
+    assert res.published and not res.auto_merge and res.labelled and res.route == "owner:jr-data"
+
+
+def test_an_owner_label_that_pr_edit_refuses_is_applied_through_rest():
+    git = _git_ok(_z(("M", "data/boards/espressif/esp32-devkitc/board.md")))
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/31\n"), ("pr", "edit"): (1, "")})
+    res = publish.publish(WT, ["data/boards/espressif/esp32-devkitc/board.md"], "s", "b", git=git, gh=gh, now=NOW,
+                          protection=PROTECTED_OK, trust=TRUSTED, include_ledger=False, owner_label="jr-data")
+    assert any(c[:3] == ("api", "--method", "POST") and c[3].endswith("/issues/31/labels") for c in gh.calls)
+    assert res.labelled
