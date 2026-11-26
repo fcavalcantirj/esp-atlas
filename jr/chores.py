@@ -30,6 +30,7 @@ import publish
 SKIP_PREFIXES = ("jr/tick-", "jr/research-")   # review_refresh and the demand retry own those
 CONTENT_PREFIXES = SKIP_PREFIXES                 # Jr's catalog PRs: a red check on one is healed on MAIN
 HUMAN_LABEL = "needs-human"
+DEMAND_PREFIX = "jr/demand-"
 DIGEST_HOUR = 12
 PR_FIELDS = ("number,headRefName,headRefOid,mergeStateStatus,isDraft,labels,baseRefName,isCrossRepository,updatedAt,"
              "createdAt,statusCheckRollup,autoMergeRequest")
@@ -410,7 +411,10 @@ def plan(gh, slug: str, prs: list) -> list[ci_watch.Verdict]:
         if not _eligible(pr):
             continue
         n, branch, head = pr["number"], pr["headRefName"], pr["headRefOid"]
-        if pr.get("mergeStateStatus") == "DIRTY":
+        # a demand PR's conflict is never heal work: the heal relay may not touch docs/demand/, so a dispatched
+        # job can only fail (2ebbc311 on #2057: two dispatches, then "gave up"). Its owner is the demand runner,
+        # which closes a superseded snapshot (demand_run._close_superseded) and republishes the next day.
+        if pr.get("mergeStateStatus") == "DIRTY" and not branch.startswith(DEMAND_PREFIX):
             out.append(ci_watch.pr_fix_verdict("conflict", n, branch, head))
         if HUMAN_LABEL in _labels(pr):
             v = agent_review.verdict_for_head(_comments(gh, slug, n), head)
