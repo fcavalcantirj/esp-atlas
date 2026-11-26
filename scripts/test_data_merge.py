@@ -128,3 +128,59 @@ def test_the_workflow_installs_what_the_script_imports():
     installs = " ".join(str(s.get("run", "")) for s in steps[:run_at])
     for need in ("pyyaml", "jsonschema", "-e apps/core"):
         assert need in installs, need
+
+
+# --- backfill PRs (root-cause plan, 2026-11-26): own switch, board-only scope, re-derived, fields counted ------------
+
+BF_ON = {"autonomy": {"backfill_automerge": True}, "env": {}}
+BOARDS = [{"path": "data/boards/espressif/esp32-devkitc/board.md", "status": "modified"},
+          {"path": "data/boards/espressif/esp32-s3-devkitc-1/board.md", "status": "modified"}]
+
+
+def bf_pr(**over):
+    return pr(headRefName="jr/tick-20261126-1300-bf", **over)
+
+
+def bf_state(**over):
+    s = {"checks": dict(GREEN), "behind_by": 0, "files": list(BOARDS), "bookkeeping_ok": True, "facts_today": 0,
+         "backfill": {"boards": 2, "pass": 2, "fields": 5, "problems": []}, "fields_today": 0}
+    s.update(over)
+    return s
+
+
+def test_a_backfill_pr_every_board_of_which_re_derives_merges():
+    d = dm.decide(bf_pr(), bf_state(), switches=BF_ON, now=NOW)
+    assert d["action"] == "merge", d
+
+
+@pytest.mark.parametrize("over, sw, why", [
+    ({}, ON, "backfill_automerge"),                                                    # its own switch
+    ({"backfill": {"boards": 2, "pass": 1, "fields": 5, "problems": ["esp32-devkitc: FAIL"]}}, BF_ON, "re-deriv"),
+    ({"backfill": {"boards": 0, "pass": 0, "fields": 0, "problems": []}}, BF_ON, "nothing"),   # zero claims: never
+    ({"files": BOARDS + [{"path": "jr/proposed_ledger.json", "status": "modified"}]}, BF_ON, "scope"),
+    ({"files": [{"path": "data/boards/x/y/board.md", "status": "added"}]}, BF_ON, "scope"),
+    ({"backfill": {"boards": 2, "pass": 2, "fields": dm.MAX_FIELDS_PER_PR + 1, "problems": []}}, BF_ON, "per PR"),
+    ({"fields_today": dm.MAX_FIELDS_PER_DAY}, BF_ON, "per day"),
+])
+def test_a_backfill_pr_outside_its_rules_never_merges(over, sw, why):
+    d = dm.decide(bf_pr(), bf_state(**over), switches=sw, now=NOW)
+    assert d["action"] != "merge" and why in d["why"], d
+
+
+def test_a_build_target_switch_never_merges_a_backfill_and_vice_versa():
+    assert dm.decide(pr(), state(), switches=BF_ON, now=NOW)["action"] != "merge"
+
+
+def test_one_pr_whose_state_cannot_be_read_never_stops_the_run(monkeypatch, capsys):
+    """Review BLOCK of #2126: a gather() failure on one PR (a missing dependency, a git error) used to kill the run."""
+    import json as _json
+    prs = [pr(number=5, headRefName="jr/tick-20261126-1300-bf"), pr(number=6)]
+    monkeypatch.setattr(dm.demand_canary, "default_gh", lambda *a: _json.dumps(prs) if a[:2] == ("pr", "list") else "[]")
+    def gather(gh, slug, p):
+        if p["number"] == 5:
+            raise AttributeError("module 'check_claims' has no attribute 'check_board_backfill'")
+        return state()
+    monkeypatch.setattr(dm, "gather", gather)
+    assert dm.main([]) == 0
+    out = capsys.readouterr().out
+    assert "#5 skip: state unreadable" in out and "#6 " in out
