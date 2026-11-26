@@ -4093,7 +4093,7 @@
       "pr_ref": "#2098",
       "repo": "martin-ger/esp32_nat_router",
       "status": "proposed",
-      "timestamp": "2026-11-26T03:00:32.957094+00:00"
+      "timestamp": "2026-11-26T04:00:33.021130+00:00"
     },
     "esp32-navigation": {
       "expires": "2026-12-16T05:00:31.772256+00:00",
@@ -17470,7 +17470,7 @@
       "repo": "forged-in-feathers-technology/observore",
       "repo_id": 1366888527,
       "status": "proposed",
-      "timestamp": "2026-11-26T03:00:32.957094+00:00"
+      "timestamp": "2026-11-26T04:00:33.021130+00:00"
     },
     "oddlings": {
       "id": "oddlings",
@@ -17976,14 +17976,12 @@
       "timestamp": "2026-11-14T21:00:55.045531+00:00"
     },
     "paperweb": {
-      "expires": "2026-12-16T00:00:31.813641+00:00",
       "id": "paperweb",
-      "pr_ref": null,
-      "reason": "already_catalogued: artem76228/paperweb is already in the atlas",
+      "pr_ref": "#2102",
       "repo": "artem76228/paperweb",
       "repo_id": 1189881877,
-      "status": "rejected",
-      "timestamp": "2026-11-16T00:00:31.813641+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-26T04:00:33.021130+00:00"
     },
     "password-manager": {
       "expires": "2026-12-15T22:00:31.751655+00:00",
@@ -28091,13 +28089,31 @@
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "xiaotai-esp32": {
-      "expires": "2027-01-25T03:00:32.957094+00:00",
+      "expires": "2027-01-25T03:03:16+00:00",
+      "history": [
+        {
+          "expires": "2027-01-25T03:00:32.957094+00:00",
+          "id": "xiaotai-esp32",
+          "pr_ref": null,
+          "reason": "needs_review_target: idf_component: an idf_component.yml but no ESP-IDF project (CMakeLists.txt including project.cmake); release_bin: v0.4.0_cores3-lite_idf5.5_merged.bin needs review: merged flash image: a 3-segment image at 0x0, then a partition table at 0x8",
+          "repo": "tangeai/xiaotai-esp32",
+          "status": "rejected",
+          "timestamp": "2026-11-26T03:00:32.957094+00:00"
+        }
+      ],
       "id": "xiaotai-esp32",
       "pr_ref": null,
-      "reason": "needs_review_target: idf_component: an idf_component.yml but no ESP-IDF project (CMakeLists.txt including project.cmake); release_bin: v0.4.0_cores3-lite_idf5.5_merged.bin needs review: merged flash image: a 3-segment image at 0x0, then a partition table at 0x8",
+      "reason": "needs_review_target: owner review raised in #2102",
       "repo": "tangeai/xiaotai-esp32",
+      "review": {
+        "evidence": null,
+        "evidence_rev": null,
+        "outcome": "open",
+        "pr_ref": "#2102",
+        "raised_at": "2026-11-26T03:03:16+00:00"
+      },
       "status": "rejected",
-      "timestamp": "2026-11-26T03:00:32.957094+00:00"
+      "timestamp": "2026-11-26T03:03:16+00:00"
     },
     "xiaotian-esp32-ai": {
       "expires": "2026-12-19T14:00:32.325670+00:00",
