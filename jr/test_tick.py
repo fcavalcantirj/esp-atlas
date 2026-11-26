@@ -1006,3 +1006,11 @@ def test_default_backfill_publisher_publishes_owner_labelled_without_the_ledger(
     assert out["pr_url"].endswith("/77") and seen["removed"] is wt2
     assert seen["paths"] == [BOARD] and seen["include_ledger"] is False and seen["owner_label"] == "jr-data"
     assert seen["auto_merge"] is False and seen["branch"].endswith("-bf")
+
+
+def test_a_stale_coordinator_owned_data_pr_never_halts_the_tick(tmp_path):
+    old = (NOW - timedelta(hours=9)).isoformat().replace("+00:00", "Z")
+    prs = json.dumps([{"number": 88, "createdAt": old, "headRefName": "jr/tick-20261126-0300-bf",
+                       "labels": [{"name": "jr-data"}], **JR_OWN}])
+    r = run(git=git_ok(tmp_path), gh=gh_ok(prs=prs))
+    assert not (r.aborted or "").startswith("a Jr tick PR has been open")

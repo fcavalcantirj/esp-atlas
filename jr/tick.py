@@ -351,6 +351,10 @@ def _triage_tick_prs(gh, prs: list, now: datetime, hours: float) -> tuple[list, 
     for pr in prs:
         if review_routing.has_review_label(pr):
             continue
+        # a coordinator-owned data PR (jr-data: backfills, build-target facts) is jr-data-merge's to merge or time
+        # out; it never halts the tick (root-cause plan step 4, 2026-11-26)
+        if any((l or {}).get("name") == BACKFILL_LABEL for l in pr.get("labels") or []):
+            continue
         age = _pr_age_hours(pr, now)
         is_stale = age is not None and age > hours
         conflicting = pr.get("mergeable") == "CONFLICTING"
