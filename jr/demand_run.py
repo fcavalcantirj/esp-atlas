@@ -308,6 +308,27 @@ def _snapshot_only(pr: dict) -> bool:
     return True
 
 
+_REST_STATUS = {"added": "ADDED", "modified": "MODIFIED", "removed": "DELETED", "renamed": "RENAMED",
+                "copied": "COPIED", "changed": "CHANGED", "unchanged": "UNCHANGED"}
+
+
+def _with_rest_files(gh, pr: dict) -> dict:
+    """`pr` with its file list from REST pulls/<n>/files (status per file, every gh version), counted against the
+    listing's changedFiles. 2026-11-26: the runner's gh 2.46 lists files WITHOUT changeType, so _snapshot_only
+    never saw positive evidence and a superseded snapshot (#2057) stayed open until it conflicted. Unreadable →
+    `pr` unchanged (then _snapshot_only decides on what the listing gave, i.e. nothing is closed on a guess)."""
+    p = gh("api", f"repos/{{owner}}/{{repo}}/pulls/{pr.get('number')}/files", "--paginate")
+    try:
+        rest = json.loads(getattr(p, "stdout", "") or "null") if getattr(p, "returncode", 1) == 0 else None
+    except json.JSONDecodeError:
+        rest = None
+    if not isinstance(rest, list) or not rest:
+        return pr
+    files = [{"path": f.get("filename"), "changeType": _REST_STATUS.get(str(f.get("status")), str(f.get("status")).upper())}
+             for f in rest if isinstance(f, dict)]
+    return {**pr, "files": files}
+
+
 def _close_superseded(gh, keep_branch: str, prefix: str = BRANCH_PREFIX) -> list[int]:
     p = gh("pr", "list", "--state", "open", "--limit", "500", "--json", "number,headRefName,labels,files,changedFiles")
     try:
@@ -320,7 +341,7 @@ def _close_superseded(gh, keep_branch: str, prefix: str = BRANCH_PREFIX) -> list
         # Every run starts from main, not the previous PR. Never discard an unmerged
         # queue or its human lifecycle data merely because a new queue was generated.
         if (head.startswith(prefix) and not head.startswith(QUEUE_ONLY_PREFIX) and head != keep_branch
-                and not review_routing.has_review_label(pr) and _snapshot_only(pr)):
+                and not review_routing.has_review_label(pr) and _snapshot_only(_with_rest_files(gh, pr))):
             r = gh("pr", "close", str(pr.get("number")), "--comment", SUPERSEDED_COMMENT, "--delete-branch")
             if getattr(r, "returncode", 1) == 0:
                 closed.append(pr.get("number"))
