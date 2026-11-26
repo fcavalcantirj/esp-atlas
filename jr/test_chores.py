@@ -1256,3 +1256,14 @@ def test_no_update_when_not_behind_not_armed_red_or_not_a_snapshot(tmp_path, kw)
     store, gh = _store(tmp_path), RedGh([_snap(**kw)])
     chores.run(gh, store, NOW, slug="o/r")
     assert not [c for c in gh.calls if c[:3] == ("api", "-X", "PUT") and "/2057/" in c[3]]
+
+
+def test_a_conflicting_demand_snapshot_is_never_a_heal_job(tmp_path):
+    """Observed 2026-11-26 (heal state on the runner, abandoned_at 23:00Z): 2ebbc311 dispatched a heal twice for #2057 (jr/demand-*); the relay may never touch
+    docs/demand/, so it could only fail and 'give up'. The demand runner's superseded-close owns it."""
+    store = _store(tmp_path)
+    p = pr(2057, "DIRTY", branch="jr/demand-20261124-1115")
+    chores.run(Gh([p]), store, NOW, slug="o/r")
+    assert not any(k.startswith("conflict:#2057") for k in _incidents(store))
+    chores.run(Gh([pr(40, "DIRTY", branch="feat/z")]), store, LATER, slug="o/r")
+    assert "conflict:#40" in _incidents(store)                                 # a code PR still gets its fix job
