@@ -4094,7 +4094,7 @@
       "pr_ref": "#2098",
       "repo": "martin-ger/esp32_nat_router",
       "status": "proposed",
-      "timestamp": "2026-11-26T17:00:33.300768+00:00"
+      "timestamp": "2026-11-26T18:00:33.472047+00:00"
     },
     "esp32-navigation": {
       "expires": "2026-12-16T05:00:31.772256+00:00",
@@ -17472,7 +17472,7 @@
       "pr_ref": "#2101",
       "repo": "forged-in-feathers-technology/observore",
       "status": "proposed",
-      "timestamp": "2026-11-26T17:00:33.300768+00:00"
+      "timestamp": "2026-11-26T18:00:33.472047+00:00"
     },
     "oddlings": {
       "id": "oddlings",
