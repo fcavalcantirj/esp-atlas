@@ -477,7 +477,7 @@
     },
     "lolin-s3": {
       "board": "lolin-s3",
-      "expires": "2026-11-26T01:00:32.121052+00:00",
+      "expires": "2026-12-03T01:00:33.067521+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -490,11 +490,12 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-19T01:00:32.121052+00:00"
+      "timestamp": "2026-11-26T01:00:33.067521+00:00",
+      "url": "https://www.wemos.cc/en/latest/s3/s3.html"
     },
     "lolin-s3-mini": {
       "board": "lolin-s3-mini",
-      "expires": "2026-11-26T01:00:32.121052+00:00",
+      "expires": "2026-12-03T01:00:33.067521+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -502,7 +503,8 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-19T01:00:32.121052+00:00"
+      "timestamp": "2026-11-26T01:00:33.067521+00:00",
+      "url": "https://www.wemos.cc/en/latest/s3/s3_mini.html"
     },
     "m5atom-lite": {
       "board": "m5atom-lite",
