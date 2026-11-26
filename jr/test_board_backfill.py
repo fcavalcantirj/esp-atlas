@@ -740,19 +740,21 @@ def test_m5stack_core2_grounds_getting_started_usb_serial_and_images(tmp_path):
 
     assert entry["status"] == "backfilled"
     assert entry["url"] == url
-    assert set(entry["written"]) == {"usb_serial", "getting_started", "images"}
-    assert set(entry["omitted"]) == {"download_mode"}
+    # 2026-11-26: the page states "USB Chip CP2104/CH9102F (two chip versions ...)" and "Actual shipments
+    # include CP2104 and CH9102F chip versions": two chips for one product is ambiguous, so usb_serial is OMITTED
+    assert set(entry["written"]) == {"getting_started", "images"}
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial"}
     assert entry["partial"] is True
 
     fm, _ = bb.parse_frontmatter(path)
-    assert fm["usb_serial"] == "ch9102"          # the page explicitly names CH9102
+    assert "usb_serial" not in fm
     assert fm["getting_started"] == url
     assert "download_mode" not in fm             # OMITTED — never forced
     # images grounded by HTML context: hero photo + the PinMap-section GPIO diagram.
     assert fm["images"]["photo"].endswith("core2_01.jpg")
     assert fm["images"]["pinout"].endswith("M5StackM5Core2GPIO.png")
     cited = {s["field"]: s for s in fm["sources"]}
-    for field in ("usb_serial", "getting_started", "images"):
+    for field in ("getting_started", "images"):
         assert cited[field]["url"] == url and cited[field]["verified"] == TODAY
 
 
@@ -809,7 +811,7 @@ def test_m5stack_usb_serial_values_are_schema_enum_valid():
                ["properties"]["usb_serial"]["enum"])
     for name in ("m5stack-core2", "m5cardputer"):
         val = bb.extract_usb_serial(bb._visible_text(_fixture(name)))
-        assert val in enum
+        assert val is None or val in enum            # omitted (ambiguous) or a schema value, never anything else
 
 
 def test_m5stack_download_mode_core2_omitted_and_espressif_img_heuristic_finds_nothing():
@@ -1048,19 +1050,22 @@ def test_adafruit_feather_v2_grounds_usb_serial_download_mode_and_photo(tmp_path
 
     assert entry["status"] == "backfilled"
     assert entry["url"] == url
-    assert set(entry["written"]) == {"download_mode", "usb_serial", "getting_started", "images"}
-    assert entry["omitted"] == []
-    assert entry["partial"] is False
+    # 2026-11-26: the page states the board moved from CP2104 to CH9102F and that "Boards shipped before May 19,
+    # 2022 used the CP2102N chip": revisions differ, so no single usb_serial is true for the product -> OMITTED
+    # (the old first-token match wrote cp2102n, the PRE-2022 chip)
+    assert set(entry["written"]) == {"download_mode", "getting_started", "images"}
+    assert entry["omitted"] == ["usb_serial"]
+    assert entry["partial"] is True
 
     fm, _ = bb.parse_frontmatter(path)
-    assert fm["usb_serial"] == "cp2102n"
+    assert "usb_serial" not in fm
     assert fm["download_mode"]["mode"] == "auto"
     assert fm["getting_started"] == url
     assert fm["images"] == {
         "photo": "https://cdn-learn.adafruit.com/guides/images/000/003/544/medium800/FV2_top_angle.jpg"}
     assert "pinout" not in fm["images"]  # deferred to the /pinouts sub-page
     cited = {s["field"]: s for s in fm["sources"]}
-    for field in ("download_mode", "usb_serial", "getting_started", "images"):
+    for field in ("download_mode", "getting_started", "images"):
         assert cited[field]["url"] == url and cited[field]["verified"] == TODAY
 
 
@@ -1106,7 +1111,7 @@ def test_adafruit_usb_serial_values_are_schema_enum_valid():
                ["properties"]["usb_serial"]["enum"])
     for name in ("adafruit-feather-esp32-v2", "adafruit-qt-py-esp32-c3"):
         val = bb.extract_usb_serial(bb._visible_text(_fixture(name)))
-        assert val in enum
+        assert val is None or val in enum
 
 
 def test_adafruit_filename_fallback_finds_nothing_motivates_context_extractor():
@@ -1312,7 +1317,9 @@ def test_lilygo_usb_serial_chrome_false_positive_is_gated_not_written(tmp_path):
     # on the real page (the site-wide "Driver of CH9102" nav chrome present on every lilygo.cc
     # product page), so usb_serial is declared UNGROUNDABLE for lilygo and gated off — proven
     # here: the extractor reads ch9102 off the fixture, but backfill must NOT write it.
-    assert bb.extract_usb_serial(bb._visible_text(_fixture("lilygo-t-qt-pro"))) == "ch9102"
+    # 2026-11-26: <header>/<nav>/<footer> chrome is no longer page text, so the extractor itself no longer
+    # false-positives; the vendor gate stays as a second line
+    assert bb.extract_usb_serial(bb._visible_text(_fixture("lilygo-t-qt-pro"))) is None
     assert "usb_serial" in bb.VENDOR_UNGROUNDABLE_FIELDS["lilygo"]
 
     bid, soc = "lilygo-t-qt-pro", "esp32-s3"
@@ -1545,12 +1552,14 @@ def _heltec_fetcher_for(bid, fixture_name):
     return url, _fetcher({url: _fixture(fixture_name)})
 
 
-@pytest.mark.parametrize("name", ["heltec-wifi-kit-32-v3", "heltec-wifi-lora-32-v3"])
-def test_heltec_usb_serial_grounds_cp2102_where_page_names_it(name):
-    # (d) the two boards whose doc page states "Integrated CP2102 ... serial port chip" ground
-    # usb_serial=cp2102 (a schema-valid enum value). This is grounded off the page text.
+@pytest.mark.parametrize("name,expected", [("heltec-wifi-kit-32-v3", "cp2102"), ("heltec-wifi-lora-32-v3", None)])
+def test_heltec_usb_serial_grounds_cp2102_where_page_names_it(name, expected):
+    # (d) wifi-kit-32-v3's page states "Integrated CP2102 ... serial port chip" -> cp2102. wifi-lora-32-v3's page
+    # carries a V3/V4 comparison table ("USB-UART Chip Integrated CP2102 Removed CP2102"); flattened text cannot
+    # tell which column is which product, so the chip is contested and OMITTED (2026-11-26: the V4 board read
+    # cp2102 off this very table, but V4 removed it). Safe loss: the live V3 record is unchanged.
     val = bb.extract_usb_serial(bb._visible_text(_fixture(name)))
-    assert val == "cp2102", f"{name} → {val!r}"
+    assert val == expected, f"{name} → {val!r}"
 
 
 @pytest.mark.parametrize("name", ["heltec-wireless-stick-v3", "heltec-wireless-tracker",
@@ -2978,3 +2987,47 @@ def test_waveshare_board_404_skipped_cleanly(tmp_path):
     assert entry["reason"] == "doc-unreachable"
     assert entry["modified"] is False
     assert path.read_text() == before
+
+
+# ── usb_serial / download_mode from a POSITIVE statement about this product (2026-11-26) ─────────────
+# Measured: the M5Stack Core Basic and Core2 for AWS pages list TWO chip versions (CP2104 and CH9102), and Jr
+# wrote `usb_serial: ch9102` for both (#2095, #2098, #2101): one revision's chip stated as the board's. A chip
+# named only in a driver list, a negation, or an optional accessory is not a statement about the product; two
+# distinct chips stated for the product is ambiguous. Both are OMITTED (cite-or-omit), with the reason.
+
+@pytest.mark.parametrize("text,expected", [
+    ("This board does not use CP2102; its USB bridge is CH9102.", "ch9102"),
+    ("Optional adapter CH9102 sold separately.", None),
+    ("Two driver-chip versions are available: CP210X (for CP2104) and CP34X (for CH9102).", None),
+    ("USB Chip CP2104/CH9102F (two chip versions, no functional difference)", None),
+    ("The board uses a CP2102N USB-to-UART bridge.", "cp2102n"),
+    ("USB Chip CH340C DC-DC Boost", "ch340"),
+    ("USB Chip CP2104 DC-DC Boost", None),                   # cp2104 is not in the schema enum: omit
+    ("Parameters V3 V4 USB to Serial Chip CP2102 Removed CP2102 Power Management", None),   # Heltec V3/V4 table
+])
+def test_usb_serial_needs_one_positive_chip_statement(text, expected):
+    assert bb.extract_usb_serial(text) == expected
+
+
+def test_usb_serial_says_why_it_omits():
+    val, why = bb.explain_usb_serial("USB Chip CP2104/CH9102F (two chip versions)")
+    assert val is None and "cp2104" in why and "ch9102" in why
+    val, why = bb.explain_usb_serial("USB Chip CP2104 DC-DC Boost")
+    assert val is None and "not in the schema" in why
+
+
+@pytest.mark.parametrize("fixture", ["m5stack-core-basic", "m5stack-core2-for-aws"])
+def test_the_two_real_m5stack_pages_that_list_two_chip_versions_omit_usb_serial(fixture):
+    # Basic names chips only in its driver table; Core2 for AWS states "USB Chip CP2104" (not in the enum)
+    # beside a driver table naming CH9102. Neither may become `ch9102`.
+    assert bb.extract_usb_serial(bb._visible_text(_fixture(fixture))) is None
+
+
+def test_download_mode_never_reads_a_negated_automatic_download_as_auto():
+    assert bb.extract_download_mode("This product does not support automatic download.") is None
+
+
+def test_site_chrome_never_names_the_products_chip():
+    raw = ('<html><header><nav><a href="/driver-of-ch9102">Driver of CH9102</a></nav></header>'
+           '<main><p>ESP32-S3 with native USB support.</p></main><footer>CH340 drivers</footer></html>')
+    assert bb.extract_usb_serial(bb._visible_text(raw)) is None
