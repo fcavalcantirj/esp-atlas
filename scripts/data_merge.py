@@ -135,8 +135,9 @@ def decide(pr: dict, st: dict, *, switches: dict, now: str) -> dict:
         return out("skip", f"required check not passing: {', '.join(failed)}")
     if any(checks.get(c) == "pending" for c in REQUIRED_CHECKS):
         return out("wait", "required checks still running")
-    if st.get("behind_by", 0) > 0:
-        return out("update-branch", f"head is {st['behind_by']} commit(s) behind main")
+    # behind main: GitHub's branch protection decides (2026-11-26). With strict off it merges a behind PR whose
+    # required checks passed; with strict on it refuses "not up to date", and act() then updates the branch. A
+    # coordinator-made update by the Actions token triggers no CI, so updating first would strand the PR.
     if backfill:
         files = st.get("files") or []
         bad = [f"{f['status']} {f['path']}" for f in files if not (_BOARD.match(f["path"]) and f["status"] == "modified")]
@@ -242,7 +243,12 @@ def _fields_today(repo: Path, today: str) -> int:
 def act(gh, slug: str, d: dict) -> str:
     n = str(d["pr"])
     if d["action"] == "merge":
-        return gh("pr", "merge", n, "--repo", slug, "--merge", "--match-head-commit", d["head"])
+        try:
+            return gh("pr", "merge", n, "--repo", slug, "--merge", "--match-head-commit", d["head"])
+        except Exception as e:  # noqa: BLE001 — refused: only an out-of-date head is ours to fix
+            if re.search(r"not up to date|out of date|behind", str(e), re.I):
+                return gh("api", "-X", "PUT", f"repos/{slug}/pulls/{n}/update-branch", "-f", f"expected_head_sha={d['head']}")
+            raise
     if d["action"] == "update-branch":
         # REST, not `gh pr update-branch` (the runner's gh 2.46 has none); expected_head_sha refuses a moved head
         return gh("api", "-X", "PUT", f"repos/{slug}/pulls/{n}/update-branch", "-f", f"expected_head_sha={d['head']}")

@@ -70,8 +70,19 @@ def test_pending_checks_wait_and_a_failed_check_never_merges():
     assert d["action"] == "skip" and "quotes" in d["why"]                    # a missing required check never passes
 
 
-def test_a_branch_behind_main_is_updated_never_merged():
-    assert decide(s=state(behind_by=3))["action"] == "update-branch"
+def test_a_branch_behind_main_is_merged_when_github_allows_and_updated_when_it_refuses():
+    """2026-11-26: GitHub's protection decides; an Actions-token update first would trigger no CI and strand the PR."""
+    assert decide(s=state(behind_by=3))["action"] == "merge"
+
+    class Refuses(FakeGh):
+        def __call__(self, *a):
+            self.calls.append(a)
+            if a[:2] == ("pr", "merge"):
+                raise RuntimeError("Pull request is not up to date with the base branch")
+            return ""
+    gh = Refuses()
+    dm.act(gh, "o/r", {"pr": 7, "head": "a" * 40, "action": "merge", "why": ""})
+    assert gh.calls[-1] == ("api", "-X", "PUT", "repos/o/r/pulls/7/update-branch", "-f", f"expected_head_sha={'a' * 40}")
 
 
 @pytest.mark.parametrize("files, why", [
