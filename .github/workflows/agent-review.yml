@@ -36,6 +36,7 @@ jobs:
       github.event.label.name == 'review-fallback' &&
       !startsWith(github.head_ref, 'jr/tick-') &&
       !startsWith(github.head_ref, 'jr/research-') &&
+      !startsWith(github.head_ref, 'jr/demand-') &&
       github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     # this job runs the PR's code (its tests, pip install): it holds NO write token; the verdict leaves only as a
@@ -202,10 +203,12 @@ jobs:
     # GitHub cancels auto-merge only on pushes by users WITHOUT write access)
     # Jr's own AUTO-routed tick PR (bookkeeping, no jr-review label) keeps the auto-merge the bot requested: a
     # push to it is the bot's own refresh or the chores' merge of main, and disarming it would strand the PR
-    # until the tick aborts on "a Jr tick PR has been open > 3 h".
+    # until the tick aborts on "a Jr tick PR has been open > 3 h". A demand snapshot is the same kind of PR: its
+    # owner is the publisher's auto-merge, and a refresh must not strand it (#2057, 2026-11-26).
     if: >-
       github.event_name == 'pull_request' && github.event.action == 'synchronize' &&
-      !(startsWith(github.head_ref, 'jr/tick-') && !contains(github.event.pull_request.labels.*.name, 'jr-review'))
+      !(startsWith(github.head_ref, 'jr/tick-') && !contains(github.event.pull_request.labels.*.name, 'jr-review')) &&
+      !(startsWith(github.head_ref, 'jr/demand-') && !contains(github.event.pull_request.labels.*.name, 'jr-review'))
     runs-on: ubuntu-latest
     permissions:
       contents: write

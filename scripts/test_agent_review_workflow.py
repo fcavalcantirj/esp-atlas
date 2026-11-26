@@ -299,3 +299,10 @@ def test_the_reviewer_can_run_every_python_test_ci_runs():
     for pkg in ("-e apps/core[test]", "-e apps/api[test]", "-e apps/cli[test]"):
         assert pkg in ci[0], pkg
         assert pkg in install, pkg
+
+
+def test_demand_snapshot_prs_are_neither_reviewed_nor_disarmed(jobs):
+    """One owner for a demand snapshot: the publisher's auto-merge (2026-11-26, #2057)."""
+    assert "!startsWith(github.head_ref, 'jr/demand-')" in jobs["agent-review"]["if"]
+    cond = jobs["disarm-on-push"]["if"]
+    assert "!(startsWith(github.head_ref, 'jr/demand-') && !contains(github.event.pull_request.labels.*.name, 'jr-review'))" in cond
