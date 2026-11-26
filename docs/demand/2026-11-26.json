@@ -1,0 +1,774 @@
+{
+ "date": "2026-11-26",
+ "window": {
+  "start": "2026-10-28",
+  "end": "2026-11-24"
+ },
+ "weight_formula_version": "v2",
+ "d2_available": true,
+ "gsc_pull_ok": true,
+ "count": 26,
+ "items": [
+  {
+   "term": "esp32 c5",
+   "raw_terms": [
+    "esp32 c5",
+    "esp32-c5"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 66,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 38.9,
+   "events": null,
+   "zero_result": null,
+   "weight": 256.74,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-c5"
+   },
+   "gap": "RANKS_POORLY",
+   "landing_page": "https://esp-atlas.com/parts/esp32-c5",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "esp32 s2",
+   "raw_terms": [
+    "esp32 s2",
+    "esp32-s2"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 40,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 57.6,
+   "events": null,
+   "zero_result": null,
+   "weight": 230.4,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-s2"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-s2",
+   "first_seen": "2026-11-25",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "flipper zero esp32 port",
+   "raw_terms": [
+    "esp32 flipper port",
+    "flipper esp32 port",
+    "flipper port esp32",
+    "flipper zero esp32",
+    "flipper zero esp32 port",
+    "flipper zero firmware for esp32",
+    "flipper zero port",
+    "flipper zero port esp32",
+    "flipper-zero-esp32-port",
+    "sor3nt flipper zero",
+    "sor3nt/flipper-zero-esp32-port"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 360,
+   "clicks": 8,
+   "ctr": 0.0222,
+   "position": 6.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 228.81,
+   "trends_interest": 0,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": "flipper-zero-esp32-adv",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/flipper-zero-esp32-adv",
+   "first_seen": "2026-11-22",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "esp32 c6",
+   "raw_terms": [
+    "esp32 c6",
+    "esp32 c6 specs",
+    "esp32-c6"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 60,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 29.4,
+   "events": null,
+   "zero_result": null,
+   "weight": 176.4,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-c6"
+   },
+   "gap": "RANKS_POORLY",
+   "landing_page": "https://esp-atlas.com/parts/esp32-c6",
+   "first_seen": "2026-11-15",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "esp32-s31",
+   "raw_terms": [
+    "esp32 s31",
+    "esp32-s31"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 73,
+   "clicks": 1,
+   "ctr": 0.0137,
+   "position": 11.6,
+   "events": null,
+   "zero_result": null,
+   "weight": 99.81,
+   "trends_interest": 39,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32-s3",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-s31"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-s31",
+   "first_seen": "2026-11-25",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "bruce esp",
+   "raw_terms": [
+    "bruce esp",
+    "bruce esp32",
+    "bruce firmware",
+    "bruce firmware esp32",
+    "esp32 bruce"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 109,
+   "clicks": 2,
+   "ctr": 0.0183,
+   "position": 8.7,
+   "events": null,
+   "zero_result": null,
+   "weight": 93.09,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "bruce",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/bruce",
+   "first_seen": "2026-11-26",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "picoware",
+   "raw_terms": [
+    "picoware"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 102,
+   "clicks": 1,
+   "ctr": 0.0098,
+   "position": 7.4,
+   "events": null,
+   "zero_result": null,
+   "weight": 74.74,
+   "trends_interest": 0,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "picoware",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/picoware",
+   "first_seen": "2026-11-08",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "esp32 marauder",
+   "raw_terms": [
+    "esp32 marauder",
+    "marauder esp32 firmware",
+    "marauder firmware"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 70,
+   "clicks": 3,
+   "ctr": 0.0429,
+   "position": 10.2,
+   "events": null,
+   "zero_result": null,
+   "weight": 68.34,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": "esp32marauder",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/esp32marauder",
+   "first_seen": "2026-11-26",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "esp32 s3 specs",
+   "raw_terms": [
+    "esp32 s3 specs",
+    "esp32-s3"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 25,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 27.2,
+   "events": null,
+   "zero_result": null,
+   "weight": 68.0,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-s3"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-s3",
+   "first_seen": "2026-11-26",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "esp32-c3",
+   "raw_terms": [
+    "esp32-c3"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 16,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 40.4,
+   "events": null,
+   "zero_result": null,
+   "weight": 64.64,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32-c3",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-c3"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-c3",
+   "first_seen": "2026-11-21",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "esp32 h2",
+   "raw_terms": [
+    "esp32 h2"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 10,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 59.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 59.1,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-h2"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-h2",
+   "first_seen": "2026-11-26",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "term512",
+   "raw_terms": [
+    "term512"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 66,
+   "clicks": 1,
+   "ctr": 0.0152,
+   "position": 8.6,
+   "events": null,
+   "zero_result": null,
+   "weight": 55.9,
+   "trends_interest": 0,
+   "resolved": null,
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/firmware/area512",
+   "first_seen": "2026-11-08",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "advanceos cardputer",
+   "raw_terms": [
+    "advanceos cardputer",
+    "cardputer meshcore",
+    "cardputer zero firmware"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 75,
+   "clicks": 3,
+   "ctr": 0.04,
+   "position": 7.7,
+   "events": null,
+   "zero_result": null,
+   "weight": 55.44,
+   "trends_interest": null,
+   "resolved": {
+    "board": "m5cardputer",
+    "board_model": null,
+    "chip": "esp32-s3",
+    "firmware_token": "advanceos-for-cardputer",
+    "capability": [],
+    "part": null
+   },
+   "gap": "UNCOVERED",
+   "landing_page": "https://esp-atlas.com/firmware/flipper-zero-meets-m5stack-cardputer",
+   "first_seen": "2026-11-18",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "area 512 cardputer",
+   "raw_terms": [
+    "area 512 cardputer",
+    "area512 cardputer"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 49,
+   "clicks": 1,
+   "ctr": 0.0204,
+   "position": 6.0,
+   "events": null,
+   "zero_result": null,
+   "weight": 28.8,
+   "trends_interest": null,
+   "resolved": {
+    "board": "m5cardputer",
+    "board_model": null,
+    "chip": "esp32-s3",
+    "firmware_token": "area512",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/area512",
+   "first_seen": "2026-11-15",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "ghost esp",
+   "raw_terms": [
+    "ghost esp"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 15,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 18.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 27.15,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "ghost-esp",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/ghost-esp",
+   "first_seen": "2026-11-15",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "fnk0104s",
+   "raw_terms": [
+    "fnk0104s"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 31,
+   "clicks": 1,
+   "ctr": 0.0323,
+   "position": 8.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 25.5,
+   "trends_interest": null,
+   "resolved": {
+    "board": "freenove-fnk0104s",
+    "board_model": "fnk0104s",
+    "chip": "esp32-s3",
+    "firmware_token": null,
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-s3",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "cathack firmware",
+   "raw_terms": [
+    "cathack",
+    "cathack firmware"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 52,
+   "clicks": 7,
+   "ctr": 0.1346,
+   "position": 4.9,
+   "events": null,
+   "zero_result": null,
+   "weight": 22.05,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "cathack",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/cathack",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "m5gotchi",
+   "raw_terms": [
+    "m5gotchi"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 34,
+   "clicks": 1,
+   "ctr": 0.0294,
+   "position": 5.6,
+   "events": null,
+   "zero_result": null,
+   "weight": 18.48,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "m5gotchi",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/m5gotchi",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "tagtinker",
+   "raw_terms": [
+    "tagtinker"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 21,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 8.6,
+   "events": null,
+   "zero_result": null,
+   "weight": 18.06,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "tagtinker-adv",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/tagtinker-adv",
+   "first_seen": "2026-11-11",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "evil cardputer",
+   "raw_terms": [
+    "evil cardputer"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 10,
+   "clicks": 1,
+   "ctr": 0.1,
+   "position": 19.6,
+   "events": null,
+   "zero_result": null,
+   "weight": 17.64,
+   "trends_interest": null,
+   "resolved": {
+    "board": "m5cardputer",
+    "board_model": null,
+    "chip": "esp32-s3",
+    "firmware_token": "evil-m5project",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/evil-portal-m5stack",
+   "first_seen": "2026-11-25",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "meshcore cardputer adv",
+   "raw_terms": [
+    "meshcore cardputer adv"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 16,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 10.0,
+   "events": null,
+   "zero_result": null,
+   "weight": 16.0,
+   "trends_interest": null,
+   "resolved": {
+    "board": "m5cardputer-adv",
+    "board_model": null,
+    "chip": "esp32-s3",
+    "firmware_token": "meshcore-cardputer",
+    "capability": [
+     "mesh"
+    ],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/meshcore-cardputer-adv",
+   "first_seen": "2026-11-20",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "area512",
+   "raw_terms": [
+    "area512"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 25,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 5.0,
+   "events": null,
+   "zero_result": null,
+   "weight": 12.5,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "area512",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/area512",
+   "first_seen": "2026-11-19",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "teamnerdminer@getalby.com",
+   "raw_terms": [
+    "teamnerdminer@getalby.com"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 14,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 8.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 11.34,
+   "trends_interest": null,
+   "resolved": null,
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/firmware/nerdminer-v2",
+   "first_seen": "2026-11-25",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "keeloq_mfcodes",
+   "raw_terms": [
+    "keeloq_mfcodes"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 16,
+   "clicks": 1,
+   "ctr": 0.0625,
+   "position": 6.4,
+   "events": null,
+   "zero_result": null,
+   "weight": 9.6,
+   "trends_interest": null,
+   "resolved": null,
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/firmware/flipper-zero-esp32-adv",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "esphome web flasher",
+   "raw_terms": [
+    "esphome web flasher"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 12,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 7.0,
+   "events": null,
+   "zero_result": null,
+   "weight": 8.4,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "esphome",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/esphome",
+   "first_seen": "2026-11-26",
+   "last_seen": "2026-11-26"
+  },
+  {
+   "term": "esp32-h4 datasheet",
+   "raw_terms": [
+    "esp32-h4 datasheet"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 10,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 5.2,
+   "events": null,
+   "zero_result": null,
+   "weight": 5.2,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32-h4",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-h4"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-h4",
+   "first_seen": "2026-11-19",
+   "last_seen": "2026-11-26"
+  }
+ ]
+}
