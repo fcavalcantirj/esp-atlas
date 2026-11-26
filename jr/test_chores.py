@@ -1181,3 +1181,48 @@ def test_the_growth_rule_reads_the_newest_row_per_day_in_date_order(tmp_path, mo
     rows = [trend_row("2026-11-19", firmware=172), trend_row("2026-11-18"), trend_row("2026-11-19", firmware=171)]
     monkeypatch.setattr(chores, "TREND", write_trend(tmp_path / "t.jsonl", rows))     # an appended re-run of the 19th
     assert "catalog +1 (2026-11-18→2026-11-19)" in _day(_store(tmp_path), _clean(), 19)
+
+
+# --- a fix that lands on main through ANY PR reaches the red PR (2026-11-25) ------------------------------------
+# Measured: #2053 went red on a test main fixed at 18:35Z through #2084 (not a Jr heal). red_prs had already used
+# its one merge of main for that failure, and a second one only followed a MERGED Jr heal, so #2053 stayed red and
+# its incident was abandoned with the fix already on main.
+
+class MainGreenGh(RedGh):
+    def __init__(self, prs, main_conclusion="success", **kw):
+        super().__init__(prs, **kw)
+        self.main_conclusion = main_conclusion
+
+    def __call__(self, *a):
+        if a[:1] == ("api",) and "/commits/main/check-runs" in a[1]:
+            self.calls.append(a)
+            runs = [] if self.main_conclusion is None else [
+                {"name": "tests", "status": "completed", "conclusion": self.main_conclusion, "started_at": "2026-11-19T13:00:00Z"}]
+            return SimpleNamespace(returncode=0, stdout=json.dumps({"check_runs": runs}), stderr="")
+        return super().__call__(*a)
+
+
+def _puts(gh):
+    return [c for c in gh.calls if c[:3] == ("api", "-X", "PUT")]
+
+
+def test_a_red_pr_gets_main_again_once_a_day_when_main_is_green_on_that_check(tmp_path):
+    store = _store(tmp_path)
+    chores.run(RedGh([tick_pr(28, [red()])], behind=3), store, NOW, slug="o/r")                 # rerun first
+    chores.run(RedGh([tick_pr(28, [red()])], behind=3), store, LATER, slug="o/r")               # first merge of main
+    gh = MainGreenGh([tick_pr(28, [red()], head=H2)], behind=2)
+    chores.run(gh, store, "2026-11-19T15:05:00+00:00", slug="o/r")
+    assert _puts(gh) == [("api", "-X", "PUT", "repos/o/r/pulls/28/update-branch", "-f", f"expected_head_sha={H2}")]
+    gh2 = MainGreenGh([tick_pr(28, [red()], head=H2)], behind=2)
+    chores.run(gh2, store, "2026-11-19T16:05:00+00:00", slug="o/r")
+    assert _puts(gh2) == []                                                                    # once per UTC day
+
+
+def test_no_second_merge_of_main_while_main_is_red_or_unreadable_on_that_check(tmp_path):
+    for conclusion in ("failure", None):
+        store = _store(tmp_path / str(conclusion))
+        chores.run(RedGh([tick_pr(28, [red()])], behind=3), store, NOW, slug="o/r")
+        chores.run(RedGh([tick_pr(28, [red()])], behind=3), store, LATER, slug="o/r")
+        gh = MainGreenGh([tick_pr(28, [red()], head=H2)], main_conclusion=conclusion, behind=2)
+        chores.run(gh, store, "2026-11-19T15:05:00+00:00", slug="o/r")
+        assert _puts(gh) == []
