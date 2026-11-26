@@ -7,5 +7,5 @@
   "pr_fix_dispatch": true,
   "build_target_shadow": true,
   "build_target_automerge": false,
-  "backfill_automerge": false
+  "backfill_automerge": true
 }
