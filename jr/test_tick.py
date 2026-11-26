@@ -950,3 +950,75 @@ def test_a_stale_conflicting_pr_the_refresher_cannot_clear_still_aborts(tmp_path
     refresher = lambda pr, **kw: {"pr": pr["number"], "status": "skipped", "why": "content conflict: data/x.md"}
     r = run(git=git_ok(tmp_path), gh=gh_ok(prs=_stale_conflicting()), refresher=refresher)
     assert r.aborted.startswith("a Jr tick PR has been open > 3 h: #2081")
+
+
+# --- backfills are their own PR, owned by jr-data-merge (root-cause plan step 3, 2026-11-26) -----------------------
+
+def _backfill_stage(paths):
+    def stage(ctx):
+        return tick.StageResult("backfill", paths=paths, summary="filled", produced=len(paths))
+    return stage
+
+
+BOARD = "data/boards/espressif/esp32-devkitc/board.md"
+
+
+def test_backfilled_boards_leave_the_tick_pr_for_their_own_pr(wt_dir):
+    git, gh, got = git_ok(wt_dir, diff=SIGNALS_REFRESH), gh_ok(), []
+    r = run(git=git, gh=gh, stages=[_backfill_stage([BOARD]), _stage(["data/firmware/x"])],
+            backfill_publisher=lambda root, paths, **kw: got.append((root, list(paths))) or {"pr_url": "https://github.com/o/r/pull/77"})
+    assert got == [(wt_dir, [BOARD])]
+    adds = [c for c in norm(git) if c[:1] == ("add",)]
+    assert adds and all(BOARD not in c for c in adds)                      # the tick PR does not carry it
+    assert any("pull/77" in w for w in r.warnings)
+
+
+def test_a_dry_run_never_publishes_a_backfill_pr(wt_dir):
+    got = []
+    run(dry_run=True, git=git_ok(wt_dir), gh=gh_ok(), stages=[_backfill_stage([BOARD])],
+        backfill_publisher=lambda root, paths, **kw: got.append(paths) or {})
+    assert got == []
+
+
+def test_default_backfill_publisher_waits_while_one_backfill_pr_is_open(monkeypatch, tmp_path):
+    from types import SimpleNamespace as P
+    gh = lambda *a: P(returncode=0, stdout=json.dumps([{"headRefName": "jr/tick-20261126-0900-bf"}]), stderr="")
+    monkeypatch.setattr(tick.publish, "add_worktree", lambda git: pytest.fail("no worktree while one is open"))
+    out = tick.default_backfill_publisher(tmp_path, [BOARD], now=NOW, git=None, gh=gh, slug="o/r", protection=None)
+    assert "still open" in out["skipped"]
+
+
+def test_default_backfill_publisher_publishes_owner_labelled_without_the_ledger(monkeypatch, tmp_path):
+    from types import SimpleNamespace as P
+    (tmp_path / "src" / BOARD).parent.mkdir(parents=True)
+    (tmp_path / "src" / BOARD).write_text("---\nid: x\n---\n")
+    wt2 = P(path=tmp_path / "wt2")
+    seen = {}
+    monkeypatch.setattr(tick.publish, "add_worktree", lambda git: wt2)
+    monkeypatch.setattr(tick.publish, "remove_worktree", lambda wt, git=None: seen.setdefault("removed", wt))
+    def fake_publish(wt, paths, subject, body, **kw):
+        seen.update(paths=paths, **kw)
+        assert (wt.path / BOARD).read_text() == "---\nid: x\n---\n"          # copied into the fresh worktree
+        return P(as_dict=lambda: {"pr_url": "https://github.com/o/r/pull/77"})
+    monkeypatch.setattr(tick.publish, "publish", fake_publish)
+    gh = lambda *a: P(returncode=0, stdout="[]", stderr="")
+    out = tick.default_backfill_publisher(tmp_path / "src", [BOARD], now=NOW, git=None, gh=gh, slug="o/r", protection=None)
+    assert out["pr_url"].endswith("/77") and seen["removed"] is wt2
+    assert seen["paths"] == [BOARD] and seen["include_ledger"] is False and seen["owner_label"] == "jr-data"
+    assert seen["auto_merge"] is False and seen["branch"].endswith("-bf")
+
+
+def test_a_stale_coordinator_owned_data_pr_never_halts_the_tick(tmp_path):
+    old = (NOW - timedelta(hours=9)).isoformat().replace("+00:00", "Z")
+    prs = json.dumps([{"number": 88, "createdAt": old, "headRefName": "jr/tick-20261126-0300-bf",
+                       "labels": [{"name": "jr-data"}], **JR_OWN}])
+    r = run(git=git_ok(tmp_path), gh=gh_ok(prs=prs))
+    assert not (r.aborted or "").startswith("a Jr tick PR has been open")
+
+
+def test_a_red_guard_publishes_no_backfill_pr(wt_dir):
+    got = []
+    r = run(git=git_ok(wt_dir), gh=gh_ok(), stages=[_backfill_stage([BOARD])],
+            guard=lambda root: {"ok": False, "output": "✗ board.md: missing source"},
+            backfill_publisher=lambda root, paths, **kw: got.append(paths) or {})
+    assert got == [] and r.aborted.startswith("guard red")
