@@ -4095,7 +4095,7 @@
       "pr_ref": "#2098",
       "repo": "martin-ger/esp32_nat_router",
       "status": "proposed",
-      "timestamp": "2026-11-26T22:00:33.266008+00:00"
+      "timestamp": "2026-11-26T23:00:33.525893+00:00"
     },
     "esp32-navigation": {
       "expires": "2026-12-16T05:00:31.772256+00:00",
@@ -4897,13 +4897,14 @@
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
     "guitar-audio-tools": {
+      "expired_at": "2026-11-26T23:00:33.525893+00:00",
       "expires": "2026-11-26T22:00:59.800752+00:00",
       "id": "guitar-audio-tools",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 3 forks",
       "repo": "vlastimilcerveny34/guitar-audio-tools",
       "repo_id": 1390805758,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-27T22:00:59.800752+00:00"
     },
     "guvtg": {
@@ -17473,7 +17474,7 @@
       "pr_ref": "#2101",
       "repo": "forged-in-feathers-technology/observore",
       "status": "proposed",
-      "timestamp": "2026-11-26T22:00:33.266008+00:00"
+      "timestamp": "2026-11-26T23:00:33.525893+00:00"
     },
     "oddlings": {
       "id": "oddlings",
