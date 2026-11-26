@@ -244,13 +244,106 @@ def act(gh, slug: str, d: dict) -> str:
     if d["action"] == "merge":
         return gh("pr", "merge", n, "--repo", slug, "--merge", "--match-head-commit", d["head"])
     if d["action"] == "update-branch":
-        return gh("pr", "update-branch", n, "--repo", slug)
+        # REST, not `gh pr update-branch` (the runner's gh 2.46 has none); expected_head_sha refuses a moved head
+        return gh("api", "-X", "PUT", f"repos/{slug}/pulls/{n}/update-branch", "-f", f"expected_head_sha={d['head']}")
     if d["action"] == "close-timeout":
         gh("pr", "edit", n, "--repo", slug, "--add-label", TIMEOUT_LABEL)
         gh("pr", "comment", n, "--repo", slug, "--body", f"{TIMEOUT_MARKER}\nClosed by jr-data-merge: {d['why']}. "
                                                          "A timeout, not a rejection: its facts are re-queued.")
         return gh("pr", "close", n, "--repo", slug)
     return ""
+
+
+# --- deploy confirmation: a merged backfill is done only when the live page shows it (2026-11-26) ----------------
+
+DEPLOYED_MARKER = "<!-- jr-data-merge deployed -->"
+REVALIDATE_AFTER_MIN, INCIDENT_AFTER_MIN = 45, 120
+_BOARD_ID = re.compile(r"^data/boards/[^/]+/([^/]+)/board\.md$")
+
+
+def _added_fields(base_md: str, head_md: str) -> dict:
+    from esp_atlas_core.frontmatter import parse_frontmatter_text
+    fb, _ = parse_frontmatter_text(base_md or "")
+    fh, _ = parse_frontmatter_text(head_md or "")
+    return {k: v for k, v in fh.items() if k not in fb and k != "sources"}
+
+
+def confirm_delivery(gh, slug: str, pr: dict, *, now: str, show, live, revalidate, incident) -> str:
+    """One merged backfill PR: "done" (already marked), "confirmed" (every added field is on the live API: marked),
+    "waiting" (not live yet, under REVALIDATE_AFTER_MIN), "revalidated" (the catalog purge was asked), "incident"
+    (still not live after INCIDENT_AFTER_MIN: a heal incident with the evidence, for the coding delegate)."""
+    if any(DEPLOYED_MARKER in str((c or {}).get("body") or "") for c in pr.get("comments") or []):
+        return "done"
+    sha = (pr.get("mergeCommit") or {}).get("oid")
+    missing = []
+    for f in pr.get("files") or []:
+        m = _BOARD_ID.match(f.get("path") or "")
+        if not m:
+            continue
+        want = _added_fields(show(f"{sha}^1", f["path"]), show(sha, f["path"]))
+        got = (live(m.group(1)) or {}).get("frontmatter") or {}
+        missing += [f"{m.group(1)}.{k}" for k, v in want.items() if got.get(k) != v]
+    n = str(pr["number"])
+    if not missing:
+        gh("pr", "comment", n, "--repo", slug, "--body", f"{DEPLOYED_MARKER}\nLive on esp-atlas.com: every backfilled "
+                                                         f"field is served by /api/parts at {now}.")
+        return "confirmed"
+    minutes = _hours(pr.get("mergedAt") or now, now) * 60
+    if minutes >= INCIDENT_AFTER_MIN:
+        incident(pr, f"not live {int(minutes)} min after merge: {', '.join(missing[:6])}")
+        return "incident"
+    if minutes >= REVALIDATE_AFTER_MIN:
+        revalidate()
+        return "revalidated"
+    return "waiting"
+
+
+def _live_part(board_id: str) -> dict | None:
+    import urllib.request
+    try:
+        with urllib.request.urlopen(f"https://esp-atlas.com/api/parts/{board_id}", timeout=20) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except Exception:  # noqa: BLE001 — unreadable: not confirmed, decided again next run
+        return None
+
+
+def _revalidate() -> dict:
+    import os
+    sys.path.insert(0, str(REPO / "jr"))
+    import publish
+    return publish.revalidate_catalog(os.environ.get("REVALIDATE_SECRET"))
+
+
+def _incident(pr: dict, why: str) -> None:
+    import hashlib
+    sys.path.insert(0, str(REPO / "jr"))
+    import ci_watch
+    check = f"deploy:#{pr['number']}"
+    v = ci_watch.Verdict(kind="incident", source="deploy", check=check,
+                         fingerprint=hashlib.sha256(check.encode()).hexdigest(), error=why, kind_detail="deploy",
+                         evidence={"pr": pr["number"], "merge": (pr.get("mergeCommit") or {}).get("oid")})
+    ci_watch.Store().record(v, datetime.now(timezone.utc).isoformat())
+
+
+def confirm_deliveries(gh, slug: str, now: str) -> list:
+    """Every backfill PR merged in the last 3 days that is not yet marked deployed."""
+    since = (datetime.fromisoformat(now.replace("Z", "+00:00")) - timedelta(days=3)).strftime("%Y-%m-%d")
+    prs = _gh_json(gh, "pr", "list", "--repo", slug, "--state", "merged", "--label", DATA_LABEL, "--search",
+                   f"merged:>={since}", "--json", "number,headRefName,mergeCommit,mergedAt,comments,files") or []
+
+    def show(ref, path):
+        p = subprocess.run(["git", "show", f"{ref}:{path}"], cwd=REPO, capture_output=True, text=True)
+        return p.stdout if p.returncode == 0 else ""
+    out = []
+    for pr in prs:
+        if not str(pr.get("headRefName") or "").endswith("-bf"):
+            continue
+        try:
+            out.append((pr["number"], confirm_delivery(gh, slug, pr, now=now, show=show, live=_live_part,
+                                                       revalidate=_revalidate, incident=_incident)))
+        except Exception as e:  # noqa: BLE001 — one delivery never stops the others
+            out.append((pr["number"], f"unreadable: {type(e).__name__}"))
+    return out
 
 
 def main(argv=None) -> int:
@@ -279,6 +372,9 @@ def main(argv=None) -> int:
             act(gh, args.repo_slug, d)
             if d["action"] == "merge":
                 break                                         # one merge per run: main moved, the rest re-check
+    if args.apply:
+        for n, outcome in confirm_deliveries(gh, args.repo_slug, now):
+            print(f"  deploy #{n}: {outcome}")
     return 0
 
 
