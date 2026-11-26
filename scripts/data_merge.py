@@ -17,7 +17,10 @@ For each open PR, decide() answers one of:
   skip           with the reason (not eligible, a switch off, a failed or missing check, out of scope, ...).
 
 Scope of a `jr-data` PR: added build-target recipes, added firmware records with their signals, and the
-enumerated bookkeeping files; never a modified or deleted record. Scope of a `jr-quarantine` PR: only
+enumerated bookkeeping files; never a modified or deleted record. A BACKFILL PR (`jr/tick-*-bf`, root-cause plan,
+2026-11-26) has its own switch (`backfill_automerge`) and scope: modified board.md files only, every one of which
+this run re-derives itself through scripts/check_claims.check_board_backfill from main's code (zero re-derived
+fields is never a merge), counted in FIELDS per PR and per UTC day. Scope of a `jr-quarantine` PR: only
 data/quarantine.json, never subject to the fact limits. `--dry-run` (the default) only prints.
 """
 from __future__ import annotations
@@ -41,6 +44,9 @@ DATA_LABEL, QUARANTINE_LABEL, TIMEOUT_LABEL = "jr-data", "jr-quarantine", "jr-ti
 TIMEOUT_MARKER = "<!-- jr-data-merge timeout -->"
 REQUIRED_CHECKS = ("schema", "tests", "jr-tests", "quotes", "claims")
 MAX_FACTS_PER_PR, MAX_FACTS_PER_DAY = 10, 30
+BF_FLAG = "backfill_automerge"
+MAX_FIELDS_PER_PR, MAX_FIELDS_PER_DAY = 12, 40
+_BOARD = re.compile(r"^data/boards/[^/]+/[^/]+/board\.md$")
 STALE_HOURS = 6
 _RECIPE = re.compile(r"^data/recipes/([^/]+)/recipe\.md$")
 _FIRMWARE = re.compile(r"^data/firmware/([^/]+)/firmware\.md$")
@@ -114,8 +120,10 @@ def decide(pr: dict, st: dict, *, switches: dict, now: str) -> dict:
         return out("skip", "base is not main")
     if not branch.startswith("jr/tick-" if kind == DATA_LABEL else "jr/quarantine-"):
         return out("skip", f"branch {branch} does not match the {kind} label")
-    if not (switches.get("autonomy") or {}).get(FLAG):
-        return out("skip", f"switch off: jr/autonomy.json {FLAG} is not true")
+    backfill = kind == DATA_LABEL and branch.endswith("-bf")
+    flag = BF_FLAG if backfill else FLAG
+    if not (switches.get("autonomy") or {}).get(flag):
+        return out("skip", f"switch off: jr/autonomy.json {flag} is not true")
     if str((switches.get("env") or {}).get(VARIABLE, "")).strip() == "0":
         return out("skip", f"switch off: {VARIABLE}=0")
     checks = st.get("checks") or {}
@@ -129,6 +137,21 @@ def decide(pr: dict, st: dict, *, switches: dict, now: str) -> dict:
         return out("wait", "required checks still running")
     if st.get("behind_by", 0) > 0:
         return out("update-branch", f"head is {st['behind_by']} commit(s) behind main")
+    if backfill:
+        files = st.get("files") or []
+        bad = [f"{f['status']} {f['path']}" for f in files if not (_BOARD.match(f["path"]) and f["status"] == "modified")]
+        if bad or not files:
+            return out("skip", f"scope: a backfill PR changes only existing board.md files ({', '.join(bad)[:200]})")
+        bf = st.get("backfill") or {}
+        if not bf.get("boards") or not bf.get("fields"):
+            return out("skip", "nothing re-derived: zero backfilled fields is never a merge")
+        if bf.get("pass") != bf.get("boards") or bf.get("boards") != len(files):
+            return out("skip", "re-derivation did not pass every board: " + "; ".join(bf.get("problems") or [])[:240])
+        if bf["fields"] > MAX_FIELDS_PER_PR:
+            return out("skip", f"{bf['fields']} fields, more than {MAX_FIELDS_PER_PR} per PR")
+        if st.get("fields_today", 0) + bf["fields"] > MAX_FIELDS_PER_DAY:
+            return out("skip", f"would pass {MAX_FIELDS_PER_DAY} fields per day")
+        return out("merge")
     problems, facts = _scope(kind, st.get("files") or [])
     if problems:
         return out("skip", "; ".join(problems)[:300])
@@ -172,8 +195,48 @@ def gather(gh, slug: str, pr: dict, repo: Path = REPO) -> dict:
     added = subprocess.run(["git", "log", "--since", f"{today}T00:00:00Z", "--diff-filter=A", "--name-only", "--format=",
                             "origin/main", "--", "data/recipes"], cwd=repo, capture_output=True, text=True).stdout
     facts_today = sum(1 for line in added.split() if _RECIPE.match(line) and "status: build-target" in (show("origin/main", line) or ""))
-    return {"checks": checks, "behind_by": int(cmp.get("behind_by") or 0), "files": files,
-            "bookkeeping_ok": ok, "facts_today": facts_today}
+    out = {"checks": checks, "behind_by": int(cmp.get("behind_by") or 0), "files": files,
+           "bookkeeping_ok": ok, "facts_today": facts_today}
+    if str(pr.get("headRefName") or "").endswith("-bf"):
+        out["backfill"] = _rederive(files, show, n, today)
+        out["fields_today"] = _fields_today(repo, today)
+    return out
+
+
+def _rederive(files: list, show, n: int, today: str) -> dict:
+    """Re-derive every board the backfill PR changes, from main's code (this checkout) on the live pages."""
+    import check_claims
+    import board_backfill
+    res = {"boards": 0, "pass": 0, "fields": 0, "problems": []}
+    for f in files:
+        if not _BOARD.match(f["path"]):
+            continue
+        res["boards"] += 1
+        base, head = show("origin/main", f["path"]), show(f"pr/{n}", f["path"])
+        r = check_claims.check_board_backfill(base or "", head or "", REPO / "data", board_backfill.default_fetch, today) \
+            if base and head else {"verdict": "INCONCLUSIVE", "id": f["path"], "reasons": ["unreadable at a ref"]}
+        if r is None:
+            res["problems"].append(f"{f['path']}: no backfilled field")
+            continue
+        if r["verdict"] == check_claims.PASS:
+            res["pass"] += 1
+            from esp_atlas_core.frontmatter import parse_frontmatter_text
+            fb, _ = parse_frontmatter_text(base)
+            fh, _ = parse_frontmatter_text(head)
+            res["fields"] += sum(1 for k in fh if k not in fb and k in check_claims.BACKFILL_FIELDS)
+        else:
+            res["problems"].append(f"{r['id']}: {r['verdict']} {'; '.join(r['reasons'][:2])}"[:200])
+    return res
+
+
+_FIELD_LINE = re.compile(r"^\+(" + "|".join(("usb_serial", "download_mode", "getting_started")) + r"):", re.M)
+
+
+def _fields_today(repo: Path, today: str) -> int:
+    """Gated fields added to board.md files on main since 00:00 UTC (its own history, one count per added line)."""
+    diff = subprocess.run(["git", "log", "--since", f"{today}T00:00:00Z", "-p", "--format=", "origin/main", "--",
+                           "data/boards"], cwd=repo, capture_output=True, text=True).stdout
+    return len(_FIELD_LINE.findall(diff))
 
 
 def act(gh, slug: str, d: dict) -> str:
