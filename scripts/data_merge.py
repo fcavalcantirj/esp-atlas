@@ -268,7 +268,12 @@ def main(argv=None) -> int:
     mine = [p for p in prs if {l.get("name") for l in p.get("labels") or []} & {DATA_LABEL, QUARANTINE_LABEL}]
     print(f"jr-data-merge {'APPLY' if args.apply else 'dry run'} at {now}: {len(mine)} labelled PR(s)")
     for p in sorted(mine, key=lambda x: x["number"]):
-        d = decide(p, gather(gh, args.repo_slug, p), switches=switches, now=now)
+        try:
+            st = gather(gh, args.repo_slug, p)
+        except Exception as e:  # noqa: BLE001 — one unreadable PR never stops the others (review of #2126)
+            print(f"  #{p.get('number')} skip: state unreadable ({type(e).__name__}: {str(e)[:160]})")
+            continue
+        d = decide(p, st, switches=switches, now=now)
         print(f"  #{d['pr']} {d['action']}{': ' + d['why'] if d['why'] else ''}")
         if args.apply and d["action"] in ("merge", "update-branch", "close-timeout"):
             act(gh, args.repo_slug, d)

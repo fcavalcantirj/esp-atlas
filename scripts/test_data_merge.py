@@ -169,3 +169,18 @@ def test_a_backfill_pr_outside_its_rules_never_merges(over, sw, why):
 
 def test_a_build_target_switch_never_merges_a_backfill_and_vice_versa():
     assert dm.decide(pr(), state(), switches=BF_ON, now=NOW)["action"] != "merge"
+
+
+def test_one_pr_whose_state_cannot_be_read_never_stops_the_run(monkeypatch, capsys):
+    """Review BLOCK of #2126: a gather() failure on one PR (a missing dependency, a git error) used to kill the run."""
+    import json as _json
+    prs = [pr(number=5, headRefName="jr/tick-20261126-1300-bf"), pr(number=6)]
+    monkeypatch.setattr(dm.demand_canary, "default_gh", lambda *a: _json.dumps(prs) if a[:2] == ("pr", "list") else "[]")
+    def gather(gh, slug, p):
+        if p["number"] == 5:
+            raise AttributeError("module 'check_claims' has no attribute 'check_board_backfill'")
+        return state()
+    monkeypatch.setattr(dm, "gather", gather)
+    assert dm.main([]) == 0
+    out = capsys.readouterr().out
+    assert "#5 skip: state unreadable" in out and "#6 " in out
