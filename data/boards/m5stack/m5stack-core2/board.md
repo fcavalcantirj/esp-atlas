@@ -29,6 +29,7 @@ io:
   gpio_free: 5
 notes:
 - 16 MB flash, 8 MB Quad PSRAM
+- 'USB-UART bridge varies by revision (the vendor page states "Actual shipments include CP2104 and CH9102F chip versions"), so usb_serial is the unnamed-bridge value'
 - ESP32-D0WDQ6-V3; MPU6886 6-axis IMU, SPM1423 PDM mic, NS4168 speaker amp, BM8563
   RTC, AXP192 PMIC, 500mAh@3.7V battery, vibration motor, microSD slot
 - 'io.gpio_free=5 DERIVED, not quoted (SPEC-io-power.md §5.3). Vendor page''s port
@@ -40,7 +41,7 @@ notes:
   from this count: it re-exposes the same SoC pins already wired to onboard LCD/SD/touch/mic,
   so those pads are not free for independent use. Math not vendor-stated; verify before
   treating as exact.'
-usb_serial: ch9102
+usb_serial: usb-uart-bridge-unspecified
 getting_started: https://docs.m5stack.com/en/core/core2
 images:
   photo: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/644/core2_01.jpg
@@ -54,7 +55,7 @@ sources:
   verified: '2026-08-26'
 - field: usb_serial
   url: https://docs.m5stack.com/en/core/core2
-  verified: '2026-09-11'
+  verified: '2026-11-26'
 - field: getting_started
   url: https://docs.m5stack.com/en/core/core2
   verified: '2026-09-11'

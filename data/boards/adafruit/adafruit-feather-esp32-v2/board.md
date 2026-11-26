@@ -41,7 +41,7 @@ notes:
   half of that is drawn by the ESP32"'
 download_mode:
   mode: auto
-usb_serial: cp2102n
+usb_serial: usb-uart-bridge-unspecified
 getting_started: https://learn.adafruit.com/adafruit-esp32-feather-v2
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/544/medium800/FV2_top_angle.jpg
@@ -68,7 +68,7 @@ sources:
   verified: '2026-09-11'
 - field: usb_serial
   url: https://learn.adafruit.com/adafruit-esp32-feather-v2
-  verified: '2026-09-11'
+  verified: '2026-11-26'
 - field: getting_started
   url: https://learn.adafruit.com/adafruit-esp32-feather-v2
   verified: '2026-09-11'
