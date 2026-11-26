@@ -257,6 +257,7 @@ def act(gh, slug: str, d: dict) -> str:
 # --- deploy confirmation: a merged backfill is done only when the live page shows it (2026-11-26) ----------------
 
 DEPLOYED_MARKER = "<!-- jr-data-merge deployed -->"
+UNCONFIRMED_MARKER = "<!-- jr-data-merge deploy-unconfirmed -->"
 REVALIDATE_AFTER_MIN, INCIDENT_AFTER_MIN = 45, 120
 _BOARD_ID = re.compile(r"^data/boards/[^/]+/([^/]+)/board\.md$")
 
@@ -268,10 +269,12 @@ def _added_fields(base_md: str, head_md: str) -> dict:
     return {k: v for k, v in fh.items() if k not in fb and k != "sources"}
 
 
-def confirm_delivery(gh, slug: str, pr: dict, *, now: str, show, live, revalidate, incident) -> str:
+def confirm_delivery(gh, slug: str, pr: dict, *, now: str, show, live, revalidate) -> str:
     """One merged backfill PR: "done" (already marked), "confirmed" (every added field is on the live API: marked),
-    "waiting" (not live yet, under REVALIDATE_AFTER_MIN), "revalidated" (the catalog purge was asked), "incident"
-    (still not live after INCIDENT_AFTER_MIN: a heal incident with the evidence, for the coding delegate)."""
+    "waiting" (not live yet, under REVALIDATE_AFTER_MIN), "revalidated" (the catalog purge was asked again; it is
+    the repair for stale serving and is retried every run while the delivery is unconfirmed, inside the 3-day
+    window), "unconfirmed" (still not live after INCIDENT_AFTER_MIN: one marker comment names the missing fields;
+    never a CI heal incident, which has no prompt or resolver for a deploy — review BLOCK of #2129)."""
     if any(DEPLOYED_MARKER in str((c or {}).get("body") or "") for c in pr.get("comments") or []):
         return "done"
     sha = (pr.get("mergeCommit") or {}).get("oid")
@@ -289,13 +292,17 @@ def confirm_delivery(gh, slug: str, pr: dict, *, now: str, show, live, revalidat
                                                          f"field is served by /api/parts at {now}.")
         return "confirmed"
     minutes = _hours(pr.get("mergedAt") or now, now) * 60
-    if minutes >= INCIDENT_AFTER_MIN:
-        incident(pr, f"not live {int(minutes)} min after merge: {', '.join(missing[:6])}")
-        return "incident"
-    if minutes >= REVALIDATE_AFTER_MIN:
-        revalidate()
+    if minutes < REVALIDATE_AFTER_MIN:
+        return "waiting"
+    res = revalidate() or {}
+    if minutes < INCIDENT_AFTER_MIN:
         return "revalidated"
-    return "waiting"
+    if not any(UNCONFIRMED_MARKER in str((c or {}).get("body") or "") for c in pr.get("comments") or []):
+        why = res.get("skipped") or res.get("error") or ("purge ok" if res.get("ok") else "purge result unknown")
+        gh("pr", "comment", n, "--repo", slug, "--body", f"{UNCONFIRMED_MARKER}\nNot live {int(minutes)} min after merge: "
+                                                         f"{', '.join(missing[:8])}. Catalog purge: {why}. "
+                                                         "jr-data-merge keeps purging and checking for 3 days.")
+    return "unconfirmed"
 
 
 def _live_part(board_id: str) -> dict | None:
@@ -314,17 +321,6 @@ def _revalidate() -> dict:
     return publish.revalidate_catalog(os.environ.get("REVALIDATE_SECRET"))
 
 
-def _incident(pr: dict, why: str) -> None:
-    import hashlib
-    sys.path.insert(0, str(REPO / "jr"))
-    import ci_watch
-    check = f"deploy:#{pr['number']}"
-    v = ci_watch.Verdict(kind="incident", source="deploy", check=check,
-                         fingerprint=hashlib.sha256(check.encode()).hexdigest(), error=why, kind_detail="deploy",
-                         evidence={"pr": pr["number"], "merge": (pr.get("mergeCommit") or {}).get("oid")})
-    ci_watch.Store().record(v, datetime.now(timezone.utc).isoformat())
-
-
 def confirm_deliveries(gh, slug: str, now: str) -> list:
     """Every backfill PR merged in the last 3 days that is not yet marked deployed."""
     since = (datetime.fromisoformat(now.replace("Z", "+00:00")) - timedelta(days=3)).strftime("%Y-%m-%d")
@@ -340,7 +336,7 @@ def confirm_deliveries(gh, slug: str, now: str) -> list:
             continue
         try:
             out.append((pr["number"], confirm_delivery(gh, slug, pr, now=now, show=show, live=_live_part,
-                                                       revalidate=_revalidate, incident=_incident)))
+                                                       revalidate=_revalidate)))
         except Exception as e:  # noqa: BLE001 — one delivery never stops the others
             out.append((pr["number"], f"unreadable: {type(e).__name__}"))
     return out

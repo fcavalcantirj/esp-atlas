@@ -226,24 +226,32 @@ def _show(ref, path):
     ({"usb_serial": "usb-uart-bridge-unspecified"}, 30, "confirmed"),
     ({}, 30, "waiting"),
     ({}, 60, "revalidated"),
-    ({}, 130, "incident"),
+    ({}, 130, "unconfirmed"),
 ])
-def test_deploy_confirmation_marks_waits_revalidates_or_opens_an_incident(live, minutes, expect):
+def test_deploy_confirmation_marks_waits_purges_or_flags_never_a_heal_incident(live, minutes, expect):
     gh, events = FakeGh(), []
     out = dm.confirm_delivery(gh, "o/r", _merged(minutes), now="2026-11-26T18:00:00Z", show=_show,
                               live=lambda board_id: {"frontmatter": live},
-                              revalidate=lambda: events.append("revalidate") or {"ok": True},
-                              incident=lambda pr, why: events.append(("incident", why)))
+                              revalidate=lambda: events.append("revalidate") or {"skipped": "no REVALIDATE_SECRET"})
     assert out == expect
+    bodies = " ".join(" ".join(c) for c in gh.calls)
     if expect == "confirmed":
-        assert any(dm.DEPLOYED_MARKER in " ".join(c) for c in gh.calls)
-    if expect == "revalidated":
-        assert events == ["revalidate"]
-    if expect == "incident":
-        assert events and events[-1][0] == "incident"
+        assert dm.DEPLOYED_MARKER in bodies and events == []
+    if expect in ("revalidated", "unconfirmed"):
+        assert events == ["revalidate"]                                   # the purge is retried every run
+    if expect == "unconfirmed":
+        assert dm.UNCONFIRMED_MARKER in bodies and "no REVALIDATE_SECRET" in bodies
+    assert not hasattr(dm, "_incident")                                   # review BLOCK of #2129: no heal incident
+
+
+def test_the_unconfirmed_marker_is_posted_once():
+    gh = FakeGh()
+    out = dm.confirm_delivery(gh, "o/r", _merged(200, comments=[dm.UNCONFIRMED_MARKER]), now="2026-11-26T18:00:00Z",
+                              show=_show, live=lambda b: {"frontmatter": {}}, revalidate=lambda: {"ok": True})
+    assert out == "unconfirmed" and not any(c[:2] == ("pr", "comment") for c in gh.calls)
 
 
 def test_an_already_confirmed_delivery_is_not_checked_again():
     out = dm.confirm_delivery(FakeGh(), "o/r", _merged(30, comments=[dm.DEPLOYED_MARKER]), now="2026-11-26T18:00:00Z",
-                              show=_show, live=lambda b: pytest.fail("no live read"), revalidate=None, incident=None)
+                              show=_show, live=lambda b: pytest.fail("no live read"), revalidate=None)
     assert out == "done"
