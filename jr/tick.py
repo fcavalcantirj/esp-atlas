@@ -1062,6 +1062,13 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                 if st.get("name") == "backfill":
                     st["paths"] = [p for p in st.get("paths", []) if p not in bf]
             if not dry_run:
+                # the guard first (review BLOCK of #2125): a red guard publishes nothing, the backfill PR included
+                r.guard = guard(root)
+                if not r.guard.get("ok"):
+                    out = (r.guard.get("output") or "").strip()
+                    print("jr-tick guard output:\n" + out, file=sys.stderr)
+                    first = next((l.strip() for l in out.splitlines() if "✗" in l or "rror" in l or "FAIL" in l), "")
+                    raise TickAbort("guard red — worktree discarded, nothing published" + (f" · {first[:160]}" if first else ""))
                 try:
                     res_bf = backfill_publisher(root, bf, now=now, git=git, gh=gh, slug=slug, protection=protection) or {}
                     r.warnings.append(f"backfill PR: {res_bf.get('pr_url') or res_bf.get('reason') or res_bf.get('skipped') or 'none'}")

@@ -1014,3 +1014,11 @@ def test_a_stale_coordinator_owned_data_pr_never_halts_the_tick(tmp_path):
                        "labels": [{"name": "jr-data"}], **JR_OWN}])
     r = run(git=git_ok(tmp_path), gh=gh_ok(prs=prs))
     assert not (r.aborted or "").startswith("a Jr tick PR has been open")
+
+
+def test_a_red_guard_publishes_no_backfill_pr(wt_dir):
+    got = []
+    r = run(git=git_ok(wt_dir), gh=gh_ok(), stages=[_backfill_stage([BOARD])],
+            guard=lambda root: {"ok": False, "output": "✗ board.md: missing source"},
+            backfill_publisher=lambda root, paths, **kw: got.append(paths) or {})
+    assert got == [] and r.aborted.startswith("guard red")
