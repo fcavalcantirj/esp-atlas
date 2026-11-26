@@ -184,3 +184,74 @@ def test_one_pr_whose_state_cannot_be_read_never_stops_the_run(monkeypatch, caps
     assert dm.main([]) == 0
     out = capsys.readouterr().out
     assert "#5 skip: state unreadable" in out and "#6 " in out
+
+
+# --- apply on the runner: REST update-branch, deploy confirmation that repairs itself (2026-11-26) ----------------
+
+class FakeGh:
+    def __init__(self, answers=None):
+        self.calls, self.answers = [], answers or {}
+
+    def __call__(self, *a):
+        self.calls.append(a)
+        for k, v in self.answers.items():
+            if a[:len(k)] == k:
+                return v
+        return ""
+
+
+def test_update_branch_goes_through_rest_with_the_expected_head():
+    """The runner's gh 2.46 has no `pr update-branch`; REST with expected_head_sha also refuses a moved head."""
+    gh = FakeGh()
+    dm.act(gh, "o/r", {"pr": 7, "head": "a" * 40, "action": "update-branch", "why": ""})
+    assert gh.calls == [("api", "-X", "PUT", "repos/o/r/pulls/7/update-branch", "-f", f"expected_head_sha={'a' * 40}")]
+
+
+BASE_MD = "---\nid: esp32-devkitc\ntype: board\n---\n"
+HEAD_MD = "---\nid: esp32-devkitc\ntype: board\nusb_serial: usb-uart-bridge-unspecified\n---\n"
+
+
+def _merged(minutes_ago, comments=()):
+    return {"number": 9, "headRefName": "jr/tick-20261126-1300-bf", "mergeCommit": {"oid": "m" * 40},
+            "mergedAt": (dm.datetime(2026, 11, 26, 18, 0, tzinfo=dm.timezone.utc) - dm.timedelta(minutes=minutes_ago)
+                         ).strftime("%Y-%m-%dT%H:%M:%SZ"), "comments": [{"body": b} for b in comments],
+            "files": [{"path": "data/boards/espressif/esp32-devkitc/board.md"}]}
+
+
+def _show(ref, path):
+    return BASE_MD if ref.endswith("^1") else HEAD_MD
+
+
+@pytest.mark.parametrize("live, minutes, expect", [
+    ({"usb_serial": "usb-uart-bridge-unspecified"}, 30, "confirmed"),
+    ({}, 30, "waiting"),
+    ({}, 60, "revalidated"),
+    ({}, 130, "unconfirmed"),
+])
+def test_deploy_confirmation_marks_waits_purges_or_flags_never_a_heal_incident(live, minutes, expect):
+    gh, events = FakeGh(), []
+    out = dm.confirm_delivery(gh, "o/r", _merged(minutes), now="2026-11-26T18:00:00Z", show=_show,
+                              live=lambda board_id: {"frontmatter": live},
+                              revalidate=lambda: events.append("revalidate") or {"skipped": "no REVALIDATE_SECRET"})
+    assert out == expect
+    bodies = " ".join(" ".join(c) for c in gh.calls)
+    if expect == "confirmed":
+        assert dm.DEPLOYED_MARKER in bodies and events == []
+    if expect in ("revalidated", "unconfirmed"):
+        assert events == ["revalidate"]                                   # the purge is retried every run
+    if expect == "unconfirmed":
+        assert dm.UNCONFIRMED_MARKER in bodies and "no REVALIDATE_SECRET" in bodies
+    assert not hasattr(dm, "_incident")                                   # review BLOCK of #2129: no heal incident
+
+
+def test_the_unconfirmed_marker_is_posted_once():
+    gh = FakeGh()
+    out = dm.confirm_delivery(gh, "o/r", _merged(200, comments=[dm.UNCONFIRMED_MARKER]), now="2026-11-26T18:00:00Z",
+                              show=_show, live=lambda b: {"frontmatter": {}}, revalidate=lambda: {"ok": True})
+    assert out == "unconfirmed" and not any(c[:2] == ("pr", "comment") for c in gh.calls)
+
+
+def test_an_already_confirmed_delivery_is_not_checked_again():
+    out = dm.confirm_delivery(FakeGh(), "o/r", _merged(30, comments=[dm.DEPLOYED_MARKER]), now="2026-11-26T18:00:00Z",
+                              show=_show, live=lambda b: pytest.fail("no live read"), revalidate=None)
+    assert out == "done"

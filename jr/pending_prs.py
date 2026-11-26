@@ -230,7 +230,7 @@ def _when(ts) -> datetime | None:
 
 
 TIMEOUT_LABEL, TIMEOUT_MARKER = "jr-timeout", "<!-- jr-data-merge timeout -->"
-COORDINATOR_LOGINS = ("github-actions", "app/github-actions")
+COORDINATOR_LOGINS = ("github-actions", "app/github-actions", "espatlas-jr")   # apply mode runs on the runner as the bot
 
 
 def coordinator_timeout(pr: dict) -> bool:
