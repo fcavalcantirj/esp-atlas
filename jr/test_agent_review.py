@@ -406,3 +406,11 @@ def test_a_new_head_is_a_new_question_for_the_backup():
     moved = SnapGh([pr(5, head=HEAD2)], snapshot_blob="same", main_blob="same")
     rep = run(moved, delegate_answering(DOWN), state=first["state"])
     assert rep["outcome"] == "fallback_requested" and "fallback_empty" not in rep["state"]
+
+
+def test_a_demand_snapshot_pr_is_never_reviewed_its_owner_is_the_publishers_auto_merge():
+    """2026-11-26, #2057: the agent reviewed a demand snapshot (bookkeeping, auto-merge armed by the publisher),
+    its agent-pass label put it in the code canary's sweep, and the sweep disarmed it every hour while strict
+    kept it behind; it conflicted and went STUCK. One owner per output kind: the publisher's auto-merge."""
+    prs = [pr(1, branch="jr/demand-20261124-1115"), pr(2, branch="jr/demand-queue-20261124-1115"), pr(3)]
+    assert [p["number"] for p in ar.candidates(prs, {})] == [3]

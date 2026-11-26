@@ -35,7 +35,10 @@ REPO = Path(__file__).resolve().parent.parent
 MARKER = "<!-- agent-review verdict -->"
 FALLBACK_LABEL = "review-fallback"
 FALLBACK_PER_DAY = 3
-SKIP_PREFIXES = ("jr/tick-", "jr/research-")   # a heal PR is code: the agent reviews it too (§1d, 2026-11-18)
+# a heal PR is code: the agent reviews it too (§1d, 2026-11-18). A demand snapshot is bookkeeping whose owner is the
+# publisher's auto-merge: reviewing it handed it to the code canary's sweep, which disarmed it hourly (#2057,
+# 2026-11-26), so it is skipped like a tick PR
+SKIP_PREFIXES = ("jr/tick-", "jr/research-", "jr/demand-")
 # Only the reviewers' own accounts carry a verdict: the Jr bot (subscription lane, the runner's GH_TOKEN) and
 # GitHub Actions (API lane, the workflow token). The repo is public: a marker comment from anyone else — a
 # PR's author included — is ignored, never a PASS (review BLOCK of #1809, 2026-11-19). A fork's workflow
