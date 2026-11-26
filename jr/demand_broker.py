@@ -147,7 +147,9 @@ def intake(queue, snap: dict, *, pam_state=None, receipts=(), new_pam=True,
     # Preserve reserved market work even when the latest feed no longer lists it
     # or now matches the catalog. A fresh discovery list never erases its lifecycle.
     for receipt in receipts:
-        if isinstance(receipt, dict) and receipt.get("source") in (rw.SOURCE_PAM, rw.SOURCE_QUOTE):
+        # resolver too (review BLOCK of #2137): its report is rewritten almost daily with a new date, so a live
+        # reservation must not lose its candidate and turn into an orphan that DEFERs every class
+        if isinstance(receipt, dict) and receipt.get("source") in (rw.SOURCE_PAM, rw.SOURCE_QUOTE, rw.SOURCE_RESOLVER):
             c = receipt.get("candidate")
             if isinstance(c, dict) and rw.candidate_key(c) == receipt.get("key"):
                 view["candidates"].setdefault(receipt["key"], copy.deepcopy(c))

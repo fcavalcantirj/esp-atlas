@@ -96,3 +96,17 @@ def test_adopt_rebuilds_the_candidate_from_the_receipt_snapshot(tmp_path):
     work_record.main(["--demand-dir", str(tmp_path), "adopt", out.key, "--date", DAY])
     cands = json.loads(q.read_text())["candidates"]
     assert len(cands) == 1 and next(iter(cands.values()))["resolver"] == prov(ROW)
+
+
+def test_a_later_report_with_a_new_date_keeps_the_open_reservation(tmp_path):
+    """Review BLOCK of #2137: the resolver report is rewritten almost daily (its rows change as the backfill
+    fills fields), and its keys carry the report date. A live reservation must stay in the broker's view, or it
+    becomes an orphan and plan_work DEFERs every class until someone repairs the queue by hand."""
+    prepare(tmp_path, ROW)
+    first = reserve(tmp_path, new_resolver=True)
+    assert first.action == rw.START
+    (tmp_path / broker.RESOLVER_REPORT_NAME).write_text(
+        json.dumps(report(dict(ROW, missing=19), date="2026-11-19")))           # the same gap, a new day's report
+    nxt = reserve(tmp_path, new_resolver=True, today="2026-11-19")
+    assert nxt.action != rw.DEFER and nxt.action in (rw.RESUME, rw.RECONCILE, rw.NOOP), nxt
+    assert len(ledger(tmp_path)["receipts"]) == 1                              # never a second job for the gap
