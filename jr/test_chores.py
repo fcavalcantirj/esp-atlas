@@ -1259,7 +1259,7 @@ def test_no_update_when_not_behind_not_armed_red_or_not_a_snapshot(tmp_path, kw)
 
 
 def test_a_conflicting_demand_snapshot_is_never_a_heal_job(tmp_path):
-    """2026-11-27: 2ebbc311 dispatched a heal twice for #2057 (jr/demand-*); the relay may never touch
+    """Observed 2026-11-26 (heal state on the runner, abandoned_at 23:00Z): 2ebbc311 dispatched a heal twice for #2057 (jr/demand-*); the relay may never touch
     docs/demand/, so it could only fail and 'give up'. The demand runner's superseded-close owns it."""
     store = _store(tmp_path)
     p = pr(2057, "DIRTY", branch="jr/demand-20261124-1115")
