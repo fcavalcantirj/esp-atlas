@@ -715,3 +715,16 @@ def test_items_carry_the_trends_interest_their_weight_used():
     assert all(it["trends_interest"] is None for t, it in by.items() if t != "marauder cardputer")
     plain = {it["term"]: it["weight"] for it in _build()}
     assert by["marauder cardputer"]["weight"] > plain["marauder cardputer"]
+
+
+# --- page totals ride the snapshot (united plan pilot E, 2026-11-26) -------------------------------------------------
+# Query rows are privacy-filtered (44 clicks of 264 in the Nov 26 export); page totals are not. The snapshot carries
+# them so stages can find the pages already earning impressions at striking distance.
+
+def test_the_snapshot_carries_page_totals_sorted_by_impressions(tmp_path):
+    rows = [{"keys": ["https://esp-atlas.com/firmware/bruce"], "clicks": 12, "impressions": 480, "position": 10.98},
+            {"keys": ["https://esp-atlas.com/parts/esp32-c6/"], "clicks": 2, "impressions": 500, "position": 10.8}]
+    path = demand.write_snapshot([], False, {"start": "a", "end": "b"}, "2026-11-26", tmp_path, pages=demand.page_totals(rows))
+    data = json.loads(path.read_text())
+    assert data["pages"][0] == {"page": "/parts/esp32-c6", "clicks": 2, "impressions": 500, "position": 10.8}
+    assert data["pages"][1]["page"] == "/firmware/bruce"

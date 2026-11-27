@@ -70,8 +70,19 @@ def test_pending_checks_wait_and_a_failed_check_never_merges():
     assert d["action"] == "skip" and "quotes" in d["why"]                    # a missing required check never passes
 
 
-def test_a_branch_behind_main_is_updated_never_merged():
-    assert decide(s=state(behind_by=3))["action"] == "update-branch"
+def test_a_branch_behind_main_is_merged_when_github_allows_and_updated_when_it_refuses():
+    """2026-11-26: GitHub's protection decides; an Actions-token update first would trigger no CI and strand the PR."""
+    assert decide(s=state(behind_by=3))["action"] == "merge"
+
+    class Refuses(FakeGh):
+        def __call__(self, *a):
+            self.calls.append(a)
+            if a[:2] == ("pr", "merge"):
+                raise RuntimeError("Pull request is not up to date with the base branch")
+            return ""
+    gh = Refuses()
+    dm.act(gh, "o/r", {"pr": 7, "head": "a" * 40, "action": "merge", "why": ""})
+    assert gh.calls[-1] == ("api", "-X", "PUT", "repos/o/r/pulls/7/update-branch", "-f", f"expected_head_sha={'a' * 40}")
 
 
 @pytest.mark.parametrize("files, why", [
@@ -128,3 +139,130 @@ def test_the_workflow_installs_what_the_script_imports():
     installs = " ".join(str(s.get("run", "")) for s in steps[:run_at])
     for need in ("pyyaml", "jsonschema", "-e apps/core"):
         assert need in installs, need
+
+
+# --- backfill PRs (root-cause plan, 2026-11-26): own switch, board-only scope, re-derived, fields counted ------------
+
+BF_ON = {"autonomy": {"backfill_automerge": True}, "env": {}}
+BOARDS = [{"path": "data/boards/espressif/esp32-devkitc/board.md", "status": "modified"},
+          {"path": "data/boards/espressif/esp32-s3-devkitc-1/board.md", "status": "modified"}]
+
+
+def bf_pr(**over):
+    return pr(headRefName="jr/tick-20261126-1300-bf", **over)
+
+
+def bf_state(**over):
+    s = {"checks": dict(GREEN), "behind_by": 0, "files": list(BOARDS), "bookkeeping_ok": True, "facts_today": 0,
+         "backfill": {"boards": 2, "pass": 2, "fields": 5, "problems": []}, "fields_today": 0}
+    s.update(over)
+    return s
+
+
+def test_a_backfill_pr_every_board_of_which_re_derives_merges():
+    d = dm.decide(bf_pr(), bf_state(), switches=BF_ON, now=NOW)
+    assert d["action"] == "merge", d
+
+
+@pytest.mark.parametrize("over, sw, why", [
+    ({}, ON, "backfill_automerge"),                                                    # its own switch
+    ({"backfill": {"boards": 2, "pass": 1, "fields": 5, "problems": ["esp32-devkitc: FAIL"]}}, BF_ON, "re-deriv"),
+    ({"backfill": {"boards": 0, "pass": 0, "fields": 0, "problems": []}}, BF_ON, "nothing"),   # zero claims: never
+    ({"files": BOARDS + [{"path": "jr/proposed_ledger.json", "status": "modified"}]}, BF_ON, "scope"),
+    ({"files": [{"path": "data/boards/x/y/board.md", "status": "added"}]}, BF_ON, "scope"),
+    ({"backfill": {"boards": 2, "pass": 2, "fields": dm.MAX_FIELDS_PER_PR + 1, "problems": []}}, BF_ON, "per PR"),
+    ({"fields_today": dm.MAX_FIELDS_PER_DAY}, BF_ON, "per day"),
+])
+def test_a_backfill_pr_outside_its_rules_never_merges(over, sw, why):
+    d = dm.decide(bf_pr(), bf_state(**over), switches=sw, now=NOW)
+    assert d["action"] != "merge" and why in d["why"], d
+
+
+def test_a_build_target_switch_never_merges_a_backfill_and_vice_versa():
+    assert dm.decide(pr(), state(), switches=BF_ON, now=NOW)["action"] != "merge"
+
+
+def test_one_pr_whose_state_cannot_be_read_never_stops_the_run(monkeypatch, capsys):
+    """Review BLOCK of #2126: a gather() failure on one PR (a missing dependency, a git error) used to kill the run."""
+    import json as _json
+    prs = [pr(number=5, headRefName="jr/tick-20261126-1300-bf"), pr(number=6)]
+    monkeypatch.setattr(dm.demand_canary, "default_gh", lambda *a: _json.dumps(prs) if a[:2] == ("pr", "list") else "[]")
+    def gather(gh, slug, p):
+        if p["number"] == 5:
+            raise AttributeError("module 'check_claims' has no attribute 'check_board_backfill'")
+        return state()
+    monkeypatch.setattr(dm, "gather", gather)
+    assert dm.main([]) == 0
+    out = capsys.readouterr().out
+    assert "#5 skip: state unreadable" in out and "#6 " in out
+
+
+# --- apply on the runner: REST update-branch, deploy confirmation that repairs itself (2026-11-26) ----------------
+
+class FakeGh:
+    def __init__(self, answers=None):
+        self.calls, self.answers = [], answers or {}
+
+    def __call__(self, *a):
+        self.calls.append(a)
+        for k, v in self.answers.items():
+            if a[:len(k)] == k:
+                return v
+        return ""
+
+
+def test_update_branch_goes_through_rest_with_the_expected_head():
+    """The runner's gh 2.46 has no `pr update-branch`; REST with expected_head_sha also refuses a moved head."""
+    gh = FakeGh()
+    dm.act(gh, "o/r", {"pr": 7, "head": "a" * 40, "action": "update-branch", "why": ""})
+    assert gh.calls == [("api", "-X", "PUT", "repos/o/r/pulls/7/update-branch", "-f", f"expected_head_sha={'a' * 40}")]
+
+
+BASE_MD = "---\nid: esp32-devkitc\ntype: board\n---\n"
+HEAD_MD = "---\nid: esp32-devkitc\ntype: board\nusb_serial: usb-uart-bridge-unspecified\n---\n"
+
+
+def _merged(minutes_ago, comments=()):
+    return {"number": 9, "headRefName": "jr/tick-20261126-1300-bf", "mergeCommit": {"oid": "m" * 40},
+            "mergedAt": (dm.datetime(2026, 11, 26, 18, 0, tzinfo=dm.timezone.utc) - dm.timedelta(minutes=minutes_ago)
+                         ).strftime("%Y-%m-%dT%H:%M:%SZ"), "comments": [{"body": b} for b in comments],
+            "files": [{"path": "data/boards/espressif/esp32-devkitc/board.md"}]}
+
+
+def _show(ref, path):
+    return BASE_MD if ref.endswith("^1") else HEAD_MD
+
+
+@pytest.mark.parametrize("live, minutes, expect", [
+    ({"usb_serial": "usb-uart-bridge-unspecified"}, 30, "confirmed"),
+    ({}, 30, "waiting"),
+    ({}, 60, "revalidated"),
+    ({}, 130, "unconfirmed"),
+])
+def test_deploy_confirmation_marks_waits_purges_or_flags_never_a_heal_incident(live, minutes, expect):
+    gh, events = FakeGh(), []
+    out = dm.confirm_delivery(gh, "o/r", _merged(minutes), now="2026-11-26T18:00:00Z", show=_show,
+                              live=lambda board_id: {"frontmatter": live},
+                              revalidate=lambda: events.append("revalidate") or {"skipped": "no REVALIDATE_SECRET"})
+    assert out == expect
+    bodies = " ".join(" ".join(c) for c in gh.calls)
+    if expect == "confirmed":
+        assert dm.DEPLOYED_MARKER in bodies and events == []
+    if expect in ("revalidated", "unconfirmed"):
+        assert events == ["revalidate"]                                   # the purge is retried every run
+    if expect == "unconfirmed":
+        assert dm.UNCONFIRMED_MARKER in bodies and "no REVALIDATE_SECRET" in bodies
+    assert not hasattr(dm, "_incident")                                   # review BLOCK of #2129: no heal incident
+
+
+def test_the_unconfirmed_marker_is_posted_once():
+    gh = FakeGh()
+    out = dm.confirm_delivery(gh, "o/r", _merged(200, comments=[dm.UNCONFIRMED_MARKER]), now="2026-11-26T18:00:00Z",
+                              show=_show, live=lambda b: {"frontmatter": {}}, revalidate=lambda: {"ok": True})
+    assert out == "unconfirmed" and not any(c[:2] == ("pr", "comment") for c in gh.calls)
+
+
+def test_an_already_confirmed_delivery_is_not_checked_again():
+    out = dm.confirm_delivery(FakeGh(), "o/r", _merged(30, comments=[dm.DEPLOYED_MARKER]), now="2026-11-26T18:00:00Z",
+                              show=_show, live=lambda b: pytest.fail("no live read"), revalidate=None)
+    assert out == "done"

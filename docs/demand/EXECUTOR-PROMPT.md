@@ -19,7 +19,12 @@ branch.
 1. **Read the work.** `python3 jr/work_record.py check --date TODAY` must report no problems. Read
    your receipt and, for a PAM key, its `candidate.feed.lead` (`source_id`, `name_hint`,
    `chip_hint`, `source_pointers`). For a search key read the term and its snapshot item in
-   `docs/demand/<date>.json`. Then `python3 jr/work_record.py attempt WORK_KEY --date TODAY` and
+   `docs/demand/<date>.json`. For a **hygiene key (`fix-…`)** read `candidate.quote`: the `record`
+   (one `data/**/*.md` path), its `id`, the `quotes` the daily check found on none of the record's
+   cited pages, and the cited `urls`; this work is the "Hygiene work" path below, not steps 2-4. For a
+   **resolver key (`resolver-…`)** read `candidate.resolver`: the `vendor`, the gauge `field`, how many of
+   the vendor's boards are `missing` it and which (`boards`); this is CODE work, the "Resolver work" path
+   below, and you never edit a catalog record. Then `python3 jr/work_record.py attempt WORK_KEY --date TODAY` and
    commit it: `git add -A docs/demand && git commit -m "chore(demand): attempt WORK_KEY on TODAY"`.
    **Every `work_record.py` write below is committed on `BRANCH` the same way, right after it**: the
    receipts and queue live in `docs/demand/`, and a change left in the working tree is lost when the
@@ -76,6 +81,55 @@ branch.
    your next attempt must fix (re-read the page; quote it as written, or omit the claim). The owner can
    still veto by closing. The daily runner verifies the deployed result and records the outcome. Never
    mark anything delivered yourself.
+
+## Hygiene work (a `fix-…` key, source `quote_check`)
+
+The record exists and is wrong in one specific way: a span written between double quotes in its
+frontmatter does not appear on any page the record cites (`scripts/check_quotes.py`, which CI runs on every
+PR and the daily runner over the whole catalog). Fix exactly that, nothing else:
+
+1. `attempt` and commit as in step 1.
+2. For each listed quote, open the cited pages (`candidate.quote.urls`) and find the passage the note
+   meant. Then either **quote it as written** — copy the page's own words, including its spacing of
+   units and its punctuation; an elision is written `...`; do not paraphrase — or, when the page does not
+   say it, **drop the quote marks and the claim they carried** (cite-or-omit: a note may describe, it may
+   not quote what is not there). A table row the page renders as cells is quoted as the page's text, not
+   as a pipe-separated line you composed. A quote inside a quote uses single quotes.
+3. Run `python3 scripts/check_quotes.py <record path>`: every quote PASS (or no quotes left). Run
+   `python3 scripts/validate.py`. Touch only that record.
+4. Validation (step 3 of the main path): `expected_ids` is `[<the record's id>]`, `forbidden_ids` `[]`;
+   the kind defaults to `catalog_quote` (the record's quotes PASS at the merge). Commit, open the ONE
+   draft PR titled `fix(catalog): <id> quotes (demand work WORK_KEY)`, `link`, push, stop (steps 5-6).
+
+## Resolver work (a `resolver-…` key, source `gauge_gap`)
+
+The model boundary (`CLAUDE.md`, "North star"): you solve a CODE problem; you never fill inventory. The
+hourly tick's backfill (`jr/stage_backfill.py` → `jr/board_backfill.py`) fills board fields from each
+vendor's documentation through deterministic extractors, and for this vendor × field it fills nothing (the
+boards in `candidate.resolver.boards` are missing the field). Make the extractor exist and work:
+
+1. `attempt` and commit as in step 1.
+2. **Fixtures first.** Open the vendor's documentation for 2-3 of the listed boards (the URL candidates in
+   `jr/board_doc_resolvers.py` for that vendor, or the pages the boards' own `sources[]` cite). Save each
+   page as it is served under `jr/fixtures/doc_resolvers/<vendor>/<board-id>.html` (or `.pdf.txt` for the
+   text of a PDF), with a `SOURCES.md` beside them naming each fixture's URL and the date you fetched it.
+   Never edit a fixture's content.
+3. **RED test.** Write `jr/test_vendor_<vendor>_<field>.py`: for each fixture, the value the extractor must
+   return, copied from the page (the manual-download steps sentence, the bridge chip, the dimensions as the
+   page states them, …), and one page that does NOT state the field returning None. Run it: it must fail.
+4. **The extractor.** Implement it in `jr/vendor_extractors/<vendor>.py` (create the package if absent) as a
+   pure function over the page text, register it for that vendor and field where `jr/board_backfill.py`
+   dispatches per brand (`_extract_for` / the per-brand tables), and add the field to the fields the backfill
+   writes for that vendor if it is not there. Cite-or-omit is the extractor's law too: it returns a value
+   only when the page states it, and the backfill writes the `sources[]` row of the page it read. Run
+   `cd jr && python3 -m pytest test_vendor_<vendor>_<field>.py test_stage_backfill.py test_board_backfill.py -q`:
+   green.
+5. **Nothing else changes.** Only `jr/**` (code, fixtures, tests) and `docs/demand/` bookkeeping; never
+   `data/**`, never a workflow. Do not run the backfill against the catalog yourself; the hourly tick does.
+6. Validation (step 3 of the main path): `expected_ids` is exactly `candidate.resolver.boards`,
+   `forbidden_ids` `[]`, `primary_sources` the fixture URLs; the kind defaults to `resolver_live` (the runner
+   counts, after the merge, which of those boards the backfill filled; three or more delivers). Commit, open
+   the ONE draft PR titled `feat(jr): <vendor> <field> extractor (demand work WORK_KEY)`, `link`, push, stop.
 
 ## Rules
 

@@ -384,6 +384,16 @@ def _feature_lines() -> list:
         return [f"*Feature usage* — unavailable ({error})"]
 
 
+def _outcome_lines() -> list[str]:
+    """SPEC-outcome-attribution.md: what Jr's shipped changes did to impressions (+28 d, DiD vs untouched pages).
+    Measurement only; a failure never stops the digest."""
+    try:
+        import outcomes
+        return outcomes.digest_lines()
+    except Exception as e:  # noqa: BLE001
+        return [f"*Outcomes* — unavailable ({_md(f'{type(e).__name__}: {str(e)[:120]}')})"]
+
+
 def weekly_digest(days: int = 7) -> str:
     denylist = load_referral_denylist(REFERRAL_DENYLIST_PATH)   # fail closed before any fetch
     S, E = completed_window(days)
@@ -414,7 +424,7 @@ def weekly_digest(days: int = 7) -> str:
         lines.append("  (no query above the miner's impression floor this week)")
     for r in queries:
         lines.append(f"  • `{r['keys'][0]}` — imp {r.get('impressions')}, pos {round(r.get('position', 0), 1)}")
-    lines += ["", *_feature_lines()]
+    lines += ["", *_feature_lines(), "", *_outcome_lines()]
     msg = "\n".join(lines)
 
     snap = Path(__file__).resolve().parent.parent / "docs" / "telemetry" / f"{E}.md"

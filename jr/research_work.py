@@ -47,20 +47,96 @@ TERMINAL_STATES = {"delivered", "rejected", "abandoned"}
 KIND_CATALOG_SEARCH = "catalog_search"     # missing catalog content: exact public search ids
 KIND_DEMAND_RESOLUTION = "demand_resolution"  # miner-resolver repair: a fresh resolved miner run
 KIND_CATALOG_PART = "catalog_part"         # missing board: the exact public part endpoint serves each id
+KIND_CATALOG_QUOTE = "catalog_quote"       # record hygiene: every quoted span holds on a cited page at the merge
+KIND_RESOLVER_LIVE = "resolver_live"       # resolver work: boards of the vendor gained the field on main after the merge
 COVERED_GAP = "COVERED_OK"
 SOURCE_PAM = "pam_feed"
+SOURCE_QUOTE = "quote_check"               # scripts/check_quotes.py's FAIL on a record of main (daily report)
+SOURCE_RESOLVER = "gauge_gap"              # the data gauge's vendor × field gap (daily resolver report): CODE work, never a record
 
 # One daily work slot PER SOURCE CLASS (decision 2026-11-08): search demand (GSC/GA4) and PAM market
 # leads each start at most MAX_NEW_PER_DAY new items a day and each recover their own live item, so a
 # day with new search demand still starts one feed lead. plan_work(source_class=...) narrows a pass to
 # one class; without it the single shared budget of before applies (direct callers, older tests).
-CLASS_SEARCH, CLASS_PAM = "search", "pam"
-CLASSES = {CLASS_SEARCH, CLASS_PAM}
+CLASS_SEARCH, CLASS_PAM, CLASS_HYGIENE, CLASS_RESOLVER = "search", "pam", "hygiene", "resolver"
+CLASSES = {CLASS_SEARCH, CLASS_PAM, CLASS_HYGIENE, CLASS_RESOLVER}
 
 
 def class_of(source) -> str:
-    """The daily-slot class a work source belongs to: `pam_feed` is PAM, everything else is search."""
-    return CLASS_PAM if source == SOURCE_PAM else CLASS_SEARCH
+    """The daily-slot class a work source belongs to: `pam_feed` is PAM, `quote_check` is hygiene (a
+    record of main whose quoted text the cited page does not hold, 2026-11-17), everything else is search."""
+    if source == SOURCE_PAM:
+        return CLASS_PAM
+    if source == SOURCE_RESOLVER:
+        return CLASS_RESOLVER
+    return CLASS_HYGIENE if source == SOURCE_QUOTE else CLASS_SEARCH
+
+
+# --- the gauge_gap source (class resolver, 2026-11-17) ------------------------------------------------
+# The model boundary (CLAUDE.md "North star"): an LLM solves CODE problems, never fills inventory. The
+# daily resolver report ranks the gauge's gaps per vendor × field (boards of that vendor missing the
+# field); each row is one work item for the executor: write the deterministic extractor for that vendor
+# and field, with fixture pages and a RED test, so the hourly backfill fills every such board itself. The
+# item's provenance is the row; its expected ids are the boards that should gain the field.
+
+RESOLVER_FIELDS = ("download_mode", "usb_serial", "pinout", "dimensions_mm", "form_factor", "usb_connector",
+                   "getting_started", "images")
+
+
+def readable_resolver_provenance(value) -> bool:
+    """A resolver report row as the broker copies it: {vendor, field, missing, records, boards, report_date}."""
+    if not isinstance(value, dict):
+        return False
+    boards = value.get("boards")
+    return (_text(value.get("vendor")) and value.get("field") in RESOLVER_FIELDS
+            and isinstance(value.get("missing"), int) and not isinstance(value.get("missing"), bool) and value["missing"] > 0
+            and isinstance(value.get("records"), int) and not isinstance(value.get("records"), bool) and value["records"] > 0
+            and isinstance(boards, list) and boards and all(_text(b) for b in boards)
+            and _date(value.get("report_date")) is not None)
+
+
+def resolver_key(prov: dict) -> str:
+    """`resolver-<24 hex>` of the vendor, the field and the report date: the same gap on a later report, after
+    the first resolver landed, is a new lifecycle (the earlier item is closed by then); the boards never
+    move the key."""
+    import hashlib
+    digest = hashlib.sha256(f"{prov['vendor']}\n{prov['field']}\n{prov['report_date']}".encode()).hexdigest()
+    return f"resolver-{digest[:24]}"
+
+
+def resolver_term(prov: dict) -> str:
+    return f"resolver {prov['vendor']} {prov['field']}"
+
+
+# --- the quote_check source (class hygiene, 2026-11-17) --------------------------------------------
+# A daily `scripts/check_quotes.py --all` report on main lists the records whose quoted spans appear on
+# none of their cited pages. Each such record is one work item for the executor: re-read the page and
+# quote it as written, or omit the claim (cite-or-omit). Its provenance is the report row itself.
+
+_QUOTE_FIELDS = {"record", "id", "report_date", "quotes", "urls"}
+
+
+def readable_quote_provenance(value) -> bool:
+    """The report row a quote work item carries: a record path under data/, its id, the report's date,
+    the failing quotes (non-empty) and the record's cited urls. Anything else fails closed."""
+    if not isinstance(value, dict) or set(value) != _QUOTE_FIELDS:
+        return False
+    record = value.get("record")
+    return (_text(record) and record.startswith("data/") and record.endswith(".md") and _text(value.get("id"))
+            and _date(value.get("report_date")) is not None
+            and isinstance(value.get("quotes"), list) and bool(value["quotes"]) and all(_text(q) for q in value["quotes"])
+            and isinstance(value.get("urls"), list) and all(_text(u) for u in value["urls"]))
+
+
+def quote_key(quote: dict) -> str:
+    """The work id of a quote fix: the record and the report day. The same record failing again on a later
+    report is a new lifecycle; the quotes themselves never move the key."""
+    digest = hashlib.sha256(f"{quote['record']}\n{quote['report_date']}".encode()).hexdigest()
+    return "fix-" + digest[:24]
+
+
+def quote_term(quote: dict) -> str:
+    return f"quote fix {quote['id']}"
 
 
 source_class = class_of
@@ -71,8 +147,12 @@ def default_verification_kind(candidate: dict) -> str:
     BOARD, checked at the exact part endpoint (a name hint is never an exact search); search demand
     keeps the exact public search of its term. The judge itself (verify_resolution) still reads a
     validation without a kind as catalog_search, as every validation written before 2026-11-08 was."""
-    return KIND_CATALOG_PART if isinstance(candidate, dict) and candidate.get("source") == SOURCE_PAM \
-        else KIND_CATALOG_SEARCH
+    source = candidate.get("source") if isinstance(candidate, dict) else None
+    if source == SOURCE_PAM:
+        return KIND_CATALOG_PART
+    if source == SOURCE_RESOLVER:
+        return KIND_RESOLVER_LIVE
+    return KIND_CATALOG_QUOTE if source == SOURCE_QUOTE else KIND_CATALOG_SEARCH
 
 _TOKEN_RE = re.compile(r"[^\W_]+")
 
@@ -108,6 +188,12 @@ def candidate_key(candidate: dict) -> str | None:
     if candidate.get("source") == SOURCE_PAM:
         feed = candidate.get("feed")
         return pam_leads.work_key(feed["lead"]) if pam_leads.readable_work_provenance(feed) else None
+    if candidate.get("source") == SOURCE_QUOTE:
+        quote = candidate.get("quote")
+        return quote_key(quote) if readable_quote_provenance(quote) else None
+    if candidate.get("source") == SOURCE_RESOLVER:
+        prov = candidate.get("resolver")
+        return resolver_key(prov) if readable_resolver_provenance(prov) else None
     term, opening = candidate.get("term"), opened_on(candidate)
     return work_key(term, opening) if term_key(term) and _date(opening) else None
 
@@ -200,6 +286,15 @@ def _readable_receipt(r) -> bool:
                 or r["key"] != pam_leads.work_key(r["feed"]["lead"])
                 or term_key(r.get("term")) != term_key(r["feed"]["lead"]["name_hint"])):
             return False
+    elif r.get("source") == SOURCE_QUOTE:
+        if ("window" in r or "metrics" in r or not readable_quote_provenance(r.get("quote"))
+                or r["key"] != quote_key(r["quote"]) or term_key(r.get("term")) != term_key(quote_term(r["quote"]))):
+            return False
+    elif r.get("source") == SOURCE_RESOLVER:
+        if ("window" in r or "metrics" in r or not readable_resolver_provenance(r.get("resolver"))
+                or r["key"] != resolver_key(r["resolver"])
+                or term_key(r.get("term")) != term_key(resolver_term(r["resolver"]))):
+            return False
     elif any(f in r and not check(r) for f, check in _SNAPSHOT_CHECKS.items()):
         return False
     if r.get("branch") != branch_for(r["key"]) or _date(r.get("started_on")) is None:
@@ -224,6 +319,8 @@ class Work:
     metrics: dict | None
     linked_work: tuple = ()
     feed: dict = field(default_factory=dict)
+    quote: dict = field(default_factory=dict)
+    resolver: dict = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -238,12 +335,18 @@ def _provenance(candidate: dict, own: list[dict]) -> dict:
     """The signal this work answers: the earliest receipt's snapshot when one was persisted (the
     queue refreshes window/counts daily, so the reservation's copy is the original), else the
     candidate's current fields."""
-    snapshots = sorted((r for r in own if (r.get("source") == SOURCE_PAM
+    snapshots = sorted((r for r in own if (r.get("source") in (SOURCE_PAM, SOURCE_QUOTE, SOURCE_RESOLVER)
                         or all(f in r for f in _SNAPSHOT_CHECKS))), key=lambda r: r["started_on"])
     row = snapshots[0] if snapshots else candidate
     if row.get("source") == SOURCE_PAM:
         return {"source": SOURCE_PAM, "window": None, "metrics": None,
                 "feed": copy.deepcopy(row.get("feed"))}
+    if row.get("source") == SOURCE_QUOTE:
+        return {"source": SOURCE_QUOTE, "window": None, "metrics": None,
+                "quote": copy.deepcopy(row.get("quote"))}
+    if row.get("source") == SOURCE_RESOLVER:
+        return {"source": SOURCE_RESOLVER, "window": None, "metrics": None,
+                "resolver": copy.deepcopy(row.get("resolver"))}
     return {"source": row.get("source"), "window": _window(row), "metrics": _metrics(row)}
 
 
@@ -263,6 +366,14 @@ def _work(candidate: dict, receipts: list[dict]) -> Work | None:
                 or not pam_leads.readable_work_provenance(prov["feed"])
                 or key != pam_leads.work_key(prov["feed"]["lead"])
                 or term_key(term) != term_key(prov["feed"]["lead"]["name_hint"])):
+            return None
+    elif prov["source"] == SOURCE_QUOTE:
+        if ("window" in candidate or "metrics" in candidate or not readable_quote_provenance(prov["quote"])
+                or key != quote_key(prov["quote"]) or term_key(term) != term_key(quote_term(prov["quote"]))):
+            return None
+    elif prov["source"] == SOURCE_RESOLVER:
+        if ("window" in candidate or "metrics" in candidate or not readable_resolver_provenance(prov["resolver"])
+                or key != resolver_key(prov["resolver"]) or term_key(term) != term_key(resolver_term(prov["resolver"]))):
             return None
     elif not (_text(prov["source"]) and prov["window"] and prov["metrics"]):
         return None
@@ -544,7 +655,35 @@ def _catalog_part_problem(receipt: dict, expected: list, forbidden: list) -> str
     return None
 
 
+def _catalog_quote_problem(receipt: dict, expected: list, forbidden: list) -> str | None:
+    """Record hygiene: at the merge, scripts/check_quotes.py finds every quoted span of the record on a
+    cited page (PASS). FAIL or INCONCLUSIVE stay open; the record must be one the validation expected."""
+    if receipt.get("verdict") != "PASS":
+        return f"quotes {receipt.get('verdict')!r} at the merge, not PASS"
+    if not _text(receipt.get("record")) or receipt.get("id") not in expected:
+        return f"the checked record {receipt.get('id')!r} is not the expected {expected}"
+    return None
+
+
+def _resolver_live_problem(receipt: dict, expected: list, forbidden: list) -> str | None:
+    """Resolver work: after the merge, the hourly backfill (deterministic code, never the delegate) wrote
+    the field on boards of the vendor. Delivered when at least min(3, len(expected)) of the expected boards
+    now carry the field on main; fewer stays open (the next delegate run gets the backfill log)."""
+    gained = receipt.get("gained")
+    if not isinstance(gained, list) or not all(_text(b) for b in gained):
+        return "gained is not a list of board ids"
+    stray = sorted(set(gained) - set(expected))
+    if stray:
+        return f"gained boards outside the expected set: {', '.join(stray)}"
+    need = min(3, len(expected))
+    if receipt.get("verdict") != "PASS" or len(set(gained)) < need:
+        return f"{len(set(gained))} of {len(expected)} expected boards gained {receipt.get('field')!r} (need {need})"
+    return None
+
+
 _KIND_CHECKS = {KIND_CATALOG_SEARCH: (_catalog_search_problem, ("http", "deployment", "ids")),
+                KIND_CATALOG_QUOTE: (_catalog_quote_problem, ("record", "merge_sha", "verdict")),
+                KIND_RESOLVER_LIVE: (_resolver_live_problem, ("vendor", "field", "merge_sha", "gained", "verdict")),
                 KIND_DEMAND_RESOLUTION: (_demand_resolution_problem,
                                          ("mined_revision", "exit_code", "resolved", "gap")),
                 KIND_CATALOG_PART: (_catalog_part_problem,

@@ -1226,3 +1226,44 @@ def test_no_second_merge_of_main_while_main_is_red_or_unreadable_on_that_check(t
         gh = MainGreenGh([tick_pr(28, [red()], head=H2)], main_conclusion=conclusion, behind=2)
         chores.run(gh, store, "2026-11-19T15:05:00+00:00", slug="o/r")
         assert _puts(gh) == []
+
+
+# --- a green, armed demand snapshot that fell behind main gets main merged in (2026-11-26) ------------------------
+# Its owner is the publisher's auto-merge; with strict protection a BEHIND PR never merges by itself (#2057 sat
+# BEHIND for 22 h). Once per PR per UTC day, only when every required check passed and the merge is armed.
+
+def _snap(n=2057, behind=True, armed=True, checks=None, branch="jr/demand-20261124-1115"):
+    p = pr(n, branch=branch, head=H1)
+    p["mergeStateStatus"] = "BEHIND" if behind else "CLEAN"
+    p["autoMergeRequest"] = {"enabledAt": "2026-11-24T11:16:29Z"} if armed else None
+    p["statusCheckRollup"] = checks if checks is not None else [
+        {"name": n_, "conclusion": "SUCCESS", "status": "COMPLETED", "detailsUrl": "https://github.com/o/r/actions/runs/1/job/2"}
+        for n_ in ("schema", "tests", "jr-tests")]
+    return p
+
+
+def test_a_green_armed_snapshot_behind_main_is_updated_once_a_day(tmp_path):
+    store, gh = _store(tmp_path), RedGh([_snap()])
+    chores.run(gh, store, NOW, slug="o/r")
+    chores.run(gh, store, LATER, slug="o/r")
+    puts = [c for c in gh.calls if c[:3] == ("api", "-X", "PUT")]
+    assert puts == [("api", "-X", "PUT", "repos/o/r/pulls/2057/update-branch", "-f", f"expected_head_sha={H1}")]
+
+
+@pytest.mark.parametrize("kw", [{"behind": False}, {"armed": False},
+                                {"checks": [red("tests")]}, {"branch": "feat/x"}])
+def test_no_update_when_not_behind_not_armed_red_or_not_a_snapshot(tmp_path, kw):
+    store, gh = _store(tmp_path), RedGh([_snap(**kw)])
+    chores.run(gh, store, NOW, slug="o/r")
+    assert not [c for c in gh.calls if c[:3] == ("api", "-X", "PUT") and "/2057/" in c[3]]
+
+
+def test_a_conflicting_demand_snapshot_is_never_a_heal_job(tmp_path):
+    """Observed 2026-11-26 (heal state on the runner, abandoned_at 23:00Z): 2ebbc311 dispatched a heal twice for #2057 (jr/demand-*); the relay may never touch
+    docs/demand/, so it could only fail and 'give up'. The demand runner's superseded-close owns it."""
+    store = _store(tmp_path)
+    p = pr(2057, "DIRTY", branch="jr/demand-20261124-1115")
+    chores.run(Gh([p]), store, NOW, slug="o/r")
+    assert not any(k.startswith("conflict:#2057") for k in _incidents(store))
+    chores.run(Gh([pr(40, "DIRTY", branch="feat/z")]), store, LATER, slug="o/r")
+    assert "conflict:#40" in _incidents(store)                                 # a code PR still gets its fix job

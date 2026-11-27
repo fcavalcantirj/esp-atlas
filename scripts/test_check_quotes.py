@@ -242,3 +242,39 @@ def test_a_pr_that_drops_or_swaps_a_cited_url_gets_no_excuse_for_the_old_spans(t
     assert known[rec] == set()
     _reports, code = cq.run([rec], fake_fetch({"https://vendor/b": "nothing"}), known=known)
     assert code == 1
+
+# --- the daily hygiene report (jr/demand_run lands it; the broker turns FAIL rows into work) --------------
+
+def test_the_report_lists_fail_records_with_their_failing_quotes_and_cited_urls(tmp_path):
+    fm, _ = cq.parse_frontmatter(RECORD)
+    bad = _pages(fm, preface=PREFACE.replace("CH340 to download codes", "CH341 to download codes"))
+    rep = cq.report([RECORD], fake_fetch(bad), today="2026-11-17")
+    assert rep["version"] == 1 and rep["date"] == "2026-11-17" and rep["complete"] is True
+    assert len(rep["records"]) == 1
+    row = rep["records"][0]
+    assert row["id"] == "freenove-esp32-wrover" and row["quotes"] == ["ESP32 uses CH340 to download codes"]
+    assert row["record"].endswith("freenove-esp32-wrover.board.md") and set(row["urls"]) == set(cq.cited_urls(fm))
+    assert rep["counts"]["fail"] == 1 and rep["counts"]["with_quotes"] == 1 and rep["inconclusive"] == []
+
+
+def test_the_report_keeps_inconclusive_apart_from_fail_and_passes_are_not_listed():
+    fm, _ = cq.parse_frontmatter(RECORD)
+    rep = cq.report([RECORD], fake_fetch(_pages(fm)), today="2026-11-17")
+    assert rep["records"] == [] and rep["inconclusive"] == [] and rep["counts"]["fail"] == 0
+    rep = cq.report([RECORD], fake_fetch(_pages(fm, preface=None)), today="2026-11-17")
+    assert rep["records"] == [] and len(rep["inconclusive"]) == 1 and rep["counts"]["inconclusive"] == 1
+
+
+def test_a_report_that_ran_out_of_budget_is_incomplete_and_fetches_each_page_once():
+    fm, _ = cq.parse_frontmatter(RECORD)
+    log = []
+    fetch = fake_fetch(_pages(fm), log)
+    t = {"now": 0.0}
+    def clock():
+        t["now"] += 100.0                    # every look at the clock costs 100 s: the budget is gone after the first page
+        return t["now"]
+    rep = cq.report([RECORD, RECORD], fetch, today="2026-11-17", budget_seconds=150, clock=clock, workers=1)
+    assert rep["complete"] is False
+    assert len(log) == len(set(log))          # one fetch per url
+    full = cq.report([RECORD, RECORD], fake_fetch(_pages(fm)), today="2026-11-17")
+    assert full["complete"] is True and full["counts"]["judged"] == 2
