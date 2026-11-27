@@ -163,6 +163,14 @@ def decide(pr: dict, st: dict, *, switches: dict, now: str) -> dict:
             return out("skip", f"{facts} facts, more than {MAX_FACTS_PER_PR} per PR")
         if st.get("facts_today", 0) + facts > MAX_FACTS_PER_DAY:
             return out("skip", f"would pass {MAX_FACTS_PER_DAY} facts per day")
+        # 2026-11-28: the coordinator re-checks every added fact with MAIN's checker, as it already re-derives
+        # backfills. A `claims` pass computed before a checker change is not trusted: #2100 passed before the
+        # product-name refusal (#2140) and merged after it, putting the refused class on main.
+        rc = st.get("recheck")
+        if not rc or not rc.get("facts"):
+            return out("skip", "no fact re-checked by main's checker: zero is never a merge")
+        if rc.get("pass") != rc.get("facts") or rc.get("facts") != facts:
+            return out("skip", "main's checker does not pass every fact: " + "; ".join(rc.get("problems") or [])[:240])
     return out("merge")
 
 
@@ -201,7 +209,40 @@ def gather(gh, slug: str, pr: dict, repo: Path = REPO) -> dict:
     if str(pr.get("headRefName") or "").endswith("-bf"):
         out["backfill"] = _rederive(files, show, n, today)
         out["fields_today"] = _fields_today(repo, today)
+    elif {l.get("name") for l in pr.get("labels") or []} & {DATA_LABEL}:
+        out["recheck"] = _recheck(files, show, n)
     return out
+
+
+def _recheck(files: list, show, n: int) -> dict:
+    """Every build-target recipe the PR adds, judged by main's checker (this checkout) against main's catalog,
+    the firmware record read from the PR (a new firmware rides in it) or main."""
+    import check_claims
+    import claims_pio_sources as src
+    from esp_atlas_core.frontmatter import parse_frontmatter_text
+    res = {"facts": 0, "pass": 0, "problems": []}
+    added = [f["path"] for f in files if _RECIPE.match(f["path"]) and f["status"] == "added"]
+    if not added:
+        return res
+    boards, _ = check_claims._catalog(REPO / "data")
+    names = src.product_names(REPO / "data")
+    http = src.Http()
+    index = src.PlatformIndex(http)
+    for path in added:
+        text = show(f"pr/{n}", path)
+        fm = parse_frontmatter_text(text)[0] if text else None
+        if not fm or fm.get("status") != "build-target":
+            continue
+        res["facts"] += 1
+        fw_path = f"data/firmware/{fm.get('firmware')}/firmware.md"
+        fw_text = show(f"pr/{n}", fw_path) or show("origin/main", fw_path)
+        fw = parse_frontmatter_text(fw_text)[0] if fw_text else {}
+        r = check_claims.check_recipe(fm, fw or {}, boards, http, index, names=names)
+        if r["verdict"] == check_claims.PASS:
+            res["pass"] += 1
+        else:
+            res["problems"].append(f"{r['id']}: {r['verdict']} {'; '.join(r['reasons'][:2])}"[:200])
+    return res
 
 
 def _rederive(files: list, show, n: int, today: str) -> dict:

@@ -1,5 +1,11 @@
 {
   "version": 1,
-  "recipes": {},
+  "recipes": {
+    "esp32-pico-kit__openmqttgateway": {
+      "reason": "claim FAIL: product name: env 'esp32-m5atom-lite' names 'm5atom-lite', not the generic option on 'esp32-pico-kit' (owner rule 2026-11-11; merged by #2100 on a claims pass computed before #2140)",
+      "run": "check_claims --all at main 2026-11-28",
+      "since": "2026-11-28"
+    }
+  },
   "suspended_repos": {}
 }

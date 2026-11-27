@@ -2706,7 +2706,7 @@
    "branch": "jr/research-b3d7b58e692b9985",
    "term": "marauders esp",
    "phase": "research",
-   "state": "reserved",
+   "state": "rejected",
    "started_on": "2026-11-27",
    "source": "gsc_query",
    "linked_work": [],
@@ -2727,6 +2727,15 @@
      "prs": []
     },
     "reserved_by": "jr/demand_run.py"
+   },
+   "last_attempt_on": "2026-11-27",
+   "resolution": {
+    "status": "rejected",
+    "reason": "already catalogued as esp32marauder: 'marauders esp' is the ESP32 Marauder firmware (https://github.com/justcallmekoko/ESP32Marauder, 'A suite of WiFi/Bluetooth offensive and defensive tools for the ESP32'), recorded at data/firmware/esp32marauder and the query's own landing page https://esp-atlas.com/firmware/esp32marauder; not a distinct board",
+    "closed_on": "2026-11-27",
+    "evidence": {
+     "settled_by": "jr/work_record.py"
+    }
    }
   },
   {
