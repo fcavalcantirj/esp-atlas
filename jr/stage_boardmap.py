@@ -95,8 +95,10 @@ def _age_days(signals_json: Path, now: datetime) -> float | None:
 
 def select_firmware(root: Path, budget: int, now: datetime, fresh_days: int = FRESH_DAYS) -> list[str]:
     """Most under-mapped first: (-missing, recipe count, -signals age, id), where missing is
-    the persisted resolved boards that still lack a recipe. Skips GitHub-less records and
-    records whose signals were fetched < fresh_days ago."""
+    the resolved boards that still lack a recipe: the persisted ones plus the persisted signals
+    re-resolved against today's catalog (zero calls), so a board catalogued after the fetch counts.
+    Skips GitHub-less records and records whose signals were fetched < fresh_days ago."""
+    catalog = board_alias.atlas_boards(root)
     cands = []
     for fmd in sorted((root / "data" / "firmware").glob("*/firmware.md")):
         fm = tools._frontmatter(fmd)
@@ -108,7 +110,9 @@ def select_firmware(root: Path, budget: int, now: datetime, fresh_days: int = FR
         if age is not None and age < fresh_days:
             continue
         n_recipes = len(list((root / "data" / "recipes").glob(f"*__{fid}")))
-        boards = ((doc or {}).get("resolved") or {}).get("boards") or []
+        boards = set(((doc or {}).get("resolved") or {}).get("boards") or [])
+        if doc and doc.get("signals"):
+            boards |= set(derive.resolve(doc, boards=catalog)["boards"])
         removed = writers.removed_recipes(fid, root) or set()     # unreadable: counted, plan_recipes refuses
         missing = sum(1 for b in boards
                       if not (root / "data" / "recipes" / f"{b}__{fid}" / "recipe.md").exists()

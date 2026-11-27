@@ -136,6 +136,16 @@ def real_report():
     return ba.report()
 
 
+def test_resolve_token_on_the_default_universe_matches_a_scan_of_it():
+    """The default universe is looked up through a key index (the boardmap selector re-resolves every
+    persisted signal each tick); it must answer exactly what a scan of the same entries answers."""
+    ba.clear_caches()
+    entries = ba.universe()
+    tokens = [t for e in entries[::7] for t in (e.get("id"), e.get("name")) if t] + ["cardputer-adv", "ESP32_WROVER"]
+    for t in tokens:
+        assert ba.resolve_token(t) == ba.resolve_token(t, entries=entries), t
+
+
 def test_real_tree_coverage_never_regresses(real_report):
     """Measured 2026-09-07 before aka landed: compact 91 + containment 15 + alias 13 → 66 of 82.
     Once `aka` is written the containment hits become compact hits (an aka IS a compact key),

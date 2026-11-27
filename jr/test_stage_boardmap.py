@@ -119,6 +119,28 @@ def test_select_firmware_prefers_measured_under_map_over_fewest_recipes(root):
     assert sb.select_firmware(root, 3, NOW) == ["full", "empty", "marauder"]
 
 
+def test_select_firmware_counts_a_board_the_catalog_gained_after_the_fetch_as_missing(root):
+    """2026-11-27 (stall:firmware, incident 0cf1acb95f79-2): m5-crystal's signals were fetched 2026-11-11 and
+    name `cardputer-adv`; m5cardputer-adv entered the catalog 2026-11-14. Its persisted resolved.boards
+    predates the board, so the selector counted 0 missing and boardmap re-read 1-recipe firmware for 24
+    ticks while 5 firmware had 6 recipes waiting. The persisted signals are re-resolved, zero calls."""
+    (root / "data" / "firmware" / "stale").mkdir()
+    (root / "data" / "firmware" / "stale" / "firmware.md").write_text(FW.replace("id: marauder", "id: stale"))
+    for b in ["m5cardputer", "m5stick-cplus2"]:
+        d = root / "data" / "recipes" / f"{b}__stale"
+        d.mkdir(parents=True)
+        (d / "recipe.md").write_text("x\n")
+    (root / "data" / "firmware" / "stale" / "signals.json").write_text(json.dumps({
+        "fetched": "2026-08-01", "errors": 0,
+        "signals": [{"kind": "ci", "rank": 3, "soc": None, "token": "cardputer-adv", "line": None, "extra": {},
+                     "url": "https://github.com/o/stale/blob/main/.github/workflows/build.yml"}],
+        "resolved": {"boards": [], "socs": [], "unresolved": ["cardputer-adv"]}}))   # fetched before the board existed
+    assert sb.select_firmware(root, 1, NOW) == ["stale"]          # 1 missing beats marauder's 0 recipes + unmeasured
+    (root / "data" / "recipes" / "m5cardputer-adv__stale").mkdir()
+    (root / "data" / "recipes" / "m5cardputer-adv__stale" / "recipe.md").write_text("x\n")
+    assert sb.select_firmware(root, 1, NOW) == ["marauder"]       # mapped: back to fewest recipes
+
+
 def test_select_firmware_treats_failed_signals_as_unmeasured(root):
     (root / "data" / "firmware" / "full").mkdir()
     (root / "data" / "firmware" / "full" / "firmware.md").write_text(FW.replace("id: marauder", "id: full"))

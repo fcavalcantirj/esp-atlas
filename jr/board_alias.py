@@ -102,9 +102,21 @@ def explicit_aliases(path: Path = ALIASES_PATH) -> dict[str, dict]:
     return {k: v for k, v in (data.get("aliases") or {}).items()}
 
 
+@lru_cache(maxsize=1)
+def _universe_by_key(path: Path = UNIVERSE_PATH) -> dict[str, list[dict]]:
+    """universe() indexed by each entry's compact keys, in universe order: resolve_token's lookup
+    instead of a scan of every entry per token."""
+    out: dict[str, list[dict]] = {}
+    for e in universe(path):
+        for k in _entry_compact_keys(e):
+            out.setdefault(k, []).append(e)
+    return out
+
+
 def clear_caches() -> None:
     atlas_boards.cache_clear()
     universe.cache_clear()
+    _universe_by_key.cache_clear()
     explicit_aliases.cache_clear()
 
 
@@ -201,7 +213,7 @@ def resolve_token(token: str, soc: str | None = None, boards: dict[str, dict] | 
     chip = chip_only(token)
     if chip:
         return {"soc": chip}
-    entries = universe() if entries is None else entries
+    entries = _universe_by_key().get(c, []) if entries is None else entries
     boards = atlas_boards() if boards is None else boards
     matches = [e for e in entries if c in _entry_compact_keys(e) and (soc is None or e.get("soc") == soc)]
     resolved = {}
