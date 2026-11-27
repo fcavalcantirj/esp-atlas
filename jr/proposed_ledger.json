@@ -188,6 +188,14 @@
       "status": "rejected",
       "timestamp": "2026-11-15T21:00:31.486348+00:00"
     },
+    "acom-digimon": {
+      "expires": "2026-12-27T05:00:34.450928+00:00",
+      "id": "acom-digimon",
+      "pr_ref": null,
+      "repo": "ultramcu/acom-digimon",
+      "status": "seen",
+      "timestamp": "2026-11-27T05:00:34.450928+00:00"
+    },
     "actpaddle": {
       "expires": "2026-12-08T20:00:54.954530+00:00",
       "id": "actpaddle",
@@ -4090,12 +4098,20 @@
       "status": "rejected",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
+    "esp32-microros-joystick": {
+      "expires": "2026-12-27T05:00:34.450928+00:00",
+      "id": "esp32-microros-joystick",
+      "pr_ref": null,
+      "repo": "nilutpolkashyap/esp32_microros_joystick",
+      "status": "seen",
+      "timestamp": "2026-11-27T05:00:34.450928+00:00"
+    },
     "esp32-nat-router": {
       "id": "esp32-nat-router",
       "pr_ref": "#2098",
       "repo": "martin-ger/esp32_nat_router",
       "status": "proposed",
-      "timestamp": "2026-11-27T04:00:33.280906+00:00"
+      "timestamp": "2026-11-27T05:00:34.450928+00:00"
     },
     "esp32-navigation": {
       "expires": "2026-12-16T05:00:31.772256+00:00",
@@ -13794,6 +13810,14 @@
       "status": "seen",
       "timestamp": "2026-11-18T05:00:31.893243+00:00"
     },
+    "m5-espalexa": {
+      "expires": "2026-12-27T05:00:34.450928+00:00",
+      "id": "m5-espalexa",
+      "pr_ref": null,
+      "repo": "nabeo114/m5_espalexa",
+      "status": "seen",
+      "timestamp": "2026-11-27T05:00:34.450928+00:00"
+    },
     "m5-fire-kids-clock": {
       "expires": "2026-12-18T11:00:31.972357+00:00",
       "id": "m5-fire-kids-clock",
@@ -14704,6 +14728,14 @@
       "status": "rejected",
       "timestamp": "2026-11-14T18:00:55.491519+00:00"
     },
+    "m5core2mpdcli": {
+      "expires": "2026-12-27T05:00:34.450928+00:00",
+      "id": "m5core2mpdcli",
+      "pr_ref": null,
+      "repo": "dheijl/m5core2mpdcli",
+      "status": "seen",
+      "timestamp": "2026-11-27T05:00:34.450928+00:00"
+    },
     "m5corehamcat": {
       "expires": "2026-11-28T19:01:00.686047+00:00",
       "id": "m5corehamcat",
@@ -15404,6 +15436,15 @@
       "repo": "sekdisorkf944sskixozad/m5stack_gw_catm_v3.git",
       "status": "expired",
       "timestamp": "2026-09-12T23:00:36.053237+00:00"
+    },
+    "m5stack-homecontrol": {
+      "expires": "2027-01-26T05:00:34.450928+00:00",
+      "id": "m5stack-homecontrol",
+      "pr_ref": null,
+      "reason": "not_device_firmware: no espressif32 platformio.ini, ESP-IDF project, Arduino sketch or release .bin",
+      "repo": "hugobloem/m5stack_homecontrol",
+      "status": "rejected",
+      "timestamp": "2026-11-27T05:00:34.450928+00:00"
     },
     "m5stack-image-viewer": {
       "expires": "2026-12-14T21:00:55.045531+00:00",
@@ -17474,7 +17515,7 @@
       "pr_ref": "#2101",
       "repo": "forged-in-feathers-technology/observore",
       "status": "proposed",
-      "timestamp": "2026-11-27T04:00:33.280906+00:00"
+      "timestamp": "2026-11-27T05:00:34.450928+00:00"
     },
     "oddlings": {
       "id": "oddlings",
@@ -19652,6 +19693,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T05:00:32.307897+00:00"
     },
+    "repo-note:bokunimowakaru/m5s": {
+      "expires": "2026-12-27T05:00:34.450928+00:00",
+      "id": "repo-note:bokunimowakaru/m5s",
+      "pr_ref": null,
+      "reason": "stopword_name: 'm5s' names a radio, not a firmware",
+      "repo": "bokunimowakaru/m5s",
+      "status": "rejected",
+      "timestamp": "2026-11-27T05:00:34.450928+00:00"
+    },
     "repo-note:bolaerts/esp32-2432s028": {
       "expires": "2026-12-25T11:00:33.440257+00:00",
       "id": "repo-note:bolaerts/esp32-2432s028",
@@ -21308,6 +21358,15 @@
       "status": "rejected",
       "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
+    "repo-note:hyx0329/axp2101-rs": {
+      "expires": "2026-12-27T05:00:34.450928+00:00",
+      "id": "repo-note:hyx0329/axp2101-rs",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'driver'",
+      "repo": "hyx0329/axp2101-rs",
+      "status": "rejected",
+      "timestamp": "2026-11-27T05:00:34.450928+00:00"
+    },
     "repo-note:i-am-engineer/ht-hd01-v2-original-firmware": {
       "expires": "2026-12-21T09:00:32.125358+00:00",
       "id": "repo-note:i-am-engineer/ht-hd01-v2-original-firmware",
@@ -21721,6 +21780,15 @@
       "repo": "jyjblrd/low-cost-mocap",
       "status": "rejected",
       "timestamp": "2026-11-26T00:00:33.415656+00:00"
+    },
+    "repo-note:k-phi/m5core2blindscontroller": {
+      "expires": "2026-12-27T05:00:34.450928+00:00",
+      "id": "repo-note:k-phi/m5core2blindscontroller",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "k-phi/m5core2blindscontroller",
+      "status": "rejected",
+      "timestamp": "2026-11-27T05:00:34.450928+00:00"
     },
     "repo-note:kaboom748/esp-analogradio": {
       "expires": "2026-12-26T02:00:33.267631+00:00",
@@ -22712,6 +22780,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T07:00:32.950177+00:00"
     },
+    "repo-note:mhwlng/arduino-albumcover": {
+      "expires": "2027-02-25T05:00:34.450928+00:00",
+      "id": "repo-note:mhwlng/arduino-albumcover",
+      "pr_ref": null,
+      "reason": "archived: mhwlng/arduino-albumcover is archived",
+      "repo": "mhwlng/arduino-albumcover",
+      "status": "rejected",
+      "timestamp": "2026-11-27T05:00:34.450928+00:00"
+    },
     "repo-note:michtronics/axloratnc": {
       "expires": "2026-12-18T09:00:32.863482+00:00",
       "id": "repo-note:michtronics/axloratnc",
@@ -23287,6 +23364,15 @@
       "repo": "opensurface/sonosesp",
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
+    "repo-note:orescek/m5stackprojects": {
+      "expires": "2026-12-27T05:00:34.450928+00:00",
+      "id": "repo-note:orescek/m5stackprojects",
+      "pr_ref": null,
+      "reason": "already_rejected: 'm5stackprojects' is in the proposed ledger",
+      "repo": "orescek/m5stackprojects",
+      "status": "rejected",
+      "timestamp": "2026-11-27T05:00:34.450928+00:00"
     },
     "repo-note:oshri-almog/esp32c5-wireshark-sniffer": {
       "expires": "2026-12-26T02:00:33.267631+00:00",
@@ -28816,6 +28902,7 @@
     "bokunimowakaru/esp": "repo-note:bokunimowakaru/esp",
     "bokunimowakaru/m5": "repo-note:bokunimowakaru/m5",
     "bokunimowakaru/m5adc": "m5adc",
+    "bokunimowakaru/m5s": "repo-note:bokunimowakaru/m5s",
     "bolaerts/esp32-2432s028": "repo-note:bolaerts/esp32-2432s028",
     "bomberman30/advanceos-for-cardputer": "advanceos-for-cardputer",
     "bomberman30/carduboy-arduboy-for-cardputer": "carduboy-arduboy-for-cardputer",
@@ -29056,6 +29143,7 @@
     "devsur11/m5tracker": "m5tracker",
     "dextelktro/black-crow-esp32-c5-firmware": "repo-note:dextelktro/black-crow-esp32-c5-firmware",
     "dezusaz/isitdefcon": "isitdefcon",
+    "dheijl/m5core2mpdcli": "m5core2mpdcli",
     "diegoguevara/hamqso-firmware": "hamqso-firmware",
     "digital-farms/microcast": "microcast",
     "dj0abr/sx1262-arduino-esp32-driver": "repo-note:dj0abr/sx1262-arduino-esp32-driver",
@@ -29386,6 +29474,7 @@
     "hshin-git/m5radiocontrol": "repo-note:hshin-git/m5radiocontrol",
     "http:/": "http:/",
     "https:/": "https:/",
+    "hugobloem/m5stack_homecontrol": "m5stack-homecontrol",
     "huskerminion/techo5": "repo-note:huskerminion/techo5",
     "huskerminion/techo5-dot": "repo-note:huskerminion/techo5-dot",
     "hxelec/antc3": "repo-note:hxelec/antc3",
@@ -29393,6 +29482,7 @@
     "hybridgroup/go-haystack": "repo-note:hybridgroup/go-haystack",
     "hybridgroup/gobot": "repo-note:hybridgroup/gobot",
     "hypnotoad08/sen66-matter-sensor": "repo-note:hypnotoad08/sen66-matter-sensor",
+    "hyx0329/axp2101-rs": "repo-note:hyx0329/axp2101-rs",
     "i-am-engineer/ht-hd01-v2-original-firmware": "repo-note:i-am-engineer/ht-hd01-v2-original-firmware",
     "i-am-shodan/usbarmyknife.git": "usbarmyknife",
     "i12bp8/echo": "echo",
@@ -29532,6 +29622,7 @@
     "jymmm/rhesus-radio": "rhesus-radio",
     "k-7iro/mk75-watch": "mk75-watch",
     "k-natori/poodle": "poodle",
+    "k-phi/m5core2blindscontroller": "repo-note:k-phi/m5core2blindscontroller",
     "k-yama2010/tab5_cockpit": "tab5-cockpit",
     "k-yama2010/world-market-clock": "world-market-clock",
     "k3yomi/wall-of-flippers": "wall-of-flippers",
@@ -30682,6 +30773,7 @@
     "meshtastic/firmware": "meshtastic",
     "mhamidjamil/ttgo_tcall": "repo-note:mhamidjamil/ttgo_tcall",
     "mhrsntrk/ask-master": "ask-master",
+    "mhwlng/arduino-albumcover": "repo-note:mhwlng/arduino-albumcover",
     "michaelrizn/hi5stack-m5stack-papsers3-m5papers3": "hi5stack-m5stack-papsers3-m5papers3",
     "michtronics/axloratnc": "repo-note:michtronics/axloratnc",
     "micokonsep/flipcard-papers3": "flipcard-papers3",
@@ -30760,6 +30852,7 @@
     "n0xa/m5stick-stuph": "m5stick-stuph",
     "n0xa/m5stickstuph": "m5stickstuph",
     "n3tfox/flockwatch": "flockwatch",
+    "nabeo114/m5_espalexa": "m5-espalexa",
     "naileclevrai/bruce-nemo-ble": "bruce-nemo-ble",
     "name_dll": "name-dll",
     "nananauno/m5guruguru-starter": "m5guruguru-starter",
@@ -30788,6 +30881,7 @@
     "nexus1203/vibsense": "vibsense",
     "ni5arga/protestchat": "repo-note:ni5arga/protestchat",
     "nikoniko78/paperweathermain": "paperweathermain",
+    "nilutpolkashyap/esp32_microros_joystick": "esp32-microros-joystick",
     "ninedter/defcon-defense": "repo-note:ninedter/defcon-defense",
     "nishad2m8/cardputer-games": "cardputer-games",
     "nishad2m8/geminiputer": "geminiputer",
@@ -30871,6 +30965,7 @@
     "openhop-dev/openhop_modem": "repo-note:openhop-dev/openhop_modem",
     "openhop-dev/openhop_repeater": "repo-note:openhop-dev/openhop_repeater",
     "opensurface/sonosesp": "repo-note:opensurface/sonosesp",
+    "orescek/m5stackprojects": "repo-note:orescek/m5stackprojects",
     "osamusg/m5papercolor-calendar": "m5papercolor-calendar",
     "oshri-almog/esp32c5-wireshark-sniffer": "repo-note:oshri-almog/esp32c5-wireshark-sniffer",
     "osptek/esp32-p4c5-core-board": "repo-note:osptek/esp32-p4c5-core-board",
@@ -31346,6 +31441,7 @@
     "u-tanick/ai_stackchan2_for_debug": "ai-stackchan2-for-debug",
     "ubo07": "ubo07",
     "ugursayar/nesso_base": "nesso-base",
+    "ultramcu/acom-digimon": "acom-digimon",
     "ultramcu/guition-jc4880p4-bsp": "repo-note:ultramcu/guition-jc4880p4-bsp",
     "unclerus/esp-idf-lib": "repo-note:unclerus/esp-idf-lib",
     "undedinside/duckyscriptpayloads": "repo-note:undedinside/duckyscriptpayloads",
