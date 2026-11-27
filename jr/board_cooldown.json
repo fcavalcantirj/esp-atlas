@@ -165,7 +165,7 @@
     },
     "adafruit-metro-esp32-s2": {
       "board": "adafruit-metro-esp32-s2",
-      "expires": "2026-12-04T07:00:33.350544+00:00",
+      "expires": "2026-12-04T08:00:32.923383+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -178,12 +178,12 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-27T07:00:33.350544+00:00",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00",
       "url": null
     },
     "adafruit-metro-esp32-s3": {
       "board": "adafruit-metro-esp32-s3",
-      "expires": "2026-12-04T07:00:33.350544+00:00",
+      "expires": "2026-12-04T08:00:32.923383+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -191,7 +191,7 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-27T07:00:33.350544+00:00",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00",
       "url": "https://learn.adafruit.com/adafruit-metro-esp32-s3"
     },
     "freenove-esp32-wrover": {

@@ -4119,7 +4119,7 @@
       "pr_ref": "#2098",
       "repo": "martin-ger/esp32_nat_router",
       "status": "proposed",
-      "timestamp": "2026-11-27T07:00:33.350544+00:00"
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "esp32-navigation": {
       "expires": "2026-12-16T05:00:31.772256+00:00",
@@ -6273,14 +6273,13 @@
       "timestamp": "2026-11-24T07:00:33.225443+00:00"
     },
     "launcher-1897200000000000145": {
-      "expired_at": "2026-11-22T20:00:33.232813+00:00",
-      "expires": "2026-11-22T20:00:31.795538+00:00",
+      "expires": "2027-02-25T08:00:32.923383+00:00",
       "id": "launcher-1897200000000000145",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (ozbk); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000000145",
-      "status": "expired",
-      "timestamp": "2026-11-15T20:00:31.795538+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "launcher-1897200000000000147": {
       "expired_at": "2026-11-22T22:00:32.976050+00:00",
@@ -6577,14 +6576,13 @@
       "timestamp": "2026-11-22T20:00:33.232813+00:00"
     },
     "launcher-1897200000000000334": {
-      "expired_at": "2026-11-22T22:00:32.976050+00:00",
-      "expires": "2026-11-22T21:00:31.486348+00:00",
+      "expires": "2027-02-25T08:00:32.923383+00:00",
       "id": "launcher-1897200000000000334",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (ewik-228); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000000334",
-      "status": "expired",
-      "timestamp": "2026-11-15T21:00:31.486348+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "launcher-1897200000000000344": {
       "expired_at": "2026-11-22T02:00:35.531858+00:00",
@@ -6977,14 +6975,13 @@
       "timestamp": "2026-11-15T07:00:31.352637+00:00"
     },
     "launcher-1897200000000000603": {
-      "expired_at": "2026-11-21T15:00:32.207430+00:00",
-      "expires": "2026-11-21T14:00:56.621804+00:00",
+      "expires": "2026-12-04T08:00:32.923383+00:00",
       "id": "launcher-1897200000000000603",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bruce fixed user:tydeanp'",
       "repo": "launcher:1897200000000000603",
-      "status": "expired",
-      "timestamp": "2026-11-14T14:00:56.621804+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "launcher-1897200000000000622": {
       "expired_at": "2026-11-23T00:00:36.050111+00:00",
@@ -7828,14 +7825,13 @@
       "timestamp": "2026-11-15T12:00:31.921339+00:00"
     },
     "launcher-1897200000000001208": {
-      "expired_at": "2026-11-23T21:00:33.535138+00:00",
-      "expires": "2026-11-23T21:00:32.122497+00:00",
+      "expires": "2027-02-25T08:00:32.923383+00:00",
       "id": "launcher-1897200000000001208",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (guvg-273); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001208",
-      "status": "expired",
-      "timestamp": "2026-11-16T21:00:32.122497+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "launcher-1897200000000001210": {
       "expired_at": "2026-11-23T04:00:36.537535+00:00",
@@ -7990,14 +7986,13 @@
       "timestamp": "2026-11-16T06:00:32.710404+00:00"
     },
     "launcher-1897200000000001301": {
-      "expired_at": "2026-11-22T20:00:33.232813+00:00",
-      "expires": "2026-11-22T20:00:31.795538+00:00",
+      "expires": "2026-12-04T08:00:32.923383+00:00",
       "id": "launcher-1897200000000001301",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'timersense user:lbuque'",
       "repo": "launcher:1897200000000001301",
-      "status": "expired",
-      "timestamp": "2026-11-15T20:00:31.795538+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "launcher-1897200000000001306": {
       "expires": "2026-11-29T20:00:33.232813+00:00",
@@ -8056,14 +8051,13 @@
       "timestamp": "2026-11-16T21:00:32.122497+00:00"
     },
     "launcher-1897200000000001369": {
-      "expired_at": "2026-11-23T10:00:33.608741+00:00",
-      "expires": "2026-11-23T10:00:32.342729+00:00",
+      "expires": "2027-02-25T08:00:32.923383+00:00",
       "id": "launcher-1897200000000001369",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (lowann); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001369",
-      "status": "expired",
-      "timestamp": "2026-11-16T10:00:32.342729+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "launcher-1897200000000001375": {
       "expires": "2026-12-03T01:00:33.067521+00:00",
@@ -9238,14 +9232,13 @@
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
     },
     "launcher-1897200000000002189": {
-      "expired_at": "2026-11-22T22:00:32.976050+00:00",
-      "expires": "2026-11-22T22:00:31.751655+00:00",
+      "expires": "2027-02-25T08:00:32.923383+00:00",
       "id": "launcher-1897200000000002189",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (zhushajun); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002189",
-      "status": "expired",
-      "timestamp": "2026-11-15T22:00:31.751655+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "launcher-1897200000000002190": {
       "expires": "2026-12-03T02:00:33.267631+00:00",
@@ -9826,14 +9819,13 @@
       "timestamp": "2026-11-25T22:00:33.430398+00:00"
     },
     "launcher-1897200000000002679": {
-      "expired_at": "2026-11-22T20:00:33.232813+00:00",
-      "expires": "2026-11-22T20:00:31.795538+00:00",
+      "expires": "2027-02-25T08:00:32.923383+00:00",
       "id": "launcher-1897200000000002679",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (oldmanrukus1); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002679",
-      "status": "expired",
-      "timestamp": "2026-11-15T20:00:31.795538+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "launcher-1897200000000002682": {
       "expires": "2027-02-23T14:00:39.942222+00:00",
@@ -11039,14 +11031,13 @@
       "timestamp": "2026-11-15T15:00:31.835014+00:00"
     },
     "launcher-2102952029751865346": {
-      "expired_at": "2026-11-23T09:00:33.350152+00:00",
-      "expires": "2026-11-23T09:00:32.393504+00:00",
+      "expires": "2026-12-04T08:00:32.923383+00:00",
       "id": "launcher-2102952029751865346",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'qchan user:m5stack'",
       "repo": "launcher:2102952029751865346",
-      "status": "expired",
-      "timestamp": "2026-11-16T09:00:32.393504+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "launcher-2103066915215503362": {
       "expires": "2026-12-04T06:00:33.568785+00:00",
@@ -12901,14 +12892,13 @@
       "timestamp": "2026-11-25T10:00:33.219895+00:00"
     },
     "launcher-CFWacf45acfce792fbbc9bc7218c8f42": {
-      "expired_at": "2026-11-23T19:00:34.130407+00:00",
-      "expires": "2026-11-23T19:00:33.230649+00:00",
+      "expires": "2026-12-04T08:00:32.923383+00:00",
       "id": "launcher-CFWacf45acfce792fbbc9bc7218c8f42",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'factory user:lilygo'",
       "repo": "launcher:cfwacf45acfce792fbbc9bc7218c8f42",
-      "status": "expired",
-      "timestamp": "2026-11-16T19:00:33.230649+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "launcher-CFWb5d031f685c85ea5342e5c1ba276f": {
       "expires": "2026-12-01T07:00:33.225443+00:00",
@@ -17537,7 +17527,7 @@
       "pr_ref": "#2101",
       "repo": "forged-in-feathers-technology/observore",
       "status": "proposed",
-      "timestamp": "2026-11-27T07:00:33.350544+00:00"
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "oddlings": {
       "id": "oddlings",
@@ -24935,6 +24925,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T14:00:32.325670+00:00"
     },
+    "repo-note:tdeckmaxmesh/maxmesh": {
+      "expires": "2026-12-27T08:00:32.923383+00:00",
+      "id": "repo-note:tdeckmaxmesh/maxmesh",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "tdeckmaxmesh/maxmesh",
+      "status": "rejected",
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
+    },
     "repo-note:tech1k/helloesp": {
       "expires": "2026-12-21T19:01:00.686047+00:00",
       "id": "repo-note:tech1k/helloesp",
@@ -28393,11 +28392,11 @@
     },
     "xadas-hud-link": {
       "id": "xadas-hud-link",
-      "pr_ref": null,
+      "pr_ref": "#2149",
       "repo": "drivedeck/xadas-hud-link",
       "repo_id": 1446024556,
       "status": "proposed",
-      "timestamp": "2026-11-27T07:00:33.350544+00:00"
+      "timestamp": "2026-11-27T08:00:32.923383+00:00"
     },
     "xcalc-cardputer": {
       "expires": "2026-12-15T14:00:31.673907+00:00",
@@ -31400,6 +31399,7 @@
     "tavden/tavden-field-suite": "tavden-field-suite",
     "tayfunulu/wifimanager": "repo-note:tayfunulu/wifimanager",
     "tboxai/tbox-iot-esp32-s3": "repo-note:tboxai/tbox-iot-esp32-s3",
+    "tdeckmaxmesh/maxmesh": "repo-note:tdeckmaxmesh/maxmesh",
     "teapot174/airmouses3": "airmouses3",
     "teapot174/esp-graber": "esp-graber",
     "tech1k/helloesp": "repo-note:tech1k/helloesp",
