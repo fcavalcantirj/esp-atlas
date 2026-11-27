@@ -1,0 +1,507 @@
+{
+ "version": 1,
+ "date": "2026-11-27",
+ "complete": true,
+ "records": [
+  {
+   "record": "data/boards/adafruit/adafruit-feather-esp32-c6/board.md",
+   "id": "adafruit-feather-esp32-c6",
+   "urls": [
+    "https://www.adafruit.com/product/5933",
+    "https://learn.adafruit.com/adafruit-esp32-c6-feather/overview",
+    "https://learn.adafruit.com/adafruit-esp32-c6-feather/pinouts",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt",
+    "https://learn.adafruit.com/adafruit-esp32-c6-feather",
+    "https://cdn-learn.adafruit.com/assets/assets/000/139/939/medium800/adafruit_products_Adafruit_Feather_ESP32-C6_PrettyPins_2.png?1758739123"
+   ],
+   "quotes": [
+    "built in USB Serial core"
+   ]
+  },
+  {
+   "record": "data/boards/adafruit/adafruit-feather-esp32-s2-tft/board.md",
+   "id": "adafruit-feather-esp32-s2-tft",
+   "urls": [
+    "https://www.adafruit.com/product/5300",
+    "https://learn.adafruit.com/adafruit-esp32-s2-tft-feather/overview",
+    "https://learn.adafruit.com/adafruit-esp32-s2-tft-feather/pinouts",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt",
+    "https://learn.adafruit.com/adafruit-esp32-s2-tft-feather",
+    "https://cdn-learn.adafruit.com/assets/assets/000/109/051/medium800/adafruit_products_Adafruit_ESP32-S2_TFT_Feather_Pinout.png?1645048115"
+   ],
+   "quotes": [
+    "IPS TFT, 240x135 pixels, ST7789 chipset (vendor:"
+   ]
+  },
+  {
+   "record": "data/boards/adafruit/adafruit-itsybitsy-esp32/board.md",
+   "id": "adafruit-itsybitsy-esp32",
+   "urls": [
+    "https://www.adafruit.com/product/5889",
+    "https://learn.adafruit.com/adafruit-itsybitsy-esp32/pinouts",
+    "https://learn.adafruit.com/adafruit-itsybitsy-esp32",
+    "https://cdn-learn.adafruit.com/assets/assets/000/127/901/medium800/adafruit_products_Adafruit_ItsyBitsy_ESP32_PrettyPinsPDF-100.jpg?1708550028"
+   ],
+   "quotes": [
+    "The ItsyBitsy ESP32 has 20 general purpose 'IO' pins."
+   ]
+  },
+  {
+   "record": "data/boards/adafruit/adafruit-matrixportal-s3/board.md",
+   "id": "adafruit-matrixportal-s3",
+   "urls": [
+    "https://www.adafruit.com/product/5778",
+    "https://learn.adafruit.com/adafruit-matrixportal-s3/pinouts",
+    "https://github.com/adafruit/circuitpython/blob/main/ports/espressif/boards/adafruit_matrixportal_s3/pins.c",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt",
+    "https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/adafruit_matrixportal_esp32s3.json",
+    "https://learn.adafruit.com/adafruit-matrixportal-s3",
+    "https://cdn-learn.adafruit.com/assets/assets/000/140/086/medium800/led_matrices_Adafruit_Matrix_Portal_S3_PrettyPins.jpg?1759351254"
+   ],
+   "quotes": [
+    "not listed among the available I/O connectors"
+   ]
+  },
+  {
+   "record": "data/boards/dfrobot/firebeetle-2-esp32-c6/board.md",
+   "id": "firebeetle-2-esp32-c6",
+   "urls": [
+    "https://wiki.dfrobot.com/dfr1075/",
+    "https://documentation.espressif.com/esp32-c6_datasheet_en.html",
+    "https://dfimg.dfrobot.com/wiki/20576/DFR1075_firebeetle-esp32-c6-microcontroller_schematics_v1.zip",
+    "https://wiki.dfrobot.com/dfr1075",
+    "https://dfimg.dfrobot.com/5d57611a3416442fa39bffca/wiki/1fa8b29bf6d340347ccdc39f4648b949_0x0.png.webp"
+   ],
+   "quotes": [
+    "Digital I/O: x19"
+   ]
+  },
+  {
+   "record": "data/boards/elecrow/elecrow-crowpanel-esp32-s3-579-epaper/board.md",
+   "id": "elecrow-crowpanel-esp32-s3-579-epaper",
+   "urls": [
+    "https://www.elecrow.com/crowpanel-esp32-5-79-e-paper-hmi-display-with-272-792-resolution-black-white-color-driven-by-spi-interface.html",
+    "https://github.com/clackups/draftling/releases/tag/v1.0.1",
+    "https://www.elecrow.com/wiki/CrowPanel_ESP32_E-paper_5.79-inch_HMI_Display.html"
+   ],
+   "quotes": [
+    "8 MB Flash, 8 MB PSRAM",
+    "BAT interface (SH1.0-2P connector)",
+    "elecrow_crowpanel_579"
+   ]
+  },
+  {
+   "record": "data/boards/m5stack/m5atom-lite/board.md",
+   "id": "m5atom-lite",
+   "urls": [
+    "https://docs.m5stack.com/en/core/ATOM%20Lite",
+    "https://documentation.espressif.com/esp32-pico_series_datasheet_en.html",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt",
+    "https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/m5stack-atom.json"
+   ],
+   "quotes": [
+    "PIN Interface: G19, G21, G22, G23, G25, G33"
+   ]
+  },
+  {
+   "record": "data/boards/m5stack/m5atoms3/board.md",
+   "id": "m5atoms3",
+   "urls": [
+    "https://docs.m5stack.com/en/core/AtomS3",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt",
+    "https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/m5stack-atoms3.json"
+   ],
+   "quotes": [
+    "Yellow: G2, White: G1"
+   ]
+  },
+  {
+   "record": "data/boards/m5stack/m5cardputer/board.md",
+   "id": "m5cardputer",
+   "urls": [
+    "https://docs.m5stack.com/en/core/Cardputer",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt"
+   ],
+   "quotes": [
+    "1 x HY2.0-4P port for connecting and expanding I2C sensors",
+    "Yellow: G2, White: G1"
+   ]
+  },
+  {
+   "record": "data/boards/m5stack/m5dial/board.md",
+   "id": "m5dial",
+   "urls": [
+    "https://docs.m5stack.com/en/core/M5Dial",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt"
+   ],
+   "quotes": [
+    "PORT.A | G13 | G15",
+    "PORT.B | G2 | G1"
+   ]
+  },
+  {
+   "record": "data/boards/m5stack/m5nanoc6/board.md",
+   "id": "m5nanoc6",
+   "urls": [
+    "https://docs.m5stack.com/en/core/M5NanoC6",
+    "https://documentation.espressif.com/esp32-c6_datasheet_en.html",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt"
+   ],
+   "quotes": [
+    "Grove Maximum Output Current: DC 5V@600mA (depends on USB supply)"
+   ]
+  },
+  {
+   "record": "data/boards/m5stack/m5stack-cores3/board.md",
+   "id": "m5stack-cores3",
+   "urls": [
+    "https://docs.m5stack.com/en/core/CoreS3"
+   ],
+   "quotes": [
+    "PORT.A | G2 | G1",
+    "PORT.B | G9 | G8",
+    "PORT.C | G17 | G18"
+   ]
+  },
+  {
+   "record": "data/boards/m5stack/m5stack-papers3/board.md",
+   "id": "m5stack-papers3",
+   "urls": [
+    "https://docs.m5stack.com/en/core/papers3",
+    "https://github.com/clackups/draftling/releases/tag/v1.0.1"
+   ],
+   "quotes": [
+    "ESP32-S3R8 @ Xtensa 32-bit LX7 dual-core processor, clock frequency 240MHz",
+    "4.7 touch e-ink screen (full screen) @EPD_ED047TC1 Resolution: 960x540 pixels 16-level grayscale display",
+    "m5stack_papers3"
+   ]
+  },
+  {
+   "record": "data/boards/m5stack/m5stick-cplus2/board.md",
+   "id": "m5stick-cplus2",
+   "urls": [
+    "https://docs.m5stack.com/en/core/M5StickC%20PLUS2",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt"
+   ],
+   "quotes": [
+    "External Pins: G0, G25/G26, G36, G32, G33",
+    "Yellow: G32, White: G33"
+   ]
+  },
+  {
+   "record": "data/boards/m5stack/m5stick-s3/board.md",
+   "id": "m5stick-s3",
+   "urls": [
+    "https://docs.m5stack.com/en/core/StickS3"
+   ],
+   "quotes": [
+    "Grove Load Capacity -- No load: 5V; Max: 4.88V@0.38A"
+   ]
+  },
+  {
+   "record": "data/boards/seeed/xiao-esp32c5/board.md",
+   "id": "xiao-esp32c5",
+   "urls": [
+    "https://wiki.seeedstudio.com/xiao_esp32c5_getting_started/",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt",
+    "https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/seeed_xiao_esp32c5.json",
+    "https://files.seeedstudio.com/wiki/XIAO_ESP32C5/Getting_started/XIAO_ESP32-C5_front_pinout.png"
+   ],
+   "quotes": [
+    "Input voltage (Type-C)",
+    "you can draw NmA"
+   ]
+  },
+  {
+   "record": "data/boards/seeed/xiao-esp32s3-sense/board.md",
+   "id": "xiao-esp32s3-sense",
+   "urls": [
+    "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/",
+    "https://files.seeedstudio.com/wiki/SeeedStudio-XIAO-ESP32S3/img/XIAO_ESP32-S3_Sense_front_pinout.png"
+   ],
+   "quotes": [
+    "1x OV3660 camera sensor",
+    "The OV2640 camera has been discontinued, and the subsequent XIAO ESP32-S3 Sense uses the OV3660 camera model.",
+    "Detachable OV2640 camera sensor for 1600x1200 resolution and OV3660 camera sensor for 2048x1536 compatible with OV5640 camera sensor"
+   ]
+  },
+  {
+   "record": "data/boards/waveshare/waveshare-esp32-s3-rlcd-42/board.md",
+   "id": "waveshare-esp32-s3-rlcd-42",
+   "urls": [
+    "https://www.waveshare.com/esp32-s3-rlcd-4.2.htm",
+    "https://github.com/clackups/draftling/releases/tag/v1.0.1",
+    "https://docs.waveshare.com/ESP32-S3-RLCD-4.2",
+    "https://docs.waveshare.com/assets/images/ESP32-S3-RLCD-4.2-IntfIntro-e8c3e55b4a4e70e8df616f3c7682ae6a.webp"
+   ],
+   "quotes": [
+    "waveshare_rlcd42"
+   ]
+  },
+  {
+   "record": "data/boards/waveshare/waveshare-esp32-s3-touch-lcd-349/board.md",
+   "id": "waveshare-esp32-s3-touch-lcd-349",
+   "urls": [
+    "https://www.waveshare.com/wiki/ESP32-S3-Touch-LCD-3.49",
+    "https://github.com/clackups/draftling/releases/tag/v1.0.1",
+    "https://docs.waveshare.com/ESP32-S3-Touch-LCD-3.49",
+    "https://docs.waveshare.com/assets/images/ESP32-S3-Touch-LCD-3.49-IntfIntro-c98715985a15287c0b786f08eea5bae0.webp"
+   ],
+   "quotes": [
+    "waveshare_touch_lcd_349"
+   ]
+  },
+  {
+   "record": "data/recipes/esp32-c6-devkitc-1__ruview/recipe.md",
+   "id": "esp32-c6-devkitc-1__ruview",
+   "urls": [
+    "https://github.com/ruvnet/RuView/blob/main/firmware/esp32-csi-node/sdkconfig.defaults.esp32c6",
+    "https://github.com/ruvnet/RuView/releases/tag/v0.8.8-esp32",
+    "https://github.com/ruvnet/RuView/blob/main/firmware/esp32-csi-node/README.md"
+   ],
+   "quotes": [
+    "Fresh ESP32-C6 installation using the supported 4 MB layout",
+    "ESP32-C6 research node",
+    "ESP32-C6-DevKit ($6-10)"
+   ]
+  },
+  {
+   "record": "data/recipes/esp32-s3-devkitc-1__ruview/recipe.md",
+   "id": "esp32-s3-devkitc-1__ruview",
+   "urls": [
+    "https://github.com/ruvnet/RuView/blob/main/firmware/esp32-csi-node/README.md",
+    "https://github.com/ruvnet/RuView/blob/main/firmware/esp32-csi-node/sdkconfig.defaults.devkitc",
+    "https://github.com/ruvnet/RuView/releases/tag/v0.8.8-esp32"
+   ],
+   "quotes": [
+    "Recommended boards | ESP32-S3-DevKitC-1, XIAO ESP32-S3"
+   ]
+  }
+ ],
+ "inconclusive": [
+  {
+   "record": "data/boards/arduino/arduino-nano-esp32/board.md",
+   "id": "arduino-nano-esp32",
+   "urls": [
+    "https://docs.arduino.cc/hardware/nano-esp32/",
+    "https://docs.arduino.cc/resources/datasheets/ABX00083-datasheet.pdf",
+    "https://docs.arduino.cc/resources/pinouts/ABX00083-full-pinout.pdf",
+    "https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/arduino_nano_esp32.json",
+    "https://github.com/pioarduino/platform-espressif32/blob/61.04.00/boards/arduino_nano_esp32.json"
+   ],
+   "quotes": [
+    "with and without headers"
+   ]
+  },
+  {
+   "record": "data/boards/dfrobot/firebeetle-esp32/board.md",
+   "id": "firebeetle-esp32",
+   "urls": [
+    "https://wiki.dfrobot.com/dfr0478/",
+    "https://documentation.espressif.com/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.html",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/master/variants/firebeetle32/pins_arduino.h",
+    "https://dfimg.dfrobot.com/wiki/19339/DFR0478_firebeetle-esp32-board_schematics_V4.0.pdf",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt",
+    "https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/firebeetle32.json",
+    "https://wiki.dfrobot.com/dfr0478",
+    "https://dfimg.dfrobot.com/62fba4cb025a892c98c6da64/wikien/555ad7fa66fecc61fe288e251ac267ce_0x0.png.webp"
+   ],
+   "quotes": [
+    "Digital I/O: 10 (default setting of arduino)"
+   ]
+  },
+  {
+   "record": "data/boards/espressif/esp32-s2-devkitm-1/board.md",
+   "id": "esp32-s2-devkitm-1",
+   "urls": [
+    "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html",
+    "https://www.espressif.com/sites/default/files/documentation/esp32-s2-mini-2_esp32-s2-mini-2u_datasheet_en.pdf",
+    "https://dl.espressif.com/dl/schematics/ESP32-S2-DevKitM-1_V1_Dimensions.pdf",
+    "https://dl.espressif.com/dl/schematics/ESP32-S2-DevKitM-1_V1_Schematics.pdf"
+   ],
+   "quotes": [
+    "is used by the embedded PSRAM on the ESP32-S2-MINI-2-N4R2 ... and cannot be used for other purposes"
+   ]
+  },
+  {
+   "record": "data/boards/freenove/freenove-fnk0104a/board.md",
+   "id": "freenove-fnk0104a",
+   "urls": [
+    "https://github.com/Freenove/Freenove_ESP32_S3_Display",
+    "https://store.freenove.com/products/fnk0104",
+    "https://github.com/clackups/draftling/releases/tag/v1.0.1",
+    "https://docs.freenove.com/projects/fnk0104/en/latest/",
+    "https://raw.githubusercontent.com/Freenove/Freenove_ESP32_S3_Display/main/Picture/FNK0104A_Bottom.png"
+   ],
+   "quotes": [
+    "Freenove ESP32 Touch Display ESP32-S3 CYD Wi-Fi Bluetooth, 2.8 3.5 4.0 Inch IPS Touch Screen, Dual-core 32-bit 240 MHz",
+    "freenove_fnk0104a"
+   ]
+  },
+  {
+   "record": "data/boards/freenove/freenove-fnk0104b/board.md",
+   "id": "freenove-fnk0104b",
+   "urls": [
+    "https://github.com/Freenove/Freenove_ESP32_S3_Display",
+    "https://store.freenove.com/products/fnk0104",
+    "https://github.com/clackups/draftling/releases/tag/v1.0.1",
+    "https://docs.freenove.com/projects/fnk0104/en/latest/",
+    "https://raw.githubusercontent.com/Freenove/Freenove_ESP32_S3_Display/main/Picture/FNK0104B_Bottom.png"
+   ],
+   "quotes": [
+    "Freenove ESP32 Touch Display ESP32-S3 CYD Wi-Fi Bluetooth, 2.8 3.5 4.0 Inch IPS Touch Screen, Dual-core 32-bit 240 MHz",
+    "freenove_fnk0104b"
+   ]
+  },
+  {
+   "record": "data/boards/freenove/freenove-fnk0104s/board.md",
+   "id": "freenove-fnk0104s",
+   "urls": [
+    "https://github.com/Freenove/Freenove_ESP32_S3_Display",
+    "https://docs.freenove.com/projects/fnk0104/en/latest/fnk0104/codes/MAIN/Freenove_ESP32S3_Display.html",
+    "https://github.com/Freenove/Freenove_ESP32_S3_Display/blob/90004f874ed567b3c09d534d021172cb716e61a1/README.md#L17",
+    "https://docs.freenove.com/projects/fnk0104/en/latest/fnk0104/codes/MAIN/12_TFT_Touch_Drawing.html",
+    "https://store.freenove.com/products/fnk0104",
+    "https://github.com/clackups/draftling/releases/tag/v1.0.1",
+    "https://docs.freenove.com/projects/fnk0104/en/latest/",
+    "https://raw.githubusercontent.com/Freenove/Freenove_ESP32_S3_Display/main/Picture/FNK0104S_Bottom.png"
+   ],
+   "quotes": [
+    "Freenove ESP32 Touch Display ESP32-S3 CYD Wi-Fi Bluetooth, 2.8 3.5 4.0 Inch IPS Touch Screen, Dual-core 32-bit 240 MHz",
+    "freenove_fnk0104s"
+   ]
+  },
+  {
+   "record": "data/boards/heltec/heltec-wifi-lora-32-v4/board.md",
+   "id": "heltec-wifi-lora-32-v4",
+   "urls": [
+    "https://heltec.org/project/wifi-lora-32-v4/",
+    "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.3.1_Datasheet.pdf",
+    "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/",
+    "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/Pinmap/V4_pinmap.png"
+   ],
+   "quotes": [
+    "Base on ESP32-S3R2 & SX-1262, supports Wi-Fi b/g/n, BLE, and LoRa communication.",
+    "The WiFi LoRa 32 now comes with the latest ESP32-S3R8 version. They use different firmware versions.",
+    "GPIO19,U1RTS,ADC2_CH8, USB_D-",
+    "GPIO20,U1CTS,ADC2_CH9, USB_D+",
+    "SH1.25-2P lithium battery interface",
+    "Added SH1.25-2P solar panel interface.",
+    "Added SH1.25-8Pin GNSS interface.",
+    "Additional Pin",
+    "2*18*2.54 Header Pins, 2*2*2.54 Header Pins"
+   ]
+  },
+  {
+   "record": "data/boards/lilygo/lilygo-t-beam/board.md",
+   "id": "lilygo-t-beam",
+   "urls": [
+    "https://www.lilygo.cc/products/t-beam",
+    "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/docs/en/t_beam/t_beam_hw.md",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt",
+    "https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/ttgo-t-beam.json",
+    "https://lilygo.cc/products/t-beam"
+   ],
+   "quotes": [
+    "Free: (cross mark)"
+   ]
+  },
+  {
+   "record": "data/boards/lilygo/lilygo-t-beam-supreme/board.md",
+   "id": "lilygo-t-beam-supreme",
+   "urls": [
+    "https://lilygo.cc/products/t-beam-supreme",
+    "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/docs/en/t_beam_supreme/t_beam_supreme_hw.md",
+    "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/schematic/T-Beam-S3-Supreme/T-Beam-S3-Core.pdf",
+    "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/schematic/T-Beam-S3-Supreme/T-Beam-S3-Supreme-V3.1.pdf",
+    "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/docs/en/t_beam_supreme/t_beam_supreme_144_hw.md"
+   ],
+   "quotes": [
+    "ESP32-S3FN8 Dual-core LX7 microprocessor",
+    "2.4 GHz Wi-Fi & Bluetooth5 (LE)",
+    "L76K 144~148 MHz",
+    "Six-axis IMU QMI8658",
+    "Boot (IO00) + Reset + Power Button"
+   ]
+  },
+  {
+   "record": "data/boards/lilygo/lilygo-t-embed/board.md",
+   "id": "lilygo-t-embed",
+   "urls": [
+    "https://www.lilygo.cc/products/t-embed",
+    "https://github.com/Xinyuan-LilyGO/T-Embed/blob/main/schematic/schematic.pdf",
+    "https://lilygo.cc/products/t-embed",
+    "https://raw.githubusercontent.com/Xinyuan-LilyGO/T-Embed/main/image/T-Embed1.png"
+   ],
+   "quotes": [
+    "2.54 x 8pin GPIO interface"
+   ]
+  },
+  {
+   "record": "data/boards/lilygo/lilygo-t-watch-s3/board.md",
+   "id": "lilygo-t-watch-s3",
+   "urls": [
+    "https://www.lilygo.cc/products/t-watch-s3",
+    "https://github.com/Xinyuan-LilyGO/LilyGoLib/blob/master/docs/hardware/lilygo-t-watch-s3.md",
+    "https://lilygo.cc/products/t-watch-s3",
+    "https://lilygo.cc/cdn/shop/files/watch2020V3_S3_a0c58be7-8f5f-4f20-a1bc-775c1942a7f3_600x600.jpg?v=1685504665"
+   ],
+   "quotes": [
+    "Free: (cross mark)"
+   ]
+  },
+  {
+   "record": "data/boards/lilygo/lilygo-t5-epaper-s3-pro/board.md",
+   "id": "lilygo-t5-epaper-s3-pro",
+   "urls": [
+    "https://github.com/Xinyuan-LilyGO/T5S3-4.7-e-paper-PRO",
+    "https://github.com/clackups/draftling/releases/tag/v1.0.1",
+    "https://lilygo.cc/products/t5-e-paper-s3-pro",
+    "https://lilygo.cc/cdn/shop/files/T5-4.7-S3-PRO_2.jpg?v=1744861731"
+   ],
+   "quotes": [
+    "lilygo_t5_epd_s3_pro"
+   ]
+  },
+  {
+   "record": "data/boards/m5stack/m5cardputer-adv/board.md",
+   "id": "m5cardputer-adv",
+   "urls": [
+    "https://docs.m5stack.com/en/core/Cardputer-Adv",
+    "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf",
+    "https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1150/Sch_StampS3_v0.3.3.pdf",
+    "https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1178/Sch_M5CardputerAdv_v1.0_2025_06_20_17_19_58.pdf",
+    "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/schematic-checklist.html",
+    "https://github.com/platformio/platform-espressif32/blob/v8.0.0/boards/m5stack-cardputer.json"
+   ],
+   "quotes": [
+    "8 MB (Quad SPI)"
+   ]
+  },
+  {
+   "record": "data/boards/sparkfun/sparkfun-esp32-thing/board.md",
+   "id": "sparkfun-esp32-thing",
+   "urls": [
+    "https://www.sparkfun.com/sparkfun-esp32-thing.html",
+    "https://documentation.espressif.com/esp32_datasheet_en.html",
+    "https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide/all",
+    "https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/ESP32ThingV1a.pdf",
+    "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt",
+    "https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32thing.json",
+    "https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide",
+    "https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/top-annotated.jpg"
+   ],
+   "quotes": [
+    "*GPIO: Port Input Only"
+   ]
+  }
+ ],
+ "counts": {
+  "with_quotes": 90,
+  "judged": 90,
+  "fail": 21,
+  "inconclusive": 14,
+  "pages": 368,
+  "pages_read": 337
+ }
+}
