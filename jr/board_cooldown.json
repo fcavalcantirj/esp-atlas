@@ -259,6 +259,37 @@
       "timestamp": "2026-11-27T11:00:32.872945+00:00",
       "url": null
     },
+    "adafruit-qualia-esp32-s3": {
+      "board": "adafruit-qualia-esp32-s3",
+      "expires": "2026-12-04T13:00:33.764787+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-27T13:00:33.764787+00:00",
+      "url": null
+    },
+    "beetle-esp32-c3": {
+      "board": "beetle-esp32-c3",
+      "expires": "2026-12-04T13:00:33.764787+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "no_pattern_match",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-27T13:00:33.764787+00:00",
+      "url": "https://wiki.dfrobot.com/dfr0868"
+    },
     "freenove-esp32-wrover": {
       "board": "freenove-esp32-wrover",
       "expires": "2026-12-02T09:00:33.578012+00:00",
