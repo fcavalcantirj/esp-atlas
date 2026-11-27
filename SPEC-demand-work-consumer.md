@@ -162,6 +162,53 @@ star is that none of this needs a person, so each becomes a CI job a PR must pas
   run. The 11:15Z `catalog_part` verification stays the recorded outcome. A person audits after the fact
   (the first five canary merges at their exact heads) and holds the kill switch; nobody waits for one.
 
+### Hygiene: quote FAILs become work (class `hygiene`, 2026-11-17)
+
+A third source class beside search demand and PAM leads, with its own one-new-item-a-day slot and its
+own pass in the daily run (after PAM). Its source is `jr/quote_run.py`: in the run's worktree,
+`scripts/check_quotes.report` judges every catalog record's quoted spans against the pages it cites
+(pages fetched once, four at a time, inside a time budget) and lands the FAIL rows as
+`docs/demand/quote-report.json` — only when the rows changed, like the PAM state; `complete: false` when
+the budget ran out. The broker (`jr/demand_broker.intake`) turns each FAIL row of a COMPLETE report into
+one candidate: source `quote_check`, term `quote fix <id>`, key `fix-<sha256(record, report date)[:24]>`,
+provenance the row itself (`quote: {record, id, report_date, quotes, urls}`), no window, no metrics. A
+record with open quote work is never reserved twice; a later report that no longer lists a record leaves
+its open work to recover (the receipt carries the candidate snapshot, as PAM's does). The executor's path
+is `docs/demand/EXECUTOR-PROMPT.md` "Hygiene work": quote the page as written or drop the claim, touch
+only that record, `expected_ids` = the record's id, kind `catalog_quote`. Closure
+(`jr/demand_closure._catalog_quote_receipt`): at the merge, `git show <merge sha>:<record>` is re-checked
+by the same `check_quotes` rule through the closure's page getter; PASS (or no quoted text left)
+delivers, FAIL and INCONCLUSIVE stay pending and are recorded. An unreadable or absent report starts no
+hygiene work and says so; every fail-closed rule of the pair applies unchanged.
+
+Acceptance: `jr/test_research_work_hygiene.py`, `jr/test_hygiene_work_intake.py`,
+`jr/test_demand_closure_catalog_quote.py`, `jr/test_quote_run.py`, `jr/test_demand_run_hygiene.py`,
+`scripts/test_check_quotes.py` (the report).
+
+### Resolver work: a gauge gap becomes CODE for the delegate, never a record (class `resolver`, 2026-11-17)
+
+The model boundary (owner, 2026-11-17; `CLAUDE.md` "North star"): an LLM solves code problems, never fills
+inventory. The fourth source class ranks the boards gauge per vendor × field (`scripts/data_completion.per_vendor`)
+in `jr/resolver_run.py`: rows with at least 3 boards of one vendor missing one field, ordered by boards
+missing, then by page demand (GSC impressions of those boards' `/parts/<id>` pages in the day's snapshot,
+`RANKS_POORLY` count; demand may ORDER data work, never touch SEO text), then vendor and field. The report is
+`docs/demand/resolver-report.json`, landed only when the ranking changed, always complete (no network). The
+broker turns each row into one candidate: source `gauge_gap`, term `resolver <vendor> <field>`, key
+`resolver-<sha256(vendor, field, report date)[:24]>`, provenance the row (`resolver: {vendor, field, missing,
+records, boards, report_date}`); a vendor × field with open resolver work is never reserved twice. The
+executor's path is `docs/demand/EXECUTOR-PROMPT.md` "Resolver work": fixtures saved from the vendor's pages,
+a RED test, the extractor, registered for the vendor and field; only `jr/**` changes. `scripts/demand_guard.py`
+R5 for this class: no `data/**`, no workflow, a changed `jr/test_*.py`, the vendor named in a changed `jr/`
+path, `expected_ids` = the row's boards. Closure kind `resolver_live` (`jr/demand_closure._resolver_live_receipt`):
+for each expected board, the record on main now carries the field and did not at the merge sha (`gained`);
+PASS at min(3, expected) gained, else PENDING and the item stays live for a second delegate run with the
+backfill log. Measured worklist on 2026-11-17: adafruit × download_mode 20 boards, espressif × dimensions_mm
+17, m5stack × download_mode 14, m5stack × usb_serial 13, m5stack × pinout 12.
+
+Acceptance: `jr/test_research_work_resolver.py`, `jr/test_resolver_work_intake.py`, `jr/test_resolver_run.py`,
+`jr/test_demand_run_resolver.py`, `jr/test_demand_closure_resolver_live.py`, `scripts/test_demand_guard.py`
+(resolver R5), `scripts/test_data_completion.py` (per_vendor).
+
 ### Verification must match the actual defect
 
 The validation receipt declares a verification kind. For missing catalog content

@@ -281,3 +281,25 @@ def test_cli_main_runs_and_prints_gauge(tmp_path, capsys):
     assert "OVERALL FINITE-COMPLETION" in out
     assert "boards" in out
     assert "download_mode" in out
+
+
+# --- per vendor x field (the resolver lane's worklist, SPEC-demand-work-consumer.md "Resolver work") -----
+
+def test_per_vendor_lists_each_vendors_boards_missing_each_field(tmp_path):
+    _write_board(tmp_path, "espressif", "esp32-c5-devkitc-1", BOARD_COMPLETE_MD)
+    _write_board(tmp_path, "adafruit", "adafruit-qtpy-esp32-s3", BOARD_GAPPY_MD)
+    _write_board(tmp_path, "adafruit", "adafruit-feather-esp32-s3",
+                 BOARD_GAPPY_MD.replace("adafruit-qtpy-esp32-s3", "adafruit-feather-esp32-s3"))
+    pv = data_completion.per_vendor(tmp_path)
+    assert pv["version"] == 1 and list(pv["vendors"]) == ["adafruit", "espressif"]
+    ada = pv["vendors"]["adafruit"]
+    assert ada["records"] == 2
+    assert ada["fields"]["download_mode"] == {"missing": 2, "boards": ["adafruit-feather-esp32-s3", "adafruit-qtpy-esp32-s3"]}
+    assert ada["fields"]["pinout"]["missing"] == 2
+    esp = pv["vendors"]["espressif"]
+    assert esp["records"] == 1 and all(f["missing"] == 0 and f["boards"] == [] for f in esp["fields"].values())
+    assert set(ada["fields"]) == {label for label, _d in data_completion.FIELD_SPECS["boards"]}
+
+
+def test_per_vendor_on_an_empty_tree_is_empty(tmp_path):
+    assert data_completion.per_vendor(tmp_path) == {"version": 1, "vendors": {}}

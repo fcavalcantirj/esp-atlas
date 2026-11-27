@@ -345,6 +345,55 @@ def default_base() -> str:
     return f"origin/{ref}" if ref else "origin/main"
 
 
+def report(paths: list[Path], fetch, *, today: str, budget_seconds: float | None = None, clock=time.monotonic,
+           workers: int = 4) -> dict:
+    """The daily hygiene report the demand runner lands (docs/demand/quote-report.json): every record among
+    `paths` whose quotes FAIL, as {record, id, quotes (the failing ones), urls (every cited url)}. Pages are
+    fetched once each, `workers` at a time, before the records are judged. `complete` is False when the
+    budget ran out before every page was read: an incomplete report starts no new work (the broker's rule),
+    but it still says which records it did judge. INCONCLUSIVE records are listed separately, never as FAIL."""
+    from concurrent.futures import ThreadPoolExecutor
+    start = clock()
+    records = []
+    for path in paths:
+        fm, _ = parse_frontmatter(path)
+        if quotes_in(fm):
+            records.append((path, fm))
+    urls = list(dict.fromkeys(u for _p, fm in records for u in cited_urls(fm)))
+    pages: dict[str, Page] = {}
+    complete = True
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        futures = {}
+        for u in urls:
+            if budget_seconds is not None and clock() - start > budget_seconds:
+                complete = False
+                break
+            futures[u] = pool.submit(fetch, u)
+        for u, f in futures.items():
+            remaining = None if budget_seconds is None else max(0.0, budget_seconds - (clock() - start))
+            try:
+                pages[u] = f.result(timeout=remaining)
+            except Exception as e:  # noqa: BLE001 — a timeout or a fetch error is an unreadable page
+                pages[u] = Page(u, None, f"not read ({type(e).__name__})")
+                if remaining is not None and remaining <= 0:
+                    complete = False
+    for u in urls:
+        pages.setdefault(u, Page(u, None, "not fetched (budget)"))
+    fails, inconclusive, judged = [], [], 0
+    for path, fm in records:
+        rep = check_record(path, fm, pages, lambda url: pages.get(url) or Page(url, None, "not fetched (budget)"))
+        judged += 1
+        rel = rep.path
+        row = {"record": rel, "id": str(fm.get("id") or ""), "urls": cited_urls(fm)}
+        if rep.verdict == FAIL:
+            fails.append({**row, "quotes": [q.quote for q in rep.quotes if q.verdict == FAIL]})
+        elif rep.verdict == INCONCLUSIVE:
+            inconclusive.append({**row, "quotes": [q.quote for q in rep.quotes if q.verdict == INCONCLUSIVE]})
+    return {"version": 1, "date": today, "complete": complete, "records": fails, "inconclusive": inconclusive,
+            "counts": {"with_quotes": len(records), "judged": judged, "fail": len(fails), "inconclusive": len(inconclusive),
+                       "pages": len(urls), "pages_read": sum(1 for p in pages.values() if p.text is not None)}}
+
+
 def run(paths: list[Path], fetch, out=None, known: dict | None = None) -> tuple[list[RecordReport], int]:
     out = out or sys.stdout          # resolved at call time, so a test's captured stdout is the one written
     pages: dict[str, Page] = {}
