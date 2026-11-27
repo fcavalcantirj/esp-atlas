@@ -27,7 +27,7 @@ def state(**over):
         {"path": "jr/proposed_ledger.json", "status": "modified"},
         {"path": "docs/telemetry/yield.jsonl", "status": "modified"},
         {"path": "docs/telemetry/data-2026-11-22.md", "status": "added"}],
-        "bookkeeping_ok": True, "facts_today": 0}
+        "bookkeeping_ok": True, "facts_today": 0, "recheck": {"facts": 1, "pass": 1, "problems": []}}
     s.update(over)
     return s
 
@@ -266,3 +266,31 @@ def test_an_already_confirmed_delivery_is_not_checked_again():
     out = dm.confirm_delivery(FakeGh(), "o/r", _merged(30, comments=[dm.DEPLOYED_MARKER]), now="2026-11-26T18:00:00Z",
                               show=_show, live=lambda b: pytest.fail("no live read"), revalidate=None)
     assert out == "done"
+
+
+# --- main's checker re-checks every fact at merge time (2026-11-28, #2100) -------------------------------------------
+
+@pytest.mark.parametrize("rc, why", [
+    (None, "no fact re-checked"),
+    ({"facts": 0, "pass": 0, "problems": []}, "no fact re-checked"),
+    ({"facts": 1, "pass": 0, "problems": ["esp32-pico-kit__openmqttgateway: FAIL product name"]}, "product name"),
+    ({"facts": 2, "pass": 2, "problems": []}, "does not pass every fact"),        # re-checked count != added count
+])
+def test_a_fact_main_s_checker_does_not_pass_now_never_merges_whatever_its_claims_check_said(rc, why):
+    d = decide(s=state(recheck=rc))
+    assert d["action"] == "skip" and why in d["why"], d
+
+
+def test_recheck_judges_added_build_target_recipes_with_main_s_checker(monkeypatch):
+    import check_claims
+    import claims_pio_sources as src
+    rec = "---\nid: b__f\ntype: recipe\nboard: b\nfirmware: f\nstatus: build-target\n---\n"
+    seen = []
+    monkeypatch.setattr(check_claims, "check_recipe",
+                        lambda fm, fw, boards, http, index, names=None: seen.append((fm["id"], names is not None))
+                        or {"id": fm["id"], "verdict": check_claims.FAIL, "reasons": ["product name: x"]})
+    monkeypatch.setattr(src, "Http", lambda: None)
+    monkeypatch.setattr(src, "PlatformIndex", lambda http: None)
+    files = [{"path": "data/recipes/b__f/recipe.md", "status": "added"}, {"path": "jr/proposed_ledger.json", "status": "modified"}]
+    r = dm._recheck(files, lambda ref, path: rec if path.endswith("recipe.md") else None, 7)
+    assert r == {"facts": 1, "pass": 0, "problems": ["b__f: FAIL product name: x"]} and seen == [("b__f", True)]
