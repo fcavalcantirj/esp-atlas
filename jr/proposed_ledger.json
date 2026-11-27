@@ -3365,6 +3365,14 @@
       "status": "merged",
       "timestamp": "2026-11-03T15:00:59.761700+00:00"
     },
+    "cz-python-template": {
+      "expires": "2026-12-27T07:00:33.350544+00:00",
+      "id": "cz-python-template",
+      "pr_ref": null,
+      "repo": "julienbidouille/cz-python-template",
+      "status": "seen",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
+    },
     "daoa-mini-cardputeradv": {
       "evidence_url": "https://github.com/chatelp/daoa-mini-cardputeradv",
       "id": "daoa-mini-cardputeradv",
@@ -4111,7 +4119,7 @@
       "pr_ref": "#2098",
       "repo": "martin-ger/esp32_nat_router",
       "status": "proposed",
-      "timestamp": "2026-11-27T06:00:33.568785+00:00"
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "esp32-navigation": {
       "expires": "2026-12-16T05:00:31.772256+00:00",
@@ -4774,6 +4782,14 @@
       "repo_id": 891566125,
       "status": "merged",
       "timestamp": "2026-10-19T19:00:59.830311+00:00"
+    },
+    "ghostpaper": {
+      "expires": "2026-12-27T07:00:33.350544+00:00",
+      "id": "ghostpaper",
+      "pr_ref": null,
+      "repo": "mistrysiddh/ghostpaper",
+      "status": "seen",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "ghostwire": {
       "expires": "2026-12-14T23:00:56.203733+00:00",
@@ -7369,14 +7385,13 @@
       "timestamp": "2026-11-22T03:00:33.646310+00:00"
     },
     "launcher-1897200000000000980": {
-      "expired_at": "2026-11-22T19:00:33.953275+00:00",
-      "expires": "2026-11-22T19:00:32.749098+00:00",
+      "expires": "2026-12-04T07:00:33.350544+00:00",
       "id": "launcher-1897200000000000980",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'maze labyrinth user:coreymillia'",
       "repo": "launcher:1897200000000000980",
-      "status": "expired",
-      "timestamp": "2026-11-15T19:00:32.749098+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "launcher-1897200000000000984": {
       "expired_at": "2026-11-23T14:00:52.402353+00:00",
@@ -7484,14 +7499,13 @@
       "timestamp": "2026-11-25T14:00:39.942222+00:00"
     },
     "launcher-1897200000000001016": {
-      "expired_at": "2026-11-23T12:00:33.378542+00:00",
-      "expires": "2026-11-23T12:00:31.947873+00:00",
+      "expires": "2026-12-04T07:00:33.350544+00:00",
       "id": "launcher-1897200000000001016",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'live wind ecowitt weatherstation user:kwindapp'",
       "repo": "launcher:1897200000000001016",
-      "status": "expired",
-      "timestamp": "2026-11-16T12:00:31.947873+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "launcher-1897200000000001020": {
       "expired_at": "2026-11-23T09:00:33.350152+00:00",
@@ -9158,14 +9172,13 @@
       "timestamp": "2026-11-22T06:00:34.928059+00:00"
     },
     "launcher-1897200000000002133": {
-      "expired_at": "2026-11-22T16:00:34.465660+00:00",
-      "expires": "2026-11-22T16:00:31.979974+00:00",
+      "expires": "2027-02-25T07:00:33.350544+00:00",
       "id": "launcher-1897200000000002133",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (dest-best); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002133",
-      "status": "expired",
-      "timestamp": "2026-11-15T16:00:31.979974+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "launcher-1897200000000002140": {
       "expired_at": "2026-11-23T02:00:34.080689+00:00",
@@ -9373,14 +9386,13 @@
       "timestamp": "2026-11-25T12:00:33.512563+00:00"
     },
     "launcher-1897200000000002332": {
-      "expired_at": "2026-11-22T01:00:35.388334+00:00",
-      "expires": "2026-11-22T00:00:55.378741+00:00",
+      "expires": "2026-12-04T07:00:33.350544+00:00",
       "id": "launcher-1897200000000002332",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'slot machine user:molfar'",
       "repo": "launcher:1897200000000002332",
-      "status": "expired",
-      "timestamp": "2026-11-15T00:00:55.378741+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "launcher-1897200000000002335": {
       "expires": "2027-02-24T00:00:33.415656+00:00",
@@ -9732,14 +9744,13 @@
       "timestamp": "2026-11-25T20:00:33.782794+00:00"
     },
     "launcher-1897200000000002627": {
-      "expired_at": "2026-11-22T20:00:33.232813+00:00",
-      "expires": "2026-11-22T20:00:31.795538+00:00",
+      "expires": "2027-02-25T07:00:33.350544+00:00",
       "id": "launcher-1897200000000002627",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (tomas1226); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002627",
-      "status": "expired",
-      "timestamp": "2026-11-15T20:00:31.795538+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "launcher-1897200000000002628": {
       "expires": "2026-11-29T20:00:33.232813+00:00",
@@ -9778,14 +9789,13 @@
       "timestamp": "2026-11-26T01:00:33.067521+00:00"
     },
     "launcher-1897200000000002658": {
-      "expired_at": "2026-11-22T19:00:33.953275+00:00",
-      "expires": "2026-11-22T19:00:32.749098+00:00",
+      "expires": "2027-02-25T07:00:33.350544+00:00",
       "id": "launcher-1897200000000002658",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (drunk-man-101); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002658",
-      "status": "expired",
-      "timestamp": "2026-11-15T19:00:32.749098+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "launcher-1897200000000002660": {
       "expires": "2026-11-28T04:00:32.449949+00:00",
@@ -10346,14 +10356,13 @@
       "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
     "launcher-1897200000000003082": {
-      "expired_at": "2026-11-22T19:00:33.953275+00:00",
-      "expires": "2026-11-22T19:00:32.749098+00:00",
+      "expires": "2026-12-04T07:00:33.350544+00:00",
       "id": "launcher-1897200000000003082",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'metarnow adv user:hosseios'",
       "repo": "launcher:1897200000000003082",
-      "status": "expired",
-      "timestamp": "2026-11-15T19:00:32.749098+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "launcher-1897200000000003087": {
       "expired_at": "2026-11-23T03:00:33.585073+00:00",
@@ -10536,14 +10545,13 @@
       "timestamp": "2026-11-15T20:00:31.795538+00:00"
     },
     "launcher-1897200000000003222": {
-      "expired_at": "2026-11-22T18:00:33.235260+00:00",
-      "expires": "2026-11-22T18:00:31.614867+00:00",
+      "expires": "2026-12-04T07:00:33.350544+00:00",
       "id": "launcher-1897200000000003222",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'key unit tester user:papand7'",
       "repo": "launcher:1897200000000003222",
-      "status": "expired",
-      "timestamp": "2026-11-15T18:00:31.614867+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "launcher-1897200000000003223": {
       "expired_at": "2026-11-23T11:00:33.327774+00:00",
@@ -10887,14 +10895,13 @@
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-2089633464953118721": {
-      "expired_at": "2026-11-23T22:00:33.297030+00:00",
-      "expires": "2026-11-23T22:00:32.290880+00:00",
+      "expires": "2026-12-04T07:00:33.350544+00:00",
       "id": "launcher-2089633464953118721",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'uiflow2 papermono user:m5stack'",
       "repo": "launcher:2089633464953118721",
-      "status": "expired",
-      "timestamp": "2026-11-16T22:00:32.290880+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "launcher-2089640807996628993": {
       "expires": "2026-12-16T08:00:31.910120+00:00",
@@ -11418,14 +11425,13 @@
       "timestamp": "2026-11-15T22:00:31.751655+00:00"
     },
     "launcher-2112145663442898946": {
-      "expired_at": "2026-11-23T19:00:34.130407+00:00",
-      "expires": "2026-11-23T19:00:33.230649+00:00",
+      "expires": "2026-12-04T07:00:33.350544+00:00",
       "id": "launcher-2112145663442898946",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'ebook reader user:balloon'",
       "repo": "launcher:2112145663442898946",
-      "status": "expired",
-      "timestamp": "2026-11-16T19:00:33.230649+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "launcher-2112472793087299586": {
       "expired_at": "2026-11-23T22:00:33.297030+00:00",
@@ -17531,7 +17537,7 @@
       "pr_ref": "#2101",
       "repo": "forged-in-feathers-technology/observore",
       "status": "proposed",
-      "timestamp": "2026-11-27T06:00:33.568785+00:00"
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "oddlings": {
       "id": "oddlings",
@@ -22480,6 +22486,15 @@
       "repo": "lyusupov/post_s76g",
       "status": "rejected",
       "timestamp": "2026-11-18T07:00:31.406931+00:00"
+    },
+    "repo-note:lyusupov/post_techo": {
+      "expires": "2026-12-27T07:00:33.350544+00:00",
+      "id": "repo-note:lyusupov/post_techo",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "lyusupov/post_techo",
+      "status": "rejected",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
     },
     "repo-note:m-abozaid/esp32-c3-adblock": {
       "expires": "2026-12-17T01:00:31.817229+00:00",
@@ -28376,6 +28391,14 @@
       "status": "rejected",
       "timestamp": "2026-11-15T08:00:31.415117+00:00"
     },
+    "xadas-hud-link": {
+      "id": "xadas-hud-link",
+      "pr_ref": null,
+      "repo": "drivedeck/xadas-hud-link",
+      "repo_id": 1446024556,
+      "status": "proposed",
+      "timestamp": "2026-11-27T07:00:33.350544+00:00"
+    },
     "xcalc-cardputer": {
       "expires": "2026-12-15T14:00:31.673907+00:00",
       "id": "xcalc-cardputer",
@@ -29185,6 +29208,7 @@
     "dragoncoder047/tinytcl": "repo-note:dragoncoder047/tinytcl",
     "drdavidda/papercolor-desk-terminal": "papercolor-desk-terminal",
     "drew-alleman/powershell-backdoor-generator": "repo-note:drew-alleman/powershell-backdoor-generator",
+    "drivedeck/xadas-hud-link": "xadas-hud-link",
     "dronebridge/esp32": "repo-note:dronebridge/esp32",
     "drrhesus/rhesus-life": "rhesus-life",
     "drrhesus/rhesus-radio-v3": "rhesus-radio-v3",
@@ -29632,6 +29656,7 @@
     "juanpabloaj/lolin_d32_waveshare": "repo-note:juanpabloaj/lolin_d32_waveshare",
     "juicecultus/crosspoint-reader-papers3": "crosspoint-reader-papers3",
     "juicecultus/epub-m5stack-paper-s3": "epub-m5stack-paper-s3",
+    "julienbidouille/cz-python-template": "cz-python-template",
     "junfactorya04": "junfactorya04",
     "justcallmekoko/esp32marauder": "esp32marauder",
     "justinknight93/doolittle": "doolittle",
@@ -30649,6 +30674,7 @@
     "lxveace/cyber-controller": "cyber-controller",
     "lyr3x/roode": "repo-note:lyr3x/roode",
     "lyusupov/post_s76g": "repo-note:lyusupov/post_s76g",
+    "lyusupov/post_techo": "repo-note:lyusupov/post_techo",
     "lyzbn/adv-tarot-firmware": "adv-tarot-firmware",
     "lyzbn/guanxiang-firmware": "guanxiang-firmware",
     "m-abozaid/esp32-c3-adblock": "repo-note:m-abozaid/esp32-c3-adblock",
@@ -30811,6 +30837,7 @@
     "minoruinachi/card-gcalc": "card-gcalc",
     "minoruinachi/paperdiyos": "paperdiyos",
     "minoruinachi/tulipcc": "tulipcc",
+    "mistrysiddh/ghostpaper": "ghostpaper",
     "mithug3/cardradio": "cardradio",
     "mive82/psa_esp32": "repo-note:mive82/psa_esp32",
     "mk324234/atoms3-lite-tvbgone": "atoms3-lite-tvbgone",
