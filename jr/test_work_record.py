@@ -410,3 +410,30 @@ def test_cli_date_after_the_subcommand_reaches_the_record(tmp_path):
     d, key = pam_dir(tmp_path)
     assert work_record.main(["--demand-dir", str(d), "attempt", key, "--date", NEXT]) == 0
     assert receipt(d, key)["last_attempt_on"] == NEXT
+
+
+# --- the launcher's key rule lives here (2026-11-27) -----------------------------------------------------------------
+
+def test_every_key_the_broker_mints_is_launchable_and_nothing_else_is(capsys, monkeypatch):
+    import io
+    import pam_leads
+    lead = {"source_id": "s", "fingerprint": "f"}
+    minted = [rw.work_key("esp32 c6 devkit", "2026-11-27"), pam_leads.work_key(lead),
+              rw.quote_key({"record": "data/boards/x/y/board.md", "report_date": "2026-11-27"}),
+              rw.resolver_key({"vendor": "adafruit", "field": "dimensions_mm", "report_date": "2026-11-27"})]
+    assert all(rw.safe_key(k) for k in minted), minted
+    for bad in ("../x", "abc", "resolver-XYZ", "fix-" + "0" * 23, "0" * 16 + "\n", "pam-" + "g" * 24, None, 7):
+        assert not rw.safe_key(bad), bad
+    receipts = {"receipts": [{"key": k, "branch": rw.branch_for(k)} for k in minted]
+                + [{"key": "resolver-" + "a" * 24, "branch": "jr/research-other"}, {"key": "x;rm", "branch": "jr/research-x;rm"}]}
+    ok, unsafe = work_record.launchable(json.dumps(receipts))
+    assert [k for k, _ in ok] == minted and len(unsafe) == 2
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps(receipts)))
+    assert work_record.main(["launchable", "--receipts", "-"]) == 0
+    out, err = capsys.readouterr()
+    assert out.split() == [x for k in minted for x in (k, rw.branch_for(k))] and err.count("SKIP-UNSAFE") == 2
+
+
+def test_the_receipts_on_main_all_carry_a_minted_key():
+    doc = json.loads((Path(__file__).resolve().parent.parent / "docs" / "demand" / "work-receipts.json").read_text())
+    assert all(rw.safe_key(r["key"]) for r in doc["receipts"])

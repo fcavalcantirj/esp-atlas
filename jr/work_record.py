@@ -24,6 +24,7 @@ Commands (CLI: python3 jr/work_record.py [--demand-dir docs/demand] [--date YYYY
   retry    <key>                          a human re-arms an EXHAUSTED receipt for one more research
                                           window (retry_on today); refused on any other receipt
   launch-state <key> [--receipts FILE|-]  read-only: free | busy | exhausted for the operator's launcher
+  launchable [--receipts FILE|-]          read-only: "<key> <branch>" of every receipt with a broker-minted key
                                           (research_work.launch_state over main's or a branch's receipts)
   settle   <key> --state abandoned|rejected --reason TEXT
                                           a supported negative result: the receipt turns terminal with
@@ -285,6 +286,24 @@ def launch_state(receipts_text: str, key: str, *, today: str) -> str:
     return rw.launch_state(found[0], today)
 
 
+def launchable(receipts_text: str) -> tuple[list[tuple[str, str]], list[str]]:
+    """The launcher's key-safety step: ((key, branch) of every receipt whose key is one the broker mints and whose
+    branch is jr/research-<key>, [the others as "key branch"]). Launch state stays launch-state's question."""
+    try:
+        doc = json.loads(receipts_text)
+    except ValueError as e:
+        raise RecordError(f"unreadable receipts: {e}") from e
+    rows = doc.get("receipts") if isinstance(doc, dict) else doc
+    ok, unsafe = [], []
+    for r in rows if isinstance(rows, list) else []:
+        key, branch = (r.get("key"), r.get("branch")) if isinstance(r, dict) else (None, None)
+        if rw.safe_key(key) and branch == rw.branch_for(key):
+            ok.append((key, branch))
+        else:
+            unsafe.append(f"{key} {branch}")
+    return ok, unsafe
+
+
 def _close_candidate(candidate: dict, *, key: str, state: str, reason: str, today: str) -> None:
     history = {"event": "closed", "date": today, "resolution": state, "work": key, "reason": reason}
     if candidate.get("outcome") is not None:
@@ -375,6 +394,8 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("launch-state", parents=[common])
     p.add_argument("key")
     p.add_argument("--receipts", help="a receipts JSON file, or - for stdin (default: the demand dir's)")
+    p = sub.add_parser("launchable", parents=[common])
+    p.add_argument("--receipts", help="a receipts JSON file, or - for stdin (default: the demand dir's)")
     p = sub.add_parser("settle", parents=[common])
     p.add_argument("key")
     p.add_argument("--state", required=True, choices=SETTLE_STATES)
@@ -389,6 +410,19 @@ def main(argv=None) -> int:
     args.date = getattr(args, "date", None) or dt.datetime.now(dt.timezone.utc).date().isoformat()
     args.dry_run = getattr(args, "dry_run", False)
     d = Path(args.demand_dir)
+    if args.cmd == "launchable":                    # read-only, "<key> <branch>" lines for the launcher
+        try:
+            src = args.receipts or str(d / "work-receipts.json")
+            text = sys.stdin.read() if src == "-" else Path(src).read_text(encoding="utf-8")
+            ok, unsafe = launchable(text)
+            for line in unsafe:
+                print(f"SKIP-UNSAFE {line}", file=sys.stderr)
+            for key, branch in ok:
+                print(f"{key} {branch}")
+        except (RecordError, OSError) as e:
+            print(f"work-record: {e}", file=sys.stderr)
+            return 1
+        return 0
     if args.cmd == "launch-state":                  # read-only, one word on stdout for the launcher
         try:
             src = args.receipts or str(d / "work-receipts.json")

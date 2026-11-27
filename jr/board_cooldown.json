@@ -308,6 +308,24 @@
       "timestamp": "2026-11-27T14:00:33.464823+00:00",
       "url": "https://wiki.dfrobot.com/dfr1117"
     },
+    "elecrow-crowpanel-esp32-s3-579-epaper": {
+      "board": "elecrow-crowpanel-esp32-s3-579-epaper",
+      "expires": "2026-12-04T17:00:33.686133+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-27T17:00:33.686133+00:00",
+      "url": "https://www.elecrow.com/wiki/CrowPanel_ESP32_E-paper_5.79-inch_HMI_Display.html"
+    },
     "firebeetle-2-esp32-c6": {
       "board": "firebeetle-2-esp32-c6",
       "expires": "2026-12-04T14:00:33.464823+00:00",
@@ -328,7 +346,7 @@
     },
     "firebeetle-2-esp32-e": {
       "board": "firebeetle-2-esp32-e",
-      "expires": "2026-12-04T16:00:33.080425+00:00",
+      "expires": "2026-12-04T15:00:34.482789+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -336,12 +354,12 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-27T16:00:33.080425+00:00",
+      "timestamp": "2026-11-27T15:00:34.482789+00:00",
       "url": "https://wiki.dfrobot.com/dfr0654"
     },
     "firebeetle-2-esp32-s3": {
       "board": "firebeetle-2-esp32-s3",
-      "expires": "2026-12-04T16:00:33.080425+00:00",
+      "expires": "2026-12-04T15:00:34.482789+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -354,8 +372,21 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-27T16:00:33.080425+00:00",
+      "timestamp": "2026-11-27T15:00:34.482789+00:00",
       "url": "https://wiki.dfrobot.com/dfr0975"
+    },
+    "firebeetle-esp32": {
+      "board": "firebeetle-esp32",
+      "expires": "2026-12-04T17:00:33.686133+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-27T17:00:33.686133+00:00",
+      "url": "https://wiki.dfrobot.com/dfr0478"
     },
     "freenove-esp32-wrover": {
       "board": "freenove-esp32-wrover",
@@ -369,6 +400,42 @@
       "reason": "doc-unreachable",
       "timestamp": "2026-11-25T09:00:33.578012+00:00",
       "url": null
+    },
+    "freenove-fnk0104a": {
+      "board": "freenove-fnk0104a",
+      "expires": "2026-12-04T18:00:33.572951+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-27T18:00:33.572951+00:00",
+      "url": "https://docs.freenove.com/projects/fnk0104/en/latest/"
+    },
+    "freenove-fnk0104b": {
+      "board": "freenove-fnk0104b",
+      "expires": "2026-12-04T18:00:33.572951+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-27T18:00:33.572951+00:00",
+      "url": "https://docs.freenove.com/projects/fnk0104/en/latest/"
     },
     "freenove-fnk0104s": {
       "board": "freenove-fnk0104s",
