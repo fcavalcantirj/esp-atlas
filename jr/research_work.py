@@ -180,6 +180,17 @@ def work_key(term: str, opening_date: str) -> str:
     return digest[:KEY_HEX_CHARS]
 
 
+# Every key the broker mints, one pattern (2026-11-27): search work_key (16 hex), pam_leads.work_key (pam-),
+# quote_key (fix-) and resolver_key (resolver-). The operator's launcher reads it through
+# `work_record.py launchable`, never a copy: a copy in the launcher accepted only the first two shapes and
+# skipped the first resolver and quote items as unsafe (2026-11-27 16:20Z).
+KEY_RE = re.compile(r"[0-9a-f]{16}|(?:pam|fix|resolver)-[0-9a-f]{24}")
+
+
+def safe_key(key) -> bool:
+    return isinstance(key, str) and KEY_RE.fullmatch(key) is not None
+
+
 def branch_for(key: str) -> str:
     return BRANCH_PREFIX + key
 
@@ -277,7 +288,7 @@ _SNAPSHOT_CHECKS = {"source": lambda r: _text(r["source"]), "window": _window, "
 
 
 def _readable_receipt(r) -> bool:
-    if not isinstance(r, dict) or not _text(r.get("key")):
+    if not isinstance(r, dict) or not safe_key(r.get("key")):
         return False
     if not isinstance(r.get("state"), str) or r["state"] not in RECEIPT_STATES:
         return False
