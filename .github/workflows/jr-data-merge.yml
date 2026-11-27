@@ -1,9 +1,9 @@
 name: jr-data-merge
 # The one serialized merger of Jr's data PRs (scripts/data_merge.py; Jr redesign plan, step 6). Level-triggered:
 # every run re-reads the open jr-data / jr-quarantine PRs and main, so a replaced or cancelled run loses nothing.
-# DRY RUN for now: it only prints its decisions (read-only token). A later reviewed PR adds --apply and write
-# permissions once the shadow run and the owner-approved branch protection (strict up-to-date + required claims)
-# are in place.
+# APPLY (2026-11-26): it merges what its own switches allow (jr/autonomy.json backfill_automerge /
+# build_target_automerge; JR_TICK_AUTOMERGE=0 kills), each backfill re-derived by main's code first, and
+# confirms deployments. The runner's timer may also run it as Jr's bot; the concurrency group serializes both.
 on:
   workflow_dispatch:
   workflow_run:
@@ -13,8 +13,9 @@ concurrency:
   group: jr-data-merge
   cancel-in-progress: false
 permissions:
-  contents: read
-  pull-requests: read
+  contents: write
+  pull-requests: write
+  issues: write
   checks: read
 jobs:
   decide:
@@ -32,8 +33,8 @@ jobs:
       # 2026-11-23: without this step every run since #2007 failed (ModuleNotFoundError: No module named 'yaml').
       - name: Install what scripts/data_merge.py imports
         run: pip install pyyaml jsonschema httpx pypdf && pip install -e apps/core
-      - name: Decide every labelled data PR (dry run)
+      - name: Decide and act on every labelled data PR
         env:
           GH_TOKEN: ${{ github.token }}
           JR_TICK_AUTOMERGE: ${{ vars.JR_TICK_AUTOMERGE }}
-        run: python3 scripts/data_merge.py
+        run: python3 scripts/data_merge.py --apply

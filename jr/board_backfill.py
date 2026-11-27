@@ -152,6 +152,9 @@ def _visible_text(raw: str) -> str:
     """Strip scripts/styles/tags and unescape entities to readable page text; collapse
     whitespace so sentence-splitting is stable. Idempotent on already-plain text."""
     text = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", raw or "")
+    # site chrome is never a statement about the product (2026-11-26: LILYGO's global <header><nav> menu
+    # "Driver of CH9102" sits on every product page, and became T-Display-S3's usb_serial)
+    text = re.sub(r"(?is)<(header|nav|footer)\b[^>]*>.*?</\1>", " ", text)
     text = re.sub(r"(?s)<[^>]+>", " ", text)
     text = html.unescape(text)
     text = re.sub(r"\s+", " ", text)
@@ -226,7 +229,10 @@ def extract_download_mode(text: str) -> dict | None:
         if "boot" in low and _M5_MANUAL_ACTION_RE.search(low):
             return {"mode": "manual", "steps": s.rstrip(". ")}
     for s in _sentences(text):
-        if _AUTO_DOWNLOAD_RE.search(s.lower()):
+        m = _AUTO_DOWNLOAD_RE.search(s.lower())
+        # "does not support automatic download" is the OPPOSITE claim (2026-11-26): a negation before the
+        # auto-word in the same sentence never grounds auto
+        if m and not _NEGATION_RE.search(s.lower()[:m.start()]):
             return {"mode": "auto"}
     return None
 
@@ -261,6 +267,67 @@ _AUTO_DOWNLOAD_RE = re.compile(
 )
 
 
+# A statement is about the product only when it is not negated, not about a driver package, and not about
+# an optional accessory (2026-11-26: the M5Stack Core Basic and Core2 for AWS pages name CP2104 and CH9102
+# in driver lists and "two chip versions" lines; first-token matching wrote ch9102 for both).
+_NEGATION_RE = re.compile(r"\b(?:not|no|without|never|instead of)\b|n't\b", re.I)
+_DRIVER_CTX_RE = re.compile(r"driver|\bvcp\b|download|install|\.zip|\.exe|\.pkg", re.I)
+_ACCESSORY_RE = re.compile(r"optional|sold separately|adapter|accessor(?:y|ies)", re.I)
+_CHIP_RE = re.compile(r"cp2102n|cp2102|cp2104|ch9102|ch343|ch340|ft2232|ft232", re.I)
+_CHIP_ENUM = {"cp2102n": "cp2102n", "cp2102": "cp2102", "cp2104": "cp2104", "ch9102": "ch9102", "ch343": "ch343",
+              "ch340": "ch340", "ft2232": "other", "ft232": "other"}
+
+
+def _clause_before(low: str, i: int, width: int = 60) -> str:
+    """The text before position i, cut at the last sentence or clause boundary within `width` chars."""
+    seg = low[max(0, i - width):i]
+    cut = max(seg.rfind(". "), seg.rfind("; "), seg.rfind(", "))
+    return seg[cut + 2:] if cut >= 0 else seg
+
+
+_CONTESTED_RE = re.compile(r"removed|replaced|deleted|discontinued|dropped", re.I)
+
+
+def _contested(low: str) -> set:
+    """Chips the page itself marks as removed or replaced ("USB to Serial Chip CP2102 Removed CP2102" in Heltec's
+    V3/V4 comparison; "CP2104 replaced with CH9102F"): never evidence for the product, wherever else named."""
+    out = set()
+    for m in _CHIP_RE.finditer(low):
+        if _CONTESTED_RE.search(low[max(0, m.start() - 15):m.start()]) or _CONTESTED_RE.search(low[m.end():m.end() + 15]):
+            out.add(_CHIP_ENUM[m.group(0)])
+    return out
+
+
+def _mention_kind(low: str, start: int, end: int) -> str | None:
+    """How a mention at [start, end) speaks about the product: "direct" (a statement about the board),
+    "driver" (a driver/download/install instruction for it), or None (negated, or an optional accessory: never
+    evidence)."""
+    before = _clause_before(low, start)
+    if _NEGATION_RE.search(before) or _ACCESSORY_RE.search(before) or _ACCESSORY_RE.search(low[end:end + 25]):
+        return None
+    around = low[max(0, start - 60):min(len(low), end + 25)]
+    # the whole sentence counts too: "Two driver-chip versions are available: CP210X (for CP2104) and CP34X (for
+    # CH9102)" names its driver words far before the second chip
+    head = low[max(0, start - 300):start]
+    tail = low[end:end + 300]
+    b = max(head.rfind(". "), head.rfind("! "), head.rfind("? "))
+    e = min([i for i in (tail.find(". "), tail.find("! "), tail.find("? ")) if i >= 0] or [len(tail)])
+    sentence = head[b + 2 if b >= 0 else 0:] + low[start:end] + tail[:e]
+    return "driver" if (_DRIVER_CTX_RE.search(around) or _DRIVER_CTX_RE.search(sentence)) else "direct"
+
+
+def _positive(low: str, start: int, end: int) -> bool:
+    return _mention_kind(low, start, end) is not None
+
+
+def _schema_usb_serial() -> set:
+    import json
+    try:
+        return set(json.loads((REPO / "schema" / "board.schema.json").read_text())["properties"]["usb_serial"]["enum"])
+    except (OSError, ValueError, KeyError):
+        return set()
+
+
 # Most-specific token first so cp2102n is never miscounted as cp2102 (and ft2232h → ft2232).
 _BRIDGE_TOKENS = (
     ("cp2102n", "cp2102n"),
@@ -282,6 +349,42 @@ _BRIDGE_TOKENS = (
 _UNSPEC_BRIDGE_RE = re.compile(r"usb[- ]?(?:to[- ]?)?uart bridge chip", re.I)
 
 
+def explain_usb_serial(text: str) -> tuple[str | None, str]:
+    """(value, why). The bridge chip only from POSITIVE statements about this product (see _positive):
+    exactly one distinct chip, inside the schema enum, or OMIT with the reason. With no chip stated: the native
+    USB-Serial-JTAG statement, then an explicit unnamed "USB-to-UART bridge chip", under the same rules."""
+    low = (text or "").lower()
+    kinds = {"direct": set(), "driver": set()}
+    contested = _contested(low)
+    for m in _CHIP_RE.finditer(low):
+        k = _mention_kind(low, m.start(), m.end())
+        if k:
+            kinds[k].add(_CHIP_ENUM[m.group(0)])
+    if contested:
+        named = kinds["direct"] | kinds["driver"]
+        if named - contested:
+            # a removed/replaced chip next to another one: the product changed chips across revisions
+            return None, f"chips changed across revisions ({', '.join(sorted(named | contested))}): omitted"
+        kinds = {"direct": set(), "driver": set()}
+    # direct statements decide; driver instructions only when the page states nothing directly
+    tier, found = ("direct", kinds["direct"]) if kinds["direct"] else ("driver", kinds["driver"])
+    chips = sorted(found)
+    if len(chips) > 1:
+        return None, f"several chips named ({tier}: {', '.join(chips)}): omitted"
+    if chips:
+        enum = _schema_usb_serial()
+        if enum and chips[0] not in enum:
+            return None, f"chip {chips[0]} is not in the schema usb_serial enum: omitted"
+        return chips[0], f"one chip named ({tier})"
+    for m in re.finditer(r"usb[-_ ]serial[-_ /]jtag", low):
+        if _positive(low, m.start(), m.end()):
+            return "native-usb-serial-jtag", "native USB-Serial-JTAG stated"
+    for m in _UNSPEC_BRIDGE_RE.finditer(low):
+        if _positive(low, m.start(), m.end()):
+            return "usb-uart-bridge-unspecified", "an unnamed USB-to-UART bridge chip stated"
+    return None, "no positive statement of a bridge chip or native USB"
+
+
 def extract_usb_serial(text: str) -> str | None:
     """Grounded usb_serial extraction, most-specific first (every branch returns a value in
     the schema's usb_serial enum, never outside it):
@@ -292,16 +395,7 @@ def extract_usb_serial(text: str) -> str | None:
 
     A named chip takes precedence (it's the default flashing path on Espressif devkits).
     Nothing stated -> None (OMIT). This is flash-critical: only ever emit what the doc says."""
-    low = (text or "").lower()
-    for token, enum in _BRIDGE_TOKENS:
-        if token in low:
-            return enum
-    if any(t in low for t in ("usb-serial-jtag", "usb serial jtag", "usb_serial_jtag",
-                              "usb serial/jtag", "usb-serial/jtag")):
-        return "native-usb-serial-jtag"
-    if _UNSPEC_BRIDGE_RE.search(low):
-        return "usb-uart-bridge-unspecified"
-    return None
+    return explain_usb_serial(text)[0]
 
 
 # ─────────────────────────── per-board backfill ───────────────────────────

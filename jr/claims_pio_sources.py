@@ -175,6 +175,42 @@ def board_for(board_id: str, manifest_digest: str, catalog: dict) -> str | None:
     return hits[0] if len(hits) == 1 else None
 
 
+# --- the product-name refusal (2026-11-27; owner rule of 2026-11-11, m5stamp-s3__adversary) -------------------------
+# An env named for another catalogued product never links to a generic board option: `cardputer` on the bare Stamp-S3
+# module option is a Cardputer build, not a Stamp-S3 one. Deterministic: catalog names, never a model's judgement.
+_GENERIC_NAME = re.compile(r"^(esp32[a-z0-9]{0,4}|devkit[a-z0-9]*|module|board|dev|kit)$")
+
+
+def _norm(text) -> str:
+    return re.sub(r"[^a-z0-9]", "", str(text or "").lower())
+
+
+def product_names(data_dir: Path) -> dict:
+    """{board id: the normalized names a product goes by (its name and aka, 5+ chars, not a generic chip/devkit name)}."""
+    from esp_atlas_core.frontmatter import iter_data_files, parse_frontmatter
+    out = {}
+    for kind, path in iter_data_files(data_dir):
+        if kind != "board":
+            continue
+        fm, _ = parse_frontmatter(path)
+        names = {_norm(n) for n in [fm.get("name"), *(fm.get("aka") or [])]}
+        out[fm["id"]] = {n for n in names if len(n) >= 5 and not _GENERIC_NAME.match(n)}
+    return out
+
+
+def product_conflict(env: str, linked_board: str, names: dict) -> str | None:
+    """The OTHER catalogued board whose name the env carries, when it links to `linked_board`; None otherwise.
+    A name the linked board shares is never a conflict."""
+    e, own = _norm(env), names.get(linked_board) or set()
+    for board, ns in sorted(names.items()):
+        if board == linked_board:
+            continue
+        for n in sorted(ns):
+            if n not in own and n in e:
+                return board
+    return None
+
+
 def platformio_version() -> str:
     import platformio
     return platformio.__version__

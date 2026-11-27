@@ -42,8 +42,12 @@ public); the launcher supplies the checkout, the branch and the incident file.
      file and gives the evidence;
    - a change to workflow `permissions` or `secrets`;
    - more than 300 changed lines.
-5. **Run what the failing job runs** (the same pytest selection) and the rest of the suite it
-   belongs to, once each, saving the full output; quote the pass and fail counts.
+5. **Run the failing selection and every test file your change touches**, once each, saving the
+   full output; quote the pass and fail counts. **Never run a whole suite on this runner**: the core
+   suite alone takes 25 minutes here (measured 2026-11-25, "658 passed, 31 skipped in 1500.61s"),
+   and two such runs (main and the PR) exceeded the run's wall-clock cap twice, so incident
+   dffa6d79 ended with no PR although its fix was green. The PR's CI runs every suite; the reviewer
+   checks that the whole suite is green there.
 6. **Commit the fix on `BRANCH` and write the PR body to `BODY`** (not into the repository):
    - the incident id and fingerprint;
    - the root cause, MEASURED and INFERRED;

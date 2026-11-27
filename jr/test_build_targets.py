@@ -92,3 +92,39 @@ def test_label_falls_back_to_rest_when_pr_edit_fails():
 def test_label_failure_is_reported_not_swallowed():
     ok, why = bt.add_label("https://github.com/o/r/pull/7", lambda *a: _P(1, "denied"))
     assert not ok and "pr edit: denied" in why and "REST issues labels: denied" in why
+
+
+# --- striking distance first (united plan pilot E, 2026-11-26) -------------------------------------------------------
+
+PAGES = [{"page": "/firmware/bruce", "impressions": 480, "clicks": 12, "position": 10.98},
+         {"page": "/firmware/top", "impressions": 900, "clicks": 90, "position": 2.1},        # already top: not a target
+         {"page": "/firmware/thin", "impressions": 5, "clicks": 0, "position": 9.0},          # too little evidence
+         {"page": "/firmware/cathack", "impressions": 156, "clicks": 16, "position": 6.2},
+         {"page": "/parts/esp32-c6", "impressions": 500, "clicks": 2, "position": 10.8}]      # not a firmware page
+
+
+def test_striking_distance_firmware_is_ranked_by_impressions_times_the_position_gap():
+    assert bt.striking(PAGES) == ["bruce", "cathack"]
+
+
+def test_a_run_takes_at_most_two_striking_pages_first_then_the_round_robin():
+    repos = ["a\to/a", "bruce\to/bruce", "c\to/c", "cathack\to/cat", "d\to/d"]
+    picked, cursor = bt.pick_with_striking(repos, cursor="a\to/a", n=3, striking_ids=["cathack", "bruce", "zzz"])
+    assert picked[:2] == ["cathack\to/cat", "bruce\to/bruce"] and len(picked) == 3
+    assert picked[2] not in picked[:2] and cursor == picked[2]         # the round robin advances only by its own picks
+
+
+# --- the product-name refusal (2026-11-27; owner rule of 2026-11-11) -------------------------------------------------
+
+def test_an_env_named_for_another_catalogued_product_never_links_to_a_generic_option():
+    import claims_pio_sources as src
+    names = src.product_names(Path(__file__).resolve().parent.parent / "data")
+    assert src.product_conflict("cardputer", "m5stamp-s3", names) == "m5cardputer"          # the Nov 11 class
+    assert src.product_conflict("cardputer", "esp32-s3-devkitc-1", names) == "m5cardputer"
+    assert src.product_conflict("esp32-m5atom-lite", "esp32-pico-kit", names) == "m5atom-lite"
+    assert src.product_conflict("esp32p4_16MB", "esp32-p4-function-ev-board", names) is None
+    assert src.product_conflict("cardputer", "m5cardputer", names) is None                 # its own product
+    facts = [dict(CLAIM, env="cardputer", board_id="m5stack-stamps3")]
+    picked = bt.plan([("cardputer-ai", "o/r", facts)], link=lambda bid, dig: "m5stamp-s3", existing=set(),
+                     conflict=lambda env, board: src.product_conflict(env, board, names))
+    assert picked == []

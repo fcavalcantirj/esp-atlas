@@ -552,6 +552,11 @@ def _pull_live(days: int = WINDOW_DAYS) -> dict:
     gsc_query = telemetry._ex("GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY",
         {"siteUrl": telemetry.GSC_SITE, "startDate": S, "endDate": E,
          "dimensions": ["query"], "rowLimit": 500})
+    # page totals (no query dimension, so no privacy filter): which pages already earn impressions, and where they
+    # rank (united plan pilot E, 2026-11-26). A failure leaves them empty; the steer never depends on them.
+    gsc_page = telemetry._ex("GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY",
+        {"siteUrl": telemetry.GSC_SITE, "startDate": S, "endDate": E,
+         "dimensions": ["page"], "rowLimit": 1000})
     gsc_query_page = telemetry._ex("GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY",
         {"siteUrl": telemetry.GSC_SITE, "startDate": S, "endDate": E,
          "dimensions": ["query", "page"], "rowLimit": 500})
@@ -568,6 +573,7 @@ def _pull_live(days: int = WINDOW_DAYS) -> dict:
         "window": {"start": S, "end": E},
         "gsc_query_rows": gsc_query_rows,
         "gsc_query_page_rows": (gsc_query_page or {}).get("rows") or [],
+        "gsc_page_rows": (gsc_page or {}).get("rows") or [],
         "ga4_searchterm_raw_rows": (ga4_searchterm or {}).get("rows") or [],
         "ga4_pull_ok": ga4_searchterm is not None,  # `_ex` returns None on a Composio failure
         "gsc_pull_ok": gsc_query is not None,       # a GSC failure must never land a GA4-only steer (2026-11-18)
@@ -595,8 +601,25 @@ def _prior_first_seen_map(prior_items: list[dict]) -> dict[str, str]:
     return {it["term"]: it["first_seen"] for it in prior_items if it.get("term") and it.get("first_seen")}
 
 
+def page_totals(rows: list) -> list[dict]:
+    """GSC page rows -> [{page (path), clicks, impressions, position}], most impressions first."""
+    from urllib.parse import unquote, urlsplit
+    out = []
+    for r in rows or []:
+        keys = r.get("keys") or []
+        if not keys:
+            continue
+        path = unquote(urlsplit(keys[0]).path)
+        if path != "/" and path.endswith("/"):
+            path = path[:-1]
+        out.append({"page": path, "clicks": int(r.get("clicks") or 0), "impressions": int(r.get("impressions") or 0),
+                    "position": round(float(r.get("position") or 0), 2)})
+    return sorted(out, key=lambda x: (-x["impressions"], x["page"]))
+
+
 def write_snapshot(items: list[dict], d2_available: bool, window: dict,
-                   today: str | None = None, demand_dir: Path = DEMAND_DIR, gsc_pull_ok: bool = True) -> Path:
+                   today: str | None = None, demand_dir: Path = DEMAND_DIR, gsc_pull_ok: bool = True,
+                   pages: list | None = None) -> Path:
     """Git-tracked, auditable, diffable — `docs/demand/<date>.json` (§9)."""
     today = today or dt.date.today().isoformat()
     demand_dir.mkdir(parents=True, exist_ok=True)
@@ -605,6 +628,8 @@ def write_snapshot(items: list[dict], d2_available: bool, window: dict,
         "date": today, "window": window, "weight_formula_version": WEIGHT_FORMULA_VERSION,
         "d2_available": d2_available, "gsc_pull_ok": bool(gsc_pull_ok), "count": len(items), "items": items,
     }
+    if pages is not None:
+        payload["pages"] = pages
     path.write_text(json.dumps(payload, indent=1))
     return path
 
@@ -700,7 +725,8 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
         today=today, prior_first_seen=prior_first_seen, part_ids=part_ids,
         trends=live.get("trends"), catalog=catalog,
     )
-    write_snapshot(items, d2_available, live["window"], today, demand_dir, gsc_pull_ok=live.get("gsc_pull_ok", True))
+    write_snapshot(items, d2_available, live["window"], today, demand_dir, gsc_pull_ok=live.get("gsc_pull_ok", True),
+                   pages=page_totals(live.get("gsc_page_rows")))
     write_unresolved(items, demand_dir)
     try:
         research_line, research = update_research_queue(ga4_raw, today, live["window"], demand_dir)

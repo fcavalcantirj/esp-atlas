@@ -30,9 +30,10 @@ import publish
 SKIP_PREFIXES = ("jr/tick-", "jr/research-")   # review_refresh and the demand retry own those
 CONTENT_PREFIXES = SKIP_PREFIXES                 # Jr's catalog PRs: a red check on one is healed on MAIN
 HUMAN_LABEL = "needs-human"
+DEMAND_PREFIX = "jr/demand-"
 DIGEST_HOUR = 12
 PR_FIELDS = ("number,headRefName,headRefOid,mergeStateStatus,isDraft,labels,baseRefName,isCrossRepository,updatedAt,"
-             "createdAt,statusCheckRollup")
+             "createdAt,statusCheckRollup,autoMergeRequest")
 
 
 # GitHub computes mergeability lazily: the first listing after main moves answers UNKNOWN for most PRs
@@ -99,7 +100,17 @@ def _red_required(pr: dict, required: list) -> list[tuple[str, str, str]]:
     return out
 
 
-def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> dict:
+def _main_green(gh, slug: str, check: str) -> bool:
+    """main's newest run of `check` completed successfully. Unreadable or absent → False."""
+    data = ci_watch._json(gh, "api", f"repos/{slug}/commits/main/check-runs?check_name={check}&per_page=20")
+    runs = [r for r in (data or {}).get("check_runs") or [] if r.get("name") == check] if isinstance(data, dict) else []
+    if not runs:
+        return False
+    newest = max(runs, key=lambda r: str(r.get("started_at") or ""))
+    return newest.get("status") == "completed" and newest.get("conclusion") == "success"
+
+
+def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool, now: str | None = None) -> dict:
     """A red required check on any open PR (2026-11-19: tick PR #1828 sat red; ci_watch only declares a tick
     break when the two NEWEST tick PRs fail alike). In order, once per PR and FAILURE (never per head: main
     moves hourly, so per-head memory looped rerun → update → rerun with no incident, review BLOCK of #1857):
@@ -142,6 +153,15 @@ def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> d
             if ukey not in updated and n not in in_flight and _behind_main(gh, slug, head):
                 out["update_branch"].append((n, head))
                 updated[ukey] = head
+                continue
+            # a fix that reached main through ANY PR (2026-11-25: #2084 fixed #2053's red test, no Jr heal merged,
+            # #2053 stayed red and its incident was abandoned): once per PR, failure and UTC day, merge main in
+            # again when main's same check is green there. Daily, so main moving hourly never loops it.
+            gkey = f"{key}:main-green:{ci_watch._utc_day(now)}" if now else None
+            if (gkey and gkey not in updated and n not in in_flight and _behind_main(gh, slug, head)
+                    and _main_green(gh, slug, check)):
+                out["update_branch"].append((n, head))
+                updated[gkey] = head
                 continue
             if content:
                 g = groups.setdefault(fp, {"check": check, "parsed": parsed, "prs": []})
@@ -246,6 +266,38 @@ def canary_retry(gh, slug: str, prs: list, store: ci_watch.Store, now: str, dry_
             out[kind].append((n, head) if kind == "update_branch" else (n, canary.group(1)))
         else:
             out["failed"].append(n)
+    return out
+
+
+SNAPSHOT_PREFIX = "jr/demand-"
+
+
+def refresh_snapshots(gh, slug: str, prs: list, store: ci_watch.Store, now: str, dry_run: bool) -> list:
+    """A demand snapshot's owner is the publisher's auto-merge (#2057, 2026-11-26). Under strict protection a BEHIND
+    PR never merges by itself, so a same-repo `jr/demand-*` PR on main that is BEHIND, has its merge armed and every
+    REQUIRED check passed gets main merged in: once per PR per UTC day (the day is remembered before the call).
+    Anything else (red, running, not armed, needs-human) is left to its owner. [n] updated (or would be)."""
+    day, out, required = ci_watch._utc_day(now), [], None
+    for p in sorted(prs, key=lambda p: int(p.get("number") or 0)):
+        n, head = p.get("number"), p.get("headRefOid")
+        if (not str(p.get("headRefName") or "").startswith(SNAPSHOT_PREFIX) or p.get("isDraft")
+                or p.get("isCrossRepository") or p.get("baseRefName") != "main" or not head
+                or p.get("mergeStateStatus") != "BEHIND" or not p.get("autoMergeRequest") or HUMAN_LABEL in _labels(p)):
+            continue
+        if required is None:
+            required = ci_watch.required_checks(gh, slug) or []
+        rollup = {c.get("name"): c for c in p.get("statusCheckRollup") or [] if c.get("name")}
+        if not required or any(str((rollup.get(r) or {}).get("conclusion") or "").upper() != "SUCCESS" for r in required):
+            continue
+        data = store._load()
+        seen = dict(data.get("snapshot_refresh") or {})
+        if seen.get(str(n)) == day:
+            continue
+        if not dry_run:
+            data["snapshot_refresh"] = {**{k: v for k, v in seen.items() if v == day}, str(n): day}
+            store._save(data)
+            gh("api", "-X", "PUT", f"repos/{slug}/pulls/{n}/update-branch", "-f", f"expected_head_sha={head}")
+        out.append(n)
     return out
 
 
@@ -359,7 +411,10 @@ def plan(gh, slug: str, prs: list) -> list[ci_watch.Verdict]:
         if not _eligible(pr):
             continue
         n, branch, head = pr["number"], pr["headRefName"], pr["headRefOid"]
-        if pr.get("mergeStateStatus") == "DIRTY":
+        # a demand PR's conflict is never heal work: the heal relay may not touch docs/demand/, so a dispatched
+        # job can only fail (2ebbc311 on #2057: two dispatches, then "gave up"). Its owner is the demand runner,
+        # which closes a superseded snapshot (demand_run._close_superseded) and republishes the next day.
+        if pr.get("mergeStateStatus") == "DIRTY" and not branch.startswith(DEMAND_PREFIX):
             out.append(ci_watch.pr_fix_verdict("conflict", n, branch, head))
         if HUMAN_LABEL in _labels(pr):
             v = agent_review.verdict_for_head(_comments(gh, slug, n), head)
@@ -512,19 +567,21 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
         if prs is None:
             return {"status": "unavailable", "why": "gh pr list failed"}
         wanted = plan(gh, slug, prs)
-        reds = red_prs(gh, slug, prs, store, dry_run)
+        reds = red_prs(gh, slug, prs, store, dry_run, now)
         wanted += reds["verdicts"]
         touched = {n for n, _ in reds["reruns"]} | {n for n, _ in reds["update_branch"]}
         rest = [p for p in prs if p.get("number") not in touched]
         if dry_run:
             retries = canary_retry(gh, slug, rest, store, now, True, autonomy_path=autonomy_path)
             expired = expire_tick_prs(gh, rest, now, True)
+            snaps = refresh_snapshots(gh, slug, rest, store, now, True)
             return {"status": "ok", "would": [f"record {v.check}" for v in wanted]
                     + [f"rerun #{n} run {r}" for n, r in reds["reruns"]]
                     + [f"merge main into #{n}" for n, _ in reds["update_branch"]]
                     + [f"canary retry #{n} (merge main)" for n, _ in retries["update_branch"]]
                     + [f"canary retry #{n} (rerun {r})" for n, r in retries["rerun"]]
-                    + [f"close tick PR #{n} ({EXPIRE_HOURS} h, not eligible)" for n in expired["closed"]], "digest": None}
+                    + [f"close tick PR #{n} ({EXPIRE_HOURS} h, not eligible)" for n in expired["closed"]]
+                    + [f"merge main into demand snapshot #{n}" for n in snaps], "digest": None}
         for _, run_id in reds["reruns"]:
             gh("run", "rerun", str(run_id), "--failed")
         for n, head in reds["update_branch"]:
@@ -535,6 +592,7 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
         retries = canary_retry(gh, slug, rest, store, now, False, autonomy_path=autonomy_path)
         acted = {n for n, _ in retries["update_branch"] + retries["rerun"]}
         expired = expire_tick_prs(gh, [p for p in rest if p.get("number") not in acted], now, False)
+        snaps = refresh_snapshots(gh, slug, [p for p in rest if p.get("number") not in acted], store, now, False)
         recorded = []
         for v in wanted:
             rec = store.record(v, now)
@@ -553,7 +611,7 @@ def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False
                 "canary_retries": [n for n, _ in retries["update_branch"] + retries["rerun"]],
                 "canary_retry_failed": retries["failed"],
                 "expired": expired["closed"], "expire_unreadable": expired["unreadable"],
-                "updated": [n for n, _ in reds["update_branch"]], "resolved": progress["resolved"], "pushed": progress["pushed"],
+                "updated": [n for n, _ in reds["update_branch"]] + snaps, "resolved": progress["resolved"], "pushed": progress["pushed"],
                 "stalled": progress["stalled"], "nudges": store.nudges(), "digest": daily(gh, store, prs, now)}
     except Exception as e:      # noqa: BLE001 — the tick must keep running whatever happens here
         return {"status": "unavailable", "why": f"{type(e).__name__}: {e}"[:300]}
