@@ -464,6 +464,34 @@ def _extract_for(text: str, url: str, missing: list[str], raw: str | None = None
     return out
 
 
+# The fields a machine may publish: each one's resolver passed its adversarial suite (2026-11-26). The single
+# source of truth: scripts/check_claims.py re-derives exactly these, and the tick's backfill PR carries only these.
+GATED_FIELDS = ("usb_serial", "download_mode", "getting_started")
+
+
+def gated_only(base_text: str, head_text: str) -> str | None:
+    """`base_text` plus ONLY the gated fields `head_text` adds (with each one's own new citation), in the writer's
+    format; None when it adds no gated field. 2026-11-27: the stage also writes `images`, the trusted check refuses
+    an ungated field, and every backfill PR (#2146) failed whole and was timed out, again and again."""
+    from esp_atlas_core.frontmatter import parse_frontmatter_text
+    fb, body = parse_frontmatter_text(base_text or "")
+    fh, _ = parse_frontmatter_text(head_text or "")
+    if not fb or not fh:
+        return None
+    added = [k for k in GATED_FIELDS if k in fh and k not in fb]
+    if not added:
+        return None
+    fm = {k: v for k, v in fb.items() if k != "sources"}
+    sources = list(fb.get("sources") or [])
+    new_sources = [s for s in (fh.get("sources") or []) if s not in sources]
+    for k in added:
+        fm[k] = fh[k]
+        sources += [s for s in new_sources if s.get("field") == k]
+    fm["sources"] = sources
+    front = yaml.safe_dump(fm, sort_keys=False, default_flow_style=False, allow_unicode=True).strip()
+    return f"---\n{front}\n---\n\n{(body or '').strip()}\n"
+
+
 def _write_fields(path: Path, fm: dict, body: str, extracted: dict, citations: dict,
                  today: str) -> None:
     """Add ONLY the extracted (missing) fields to the frontmatter, each with its own

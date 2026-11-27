@@ -491,10 +491,19 @@ def default_backfill_publisher(root: Path, paths: list, *, now, git, gh, slug, p
         return {"skipped": f"backfill PR {open_bf[0].get('headRefName')} still open"}
     wt2 = publish.add_worktree(git)
     try:
+        import board_backfill
+        kept = []
         for rel in paths:
             dst = Path(wt2.path) / rel
-            dst.parent.mkdir(parents=True, exist_ok=True)
-            dst.write_bytes((Path(root) / rel).read_bytes())
+            base = dst.read_text(encoding="utf-8") if dst.exists() else ""
+            text = board_backfill.gated_only(base, (Path(root) / rel).read_text(encoding="utf-8"))
+            if text is None:                       # nothing the trusted check accepts: never published
+                continue
+            dst.write_text(text, encoding="utf-8")
+            kept.append(rel)
+        if not kept:
+            return {"skipped": "no gated field to publish"}
+        paths = kept
         stamp = now.strftime("%Y%m%d-%H%M")
         res = publish.publish(wt2, list(paths), f"feat(jr): backfill {len(paths)} board(s) {stamp}",
                               "Board fields backfilled by Jr's resolvers. Re-derived by the trusted `claims` check "

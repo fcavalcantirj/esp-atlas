@@ -991,14 +991,18 @@ def test_default_backfill_publisher_waits_while_one_backfill_pr_is_open(monkeypa
 def test_default_backfill_publisher_publishes_owner_labelled_without_the_ledger(monkeypatch, tmp_path):
     from types import SimpleNamespace as P
     (tmp_path / "src" / BOARD).parent.mkdir(parents=True)
-    (tmp_path / "src" / BOARD).write_text("---\nid: x\n---\n")
+    (tmp_path / "src" / BOARD).write_text("---\nid: x\nusb_serial: ch340\nimages:\n  photo: https://p\nsources:\n"
+                                           "- field: usb_serial\n  url: https://u\n  verified: '2026-11-27'\n---\n")
     wt2 = P(path=tmp_path / "wt2")
+    (wt2.path / BOARD).parent.mkdir(parents=True)
+    (wt2.path / BOARD).write_text("---\nid: x\n---\n")                  # main's version of the board
     seen = {}
     monkeypatch.setattr(tick.publish, "add_worktree", lambda git: wt2)
     monkeypatch.setattr(tick.publish, "remove_worktree", lambda wt, git=None: seen.setdefault("removed", wt))
     def fake_publish(wt, paths, subject, body, **kw):
         seen.update(paths=paths, **kw)
-        assert (wt.path / BOARD).read_text() == "---\nid: x\n---\n"          # copied into the fresh worktree
+        text = (wt.path / BOARD).read_text()                                 # only the gated field went in
+        assert "usb_serial: ch340" in text and "images" not in text
         return P(as_dict=lambda: {"pr_url": "https://github.com/o/r/pull/77"})
     monkeypatch.setattr(tick.publish, "publish", fake_publish)
     gh = lambda *a: P(returncode=0, stdout="[]", stderr="")
