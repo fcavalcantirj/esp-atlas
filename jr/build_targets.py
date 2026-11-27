@@ -139,7 +139,7 @@ def blocked_ids(firmware: str, root: Path):
     return {Path(p).parent.name for p in removed}
 
 
-def plan(per_repo, link, existing: set, cap: int = MAX_FACTS) -> list[tuple]:
+def plan(per_repo, link, existing: set, cap: int = MAX_FACTS, conflict=None) -> list[tuple]:
     """[(recipe id, board, firmware, claim)] to write. `per_repo`: [(firmware id, slug, [claims])];
     `link(board_id, manifest_digest)` -> catalog board or None; `existing`: recipe ids already in the catalog."""
     out, seen = [], set(existing)
@@ -148,6 +148,8 @@ def plan(per_repo, link, existing: set, cap: int = MAX_FACTS) -> list[tuple]:
             board = link(c["board_id"], c["platform"]["manifest_digest"])
             rid = f"{board}__{firmware}" if board else None
             if not board or rid in seen:
+                continue
+            if conflict is not None and conflict(c["env"], board):        # the env names another product
                 continue
             seen.add(rid)
             out.append((rid, board, firmware, c))
@@ -226,7 +228,9 @@ def main(argv=None) -> int:
             continue
         print(f"  {slug}: {len(claims)} fact(s)")
         per_repo.append((fid, slug, claims))
-    picked = plan(per_repo, lambda bid, dig: src.board_for(bid, dig, boards), recipes)
+    names = src.product_names(REPO / "data")
+    picked = plan(per_repo, lambda bid, dig: src.board_for(bid, dig, boards), recipes,
+                  conflict=lambda env, board: src.product_conflict(env, board, names))
     today = dt.date.today().isoformat()
     print(f"build-targets {'publish' if args.publish else 'dry run'}: {len(picked)} new linked fact(s) from {len(batch)} repo(s)")
     for rid, board, fid, c in picked:

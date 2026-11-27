@@ -44,7 +44,7 @@ PASS, FAIL, INCONCLUSIVE = "PASS", "FAIL", "INCONCLUSIVE"
 _GITHUB = re.compile(r"^https?://github\.com/([^/\s]+)/([^/\s#?]+)")
 
 
-def check_recipe(recipe: dict, firmware: dict, catalog: dict, http, platform_index, workdir=None) -> dict:
+def check_recipe(recipe: dict, firmware: dict, catalog: dict, http, platform_index, workdir=None, names=None) -> dict:
     """{"id", "verdict", "reasons"} for one build-target recipe."""
     reasons, rid = [], recipe.get("id")
     claim = recipe.get("claim") or {}
@@ -82,6 +82,9 @@ def check_recipe(recipe: dict, firmware: dict, catalog: dict, http, platform_ind
         page = src.board_for(claim.get("board_id"), (claim.get("platform") or {}).get("manifest_digest"), catalog)
         if page != recipe.get("board"):
             reasons.append(f"board page: the definition links to {page!r}, the recipe names {recipe.get('board')!r}")
+        other = src.product_conflict(claim.get("env"), recipe.get("board"), names) if names is not None else None
+        if other:
+            reasons.append(f"product name: env {claim.get('env')!r} names {other!r}, not the generic option on {recipe.get('board')!r}")
     except src.Unreadable as e:
         return {"id": rid, "verdict": INCONCLUSIVE, "reasons": reasons + [str(e)]}
     except (KeyError, TypeError) as e:
@@ -182,6 +185,7 @@ def main(argv=None) -> int:
     ap.add_argument("--pr-dir", default=str(REPO), help="checkout whose recipes and firmware are judged (CI: the PR, as data)")
     args = ap.parse_args(argv)
     boards, _ = _catalog(Path(args.data_dir))
+    names = src.product_names(Path(args.data_dir))
     _, firmware = _catalog(Path(args.pr_dir) / "data")
     http, index = src.Http(), None
     index = src.PlatformIndex(http)
@@ -190,7 +194,7 @@ def main(argv=None) -> int:
         fm, _ = parse_frontmatter(path)
         if fm.get("status") != "build-target" and "claim" not in fm:
             continue
-        results.append(check_recipe(fm, firmware.get(fm.get("firmware")) or {}, boards, http, index))
+        results.append(check_recipe(fm, firmware.get(fm.get("firmware")) or {}, boards, http, index, names=names))
     backfills = []
     if not args.all:
         import datetime as _dt
