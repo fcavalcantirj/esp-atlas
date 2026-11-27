@@ -25,8 +25,11 @@ def test_the_committed_switch_file_is_the_reviewed_autonomy_state():
         "pr_fix_dispatch": True,
         # 2026-11-23, Jr redesign plan steps 8-9: build-target facts, both OFF through the 3-day shadow; each goes
         # on only by its own reviewed PR
-        # 2026-11-23: the owner started the 3-day shadow ("Yes, start the shadow"); merging stays off
-        "build_target_shadow": True, "build_target_automerge": False}
+        # 2026-11-23: the owner started the 3-day shadow ("Yes, start the shadow"); merging stays off until the
+        # product-name refusal rule exists (#2053 holds m5stamp-s3__cardputer-ai, the class removed on 2026-11-11)
+        "build_target_shadow": True, "build_target_automerge": False,
+        # 2026-11-26 night, owner: "WERE A MONTH IN THIS" — backfill merges ON; every board still needs the trusted re-derivation PASS
+        "backfill_automerge": True}
     assert cw.stall_dispatch_allowed(REPO / "jr" / "autonomy.json", {}) is True
     assert cw.stall_dispatch_allowed(REPO / "jr" / "autonomy.json", {"JR_STALL_DISPATCH": "0"}) is False   # the kill
 

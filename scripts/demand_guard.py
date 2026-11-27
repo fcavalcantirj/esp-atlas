@@ -14,7 +14,10 @@ PR adds are the ones the validation receipt promised. This script is that readin
   R4  every OTHER candidate, receipt and top-level field is byte-identical to the base;
   R5  the catalog records the PR adds under data/boards/<vendor>/<id>/board.md are exactly
       validation.expected_ids; no forbidden id appears in any changed path or added record id; no other
-      data/** file changes;
+      data/** file changes. Hygiene work (source quote_check, 2026-11-17) instead MODIFIES exactly the one
+      record its quote row names, and expected_ids is that record's id. Resolver work (source gauge_gap)
+      changes only jr/** and docs/demand/ (an extractor, fixtures, a test naming the vendor), never data/**,
+      and expected_ids is the row's boards;
   R6  every commit that touches docs/demand has a subject starting with `chore(demand):`. Not counted: a
       two-parent merge of the base's history whose docs/demand is exactly git's automatic merge of its
       parents (a refresh of the branch, GitHub's test merge). A hand-resolved or edited merge is counted.
@@ -196,16 +199,45 @@ def check(repo: Path, *, base: str, head: str, branch: str, pr_url: str | None) 
         problems.append(f"R4 a receipt other than {key}, or a receipts top-level field, changed")
     lines.append("R4 every other candidate and receipt unchanged" if not any(p.startswith("R4") for p in problems) else "R4 see above")
 
-    added_ids = {m.group(1) for s, p in changes if s == "A" and (m := _BOARD.match(p))}
-    other_data = sorted(p for s, p in changes if p.startswith("data/") and not (s == "A" and _BOARD.match(p)))
-    if added_ids != expected:
-        problems.append(f"R5 records added {sorted(added_ids)} != expected_ids {sorted(expected)}")
-    hit = sorted(f for f in forbidden if f in added_ids or any(f"/{f}/" in p for p in paths))
-    if hit:
-        problems.append(f"R5 forbidden id(s) in the change: {', '.join(hit)}")
-    if other_data:
-        problems.append(f"R5 data/** changed beyond the expected records: {', '.join(other_data)}")
-    lines.append(f"R5 records added: {sorted(added_ids)}")
+    quote = cand.get("quote") if cand.get("source") == rw.SOURCE_QUOTE and isinstance(cand.get("quote"), dict) else None
+    resolver = cand.get("resolver") if cand.get("source") == rw.SOURCE_RESOLVER and isinstance(cand.get("resolver"), dict) else None
+    if resolver is not None:
+        # Resolver work (2026-11-17, the model boundary): the delegate writes CODE. The PR may touch only jr/**
+        # (an extractor, its fixtures under jr/fixtures/, its tests) and the demand bookkeeping; never data/**,
+        # never a workflow; it must add or change a test, name the vendor in a changed jr/ path, and the
+        # validation's expected ids are the row's boards (the closure counts which of them gain the field).
+        stray = sorted(p for p in paths if not (p.startswith("jr/") or p.startswith("docs/demand/")))
+        if stray:
+            problems.append(f"R5 resolver work may change only jr/** and docs/demand/; also changed: {', '.join(stray)}")
+        tests = [p for p in paths if p.startswith("jr/test_") and p.endswith(".py")]
+        if not tests:
+            problems.append("R5 resolver work must add or change a jr/test_*.py")
+        vendor = str(resolver.get("vendor") or "")
+        if not any(vendor and vendor.replace("-", "_") in p.replace("-", "_") for p in paths if p.startswith("jr/")):
+            problems.append(f"R5 resolver work must name its vendor {vendor!r} in a changed jr/ path (extractor, fixture or test)")
+        if set(expected) != set(resolver.get("boards") or []):
+            problems.append(f"R5 resolver expected_ids must be the row's boards ({len(resolver.get('boards') or [])}), got {len(expected)}")
+        lines.append(f"R5 resolver: {vendor} × {resolver.get('field')}, {len(tests)} test file(s) changed")
+    elif quote is not None:
+        # Hygiene work (2026-11-17): the one allowed catalog change is a MODIFICATION of the record the quote
+        # report named, and the validation's expected id is that record's id. Nothing added, nothing else.
+        data_changes = sorted((s, p) for s, p in changes if p.startswith("data/"))
+        if data_changes != [("M", quote.get("record"))]:
+            problems.append(f"R5 hygiene work may only modify {quote.get('record')}; data changes: {data_changes}")
+        if expected != {quote.get("id")}:
+            problems.append(f"R5 hygiene expected_ids {sorted(expected)} != the record's id [{quote.get('id')}]")
+        lines.append(f"R5 hygiene: record modified {quote.get('record')}")
+    else:
+        added_ids = {m.group(1) for s, p in changes if s == "A" and (m := _BOARD.match(p))}
+        other_data = sorted(p for s, p in changes if p.startswith("data/") and not (s == "A" and _BOARD.match(p)))
+        if added_ids != expected:
+            problems.append(f"R5 records added {sorted(added_ids)} != expected_ids {sorted(expected)}")
+        hit = sorted(f for f in forbidden if f in added_ids or any(f"/{f}/" in p for p in paths))
+        if hit:
+            problems.append(f"R5 forbidden id(s) in the change: {', '.join(hit)}")
+        if other_data:
+            problems.append(f"R5 data/** changed beyond the expected records: {', '.join(other_data)}")
+        lines.append(f"R5 records added: {sorted(added_ids)}")
 
     _check_commits(repo, base, head, problems, lines)
     return problems, lines

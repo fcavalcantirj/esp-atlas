@@ -834,3 +834,10 @@ def test_a_coordinator_timeout_holds_nothing():
 def test_anything_short_of_the_coordinators_own_timeout_stays_a_veto(kw):
     hold = pending_prs.build([], [_timed_out(**kw)], NOW).hold("newtool")
     assert hold and hold.state == pending_prs.VETOED
+
+
+def test_a_timeout_marker_from_the_coordinator_on_the_runner_counts():
+    """The coordinator's apply mode runs on the runner as Jr's bot (2026-11-26): its marker is the coordinator's."""
+    pr = {"labels": [{"name": "jr-timeout"}],
+          "comments": [{"body": "<!-- jr-data-merge timeout -->\nClosed by jr-data-merge", "author": {"login": "espatlas-jr"}}]}
+    assert pending_prs.coordinator_timeout(pr) is True

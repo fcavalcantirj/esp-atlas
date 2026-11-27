@@ -1,21 +1,21 @@
 {
  "version": 1,
  "source": "pam_feed",
- "checked_at": "2026-11-22T11:15:32.492374Z",
+ "checked_at": "2026-11-26T11:15:32.161061Z",
  "feeds": {
   "products": {
    "url": "https://pamfinds.com/api/products.json",
-   "fetched_at": "2026-11-06T04:22:34.124739Z",
-   "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
-   "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
-   "bytes": 110684
+   "fetched_at": "2026-11-26T11:15:32.161061Z",
+   "etag": "\"7042121f0c9485972427a8fb5331eb9e\"",
+   "sha256": "f398995fe88502deb37e9d080dad4b7a5eec9177d95256939503142646f2b0af",
+   "bytes": 110700
   },
   "specs": {
    "url": "https://pamfinds.com/api/specs.json",
-   "fetched_at": "2026-11-06T04:22:34.124739Z",
-   "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
-   "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
-   "bytes": 349157
+   "fetched_at": "2026-11-26T11:15:32.161061Z",
+   "etag": "\"3d50f1857095b968f65bb57b89ada6ee\"",
+   "sha256": "cc53e9bcf63dd57979e81c09d2d77d49b1315e4132bde89b917d085ff4eafe80",
+   "bytes": 349173
   }
  },
  "leads": [

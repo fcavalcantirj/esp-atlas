@@ -381,3 +381,37 @@ def test_the_refresh_age_is_measured_between_the_miners_own_dates(tmp_path):
     res = demand_run.run(now=late, root=tmp_path, repo_slug=SLUG, python="/venv/bin/python",
                          git=git_ok(), gh=gh_ok(), miner=fake_miner(today="2026-11-03"))
     assert res.reason.startswith("no-op")
+
+
+# --- gh 2.46 lists PR files without changeType (2026-11-26) ---------------------------------------------------
+# Measured on the runner: `gh pr list --json files` (gh 2.46.0) gives path/additions/deletions only, so
+# _snapshot_only never saw positive evidence and the Nov 24 snapshot #2057 was never closed as superseded. It then
+# conflicted with the Nov 25 snapshot on docs/demand/unresolved.json, and the heal relay may never touch
+# docs/demand/, so its conflict incident went stuck. The statuses now come from REST pulls/<n>/files, which every
+# gh version passes through unchanged.
+
+def _rest(files):
+    return json.dumps([{"filename": p, "status": s} for p, s in files])
+
+
+def test_a_superseded_snapshot_is_closed_when_gh_lists_files_without_change_type(tmp_path):
+    prs = json.dumps([{"number": 2057, "headRefName": "jr/demand-20261124-1115", "changedFiles": 2,
+                       "files": [{"path": "docs/demand/2026-11-24.json", "additions": 653, "deletions": 0},
+                                 {"path": "docs/demand/unresolved.json", "additions": 5, "deletions": 5}]}])
+    gh = recorder({("pr", "create"): (0, "https://github.com/fcavalcantirj/esp-atlas/pull/1401\n"),
+                   ("pr", "list"): (0, prs),
+                   ("api", "repos/{owner}/{repo}/pulls/2057/files"): (0, _rest([("docs/demand/2026-11-24.json", "added"),
+                                                                               ("docs/demand/unresolved.json", "modified")]))})
+    res = run(tmp_path, gh=gh)
+    assert res.superseded == [2057]
+
+
+def test_rest_statuses_that_show_a_non_snapshot_file_still_block_the_close(tmp_path):
+    prs = json.dumps([{"number": 2057, "headRefName": "jr/demand-20261124-1115", "changedFiles": 2,
+                       "files": [{"path": "docs/demand/2026-11-24.json"}, {"path": "docs/demand/research-queue.json"}]}])
+    gh = recorder({("pr", "create"): (0, "https://github.com/fcavalcantirj/esp-atlas/pull/1401\n"),
+                   ("pr", "list"): (0, prs),
+                   ("api", "repos/{owner}/{repo}/pulls/2057/files"): (0, _rest([("docs/demand/2026-11-24.json", "added"),
+                                                                               ("docs/demand/research-queue.json", "modified")]))})
+    res = run(tmp_path, gh=gh)
+    assert res.superseded == []

@@ -46,7 +46,7 @@ MERGEABLE_TRIES, MERGEABLE_WAIT = 3, 3   # GitHub computes `mergeable` lazily: U
 HUMAN_ONLY = ("jr/autonomy.json", ".github/", "scripts/code_canary.py", "scripts/demand_canary.py",
               "scripts/tick_canary.py", "scripts/demand_guard.py", "scripts/receipt_guard.py", "scripts/ledger_guard.py",
               "scripts/jr_pr_guard.py", "scripts/validate_main.py", "jr/agent_review.py", "docs/REVIEW-CONTRACT.md",
-              "docs/ops/REVIEW-PROMPT.md")
+              "docs/ops/REVIEW-PROMPT.md", "scripts/check_claims.py", "scripts/data_merge.py")
 
 
 def human_only_paths(gh, repo_slug: str, pr: int) -> list[str] | None:

@@ -121,3 +121,14 @@ def test_a_claim_whose_id_is_not_its_named_repos_fails_even_when_the_firmware_ag
     http = FakeHttp({**routes(), "https://api.github.com/repos/someone/b": {"id": 999, "default_branch": "main"}})
     v = check(r, firmware={"id": "nightdriverstrip", "url": "https://github.com/someone/b"}, http=http, tmp=tmp_path)
     assert v["verdict"] == cc.FAIL and any(f"{SLUG} is {RID}" in x for x in v["reasons"]), v
+
+
+def test_an_env_named_for_another_product_fails_the_trusted_check(recipe, tmp_path):
+    """2026-11-27: the product-name refusal is enforced by the checker too, never only by the producer. Here the
+    catalog names say env heltecv3demo carries another product's name ('heltecv3demo' made up for the test)."""
+    names = {"heltec-wifi-kit-32-v3": {"wifikit32v3"}, "other-product": {"heltecv3demo"}}
+    v = cc.check_recipe(recipe, FIRMWARE, CATALOG, FakeHttp(routes()), index, tmp_path, names=names)
+    assert v["verdict"] == cc.FAIL and any("product name" in x and "other-product" in x for x in v["reasons"]), v
+    ok = cc.check_recipe(recipe, FIRMWARE, CATALOG, FakeHttp(routes()), index, tmp_path,
+                         names={"heltec-wifi-kit-32-v3": {"wifikit32v3"}})
+    assert ok["verdict"] == cc.PASS, ok["reasons"]

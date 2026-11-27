@@ -51,6 +51,8 @@ import demand_closure  # noqa: E402
 import demand_signal  # noqa: E402
 import publish  # noqa: E402
 import pam_run  # noqa: E402
+import quote_run  # noqa: E402
+import resolver_run  # noqa: E402
 import research_queue  # noqa: E402
 import research_work as rw  # noqa: E402
 import review_routing  # noqa: E402
@@ -81,11 +83,15 @@ class RunResult:
     work: str = ""            # the demand work broker's decision (jr/demand_broker.py)
     pam: str = ""
     pam_receipt: dict = field(default_factory=dict)
+    quotes: str = ""          # the hygiene source line (jr/quote_run.py)
+    resolvers: str = ""       # the resolver class's source line (jr/resolver_run.py)
     source_error: str = ""    # search failed, but independent PAM metadata may still have landed
 
     def line(self) -> str:
         return (self._head() + (f" · work {self.work}" if self.work else "")
                 + (f" · {self.pam}" if self.pam else "")
+                + (f" · {self.quotes}" if self.quotes else "")
+                + (f" · {self.resolvers}" if self.resolvers else "")
                 + (f" · search deferred: {self.source_error}" if self.source_error else ""))
 
     def _head(self) -> str:
@@ -131,6 +137,12 @@ class Decision:
     pam_only: bool = False
     work_action: str = ""
     pam_ready: bool = False
+    quote_paths: tuple = ()          # docs/demand/quote-report.json when this run's hygiene report changed
+    quote_ready: bool = False        # a COMPLETE report this run: the hygiene class may start new work
+    quote_summary: str = ""
+    resolver_paths: tuple = ()       # docs/demand/resolver-report.json when the gauge's gap ranking changed
+    resolver_ready: bool = False     # a complete resolver report this run: the resolver class may start new work
+    resolver_summary: str = ""
 
 
 # --- the no-op rule ----------------------------------------------------------------------------------
@@ -308,6 +320,27 @@ def _snapshot_only(pr: dict) -> bool:
     return True
 
 
+_REST_STATUS = {"added": "ADDED", "modified": "MODIFIED", "removed": "DELETED", "renamed": "RENAMED",
+                "copied": "COPIED", "changed": "CHANGED", "unchanged": "UNCHANGED"}
+
+
+def _with_rest_files(gh, pr: dict) -> dict:
+    """`pr` with its file list from REST pulls/<n>/files (status per file, every gh version), counted against the
+    listing's changedFiles. 2026-11-26: the runner's gh 2.46 lists files WITHOUT changeType, so _snapshot_only
+    never saw positive evidence and a superseded snapshot (#2057) stayed open until it conflicted. Unreadable →
+    `pr` unchanged (then _snapshot_only decides on what the listing gave, i.e. nothing is closed on a guess)."""
+    p = gh("api", f"repos/{{owner}}/{{repo}}/pulls/{pr.get('number')}/files", "--paginate")
+    try:
+        rest = json.loads(getattr(p, "stdout", "") or "null") if getattr(p, "returncode", 1) == 0 else None
+    except json.JSONDecodeError:
+        rest = None
+    if not isinstance(rest, list) or not rest:
+        return pr
+    files = [{"path": f.get("filename"), "changeType": _REST_STATUS.get(str(f.get("status")), str(f.get("status")).upper())}
+             for f in rest if isinstance(f, dict)]
+    return {**pr, "files": files}
+
+
 def _close_superseded(gh, keep_branch: str, prefix: str = BRANCH_PREFIX) -> list[int]:
     p = gh("pr", "list", "--state", "open", "--limit", "500", "--json", "number,headRefName,labels,files,changedFiles")
     try:
@@ -320,7 +353,7 @@ def _close_superseded(gh, keep_branch: str, prefix: str = BRANCH_PREFIX) -> list
         # Every run starts from main, not the previous PR. Never discard an unmerged
         # queue or its human lifecycle data merely because a new queue was generated.
         if (head.startswith(prefix) and not head.startswith(QUEUE_ONLY_PREFIX) and head != keep_branch
-                and not review_routing.has_review_label(pr) and _snapshot_only(pr)):
+                and not review_routing.has_review_label(pr) and _snapshot_only(_with_rest_files(gh, pr))):
             r = gh("pr", "close", str(pr.get("number")), "--comment", SUPERSEDED_COMMENT, "--delete-branch")
             if getattr(r, "returncode", 1) == 0:
                 closed.append(pr.get("number"))
@@ -421,18 +454,27 @@ def _publication(d: Decision) -> tuple[list[str], str, str]:
     if d.pam_paths:
         note += (f"\n\nPAM discovery: {d.pam_summary}. Unverified leads and source pointers only; "
                  "every publishable catalog fact still requires primary-source verification and review.")
+    if d.quote_paths:
+        note += (f"\n\nQuote report: {d.quote_summary} (`{quote_run.STATE_PATH}`, scripts/check_quotes.py over the "
+                 "catalog). Each listed record is one hygiene work item: re-read the page, quote it as written or omit.")
+    if d.resolver_paths:
+        note += (f"\n\nResolver report: {d.resolver_summary} (`{resolver_run.STATE_PATH}`, the boards gauge per vendor × "
+                 "field, ordered by boards missing then page demand). Each row is one CODE work item for the delegate: "
+                 "write the extractor with fixtures and a RED test; the hourly backfill fills the boards.")
     if d.pam_only:
-        return (list(d.pam_paths) + d.bookkeeping, f"chore(jr): PAM discovery metadata {snap['date']}",
+        return (list(d.pam_paths) + list(d.quote_paths) + list(d.resolver_paths) + d.bookkeeping,
+                f"chore(jr): PAM discovery metadata {snap['date']}" if d.pam_paths
+                else f"chore(jr): quote report {snap['date']}" if d.quote_paths else f"chore(jr): resolver report {snap['date']}",
                 "PAM discovery metadata only. The dated search-demand snapshot is not included; "
                 "the prior committed steer is preserved. No catalog writes.\n\n"
                 "Source: the two fixed public PAM feeds, through jr/pam_run.py and the existing "
                 "daily runner. No new job or monitor." + note)
     if d.queue_only:
-        return ([*d.bookkeeping, *d.pam_paths],
+        return ([*d.bookkeeping, *d.pam_paths, *d.quote_paths, *d.resolver_paths],
                 f"chore(jr): research queue {snap['date']} — demand snapshot not landed (0 items)",
                 _queue_only_body(snap, d.why, d.research) + note)
     paths = [f"{DEMAND_RELDIR}/{snap['date']}.json", f"{DEMAND_RELDIR}/{UNRESOLVED_NAME}", *d.bookkeeping]
-    return (paths + list(d.pam_paths), f"chore(jr): demand snapshot {snap['date']} — {len(snap['items'])} item(s)",
+    return (paths + list(d.pam_paths) + list(d.quote_paths) + list(d.resolver_paths), f"chore(jr): demand snapshot {snap['date']} — {len(snap['items'])} item(s)",
             _pr_body(snap, d.why, d.research) + note)
 
 
@@ -454,7 +496,8 @@ def _note_work(d: Decision, work: demand_broker.Outcome) -> None:
 
 def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str | None,
                   *, new_pam: bool = False, git=None, mined_revision: str | None = None,
-                  close: bool = True, fetch=None, source_class: str | None = None) -> str:
+                  close: bool = True, fetch=None, source_class: str | None = None, new_quote: bool = False,
+                  new_resolver: bool = False) -> str:
     """Bookkeeping after a SUCCESSFUL mine: at most one work reservation, after closing linked work
     the broker verified against this run's snapshot mined at `mined_revision`. A broker failure is
     reported on the run line, never allowed to block the demand snapshot itself; a closure the
@@ -470,7 +513,9 @@ def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str 
                                      source_class=source_class,   # this pass's daily-slot class
                                      fetch=fetch,       # catalog_search/catalog_part: the live public getter
                                      writes=d.owned,    # the exact bytes of each durable broker write
-                                     expected=expected)     # ownership history, checked before every pass
+                                     expected=expected,     # ownership history, checked before every pass
+                                     new_quote=new_quote,   # hygiene: a complete quote report this run
+                                     new_resolver=new_resolver)   # resolver: a complete gap ranking this run
     except RunAbort:
         raise                           # host timeout is fatal, not an ordinary source failure
     except Exception as e:  # noqa: BLE001
@@ -490,6 +535,68 @@ def _inconsistent_landing(demand_dir: Path, d: Decision, receipts_before: bytes 
     keys = demand_broker.inconsistent_closures(_read_bytes(demand_dir / research_queue.QUEUE_NAME), receipts)
     return (f"inconsistent closure bookkeeping for work {', '.join(keys)} (queue closed, receipt still live): "
             "not published" if keys else "")
+
+
+def _refresh_resolvers(wt_path: Path, d: Decision, res: RunResult, refresh, now: datetime) -> None:
+    """The resolver class's source (jr/resolver_run.py): the gauge's vendor × field gaps ranked, landed when the
+    ranking changed. Pure (no network); a failure defers the class and never the rest. Same manifest discipline."""
+    if refresh is None:
+        return
+    try:
+        result = refresh(wt_path, now=now, snap=d.snap)
+        paths = tuple(result.changed_paths)
+        if (result.status not in {"updated", "unchanged", "deferred"}
+                or (result.status == "updated" and paths != (resolver_run.STATE_PATH,))
+                or (result.status != "updated" and paths)
+                or (paths and not (wt_path / resolver_run.STATE_PATH).is_file())):
+            res.resolvers = "resolvers deferred: invalid changed-path manifest"
+            return
+        d.resolver_ready = result.status in ("updated", "unchanged") and bool(result.complete)
+        c = result.counts or {}
+        res.resolvers = (f"resolvers {result.status}: {c.get('gaps', '?')} vendor×field gap(s), "
+                         f"{c.get('boards_missing_total', '?')} board-fields missing" + (f"; {result.error}" if result.error else ""))
+        if paths:
+            d.resolver_paths = paths
+            d.resolver_summary = f"{c.get('gaps', '?')} vendor × field gap(s) ranked"
+            if not d.land:
+                d.land, d.pam_only = True, True
+                d.why = f"resolver report changed ({d.why})"
+    except RunAbort:
+        raise
+    except Exception as exc:  # noqa: BLE001
+        res.resolvers = f"resolvers deferred: {type(exc).__name__}"
+
+
+def _refresh_quotes(wt_path: Path, d: Decision, res: RunResult, refresh, now: datetime) -> None:
+    """The hygiene class's source (jr/quote_run.py): the day's quote report, landed when its FAIL rows changed.
+    A deferred or failed check never prevents publishing the rest; only a COMPLETE report lets the class
+    start new work. The same manifest discipline as the PAM refresh: the one allowed changed path."""
+    if refresh is None:
+        return
+    try:
+        result = refresh(wt_path, now=now)
+        paths = tuple(result.changed_paths)
+        if (result.status not in {"updated", "unchanged", "deferred"}
+                or (result.status == "updated" and paths != (quote_run.STATE_PATH,))
+                or (result.status != "updated" and paths)
+                or (paths and not (wt_path / quote_run.STATE_PATH).is_file())):
+            res.quotes = "quotes deferred: invalid changed-path manifest"
+            return
+        d.quote_ready = result.status in ("updated", "unchanged") and bool(result.complete)
+        c = result.counts or {}
+        res.quotes = (f"quotes {result.status}: {c.get('fail', '?')} FAIL / {c.get('with_quotes', '?')} records with quotes"
+                      + ("" if result.complete or result.status == "deferred" else " (incomplete: no new hygiene work)")
+                      + (f"; {result.error}" if result.error else ""))
+        if paths:
+            d.quote_paths = paths
+            d.quote_summary = f"{c.get('fail', '?')} record(s) whose quotes fail"
+            if not d.land:
+                d.land, d.pam_only = True, True
+                d.why = f"quote report changed ({d.why})"
+    except RunAbort:
+        raise                           # a timeout must stop every source, not become a deferral
+    except Exception as exc:  # noqa: BLE001 — secondary-source failure is independently reported
+        res.quotes = f"quotes deferred: {type(exc).__name__}"
 
 
 def _refresh_pam(wt_path: Path, d: Decision, res: RunResult, refresh, now: datetime) -> None:
@@ -524,7 +631,7 @@ def _refresh_pam(wt_path: Path, d: Decision, res: RunResult, refresh, now: datet
 def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         python: str = DEFAULT_DEMAND_PYTHON, telegram: bool = False, now: datetime | None = None,
         root: Path | None = None, repo_slug: str | None = None, auto_merge: bool = True,
-        pam_refresh=None, fetch=demand_closure.default_fetch) -> RunResult:
+        pam_refresh=None, fetch=demand_closure.default_fetch, quote_refresh=None, resolver_refresh=None) -> RunResult:
     now = now or datetime.now(timezone.utc)
     res = RunResult()
     wt = branch = None
@@ -570,6 +677,22 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
             second = _reserve_work(wt.path, decision, gh, now, repo_slug, new_pam=decision.pam_ready,
                                    source_class=rw.CLASS_PAM, close=not decision.work_closed, **closer)
             res.work = f"{res.work} · then {second}"
+        # The third pass is the hygiene class's own (2026-11-17): the day's quote report (jr/quote_run.py)
+        # lists the records whose quoted text no cited page holds; a COMPLETE report may start ONE such
+        # fix item a day, and the pass recovers/reconciles its own live work every run.
+        _refresh_quotes(wt.path, decision, res, quote_refresh, now)
+        if not res.source_error:
+            third = _reserve_work(wt.path, decision, gh, now, repo_slug, new_quote=decision.quote_ready,
+                                  source_class=rw.CLASS_HYGIENE, close=not decision.work_closed, **closer)
+            res.work = f"{res.work} · then {third}"
+        # The fourth pass is the resolver class (2026-11-17, the model boundary): the gauge's vendor × field
+        # gaps ranked by boards missing then page demand (jr/resolver_run.py); one CODE item a day for the
+        # delegate — an extractor with fixtures and a RED test — never a record.
+        _refresh_resolvers(wt.path, decision, res, resolver_refresh, now)
+        if not res.source_error:
+            fourth = _reserve_work(wt.path, decision, gh, now, repo_slug, new_resolver=decision.resolver_ready,
+                                   source_class=rw.CLASS_RESOLVER, close=not decision.work_closed, **closer)
+            res.work = f"{res.work} · then {fourth}"
         if res.pam_receipt:
             revision = git("rev-parse", "HEAD")
             res.pam_receipt["runner_revision"] = ((getattr(revision, "stdout", "") or "").strip()
@@ -591,7 +714,7 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
             res.work = _withheld_line(decision, res.work)
             decision.research = None                            # the queue's digest no longer lands
             if decision.pair_landed:                            # the withheld pair was the reason to land
-                if not decision.pam_paths:
+                if not (decision.pam_paths or decision.quote_paths or decision.resolver_paths):
                     raise RunAbort(f"bookkeeping not landed: {decision.withheld}; nothing else to publish")
                 decision.pam_only, decision.queue_only = True, False
                 decision.why = f"PAM metadata changed; bookkeeping not landed: {decision.withheld}"
@@ -632,7 +755,8 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
     r = run(python=os.environ.get("JR_DEMAND_PYTHON") or DEFAULT_DEMAND_PYTHON,
             telegram=args.telegram, auto_merge=not args.no_auto_merge,
-            pam_refresh=pam_run.refresh_worktree)
+            pam_refresh=pam_run.refresh_worktree, quote_refresh=quote_run.refresh_worktree,
+            resolver_refresh=resolver_run.refresh_worktree)
     print(r.line())
     if r.pam_receipt:
         print("PAM receipt: " + json.dumps(r.pam_receipt, sort_keys=True))
