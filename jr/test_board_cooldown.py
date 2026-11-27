@@ -18,7 +18,7 @@ REASONS = {"usb_serial": {"vendor": "field_absent", "manifest": "no_manifest"},
 
 
 def _fake(statuses, calls, monkeypatch):
-    def fake_bb(path, data_root, fetch, today, write=True):
+    def fake_bb(path, data_root, fetch, today, write=True, fields=None):
         bid = path.parent.name
         calls.append(bid)
         st = statuses[bid]
@@ -128,7 +128,7 @@ def test_cooldown_file_is_tick_bookkeeping():
 def test_no_soc_skip_is_not_cooled_because_no_source_was_tried(tmp_path, monkeypatch):
     _mk_boards(tmp_path, ["b1"])
 
-    def fake_bb(path, data_root, fetch, today, write=True):
+    def fake_bb(path, data_root, fetch, today, write=True, fields=None):
         return {"board_id": "b1", "status": "skipped", "reason": "no-soc", "url": None}
     monkeypatch.setattr(board_backfill, "backfill_board", fake_bb)
     res = _tick(tmp_path, T0)
@@ -141,7 +141,7 @@ def test_no_soc_skip_is_not_cooled_because_no_source_was_tried(tmp_path, monkeyp
 def _fake_unreachable(calls, monkeypatch):
     """backfill_board as it reports a board whose vendor doc did not resolve: `url` is the last
     candidate it tried, None when the resolver had no candidate at all."""
-    def fake_bb(path, data_root, fetch, today, write=True):
+    def fake_bb(path, data_root, fetch, today, write=True, fields=None):
         bid = path.parent.name
         calls.append(bid)
         url = (board_backfill.VENDOR_DOC_RESOLVERS["m5stack"](bid, "esp32") or [None])[-1]

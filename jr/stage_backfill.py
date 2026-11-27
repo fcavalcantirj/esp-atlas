@@ -39,6 +39,10 @@ SECONDS_PER_BOARD = 30.0   # three fetches (boards.txt is ~3 MB) + parse
 # a pinned toolchain source (re-fetching cannot change that; a human resolves it). A no-soc skip
 # fetched nothing: it is fixed by editing the record, so it must not wait out a cooldown.
 COOLDOWN_REASONS = ("doc-unreachable", "nothing-groundable", "needs-review")
+# What the stage writes: only the fields the trusted `claims` check re-derives before jr-data-merge merges a
+# backfill PR (scripts/check_claims.BACKFILL_FIELDS, owner-only). `images` waits for its own adversarial suite;
+# written here it turned every backfill PR red by construction (incident 0a6272058890, PR #2146).
+PUBLISHED_FIELDS = ("download_mode", "usb_serial", "getting_started")
 
 
 def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
@@ -83,7 +87,8 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
         if ctx.budget.remaining_calls() < CALLS_PER_BOARD or ctx.budget.remaining_seconds() < SECONDS_PER_BOARD:
             lines.append(f"stopped: tick budget low ({ctx.budget.remaining_calls()} calls left)")
             break
-        entry = board_backfill.backfill_board(path, data_root, fetch, today, write=not ctx.dry_run)
+        entry = board_backfill.backfill_board(path, data_root, fetch, today, write=not ctx.dry_run,
+                                              fields=PUBLISHED_FIELDS)
         status = entry["status"]
         if status == "complete":
             continue  # not on the worklist; no fetch spent

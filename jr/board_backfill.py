@@ -483,14 +483,16 @@ def _write_fields(path: Path, fm: dict, body: str, extracted: dict, citations: d
     path.write_text(f"---\n{front}\n---\n\n{body.strip()}\n")
 
 
-def backfill_board(path: Path, data_root: Path, fetch, today: str, write: bool = True) -> dict:
+def backfill_board(path: Path, data_root: Path, fetch, today: str, write: bool = True,
+                   fields: tuple = BACKFILL_FIELDS) -> dict:
     """Backfill ONE board.md. Returns a report entry with `status`:
       * "complete"    — nothing was missing (not part of the worklist).
       * "skipped"     — doc-unreachable / no-soc / nothing-groundable; NOT modified.
       * "backfilled"  — >=1 missing field grounded and written; `written`/`omitted` list
                         which; `partial` is True when some missing field was omitted.
     `write=False` (the tick's dry-run) grounds exactly the same way but leaves the file alone:
-    `written` then names what a real run WOULD write, `values` what, and `modified` is False."""
+    `written` then names what a real run WOULD write, `values` what, and `modified` is False.
+    `fields` limits the board to those BACKFILL_FIELDS (the others are neither grounded nor written)."""
     fm, body = parse_frontmatter(path)
     board_id = fm.get("id") or path.parent.name
     brand = fm.get("brand") or path.parent.parent.name
@@ -503,7 +505,7 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str, write: bool =
     if resolver is None:
         return {**base, "status": "skipped", "reason": "no-resolver", "url": None}
 
-    missing = _missing_fields(fm)
+    missing = [f for f in _missing_fields(fm) if f in fields]
     if not missing:
         return {**base, "status": "complete"}
 
