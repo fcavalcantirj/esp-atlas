@@ -4111,7 +4111,7 @@
       "pr_ref": "#2098",
       "repo": "martin-ger/esp32_nat_router",
       "status": "proposed",
-      "timestamp": "2026-11-27T05:00:34.450928+00:00"
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "esp32-navigation": {
       "expires": "2026-12-16T05:00:31.772256+00:00",
@@ -4230,6 +4230,14 @@
       "repo": "risinek/esp32-wifi-penetration-too",
       "status": "rejected",
       "timestamp": "2026-11-21T19:01:00.686047+00:00"
+    },
+    "esp32-winkeyer": {
+      "expires": "2026-12-27T06:00:33.568785+00:00",
+      "id": "esp32-winkeyer",
+      "pr_ref": null,
+      "repo": "jtroyer76/esp32_winkeyer",
+      "status": "seen",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "esp32marauder": {
       "id": "esp32marauder",
@@ -6749,14 +6757,13 @@
       "timestamp": "2026-11-26T03:00:32.957094+00:00"
     },
     "launcher-1897200000000000484": {
-      "expired_at": "2026-11-22T17:00:33.310065+00:00",
-      "expires": "2026-11-22T17:00:31.529719+00:00",
+      "expires": "2026-12-04T06:00:33.568785+00:00",
       "id": "launcher-1897200000000000484",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'factory code user:kawacci'",
       "repo": "launcher:1897200000000000484",
-      "status": "expired",
-      "timestamp": "2026-11-15T17:00:31.529719+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "launcher-1897200000000000486": {
       "expired_at": "2026-11-23T07:00:33.518845+00:00",
@@ -7911,14 +7918,13 @@
       "timestamp": "2026-11-16T05:00:31.772256+00:00"
     },
     "launcher-1897200000000001259": {
-      "expired_at": "2026-11-23T02:00:34.080689+00:00",
-      "expires": "2026-11-23T02:00:31.729728+00:00",
+      "expires": "2027-02-25T06:00:33.568785+00:00",
       "id": "launcher-1897200000000001259",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (sayanjit123); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001259",
-      "status": "expired",
-      "timestamp": "2026-11-16T02:00:31.729728+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "launcher-1897200000000001262": {
       "expired_at": "2026-11-23T20:00:33.129550+00:00",
@@ -8121,14 +8127,13 @@
       "timestamp": "2026-11-16T14:00:31.914738+00:00"
     },
     "launcher-1897200000000001405": {
-      "expired_at": "2026-11-22T18:00:33.235260+00:00",
-      "expires": "2026-11-22T18:00:31.614867+00:00",
+      "expires": "2026-12-04T06:00:33.568785+00:00",
       "id": "launcher-1897200000000001405",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bugc2 user user:m5stack'",
       "repo": "launcher:1897200000000001405",
-      "status": "expired",
-      "timestamp": "2026-11-15T18:00:31.614867+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "launcher-1897200000000001407": {
       "expires": "2026-12-03T02:00:33.267631+00:00",
@@ -8373,14 +8378,13 @@
       "timestamp": "2026-11-22T05:00:34.103182+00:00"
     },
     "launcher-1897200000000001556": {
-      "expired_at": "2026-11-22T18:00:33.235260+00:00",
-      "expires": "2026-11-22T18:00:31.614867+00:00",
+      "expires": "2026-12-04T06:00:33.568785+00:00",
       "id": "launcher-1897200000000001556",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'pomodoro timer user:pslon'",
       "repo": "launcher:1897200000000001556",
-      "status": "expired",
-      "timestamp": "2026-11-15T18:00:31.614867+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "launcher-1897200000000001566": {
       "expires": "2026-12-02T09:00:33.578012+00:00",
@@ -8465,14 +8469,13 @@
       "timestamp": "2026-11-25T12:00:33.512563+00:00"
     },
     "launcher-1897200000000001645": {
-      "expired_at": "2026-11-22T17:00:33.310065+00:00",
-      "expires": "2026-11-22T17:00:31.529719+00:00",
+      "expires": "2026-12-04T06:00:33.568785+00:00",
       "id": "launcher-1897200000000001645",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "no_source_repo: 0 matches for 'env adv eng user:aliense44'",
       "repo": "launcher:1897200000000001645",
-      "status": "expired",
-      "timestamp": "2026-11-15T17:00:31.529719+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "launcher-1897200000000001647": {
       "expired_at": "2026-11-23T15:00:33.714568+00:00",
@@ -10045,14 +10048,13 @@
       "timestamp": "2026-11-22T05:00:34.103182+00:00"
     },
     "launcher-1897200000000002842": {
-      "expired_at": "2026-11-22T18:00:33.235260+00:00",
-      "expires": "2026-11-22T18:00:31.614867+00:00",
+      "expires": "2027-02-25T06:00:33.568785+00:00",
       "id": "launcher-1897200000000002842",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (nft-owner); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002842",
-      "status": "expired",
-      "timestamp": "2026-11-15T18:00:31.614867+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "launcher-1897200000000002850": {
       "expires": "2026-12-16T00:00:31.813641+00:00",
@@ -10741,14 +10743,13 @@
       "timestamp": "2026-11-16T03:00:32.040222+00:00"
     },
     "launcher-1897200000000003414": {
-      "expired_at": "2026-11-23T04:00:36.537535+00:00",
-      "expires": "2026-11-23T04:00:31.943499+00:00",
+      "expires": "2027-02-25T06:00:33.568785+00:00",
       "id": "launcher-1897200000000003414",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (pigang); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000003414",
-      "status": "expired",
-      "timestamp": "2026-11-16T04:00:31.943499+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "launcher-1897200000000003417": {
       "expired_at": "2026-11-23T12:00:33.378542+00:00",
@@ -11041,14 +11042,13 @@
       "timestamp": "2026-11-16T09:00:32.393504+00:00"
     },
     "launcher-2103066915215503362": {
-      "expired_at": "2026-11-23T19:00:34.130407+00:00",
-      "expires": "2026-11-23T19:00:33.230649+00:00",
+      "expires": "2026-12-04T06:00:33.568785+00:00",
       "id": "launcher-2103066915215503362",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'unit 8servos i2c chain user:m5stack'",
       "repo": "launcher:2103066915215503362",
-      "status": "expired",
-      "timestamp": "2026-11-16T19:00:33.230649+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "launcher-2103066956948828162": {
       "expired_at": "2026-11-23T14:00:52.402353+00:00",
@@ -11792,14 +11792,13 @@
       "timestamp": "2026-11-16T18:00:31.810746+00:00"
     },
     "launcher-2122191762896142337": {
-      "expired_at": "2026-11-23T13:00:33.459794+00:00",
-      "expires": "2026-11-23T13:00:32.318887+00:00",
+      "expires": "2027-02-25T06:00:33.568785+00:00",
       "id": "launcher-2122191762896142337",
       "pr_ref": null,
-      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "reason": "owner_missing: owner not on GitHub (bd4vrn); gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2122191762896142337",
-      "status": "expired",
-      "timestamp": "2026-11-16T13:00:32.318887+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "launcher-2122545120110657537": {
       "expired_at": "2026-11-24T11:00:33.734333+00:00",
@@ -11932,6 +11931,15 @@
       "repo": "launcher:2124166564678680577",
       "status": "rejected",
       "timestamp": "2026-11-26T03:00:32.957094+00:00"
+    },
+    "launcher-2124462548377878529": {
+      "expires": "2026-12-04T06:00:33.568785+00:00",
+      "id": "launcher-2124462548377878529",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'deskfolio user:wuweiping'",
+      "repo": "launcher:2124462548377878529",
+      "status": "rejected",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "launcher-2124617309202890754": {
       "expires": "2026-12-25T09:00:33.578012+00:00",
@@ -17022,6 +17030,14 @@
       "status": "rejected",
       "timestamp": "2026-11-15T08:00:31.415117+00:00"
     },
+    "miniminal-web-flasher": {
+      "expires": "2026-12-27T06:00:33.568785+00:00",
+      "id": "miniminal-web-flasher",
+      "pr_ref": null,
+      "repo": "perrymitchell/miniminal-web-flasher",
+      "status": "seen",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
+    },
     "misedeck-cardputer": {
       "expires": "2026-12-15T07:00:31.352637+00:00",
       "id": "misedeck-cardputer",
@@ -17515,7 +17531,7 @@
       "pr_ref": "#2101",
       "repo": "forged-in-feathers-technology/observore",
       "status": "proposed",
-      "timestamp": "2026-11-27T05:00:34.450928+00:00"
+      "timestamp": "2026-11-27T06:00:33.568785+00:00"
     },
     "oddlings": {
       "id": "oddlings",
@@ -29612,6 +29628,7 @@
     "jtcozart/atom-artificial-horizon": "atom-artificial-horizon",
     "jtcozart/atom-plane-tracker": "atom-plane-tracker",
     "jtenniswood/espframe": "repo-note:jtenniswood/espframe",
+    "jtroyer76/esp32_winkeyer": "esp32-winkeyer",
     "juanpabloaj/lolin_d32_waveshare": "repo-note:juanpabloaj/lolin_d32_waveshare",
     "juicecultus/crosspoint-reader-papers3": "crosspoint-reader-papers3",
     "juicecultus/epub-m5stack-paper-s3": "epub-m5stack-paper-s3",
@@ -30384,6 +30401,7 @@
     "launcher:2123845435640463361": "launcher-2123845435640463361",
     "launcher:2124005308617408513": "launcher-2124005308617408513",
     "launcher:2124166564678680577": "launcher-2124166564678680577",
+    "launcher:2124462548377878529": "launcher-2124462548377878529",
     "launcher:2124617309202890754": "launcher-2124617309202890754",
     "launcher:2124734499793092609": "launcher-2124734499793092609",
     "launcher:2124835053353517057": "launcher-2124835053353517057",
@@ -31004,6 +31022,7 @@
     "pepeangell5/bwifikill-cardputer-adv": "bwifikill-cardputer-adv",
     "permalmberg/smooth": "repo-note:permalmberg/smooth",
     "perrart/historias_sinistras": "historias-sinistras",
+    "perrymitchell/miniminal-web-flasher": "miniminal-web-flasher",
     "personwithbeans/cardlife": "cardlife",
     "petoicamp/opencat-quadruped-robot": "repo-note:petoicamp/opencat-quadruped-robot",
     "petrisi/tanmatsu-multimesh": "repo-note:petrisi/tanmatsu-multimesh",
