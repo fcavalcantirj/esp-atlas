@@ -92,7 +92,9 @@ def check_recipe(recipe: dict, firmware: dict, catalog: dict, http, platform_ind
     return {"id": rid, "verdict": FAIL if reasons else PASS, "reasons": reasons}
 
 
-BACKFILL_FIELDS = ("usb_serial", "download_mode", "getting_started")   # fields whose resolver passed its adversarial suite
+import board_backfill as _bb  # noqa: E402
+
+BACKFILL_FIELDS = _bb.GATED_FIELDS        # one source of truth with the producer (jr/board_backfill.py)
 
 
 def check_board_backfill(base_text: str, head_text: str, data_dir: Path, fetch, today: str) -> dict | None:
@@ -201,8 +203,8 @@ def main(argv=None) -> int:
         import board_backfill
         pr = Path(args.pr_dir)
         mb = subprocess.run(["git", "merge-base", args.base, "HEAD"], cwd=pr, capture_output=True, text=True).stdout.strip()
-        heads = {k: subprocess.run(["git", "rev-parse", k], cwd=d, capture_output=True, text=True).stdout.strip()
-                 for k, d in (("HEAD", pr), ("checker", REPO))}
+        heads = {k: subprocess.run(["git", "rev-parse", "HEAD"], cwd=d, capture_output=True, text=True).stdout.strip()
+                 for k, d in (("HEAD", pr), ("checker", REPO))}      # 2026-11-27: printed 'checker=checker' before
         print(f"binding: pr_head={heads['HEAD']} base={mb or '?'} checker={heads['checker']}")
         for rel in _board_targets(args.base, pr):
             base_text = subprocess.run(["git", "show", f"{mb}:{rel}"], cwd=pr, capture_output=True, text=True).stdout

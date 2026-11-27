@@ -3031,3 +3031,30 @@ def test_site_chrome_never_names_the_products_chip():
     raw = ('<html><header><nav><a href="/driver-of-ch9102">Driver of CH9102</a></nav></header>'
            '<main><p>ESP32-S3 with native USB support.</p></main><footer>CH340 drivers</footer></html>')
     assert bb.extract_usb_serial(bb._visible_text(raw)) is None
+
+
+# --- only gated fields are published (2026-11-27, #2146) -------------------------------------------------------------
+
+_BASE = "---\nid: b\ntype: board\nsources:\n- field: '*'\n  url: https://v/b\n  verified: '2026-01-01'\n---\n\n# b\n"
+_HEAD = ("---\nid: b\ntype: board\ngetting_started: https://v/b\nimages:\n  photo: https://v/p.jpg\nsources:\n"
+         "- field: '*'\n  url: https://v/b\n  verified: '2026-01-01'\n- field: getting_started\n  url: https://v/b\n"
+         "  verified: '2026-11-27'\n- field: images\n  url: https://v/b\n  verified: '2026-11-27'\n---\n\n# b\n")
+
+
+def test_only_gated_fields_and_their_own_citations_are_published():
+    out = bb.gated_only(_BASE, _HEAD)
+    fm, body = bb.parse_frontmatter_text(out) if hasattr(bb, "parse_frontmatter_text") else __import__("esp_atlas_core.frontmatter", fromlist=["x"]).parse_frontmatter_text(out)
+    assert fm["getting_started"] == "https://v/b" and "images" not in fm
+    assert [s["field"] for s in fm["sources"]] == ["*", "getting_started"] and body.strip() == "# b"
+
+
+def test_a_board_whose_only_new_field_is_ungated_publishes_nothing():
+    head = _HEAD.replace("getting_started: https://v/b\n", "").replace("- field: getting_started\n  url: https://v/b\n  verified: '2026-11-27'\n", "")
+    assert bb.gated_only(_BASE, head) is None
+
+
+def test_the_checker_reads_the_same_gate_as_the_producer():
+    import sys
+    sys.path.insert(0, str(bb.REPO / "scripts"))
+    import check_claims
+    assert check_claims.BACKFILL_FIELDS is bb.GATED_FIELDS
