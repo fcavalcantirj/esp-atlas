@@ -207,6 +207,32 @@
       "timestamp": "2026-11-27T09:00:33.423338+00:00",
       "url": "https://learn.adafruit.com/adafruit-qt-py-esp32-c3-wifi-dev-board"
     },
+    "adafruit-qt-py-esp32-s2": {
+      "board": "adafruit-qt-py-esp32-s2",
+      "expires": "2026-12-04T11:00:32.872945+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-27T11:00:32.872945+00:00",
+      "url": "https://learn.adafruit.com/adafruit-qt-py-esp32-s2"
+    },
+    "adafruit-qt-py-esp32-s3-no-psram": {
+      "board": "adafruit-qt-py-esp32-s3-no-psram",
+      "expires": "2026-12-04T11:00:32.872945+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-27T11:00:32.872945+00:00",
+      "url": null
+    },
     "freenove-esp32-wrover": {
       "board": "freenove-esp32-wrover",
       "expires": "2026-12-02T09:00:33.578012+00:00",
