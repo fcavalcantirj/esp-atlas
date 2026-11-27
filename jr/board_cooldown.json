@@ -127,6 +127,42 @@
       "timestamp": "2026-11-27T03:00:33.160697+00:00",
       "url": null
     },
+    "adafruit-magtag": {
+      "board": "adafruit-magtag",
+      "expires": "2026-12-04T06:00:33.568785+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00",
+      "url": null
+    },
+    "adafruit-matrixportal-s3": {
+      "board": "adafruit-matrixportal-s3",
+      "expires": "2026-12-04T06:00:33.568785+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-27T06:00:33.568785+00:00",
+      "url": "https://learn.adafruit.com/adafruit-matrixportal-s3"
+    },
     "freenove-esp32-wrover": {
       "board": "freenove-esp32-wrover",
       "expires": "2026-12-02T09:00:33.578012+00:00",
@@ -621,6 +657,33 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-27T04:00:33.280906+00:00",
       "url": "https://docs.m5stack.com/en/core/M5NanoC6"
+    },
+    "m5stack-core2": {
+      "board": "m5stack-core2",
+      "expires": "2026-12-04T05:00:34.450928+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-27T05:00:34.450928+00:00",
+      "url": "https://docs.m5stack.com/en/core/core2"
+    },
+    "m5stack-cores3": {
+      "board": "m5stack-cores3",
+      "expires": "2026-12-04T05:00:34.450928+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-27T05:00:34.450928+00:00",
+      "url": "https://docs.m5stack.com/en/core/CoreS3"
     }
   }
 }
