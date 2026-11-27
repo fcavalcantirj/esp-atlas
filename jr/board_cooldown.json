@@ -194,24 +194,6 @@
       "timestamp": "2026-11-27T08:00:32.923383+00:00",
       "url": "https://learn.adafruit.com/adafruit-metro-esp32-s3"
     },
-    "adafruit-pycamera-s3": {
-      "board": "adafruit-pycamera-s3",
-      "expires": "2026-12-04T10:00:33.186406+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "no_pattern_match"
-        },
-        "usb_serial": {
-          "boards_txt": "no_pattern_match",
-          "manifest": "no_pattern_match",
-          "vendor": "field_absent"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-27T10:00:33.186406+00:00",
-      "url": "https://learn.adafruit.com/adafruit-memento-camera-board"
-    },
     "adafruit-qt-py-esp32-c3": {
       "board": "adafruit-qt-py-esp32-c3",
       "expires": "2026-12-04T09:00:33.423338+00:00",
@@ -227,7 +209,7 @@
     },
     "adafruit-qt-py-esp32-s2": {
       "board": "adafruit-qt-py-esp32-s2",
-      "expires": "2026-12-04T10:00:33.186406+00:00",
+      "expires": "2026-12-04T11:00:32.872945+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -235,8 +217,21 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-27T10:00:33.186406+00:00",
+      "timestamp": "2026-11-27T11:00:32.872945+00:00",
       "url": "https://learn.adafruit.com/adafruit-qt-py-esp32-s2"
+    },
+    "adafruit-qt-py-esp32-s3-no-psram": {
+      "board": "adafruit-qt-py-esp32-s3-no-psram",
+      "expires": "2026-12-04T11:00:32.872945+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-27T11:00:32.872945+00:00",
+      "url": null
     },
     "freenove-esp32-wrover": {
       "board": "freenove-esp32-wrover",

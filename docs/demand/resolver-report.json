@@ -1,0 +1,804 @@
+{
+ "version": 1,
+ "date": "2026-11-27",
+ "complete": true,
+ "records": [
+  {
+   "vendor": "adafruit",
+   "field": "pinout",
+   "missing": 26,
+   "records": 26,
+   "boards": [
+    "adafruit-feather-esp32-c6",
+    "adafruit-feather-esp32-s2",
+    "adafruit-feather-esp32-s2-reverse-tft",
+    "adafruit-feather-esp32-s2-tft",
+    "adafruit-feather-esp32-s3",
+    "adafruit-feather-esp32-s3-no-psram",
+    "adafruit-feather-esp32-s3-reverse-tft",
+    "adafruit-feather-esp32-s3-tft",
+    "adafruit-feather-esp32-v2",
+    "adafruit-funhouse",
+    "adafruit-huzzah32-esp32-feather",
+    "adafruit-itsybitsy-esp32",
+    "adafruit-magtag",
+    "adafruit-matrixportal-s3",
+    "adafruit-metro-esp32-s2",
+    "adafruit-metro-esp32-s3",
+    "adafruit-pycamera-s3",
+    "adafruit-qt-py-esp32",
+    "adafruit-qt-py-esp32-c3",
+    "adafruit-qt-py-esp32-s2",
+    "adafruit-qt-py-esp32-s3",
+    "adafruit-qt-py-esp32-s3-no-psram",
+    "adafruit-qualia-esp32-s3",
+    "adafruit-sparkle-motion",
+    "adafruit-sparkle-motion-mini",
+    "adafruit-sparkle-motion-stick"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "adafruit",
+   "field": "download_mode",
+   "missing": 20,
+   "records": 26,
+   "boards": [
+    "adafruit-feather-esp32-c6",
+    "adafruit-feather-esp32-s2",
+    "adafruit-feather-esp32-s2-reverse-tft",
+    "adafruit-feather-esp32-s2-tft",
+    "adafruit-feather-esp32-s3",
+    "adafruit-feather-esp32-s3-no-psram",
+    "adafruit-feather-esp32-s3-reverse-tft",
+    "adafruit-feather-esp32-s3-tft",
+    "adafruit-funhouse",
+    "adafruit-magtag",
+    "adafruit-matrixportal-s3",
+    "adafruit-metro-esp32-s2",
+    "adafruit-metro-esp32-s3",
+    "adafruit-pycamera-s3",
+    "adafruit-qt-py-esp32",
+    "adafruit-qt-py-esp32-c3",
+    "adafruit-qt-py-esp32-s2",
+    "adafruit-qt-py-esp32-s3",
+    "adafruit-qt-py-esp32-s3-no-psram",
+    "adafruit-qualia-esp32-s3"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "m5stack",
+   "field": "pinout",
+   "missing": 19,
+   "records": 20,
+   "boards": [
+    "m5atom-lite",
+    "m5atoms3",
+    "m5atoms3-lite",
+    "m5cardputer",
+    "m5dial",
+    "m5nanoc6",
+    "m5stack-core",
+    "m5stack-core-aws",
+    "m5stack-core2",
+    "m5stack-cores3",
+    "m5stack-cores3-se",
+    "m5stack-fire",
+    "m5stack-papers3",
+    "m5stamp-c3",
+    "m5stamp-s3",
+    "m5stick-c",
+    "m5stick-cplus",
+    "m5stick-cplus2",
+    "m5stick-s3"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "espressif",
+   "field": "dimensions_mm",
+   "missing": 17,
+   "records": 19,
+   "boards": [
+    "esp-wrover-kit",
+    "esp32-c3-devkitc-02",
+    "esp32-c3-devkitm-1",
+    "esp32-c5-devkitc-1",
+    "esp32-c6-devkitc-1",
+    "esp32-c6-devkitm-1",
+    "esp32-c61-devkitc-1",
+    "esp32-devkitc-v4",
+    "esp32-devkitm-1",
+    "esp32-ethernet-kit",
+    "esp32-h2-devkitm-1",
+    "esp32-lyrat",
+    "esp32-p4-function-ev-board",
+    "esp32-s2-devkitc-1",
+    "esp32-s2-saola-1",
+    "esp32-s3-devkitc-1",
+    "esp32-s3-devkitm-1"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "m5stack",
+   "field": "download_mode",
+   "missing": 14,
+   "records": 20,
+   "boards": [
+    "m5atom-lite",
+    "m5atoms3",
+    "m5atoms3-lite",
+    "m5cardputer",
+    "m5nanoc6",
+    "m5stack-core",
+    "m5stack-core-aws",
+    "m5stack-core2",
+    "m5stack-cores3-se",
+    "m5stack-fire",
+    "m5stamp-c3",
+    "m5stick-c",
+    "m5stick-cplus",
+    "m5stick-cplus2"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "adafruit",
+   "field": "dimensions_mm",
+   "missing": 13,
+   "records": 26,
+   "boards": [
+    "adafruit-feather-esp32-c6",
+    "adafruit-feather-esp32-s2-reverse-tft",
+    "adafruit-feather-esp32-s2-tft",
+    "adafruit-feather-esp32-s3-no-psram",
+    "adafruit-feather-esp32-s3-reverse-tft",
+    "adafruit-feather-esp32-s3-tft",
+    "adafruit-funhouse",
+    "adafruit-magtag",
+    "adafruit-metro-esp32-s3",
+    "adafruit-pycamera-s3",
+    "adafruit-qt-py-esp32",
+    "adafruit-qualia-esp32-s3",
+    "adafruit-sparkle-motion-stick"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "m5stack",
+   "field": "usb_serial",
+   "missing": 13,
+   "records": 20,
+   "boards": [
+    "m5atom-lite",
+    "m5atoms3",
+    "m5atoms3-lite",
+    "m5nanoc6",
+    "m5stack-core",
+    "m5stack-core-aws",
+    "m5stack-cores3",
+    "m5stack-cores3-se",
+    "m5stack-fire",
+    "m5stamp-s3",
+    "m5stick-c",
+    "m5stick-cplus",
+    "m5stick-s3"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "lilygo",
+   "field": "dimensions_mm",
+   "missing": 11,
+   "records": 11,
+   "boards": [
+    "lilygo-t-beam",
+    "lilygo-t-beam-supreme",
+    "lilygo-t-deck",
+    "lilygo-t-display",
+    "lilygo-t-display-s3",
+    "lilygo-t-display-s3-amoled",
+    "lilygo-t-dongle-s3",
+    "lilygo-t-embed",
+    "lilygo-t-qt-pro",
+    "lilygo-t-watch-s3",
+    "lilygo-t5-epaper-s3-pro"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "lilygo",
+   "field": "download_mode",
+   "missing": 11,
+   "records": 11,
+   "boards": [
+    "lilygo-t-beam",
+    "lilygo-t-beam-supreme",
+    "lilygo-t-deck",
+    "lilygo-t-display",
+    "lilygo-t-display-s3",
+    "lilygo-t-display-s3-amoled",
+    "lilygo-t-dongle-s3",
+    "lilygo-t-embed",
+    "lilygo-t-qt-pro",
+    "lilygo-t-watch-s3",
+    "lilygo-t5-epaper-s3-pro"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "lilygo",
+   "field": "pinout",
+   "missing": 11,
+   "records": 11,
+   "boards": [
+    "lilygo-t-beam",
+    "lilygo-t-beam-supreme",
+    "lilygo-t-deck",
+    "lilygo-t-display",
+    "lilygo-t-display-s3",
+    "lilygo-t-display-s3-amoled",
+    "lilygo-t-dongle-s3",
+    "lilygo-t-embed",
+    "lilygo-t-qt-pro",
+    "lilygo-t-watch-s3",
+    "lilygo-t5-epaper-s3-pro"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "adafruit",
+   "field": "usb_serial",
+   "missing": 8,
+   "records": 26,
+   "boards": [
+    "adafruit-feather-esp32-s2",
+    "adafruit-feather-esp32-s2-reverse-tft",
+    "adafruit-feather-esp32-s2-tft",
+    "adafruit-funhouse",
+    "adafruit-magtag",
+    "adafruit-matrixportal-s3",
+    "adafruit-metro-esp32-s2",
+    "adafruit-pycamera-s3"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "m5stack",
+   "field": "usb_connector",
+   "missing": 8,
+   "records": 20,
+   "boards": [
+    "m5cardputer",
+    "m5stack-core",
+    "m5stack-core-aws",
+    "m5stack-cores3-se",
+    "m5stack-fire",
+    "m5stack-papers3",
+    "m5stick-c",
+    "m5stick-cplus"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "lilygo",
+   "field": "usb_connector",
+   "missing": 7,
+   "records": 11,
+   "boards": [
+    "lilygo-t-deck",
+    "lilygo-t-display",
+    "lilygo-t-display-s3-amoled",
+    "lilygo-t-dongle-s3",
+    "lilygo-t-qt-pro",
+    "lilygo-t-watch-s3",
+    "lilygo-t5-epaper-s3-pro"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "lilygo",
+   "field": "usb_serial",
+   "missing": 7,
+   "records": 11,
+   "boards": [
+    "lilygo-t-deck",
+    "lilygo-t-display-s3-amoled",
+    "lilygo-t-dongle-s3",
+    "lilygo-t-embed",
+    "lilygo-t-qt-pro",
+    "lilygo-t-watch-s3",
+    "lilygo-t5-epaper-s3-pro"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "m5stack",
+   "field": "dimensions_mm",
+   "missing": 7,
+   "records": 20,
+   "boards": [
+    "m5stack-core",
+    "m5stack-core-aws",
+    "m5stack-cores3-se",
+    "m5stack-fire",
+    "m5stick-c",
+    "m5stick-cplus",
+    "m5stick-s3"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "m5stack",
+   "field": "form_factor",
+   "missing": 7,
+   "records": 20,
+   "boards": [
+    "m5stack-core",
+    "m5stack-core-aws",
+    "m5stack-cores3-se",
+    "m5stack-fire",
+    "m5stack-papers3",
+    "m5stick-c",
+    "m5stick-cplus"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "dfrobot",
+   "field": "download_mode",
+   "missing": 6,
+   "records": 6,
+   "boards": [
+    "beetle-esp32-c3",
+    "beetle-esp32-c6",
+    "firebeetle-2-esp32-c6",
+    "firebeetle-2-esp32-e",
+    "firebeetle-2-esp32-s3",
+    "firebeetle-esp32"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "dfrobot",
+   "field": "pinout",
+   "missing": 6,
+   "records": 6,
+   "boards": [
+    "beetle-esp32-c3",
+    "beetle-esp32-c6",
+    "firebeetle-2-esp32-c6",
+    "firebeetle-2-esp32-e",
+    "firebeetle-2-esp32-s3",
+    "firebeetle-esp32"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "lolin",
+   "field": "download_mode",
+   "missing": 6,
+   "records": 6,
+   "boards": [
+    "lolin-c3-mini",
+    "lolin-d32",
+    "lolin-d32-pro",
+    "lolin-s2-mini",
+    "lolin-s3",
+    "lolin-s3-mini"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "lolin",
+   "field": "pinout",
+   "missing": 6,
+   "records": 6,
+   "boards": [
+    "lolin-c3-mini",
+    "lolin-d32",
+    "lolin-d32-pro",
+    "lolin-s2-mini",
+    "lolin-s3",
+    "lolin-s3-mini"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "m5stack",
+   "field": "getting_started",
+   "missing": 6,
+   "records": 20,
+   "boards": [
+    "m5stack-core",
+    "m5stack-core-aws",
+    "m5stack-cores3-se",
+    "m5stack-fire",
+    "m5stick-c",
+    "m5stick-cplus"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "m5stack",
+   "field": "images",
+   "missing": 6,
+   "records": 20,
+   "boards": [
+    "m5stack-core",
+    "m5stack-core-aws",
+    "m5stack-cores3-se",
+    "m5stack-fire",
+    "m5stick-c",
+    "m5stick-cplus"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "heltec",
+   "field": "download_mode",
+   "missing": 5,
+   "records": 6,
+   "boards": [
+    "heltec-wifi-kit-32-v3",
+    "heltec-wifi-lora-32-v3",
+    "heltec-wireless-paper",
+    "heltec-wireless-stick-v3",
+    "heltec-wireless-tracker"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "heltec",
+   "field": "pinout",
+   "missing": 5,
+   "records": 6,
+   "boards": [
+    "heltec-wifi-kit-32-v3",
+    "heltec-wifi-lora-32-v3",
+    "heltec-wireless-paper",
+    "heltec-wireless-stick-v3",
+    "heltec-wireless-tracker"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "seeed",
+   "field": "pinout",
+   "missing": 5,
+   "records": 5,
+   "boards": [
+    "xiao-esp32c3",
+    "xiao-esp32c5",
+    "xiao-esp32c6",
+    "xiao-esp32s3",
+    "xiao-esp32s3-sense"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "seeed",
+   "field": "usb_serial",
+   "missing": 5,
+   "records": 5,
+   "boards": [
+    "xiao-esp32c3",
+    "xiao-esp32c5",
+    "xiao-esp32c6",
+    "xiao-esp32s3",
+    "xiao-esp32s3-sense"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "sparkfun",
+   "field": "download_mode",
+   "missing": 5,
+   "records": 6,
+   "boards": [
+    "sparkfun-esp32-thing",
+    "sparkfun-iot-redboard-esp32",
+    "sparkfun-micromod-esp32-processor",
+    "sparkfun-thing-plus-esp32-s2-wroom",
+    "sparkfun-thing-plus-esp32-s3"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "sparkfun",
+   "field": "pinout",
+   "missing": 5,
+   "records": 6,
+   "boards": [
+    "sparkfun-esp32-thing",
+    "sparkfun-iot-redboard-esp32",
+    "sparkfun-micromod-esp32-processor",
+    "sparkfun-thing-plus-esp32-s2-wroom",
+    "sparkfun-thing-plus-esp32-wroom"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "dfrobot",
+   "field": "usb_serial",
+   "missing": 4,
+   "records": 6,
+   "boards": [
+    "beetle-esp32-c3",
+    "beetle-esp32-c6",
+    "firebeetle-2-esp32-c6",
+    "firebeetle-2-esp32-s3"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "freenove",
+   "field": "dimensions_mm",
+   "missing": 4,
+   "records": 4,
+   "boards": [
+    "freenove-esp32-wrover",
+    "freenove-fnk0104a",
+    "freenove-fnk0104b",
+    "freenove-fnk0104s"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "freenove",
+   "field": "download_mode",
+   "missing": 4,
+   "records": 4,
+   "boards": [
+    "freenove-esp32-wrover",
+    "freenove-fnk0104a",
+    "freenove-fnk0104b",
+    "freenove-fnk0104s"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "freenove",
+   "field": "form_factor",
+   "missing": 4,
+   "records": 4,
+   "boards": [
+    "freenove-esp32-wrover",
+    "freenove-fnk0104a",
+    "freenove-fnk0104b",
+    "freenove-fnk0104s"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "freenove",
+   "field": "pinout",
+   "missing": 4,
+   "records": 4,
+   "boards": [
+    "freenove-esp32-wrover",
+    "freenove-fnk0104a",
+    "freenove-fnk0104b",
+    "freenove-fnk0104s"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "freenove",
+   "field": "usb_connector",
+   "missing": 4,
+   "records": 4,
+   "boards": [
+    "freenove-esp32-wrover",
+    "freenove-fnk0104a",
+    "freenove-fnk0104b",
+    "freenove-fnk0104s"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "soldered",
+   "field": "download_mode",
+   "missing": 4,
+   "records": 4,
+   "boards": [
+    "soldered-inkplate-10",
+    "soldered-inkplate-2",
+    "soldered-inkplate-6",
+    "soldered-inkplate-6color"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "soldered",
+   "field": "getting_started",
+   "missing": 4,
+   "records": 4,
+   "boards": [
+    "soldered-inkplate-10",
+    "soldered-inkplate-2",
+    "soldered-inkplate-6",
+    "soldered-inkplate-6color"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "soldered",
+   "field": "pinout",
+   "missing": 4,
+   "records": 4,
+   "boards": [
+    "soldered-inkplate-10",
+    "soldered-inkplate-2",
+    "soldered-inkplate-6",
+    "soldered-inkplate-6color"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "soldered",
+   "field": "usb_serial",
+   "missing": 4,
+   "records": 4,
+   "boards": [
+    "soldered-inkplate-10",
+    "soldered-inkplate-2",
+    "soldered-inkplate-6",
+    "soldered-inkplate-6color"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "unexpected-maker",
+   "field": "download_mode",
+   "missing": 4,
+   "records": 4,
+   "boards": [
+    "um-feathers3",
+    "um-nanos3",
+    "um-pros3",
+    "um-tinys3"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "unexpected-maker",
+   "field": "pinout",
+   "missing": 4,
+   "records": 4,
+   "boards": [
+    "um-feathers3",
+    "um-nanos3",
+    "um-pros3",
+    "um-tinys3"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "unexpected-maker",
+   "field": "usb_connector",
+   "missing": 4,
+   "records": 4,
+   "boards": [
+    "um-feathers3",
+    "um-nanos3",
+    "um-pros3",
+    "um-tinys3"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "adafruit",
+   "field": "form_factor",
+   "missing": 3,
+   "records": 26,
+   "boards": [
+    "adafruit-sparkle-motion",
+    "adafruit-sparkle-motion-mini",
+    "adafruit-sparkle-motion-stick"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "freenove",
+   "field": "usb_serial",
+   "missing": 3,
+   "records": 4,
+   "boards": [
+    "freenove-fnk0104a",
+    "freenove-fnk0104b",
+    "freenove-fnk0104s"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "lolin",
+   "field": "usb_connector",
+   "missing": 3,
+   "records": 6,
+   "boards": [
+    "lolin-d32",
+    "lolin-d32-pro",
+    "lolin-s3-mini"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "lolin",
+   "field": "usb_serial",
+   "missing": 3,
+   "records": 6,
+   "boards": [
+    "lolin-c3-mini",
+    "lolin-s2-mini",
+    "lolin-s3"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "sparkfun",
+   "field": "usb_serial",
+   "missing": 3,
+   "records": 6,
+   "boards": [
+    "sparkfun-esp32-thing",
+    "sparkfun-micromod-esp32-processor",
+    "sparkfun-thing-plus-esp32-s2-wroom"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  }
+ ],
+ "counts": {
+  "vendors": 16,
+  "gaps": 46,
+  "boards_missing_total": 332
+ }
+}

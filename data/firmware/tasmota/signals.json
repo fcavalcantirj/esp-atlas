@@ -1,7 +1,7 @@
 {
  "calls": 12,
  "errors": 0,
- "fetched": "2026-11-16",
+ "fetched": "2026-11-27",
  "notes": [],
  "ref": "development",
  "repo": "arendst/Tasmota",
@@ -190,6 +190,9 @@
    "tasmota32s3",
    "tasmota32s3-safeboot",
    "tasmota32s3.factory",
+   "tasmota32s31",
+   "tasmota32s31-safeboot",
+   "tasmota32s31ser-safeboot",
    "tasmota32s3ser-safeboot",
    "tasmota32solo1",
    "tasmota32solo1-safeboot",
@@ -3908,6 +3911,28 @@
    "line": null,
    "rank": 3,
    "soc": null,
+   "token": "tasmota32s31-safeboot",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_devel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/Tasmota_build_devel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tasmota32s31ser-safeboot",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_devel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/Tasmota_build_devel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
    "token": "tasmota",
    "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_devel.yml"
   },
@@ -4173,6 +4198,17 @@
    "rank": 3,
    "soc": null,
    "token": "tasmota32p4r3",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_devel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/Tasmota_build_devel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tasmota32s31",
    "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_devel.yml"
   },
   {
@@ -4733,6 +4769,28 @@
    "line": null,
    "rank": 3,
    "soc": null,
+   "token": "tasmota32s31-safeboot",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_master.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/Tasmota_build_master.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tasmota32s31ser-safeboot",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_master.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/Tasmota_build_master.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
    "token": "tasmota",
    "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_master.yml"
   },
@@ -5042,6 +5100,17 @@
    "rank": 3,
    "soc": null,
    "token": "tasmota32solo1",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_master.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/Tasmota_build_master.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tasmota32s31",
    "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_master.yml"
   },
   {
@@ -5558,6 +5627,17 @@
    "line": null,
    "rank": 3,
    "soc": null,
+   "token": "tasmota32s31",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/build_all_the_things.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_all_the_things.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
    "token": "tasmota32s2",
    "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/build_all_the_things.yml"
   },
@@ -5768,6 +5848,17 @@
    "rank": 3,
    "soc": null,
    "token": "tasmota32p4-safeboot",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/build_all_the_things.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_all_the_things.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tasmota32s31-safeboot",
    "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/build_all_the_things.yml"
   },
   {

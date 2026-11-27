@@ -2700,6 +2700,168 @@
      "settled_by": "jr/work_record.py"
     }
    }
+  },
+  {
+   "key": "b3d7b58e692b9985",
+   "branch": "jr/research-b3d7b58e692b9985",
+   "term": "marauders esp",
+   "phase": "research",
+   "state": "reserved",
+   "started_on": "2026-11-27",
+   "source": "gsc_query",
+   "linked_work": [],
+   "window": {
+    "start": "2026-10-29",
+    "end": "2026-11-25"
+   },
+   "metrics": {
+    "impressions": 11,
+    "position": 13.2
+   },
+   "provenance": {
+    "snapshot": "docs/demand/2026-11-27.json",
+    "opened_on": "2026-11-27",
+    "status": "new",
+    "remote": {
+     "branch": false,
+     "prs": []
+    },
+    "reserved_by": "jr/demand_run.py"
+   }
+  },
+  {
+   "key": "fix-f980089da0041561e9522636",
+   "branch": "jr/research-fix-f980089da0041561e9522636",
+   "term": "quote fix adafruit-feather-esp32-c6",
+   "phase": "research",
+   "state": "reserved",
+   "started_on": "2026-11-27",
+   "source": "quote_check",
+   "linked_work": [],
+   "quote": {
+    "record": "data/boards/adafruit/adafruit-feather-esp32-c6/board.md",
+    "id": "adafruit-feather-esp32-c6",
+    "quotes": [
+     "built in USB Serial core"
+    ],
+    "urls": [
+     "https://www.adafruit.com/product/5933",
+     "https://learn.adafruit.com/adafruit-esp32-c6-feather/overview",
+     "https://learn.adafruit.com/adafruit-esp32-c6-feather/pinouts",
+     "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt",
+     "https://learn.adafruit.com/adafruit-esp32-c6-feather",
+     "https://cdn-learn.adafruit.com/assets/assets/000/139/939/medium800/adafruit_products_Adafruit_Feather_ESP32-C6_PrettyPins_2.png?1758739123"
+    ],
+    "report_date": "2026-11-27"
+   },
+   "candidate": {
+    "term": "quote fix adafruit-feather-esp32-c6",
+    "source": "quote_check",
+    "status": "new",
+    "first_seen": "2026-11-27",
+    "history": [],
+    "linked_work": [],
+    "snapshot": "docs/demand/quote-report.json",
+    "quote": {
+     "record": "data/boards/adafruit/adafruit-feather-esp32-c6/board.md",
+     "id": "adafruit-feather-esp32-c6",
+     "quotes": [
+      "built in USB Serial core"
+     ],
+     "urls": [
+      "https://www.adafruit.com/product/5933",
+      "https://learn.adafruit.com/adafruit-esp32-c6-feather/overview",
+      "https://learn.adafruit.com/adafruit-esp32-c6-feather/pinouts",
+      "https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt",
+      "https://learn.adafruit.com/adafruit-esp32-c6-feather",
+      "https://cdn-learn.adafruit.com/assets/assets/000/139/939/medium800/adafruit_products_Adafruit_Feather_ESP32-C6_PrettyPins_2.png?1758739123"
+     ],
+     "report_date": "2026-11-27"
+    }
+   },
+   "provenance": {
+    "snapshot": "docs/demand/quote-report.json",
+    "opened_on": "2026-11-27",
+    "status": "new",
+    "remote": {
+     "branch": false,
+     "prs": []
+    },
+    "reserved_by": "jr/demand_run.py"
+   }
+  },
+  {
+   "key": "resolver-0cc6631792bcf99e9934f54b",
+   "branch": "jr/research-resolver-0cc6631792bcf99e9934f54b",
+   "term": "resolver adafruit dimensions_mm",
+   "phase": "research",
+   "state": "reserved",
+   "started_on": "2026-11-27",
+   "source": "gauge_gap",
+   "linked_work": [],
+   "resolver": {
+    "vendor": "adafruit",
+    "field": "dimensions_mm",
+    "missing": 13,
+    "records": 26,
+    "boards": [
+     "adafruit-feather-esp32-c6",
+     "adafruit-feather-esp32-s2-reverse-tft",
+     "adafruit-feather-esp32-s2-tft",
+     "adafruit-feather-esp32-s3-no-psram",
+     "adafruit-feather-esp32-s3-reverse-tft",
+     "adafruit-feather-esp32-s3-tft",
+     "adafruit-funhouse",
+     "adafruit-magtag",
+     "adafruit-metro-esp32-s3",
+     "adafruit-pycamera-s3",
+     "adafruit-qt-py-esp32",
+     "adafruit-qualia-esp32-s3",
+     "adafruit-sparkle-motion-stick"
+    ],
+    "report_date": "2026-11-27"
+   },
+   "candidate": {
+    "term": "resolver adafruit dimensions_mm",
+    "source": "gauge_gap",
+    "status": "new",
+    "first_seen": "2026-11-27",
+    "history": [],
+    "linked_work": [],
+    "snapshot": "docs/demand/resolver-report.json",
+    "resolver": {
+     "vendor": "adafruit",
+     "field": "dimensions_mm",
+     "missing": 13,
+     "records": 26,
+     "boards": [
+      "adafruit-feather-esp32-c6",
+      "adafruit-feather-esp32-s2-reverse-tft",
+      "adafruit-feather-esp32-s2-tft",
+      "adafruit-feather-esp32-s3-no-psram",
+      "adafruit-feather-esp32-s3-reverse-tft",
+      "adafruit-feather-esp32-s3-tft",
+      "adafruit-funhouse",
+      "adafruit-magtag",
+      "adafruit-metro-esp32-s3",
+      "adafruit-pycamera-s3",
+      "adafruit-qt-py-esp32",
+      "adafruit-qualia-esp32-s3",
+      "adafruit-sparkle-motion-stick"
+     ],
+     "report_date": "2026-11-27"
+    }
+   },
+   "provenance": {
+    "snapshot": "docs/demand/resolver-report.json",
+    "opened_on": "2026-11-27",
+    "status": "new",
+    "remote": {
+     "branch": false,
+     "prs": []
+    },
+    "reserved_by": "jr/demand_run.py"
+   }
   }
  ]
 }
