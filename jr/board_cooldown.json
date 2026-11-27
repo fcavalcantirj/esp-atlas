@@ -326,6 +326,37 @@
       "timestamp": "2026-11-27T14:00:33.464823+00:00",
       "url": "https://wiki.dfrobot.com/dfr1075"
     },
+    "firebeetle-2-esp32-e": {
+      "board": "firebeetle-2-esp32-e",
+      "expires": "2026-12-04T16:00:33.080425+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-27T16:00:33.080425+00:00",
+      "url": "https://wiki.dfrobot.com/dfr0654"
+    },
+    "firebeetle-2-esp32-s3": {
+      "board": "firebeetle-2-esp32-s3",
+      "expires": "2026-12-04T16:00:33.080425+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-27T16:00:33.080425+00:00",
+      "url": "https://wiki.dfrobot.com/dfr0975"
+    },
     "freenove-esp32-wrover": {
       "board": "freenove-esp32-wrover",
       "expires": "2026-12-02T09:00:33.578012+00:00",
