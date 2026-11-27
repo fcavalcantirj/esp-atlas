@@ -46,7 +46,7 @@ def _mk_brand_boards(root, brand, names):
 
 
 def _fake_backfill(statuses, monkeypatch):
-    def fake_bb(path, data_root, fetch, today, write=True):
+    def fake_bb(path, data_root, fetch, today, write=True, fields=None):
         bid = path.parent.name
         st = statuses[bid]
         base = {"board_id": bid, "status": st}
@@ -129,7 +129,7 @@ def test_brand_without_a_registered_resolver_is_not_in_the_worklist(tmp_path, mo
     _mk_brand_boards(tmp_path, "noresolver-vendor", ["noresolver-vendor-esp32-s3-touch"])
     seen = []
 
-    def fake_bb(path, data_root, fetch, today, write=True):
+    def fake_bb(path, data_root, fetch, today, write=True, fields=None):
         seen.append(str(path))
         return {"board_id": path.parent.name, "status": "skipped", "reason": "x"}
 
@@ -155,7 +155,7 @@ def test_dry_run_writes_nothing_and_lists_every_would_be_write(tmp_path, monkeyp
     _mk_boards(tmp_path, ["b1", "b2"])
     asked = []
 
-    def fake_bb(path, data_root, fetch, today, write=True):
+    def fake_bb(path, data_root, fetch, today, write=True, fields=None):
         asked.append(write)
         if path.parent.name == "b1":
             return {"board_id": "b1", "status": "backfilled", "written": ["usb_serial"], "omitted": [],
@@ -173,3 +173,40 @@ def test_dry_run_writes_nothing_and_lists_every_would_be_write(tmp_path, monkeyp
         {"path": "jr/board_cooldown.json", "field": "by_board.b2", "value": "doc-unreachable"},
     ]
     assert "would backfill 1" in res.summary and "would cool 1" in res.summary
+
+
+def test_what_the_stage_publishes_passes_the_trusted_claims_gate(tmp_path):
+    # Incident 0a6272058890 (PR #2146, 2026-11-27): the stage wrote `images` beside getting_started on
+    # m5stack-core, and the trusted `claims` check (scripts/check_claims.py, owner-only) failed the board
+    # "field not under the backfill gate: images". The real stage on the real board and vendor page must
+    # publish only what that gate re-derives.
+    import shutil
+    import sys
+    from pathlib import Path
+    repo = Path(__file__).resolve().parent.parent
+    sys.path[:0] = [str(repo / "scripts"), str(repo / "apps" / "core" / "src")]
+    import check_claims
+    rel = "data/boards/m5stack/m5stack-core/board.md"
+    (tmp_path / rel).parent.mkdir(parents=True)
+    shutil.copy(repo / rel, tmp_path / rel)
+    base = (tmp_path / rel).read_text()
+    page = (repo / "jr" / "fixtures" / "board_backfill" / "m5stack-core-basic.html").read_text()
+    url = board_backfill.VENDOR_DOC_RESOLVERS["m5stack"]("m5stack-core", "esp32")[0]
+
+    def fetch(u):
+        return {"ok": True, "status": 200, "text": page} if u == url else {"ok": False, "status": 404, "error": "HTTP 404"}
+    ctx = Ctx(tmp_path)
+    ctx.now = dt.datetime(2026, 11, 27, 5, 0)
+    res = stage_backfill.run(ctx, budget=1, fetch=fetch)
+    assert res.paths == [rel]
+    verdict = check_claims.check_board_backfill(base, (tmp_path / rel).read_text(), repo / "data", fetch, "2026-11-27")
+    assert verdict["verdict"] == check_claims.PASS, verdict
+
+
+def test_the_stage_publishes_exactly_the_fields_the_trusted_gate_re_derives():
+    import sys
+    from pathlib import Path
+    repo = Path(__file__).resolve().parent.parent
+    sys.path[:0] = [str(repo / "scripts"), str(repo / "apps" / "core" / "src")]
+    import check_claims
+    assert set(stage_backfill.PUBLISHED_FIELDS) == set(check_claims.BACKFILL_FIELDS)
