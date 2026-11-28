@@ -1,0 +1,187 @@
+{
+ "calls": 15,
+ "errors": 0,
+ "fetched": "2026-11-28",
+ "notes": [
+  "latest release android-v2.2.8 has no binaries; read firmware-v2.2.2 instead"
+ ],
+ "ref": "main",
+ "repo": "soyboitech/beacons",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-c5",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "/Applications/Xcode.app",
+   "/Applications/Xcode_26.6.app",
+   "ACAB Mesh-Detect",
+   "ACAB Mesh-Detect (private channel 1)",
+   "ACAB OUI-Spy (All Cameras Are Beacons)",
+   "ACAB beacon c5 (All Cameras Are Beacons), Seeed XIAO ESP32-C5",
+   "ACAB beacon c5 devkitc (All Cameras Are Beacons), ESP32-C5-DevKitC-1",
+   "acab-beacon-c5-app",
+   "acab-beacon-c5-devkitc-app",
+   "acab-mesh-detect-app",
+   "acab-mesh-detect-ch1-app",
+   "acab-oui-spy-app",
+   "xcode-27"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "acab-beacon-c5-app.bin",
+    "release": "firmware-v2.2.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "acab-beacon-c5-app",
+   "url": "https://github.com/soyboitech/beacons/releases/download/firmware-v2.2.2/acab-beacon-c5-app.bin"
+  },
+  {
+   "extra": {
+    "asset": "acab-beacon-c5-devkitc-app.bin",
+    "release": "firmware-v2.2.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "acab-beacon-c5-devkitc-app",
+   "url": "https://github.com/soyboitech/beacons/releases/download/firmware-v2.2.2/acab-beacon-c5-devkitc-app.bin"
+  },
+  {
+   "extra": {
+    "asset": "acab-mesh-detect-app.bin",
+    "release": "firmware-v2.2.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "acab-mesh-detect-app",
+   "url": "https://github.com/soyboitech/beacons/releases/download/firmware-v2.2.2/acab-mesh-detect-app.bin"
+  },
+  {
+   "extra": {
+    "asset": "acab-mesh-detect-ch1-app.bin",
+    "release": "firmware-v2.2.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "acab-mesh-detect-ch1-app",
+   "url": "https://github.com/soyboitech/beacons/releases/download/firmware-v2.2.2/acab-mesh-detect-ch1-app.bin"
+  },
+  {
+   "extra": {
+    "asset": "acab-oui-spy-app.bin",
+    "release": "firmware-v2.2.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "acab-oui-spy-app",
+   "url": "https://github.com/soyboitech/beacons/releases/download/firmware-v2.2.2/acab-oui-spy-app.bin"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-C5",
+    "release": "firmware-v2.2.2"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-c5",
+   "token": "ACAB beacon c5 devkitc (All Cameras Are Beacons), ESP32-C5-DevKitC-1",
+   "url": "https://github.com/soyboitech/beacons/releases/download/firmware-v2.2.2/manifest-beacon-c5-devkitc.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-C5",
+    "release": "firmware-v2.2.2"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-c5",
+   "token": "ACAB beacon c5 (All Cameras Are Beacons), Seeed XIAO ESP32-C5",
+   "url": "https://github.com/soyboitech/beacons/releases/download/firmware-v2.2.2/manifest-beacon-c5.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-S3",
+    "release": "firmware-v2.2.2"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "ACAB Mesh-Detect (private channel 1)",
+   "url": "https://github.com/soyboitech/beacons/releases/download/firmware-v2.2.2/manifest-mesh-detect-ch1.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-S3",
+    "release": "firmware-v2.2.2"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "ACAB Mesh-Detect",
+   "url": "https://github.com/soyboitech/beacons/releases/download/firmware-v2.2.2/manifest-mesh-detect.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-S3",
+    "release": "firmware-v2.2.2"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "ACAB OUI-Spy (All Cameras Are Beacons)",
+   "url": "https://github.com/soyboitech/beacons/releases/download/firmware-v2.2.2/manifest-oui-spy.json"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ios-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "/Applications/Xcode_26.6.app",
+   "url": "https://github.com/soyboitech/beacons/blob/main/.github/workflows/ios-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ios-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "xcode-27",
+   "url": "https://github.com/soyboitech/beacons/blob/main/.github/workflows/ios-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ios-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "/Applications/Xcode.app",
+   "url": "https://github.com/soyboitech/beacons/blob/main/.github/workflows/ios-ci.yml"
+  }
+ ]
+}
