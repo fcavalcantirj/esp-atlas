@@ -854,6 +854,14 @@
       "status": "expired",
       "timestamp": "2026-10-31T17:00:59.604583+00:00"
     },
+    "beacons": {
+      "id": "beacons",
+      "pr_ref": null,
+      "repo": "soyboitech/beacons",
+      "repo_id": 1268072513,
+      "status": "proposed",
+      "timestamp": "2026-11-28T09:00:39.811039+00:00"
+    },
     "beamstalker": {
       "expires": "2026-12-05T20:00:59.980852+00:00",
       "id": "beamstalker",
@@ -4171,7 +4179,7 @@
       "pr_ref": "#2098",
       "repo": "martin-ger/esp32_nat_router",
       "status": "proposed",
-      "timestamp": "2026-11-28T08:00:33.347798+00:00"
+      "timestamp": "2026-11-28T09:00:39.811039+00:00"
     },
     "esp32-navigation": {
       "expires": "2026-12-16T05:00:31.772256+00:00",
@@ -11808,12 +11816,13 @@
       "timestamp": "2026-11-21T04:00:32.449949+00:00"
     },
     "launcher-2123845435640463361": {
+      "expired_at": "2026-11-28T09:00:39.811039+00:00",
       "expires": "2026-11-28T09:00:32.125358+00:00",
       "id": "launcher-2123845435640463361",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'ducky watch user:fc88a'",
       "repo": "launcher:2123845435640463361",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-21T09:00:32.125358+00:00"
     },
     "launcher-2123874075002486786": {
@@ -16913,6 +16922,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T04:00:34.403128+00:00"
     },
+    "meshzero": {
+      "expires": "2027-01-27T09:00:39.811039+00:00",
+      "id": "meshzero",
+      "pr_ref": null,
+      "reason": "not_device_firmware: no espressif32 platformio.ini, ESP-IDF project, Arduino sketch or release .bin",
+      "repo": "s0liton/meshzero",
+      "status": "rejected",
+      "timestamp": "2026-11-28T09:00:39.811039+00:00"
+    },
     "meta-tv-ir": {
       "expires": "2026-12-20T12:00:31.870191+00:00",
       "id": "meta-tv-ir",
@@ -17580,7 +17598,7 @@
       "pr_ref": "#2101",
       "repo": "forged-in-feathers-technology/observore",
       "status": "proposed",
-      "timestamp": "2026-11-28T08:00:33.347798+00:00"
+      "timestamp": "2026-11-28T09:00:39.811039+00:00"
     },
     "oddlings": {
       "id": "oddlings",
@@ -19215,6 +19233,15 @@
       "repo": "alanmimms/wallclock",
       "status": "rejected",
       "timestamp": "2026-11-17T16:00:31.699892+00:00"
+    },
+    "repo-note:alexbegoon/meshimi": {
+      "expires": "2026-12-28T09:00:39.811039+00:00",
+      "id": "repo-note:alexbegoon/meshimi",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "alexbegoon/meshimi",
+      "status": "rejected",
+      "timestamp": "2026-11-28T09:00:39.811039+00:00"
     },
     "repo-note:alexkid77/esp32_quake2": {
       "expires": "2026-12-26T03:00:32.957094+00:00",
@@ -23077,6 +23104,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T07:00:32.950177+00:00"
     },
+    "repo-note:lmatte7/gomesh": {
+      "expires": "2026-12-28T09:00:39.811039+00:00",
+      "id": "repo-note:lmatte7/gomesh",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "lmatte7/gomesh",
+      "status": "rejected",
+      "timestamp": "2026-11-28T09:00:39.811039+00:00"
+    },
     "repo-note:loiseaucreatif/datacrow": {
       "expires": "2026-12-19T16:00:34.301043+00:00",
       "id": "repo-note:loiseaucreatif/datacrow",
@@ -24481,6 +24517,15 @@
       "status": "rejected",
       "timestamp": "2026-11-24T09:00:33.074536+00:00"
     },
+    "repo-note:pdxlocations/mudp": {
+      "expires": "2026-12-28T09:00:39.811039+00:00",
+      "id": "repo-note:pdxlocations/mudp",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'library'",
+      "repo": "pdxlocations/mudp",
+      "status": "rejected",
+      "timestamp": "2026-11-28T09:00:39.811039+00:00"
+    },
     "repo-note:peacepaul1999/web_flasher_esp32_1.0.0": {
       "expires": "2026-12-22T04:00:33.436471+00:00",
       "id": "repo-note:peacepaul1999/web_flasher_esp32_1.0.0",
@@ -24525,6 +24570,15 @@
       "repo": "permalmberg/smooth",
       "status": "rejected",
       "timestamp": "2026-11-25T19:00:34.766806+00:00"
+    },
+    "repo-note:petergrace/meshtui": {
+      "expires": "2026-12-28T09:00:39.811039+00:00",
+      "id": "repo-note:petergrace/meshtui",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "petergrace/meshtui",
+      "status": "rejected",
+      "timestamp": "2026-11-28T09:00:39.811039+00:00"
     },
     "repo-note:petoicamp/opencat-quadruped-robot": {
       "expires": "2026-12-18T15:00:31.763832+00:00",
@@ -24669,6 +24723,15 @@
       "repo": "playmean/fap-list",
       "status": "rejected",
       "timestamp": "2026-11-18T13:00:31.999065+00:00"
+    },
+    "repo-note:playmean/mtsh": {
+      "expires": "2026-12-28T09:00:39.811039+00:00",
+      "id": "repo-note:playmean/mtsh",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "playmean/mtsh",
+      "status": "rejected",
+      "timestamp": "2026-11-28T09:00:39.811039+00:00"
     },
     "repo-note:poovarasanmsd/avenger": {
       "expires": "2026-12-18T12:00:31.958773+00:00",
@@ -25219,6 +25282,24 @@
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
     },
+    "repo-note:sams0n1te/meshtui": {
+      "expires": "2026-12-28T09:00:39.811039+00:00",
+      "id": "repo-note:sams0n1te/meshtui",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sams0n1te/meshtui",
+      "status": "rejected",
+      "timestamp": "2026-11-28T09:00:39.811039+00:00"
+    },
+    "repo-note:sams0n1te/mim": {
+      "expires": "2026-12-28T09:00:39.811039+00:00",
+      "id": "repo-note:sams0n1te/mim",
+      "pr_ref": null,
+      "reason": "stopword_name: 'MIM' names a radio, not a firmware",
+      "repo": "sams0n1te/mim",
+      "status": "rejected",
+      "timestamp": "2026-11-28T09:00:39.811039+00:00"
+    },
     "repo-note:sams0n1te/zeromesh": {
       "expires": "2026-12-27T09:00:33.423338+00:00",
       "id": "repo-note:sams0n1te/zeromesh",
@@ -25569,6 +25650,15 @@
       "repo": "simplefoc/arduino-foc",
       "status": "rejected",
       "timestamp": "2026-11-19T15:00:33.556715+00:00"
+    },
+    "repo-note:skobkin/antenna-stats": {
+      "expires": "2026-12-28T09:00:39.811039+00:00",
+      "id": "repo-note:skobkin/antenna-stats",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "skobkin/antenna-stats",
+      "status": "rejected",
+      "timestamp": "2026-11-28T09:00:39.811039+00:00"
     },
     "repo-note:skythinker616/foc-wheel-legged-robot": {
       "expires": "2026-12-28T00:00:33.314981+00:00",
@@ -30248,6 +30338,7 @@
     "aleksalcdel/two-button_tetris_for_scplus2.": "two-button-tetris-for-scplus2",
     "aleksm2137/mini-mp3player_cardputer-adv": "mini-mp3player-cardputer-adv",
     "alex-wei-hz/distributionresources": "distributionresources",
+    "alexbegoon/meshimi": "repo-note:alexbegoon/meshimi",
     "alexdelprete/ha-sugar-valley-neopool": "ha-sugar-valley-neopool",
     "alexkid77/esp32_quake2": "repo-note:alexkid77/esp32_quake2",
     "alexkid77/openlara_esp32p4": "repo-note:alexkid77/openlara_esp32p4",
@@ -32211,6 +32302,7 @@
     "liuscraft/conference-hosting": "repo-note:liuscraft/conference-hosting",
     "liyongjian5179/m5stack_sticks3_lucky_slots": "m5stack-sticks3-lucky-slots",
     "llams/esp-md": "repo-note:llams/esp-md",
+    "lmatte7/gomesh": "repo-note:lmatte7/gomesh",
     "locosp/bruce-firmware-wdgwars": "bruce-firmware-wdgwars",
     "loiseaucreatif/datacrow": "repo-note:loiseaucreatif/datacrow",
     "lolzik-2/cardputer-adv-fw": "cardputer-adv-fw",
@@ -32648,6 +32740,7 @@
     "pdlsurya/esp32-riscv-bare-metal-sdk": "repo-note:pdlsurya/esp32-riscv-bare-metal-sdk",
     "pdrix": "pdrix",
     "pdxlocations/contact": "repo-note:pdxlocations/contact",
+    "pdxlocations/mudp": "repo-note:pdxlocations/mudp",
     "peacepaul1999/web_flasher_esp32_1.0.0": "repo-note:peacepaul1999/web_flasher_esp32_1.0.0",
     "pedrominatel/m5stack-capsule-tv-b-gone": "m5stack-capsule-tv-b-gone",
     "peff74/esp32-c3_oled": "repo-note:peff74/esp32-c3_oled",
@@ -32660,6 +32753,7 @@
     "perrart/historias_sinistras": "historias-sinistras",
     "perrymitchell/miniminal-web-flasher": "miniminal-web-flasher",
     "personwithbeans/cardlife": "cardlife",
+    "petergrace/meshtui": "repo-note:petergrace/meshtui",
     "petoicamp/opencat-quadruped-robot": "repo-note:petoicamp/opencat-quadruped-robot",
     "petrisi/tanmatsu-multimesh": "repo-note:petrisi/tanmatsu-multimesh",
     "petsven/s3_decibel_meter": "s3-decibel-meter",
@@ -32689,6 +32783,7 @@
     "platformio/platformio-core": "repo-note:platformio/platformio-core",
     "platformio/platformio-vscode-ide": "repo-note:platformio/platformio-vscode-ide",
     "playmean/fap-list": "repo-note:playmean/fap-list",
+    "playmean/mtsh": "repo-note:playmean/mtsh",
     "plummerssoftwarellc/nightdriverstrip": "nightdriverstrip",
     "poovarasanmsd/avenger": "repo-note:poovarasanmsd/avenger",
     "power-pill/ascii-aquarium": "ascii-aquarium",
@@ -32826,6 +32921,7 @@
     "ryuzaki-mrl/espeon.git": "espeon",
     "rzeldent/esp32-smartdisplay": "repo-note:rzeldent/esp32-smartdisplay",
     "rzeldent/esp32cam-rtsp": "repo-note:rzeldent/esp32cam-rtsp",
+    "s0liton/meshzero": "meshzero",
     "s0lness/awesome-esp32": "awesome-esp32",
     "s1z0v/s1-adv": "s1-adv",
     "s60sc/esp32-cam_mjpeg2sd": "repo-note:s60sc/esp32-cam_mjpeg2sd",
@@ -32842,6 +32938,8 @@
     "sakkra-adv/spaceship": "spaceship",
     "samdenty/wi-pwn": "wi-pwn",
     "sams0n1te/lakeshark": "repo-note:sams0n1te/lakeshark",
+    "sams0n1te/meshtui": "repo-note:sams0n1te/meshtui",
+    "sams0n1te/mim": "repo-note:sams0n1te/mim",
     "sams0n1te/zeromesh": "repo-note:sams0n1te/zeromesh",
     "samucarre/m5cores3-automatic-irrigation": "m5cores3-automatic-irrigation",
     "samucarre/m5papers3-animal-quiz": "m5papers3-animal-quiz",
@@ -32919,6 +33017,7 @@
     "sira-fiinikkusu/reterminal-sticky-voice-companion": "reterminal-sticky-voice-companion",
     "sjoyce1/plai-meshcore": "plai-meshcore",
     "skizzophrenic/squachwatch-cyd": "squachwatch-cyd",
+    "skobkin/antenna-stats": "repo-note:skobkin/antenna-stats",
     "sky18dragon/carplay-tab5": "carplay-tab5",
     "sky18dragon/ricoh-gr-live-view-shooting": "ricoh-gr-live-view-shooting",
     "skyper02/evil-m5project": "evil-m5project",
@@ -32949,6 +33048,7 @@
     "sourcels/mini-mp3player_cardputer-adv": "mini-mp3player-cardputer-adv",
     "sourcels/wordle_cardputer": "wordle-cardputer",
     "sourcels/xcalc_cardputer": "xcalc-cardputer",
+    "soyboitech/beacons": "beacons",
     "soykhaler/tinycardputer": "tinycardputer",
     "soykhaler/zx-spectrum-cardputer-internal": "repo-note:soykhaler/zx-spectrum-cardputer-internal",
     "soynx/hacking-pentesting-utils": "hacking-pentesting-utils",
