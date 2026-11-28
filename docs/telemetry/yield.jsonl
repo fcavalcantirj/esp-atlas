@@ -336,3 +336,6 @@
 {"calls": 81, "counts": {}, "paths": 0, "produced": 0, "seconds": 125.6, "stage": "admit_topics", "tick": "2026-11-28T05:00Z", "units": 2}
 {"calls": 81, "counts": {"cooled": 1, "cooling": 31, "filled": 1, "skipped": 1}, "paths": 2, "produced": 1, "seconds": 125.6, "stage": "backfill", "tick": "2026-11-28T05:00Z", "units": 2}
 {"calls": 81, "counts": {}, "paths": 2, "produced": 0, "seconds": 125.6, "stage": "boardmap", "tick": "2026-11-28T05:00Z", "units": 2}
+{"calls": 51, "counts": {}, "paths": 0, "produced": 0, "seconds": 87.3, "stage": "admit_topics", "tick": "2026-11-28T06:00Z", "units": 2}
+{"calls": 51, "counts": {"cooled": 4, "cooling": 6, "filled": 1, "skipped": 4}, "paths": 2, "produced": 1, "seconds": 87.3, "stage": "backfill", "tick": "2026-11-28T06:00Z", "units": 5}
+{"calls": 51, "counts": {}, "paths": 1, "produced": 0, "seconds": 87.3, "stage": "boardmap", "tick": "2026-11-28T06:00Z", "units": 1}

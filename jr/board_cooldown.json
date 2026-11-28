@@ -533,25 +533,6 @@
       "timestamp": "2026-11-25T12:00:33.512563+00:00",
       "url": "https://lilygo.cc/products/t-beam"
     },
-    "lilygo-t-beam-supreme": {
-      "board": "lilygo-t-beam-supreme",
-      "expires": "2026-11-28T06:00:32.350998+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "no_manifest",
-          "vendor": "doc_unreachable"
-        },
-        "getting_started": {
-          "vendor": "doc_unreachable"
-        },
-        "images": {
-          "vendor": "doc_unreachable"
-        }
-      },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-21T06:00:32.350998+00:00",
-      "url": null
-    },
     "lilygo-t-deck": {
       "board": "lilygo-t-deck",
       "expires": "2026-12-02T12:00:33.512563+00:00",
@@ -944,6 +925,75 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-27T05:00:34.450928+00:00",
       "url": "https://docs.m5stack.com/en/core/CoreS3"
+    },
+    "m5stack-fire": {
+      "board": "m5stack-fire",
+      "expires": "2026-12-05T06:00:33.760683+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-28T06:00:33.760683+00:00",
+      "url": null
+    },
+    "m5stamp-c3": {
+      "board": "m5stamp-c3",
+      "expires": "2026-12-05T06:00:33.760683+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-28T06:00:33.760683+00:00",
+      "url": "https://docs.m5stack.com/en/core/Stamp_C3"
+    },
+    "m5stamp-s3": {
+      "board": "m5stamp-s3",
+      "expires": "2026-12-05T06:00:33.760683+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-28T06:00:33.760683+00:00",
+      "url": "https://docs.m5stack.com/en/core/StampS3"
+    },
+    "m5stick-cplus": {
+      "board": "m5stick-cplus",
+      "expires": "2026-12-05T06:00:33.760683+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-28T06:00:33.760683+00:00",
+      "url": null
     }
   }
 }
