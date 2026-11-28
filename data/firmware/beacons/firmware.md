@@ -16,6 +16,7 @@ popularity:
   as_of: '2026-11-28'
 socs:
 - esp32-c5
+- esp32-s3
 sources:
 - field: '*'
   url: https://github.com/soyboitech/beacons
@@ -34,6 +35,9 @@ sources:
   verified: '2026-11-28'
 - field: popularity.downloads_as_of
   url: https://api.launcherhub.net/giveMeTheList
+  verified: '2026-11-28'
+- field: socs
+  url: https://github.com/soyboitech/beacons/releases/download/firmware-v2.2.2/manifest-mesh-detect.json
   verified: '2026-11-28'
 ---
 
