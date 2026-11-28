@@ -483,18 +483,15 @@
     },
     "heltec-wireless-paper": {
       "board": "heltec-wireless-paper",
-      "expires": "2026-11-28T04:00:32.449949+00:00",
+      "expires": "2026-12-05T04:00:32.974252+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
           "vendor": "field_absent"
-        },
-        "images": {
-          "vendor": "no_pattern_match"
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-21T04:00:32.449949+00:00",
+      "timestamp": "2026-11-28T04:00:32.974252+00:00",
       "url": "https://docs.heltec.org/en/node/esp32/wireless_paper/index.html"
     },
     "heltec-wireless-stick-v3": {
@@ -884,6 +881,24 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-27T04:00:33.280906+00:00",
       "url": "https://docs.m5stack.com/en/core/M5NanoC6"
+    },
+    "m5stack-core-aws": {
+      "board": "m5stack-core-aws",
+      "expires": "2026-12-05T04:00:32.974252+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-28T04:00:32.974252+00:00",
+      "url": "https://docs.m5stack.com/en/core/core2_for_aws"
     },
     "m5stack-core2": {
       "board": "m5stack-core2",
