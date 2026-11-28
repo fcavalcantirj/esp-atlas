@@ -180,17 +180,20 @@ def test_what_the_stage_publishes_passes_the_trusted_claims_gate(tmp_path):
     # m5stack-core, and the trusted `claims` check (scripts/check_claims.py, owner-only) failed the board
     # "field not under the backfill gate: images". The real stage on the real board and vendor page must
     # publish only what that gate re-derives.
+    # The input record is frozen (fixture, pre-backfill as on main at d9135134): the live catalog record gains
+    # getting_started once a tick backfills it (PR #2166), after which the stage correctly only cools it.
     import shutil
     import sys
     from pathlib import Path
     repo = Path(__file__).resolve().parent.parent
     sys.path[:0] = [str(repo / "scripts"), str(repo / "apps" / "core" / "src")]
     import check_claims
+    fixtures = repo / "jr" / "fixtures" / "board_backfill"
     rel = "data/boards/m5stack/m5stack-core/board.md"
     (tmp_path / rel).parent.mkdir(parents=True)
-    shutil.copy(repo / rel, tmp_path / rel)
+    shutil.copy(fixtures / "m5stack-core.board.md", tmp_path / rel)
     base = (tmp_path / rel).read_text()
-    page = (repo / "jr" / "fixtures" / "board_backfill" / "m5stack-core-basic.html").read_text()
+    page = (fixtures / "m5stack-core-basic.html").read_text()
     url = board_backfill.VENDOR_DOC_RESOLVERS["m5stack"]("m5stack-core", "esp32")[0]
 
     def fetch(u):
