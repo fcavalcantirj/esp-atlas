@@ -1,5 +1,18 @@
 {
   "by_board": {
+    "adafruit-feather-esp32-c6": {
+      "board": "adafruit-feather-esp32-c6",
+      "expires": "2026-12-05T12:00:33.080805+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-28T12:00:33.080805+00:00",
+      "url": null
+    },
     "adafruit-feather-esp32-s2": {
       "board": "adafruit-feather-esp32-s2",
       "expires": "2026-11-29T04:00:33.436471+00:00",
@@ -193,6 +206,24 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-27T08:00:32.923383+00:00",
       "url": "https://learn.adafruit.com/adafruit-metro-esp32-s3"
+    },
+    "adafruit-pycamera-s3": {
+      "board": "adafruit-pycamera-s3",
+      "expires": "2026-12-05T12:00:33.080805+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-28T12:00:33.080805+00:00",
+      "url": "https://learn.adafruit.com/adafruit-memento-camera-board"
     },
     "adafruit-qt-py-esp32": {
       "board": "adafruit-qt-py-esp32",
@@ -532,6 +563,22 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-25T12:00:33.512563+00:00",
       "url": "https://lilygo.cc/products/t-beam"
+    },
+    "lilygo-t-beam-supreme": {
+      "board": "lilygo-t-beam-supreme",
+      "expires": "2026-12-05T12:00:33.080805+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-28T12:00:33.080805+00:00",
+      "url": null
     },
     "lilygo-t-deck": {
       "board": "lilygo-t-deck",
@@ -1189,6 +1236,24 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-28T11:00:32.872748+00:00",
       "url": "https://docs.waveshare.com/ESP32-S3-RLCD-4.2"
+    },
+    "waveshare-esp32-s3-touch-lcd-349": {
+      "board": "waveshare-esp32-s3-touch-lcd-349",
+      "expires": "2026-12-05T12:00:33.080805+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "source_gated"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-28T12:00:33.080805+00:00",
+      "url": "https://docs.waveshare.com/ESP32-S3-Touch-LCD-3.49"
     },
     "xiao-esp32c3": {
       "board": "xiao-esp32c3",
