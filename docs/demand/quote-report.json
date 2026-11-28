@@ -1,6 +1,6 @@
 {
  "version": 1,
- "date": "2026-11-27",
+ "date": "2026-11-28",
  "complete": true,
  "records": [
   {
@@ -88,6 +88,19 @@
     "8 MB Flash, 8 MB PSRAM",
     "BAT interface (SH1.0-2P connector)",
     "elecrow_crowpanel_579"
+   ]
+  },
+  {
+   "record": "data/boards/lilygo/lilygo-t5-epaper-s3-pro/board.md",
+   "id": "lilygo-t5-epaper-s3-pro",
+   "urls": [
+    "https://github.com/Xinyuan-LilyGO/T5S3-4.7-e-paper-PRO",
+    "https://github.com/clackups/draftling/releases/tag/v1.0.1",
+    "https://lilygo.cc/products/t5-e-paper-s3-pro",
+    "https://lilygo.cc/cdn/shop/files/T5-4.7-S3-PRO_2.jpg?v=1744861731"
+   ],
+   "quotes": [
+    "lilygo_t5_epd_s3_pro"
    ]
   },
   {
@@ -438,6 +451,18 @@
    ]
   },
   {
+   "record": "data/boards/lilygo/lilygo-t-qt-pro/board.md",
+   "id": "lilygo-t-qt-pro",
+   "urls": [
+    "https://www.lilygo.cc/products/t-qt-pro",
+    "https://lilygo.cc/products/t-qt-pro",
+    "https://raw.githubusercontent.com/Xinyuan-LilyGO/T-QT/main/image/pinmap_en.jpg"
+   ],
+   "quotes": [
+    "Onboard functions"
+   ]
+  },
+  {
    "record": "data/boards/lilygo/lilygo-t-watch-s3/board.md",
    "id": "lilygo-t-watch-s3",
    "urls": [
@@ -448,19 +473,6 @@
    ],
    "quotes": [
     "Free: (cross mark)"
-   ]
-  },
-  {
-   "record": "data/boards/lilygo/lilygo-t5-epaper-s3-pro/board.md",
-   "id": "lilygo-t5-epaper-s3-pro",
-   "urls": [
-    "https://github.com/Xinyuan-LilyGO/T5S3-4.7-e-paper-PRO",
-    "https://github.com/clackups/draftling/releases/tag/v1.0.1",
-    "https://lilygo.cc/products/t5-e-paper-s3-pro",
-    "https://lilygo.cc/cdn/shop/files/T5-4.7-S3-PRO_2.jpg?v=1744861731"
-   ],
-   "quotes": [
-    "lilygo_t5_epd_s3_pro"
    ]
   },
   {
@@ -499,9 +511,9 @@
  "counts": {
   "with_quotes": 90,
   "judged": 90,
-  "fail": 21,
+  "fail": 22,
   "inconclusive": 14,
   "pages": 368,
-  "pages_read": 337
+  "pages_read": 338
  }
 }

@@ -1,0 +1,2235 @@
+{
+ "date": "2026-11-28",
+ "window": {
+  "start": "2026-10-30",
+  "end": "2026-11-26"
+ },
+ "weight_formula_version": "v2",
+ "d2_available": true,
+ "gsc_pull_ok": true,
+ "count": 30,
+ "items": [
+  {
+   "term": "esp32 c5",
+   "raw_terms": [
+    "esp32 c5",
+    "esp32 c5 specs",
+    "esp32-c5"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 85,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 33.9,
+   "events": null,
+   "zero_result": null,
+   "weight": 288.15,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-c5"
+   },
+   "gap": "RANKS_POORLY",
+   "landing_page": "https://esp-atlas.com/parts/esp32-c5",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "flipper zero esp32 port",
+   "raw_terms": [
+    "esp32 flipper port",
+    "flipper esp32 port",
+    "flipper port esp32",
+    "flipper zero esp32",
+    "flipper zero esp32 port",
+    "flipper zero firmware for esp32",
+    "flipper zero port",
+    "flipper zero port esp32",
+    "flipper-zero-esp32-port",
+    "sor3nt flipper zero",
+    "sor3nt/flipper-zero-esp32-port"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 420,
+   "clicks": 8,
+   "ctr": 0.019,
+   "position": 6.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 267.81,
+   "trends_interest": 0,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": "flipper-zero-esp32-adv",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/flipper-zero-esp32-adv",
+   "first_seen": "2026-11-22",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "esp32 s2",
+   "raw_terms": [
+    "esp32 s2",
+    "esp32-s2"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 45,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 57.3,
+   "events": null,
+   "zero_result": null,
+   "weight": 257.85,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-s2"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-s2",
+   "first_seen": "2026-11-25",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "esp32-s31",
+   "raw_terms": [
+    "esp32 s31",
+    "esp32-s31",
+    "esp32s31"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 128,
+   "clicks": 2,
+   "ctr": 0.0156,
+   "position": 12.2,
+   "events": null,
+   "zero_result": null,
+   "weight": 182.16,
+   "trends_interest": 37,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32-s3",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-s31"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-s31",
+   "first_seen": "2026-11-25",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "esp32 c6",
+   "raw_terms": [
+    "esp32 c6",
+    "esp32 c6 specs",
+    "esp32-c6"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 69,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 24.3,
+   "events": null,
+   "zero_result": null,
+   "weight": 167.67,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-c6"
+   },
+   "gap": "RANKS_POORLY",
+   "landing_page": "https://esp-atlas.com/parts/esp32-c6",
+   "first_seen": "2026-11-15",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "bruce esp",
+   "raw_terms": [
+    "bruce esp",
+    "bruce esp32",
+    "bruce firmware",
+    "bruce firmware esp32",
+    "esp32 bruce",
+    "firmware bruce"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 173,
+   "clicks": 3,
+   "ctr": 0.0173,
+   "position": 8.8,
+   "events": null,
+   "zero_result": null,
+   "weight": 149.61,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "bruce",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/bruce",
+   "first_seen": "2026-11-26",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "esp32 h2",
+   "raw_terms": [
+    "esp32 h2",
+    "esp32-h2"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 26,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 52.6,
+   "events": null,
+   "zero_result": null,
+   "weight": 136.76,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-h2"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-h2",
+   "first_seen": "2026-11-26",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "esp32 marauder",
+   "raw_terms": [
+    "esp32 marauder",
+    "marauder esp32 firmware",
+    "marauder firmware"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 123,
+   "clicks": 3,
+   "ctr": 0.0244,
+   "position": 10.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 121.2,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": "esp32marauder",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/esp32marauder",
+   "first_seen": "2026-11-26",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "picoware",
+   "raw_terms": [
+    "picoware"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 113,
+   "clicks": 1,
+   "ctr": 0.0088,
+   "position": 7.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 84.0,
+   "trends_interest": 0,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "picoware",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/picoware",
+   "first_seen": "2026-11-08",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "esp32 s3 specs",
+   "raw_terms": [
+    "esp32 s3 specs",
+    "esp32-s3"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 27,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 26.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 70.47,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-s3"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-s3",
+   "first_seen": "2026-11-26",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "advanceos cardputer",
+   "raw_terms": [
+    "advanceos cardputer",
+    "cardputer meshcore",
+    "cardputer zero firmware"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 87,
+   "clicks": 3,
+   "ctr": 0.0345,
+   "position": 7.8,
+   "events": null,
+   "zero_result": null,
+   "weight": 65.52,
+   "trends_interest": null,
+   "resolved": {
+    "board": "m5cardputer",
+    "board_model": null,
+    "chip": "esp32-s3",
+    "firmware_token": "advanceos-for-cardputer",
+    "capability": [],
+    "part": null
+   },
+   "gap": "UNCOVERED",
+   "landing_page": "https://esp-atlas.com/firmware/flipper-zero-meets-m5stack-cardputer",
+   "first_seen": "2026-11-18",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "esp32-c3",
+   "raw_terms": [
+    "esp32-c3"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 16,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 40.4,
+   "events": null,
+   "zero_result": null,
+   "weight": 64.64,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32-c3",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-c3"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-c3",
+   "first_seen": "2026-11-21",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "term512",
+   "raw_terms": [
+    "term512"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 67,
+   "clicks": 1,
+   "ctr": 0.0149,
+   "position": 8.7,
+   "events": null,
+   "zero_result": null,
+   "weight": 57.42,
+   "trends_interest": null,
+   "resolved": null,
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/firmware/area512",
+   "first_seen": "2026-11-08",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "cathack firmware",
+   "raw_terms": [
+    "cathack",
+    "cathack firmware"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 87,
+   "clicks": 5,
+   "ctr": 0.0575,
+   "position": 5.6,
+   "events": null,
+   "zero_result": null,
+   "weight": 45.92,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "cathack",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/cathack",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "esp32-p4",
+   "raw_terms": [
+    "esp32-p4"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 11,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 38.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 42.35,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32-p4",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-p4"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-p4",
+   "first_seen": "2026-11-28",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "area 512 cardputer",
+   "raw_terms": [
+    "area 512 cardputer",
+    "area512 cardputer"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 61,
+   "clicks": 1,
+   "ctr": 0.0164,
+   "position": 6.0,
+   "events": null,
+   "zero_result": null,
+   "weight": 36.0,
+   "trends_interest": null,
+   "resolved": {
+    "board": "m5cardputer",
+    "board_model": null,
+    "chip": "esp32-s3",
+    "firmware_token": "area512",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/area512",
+   "first_seen": "2026-11-15",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "esphome flasher",
+   "raw_terms": [
+    "esphome flasher",
+    "esphome web flasher"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 41,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 7.0,
+   "events": null,
+   "zero_result": null,
+   "weight": 28.7,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "esphome",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/esphome",
+   "first_seen": "2026-11-28",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "ghost esp",
+   "raw_terms": [
+    "ghost esp"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 15,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 18.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 27.15,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "ghost-esp",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/ghost-esp",
+   "first_seen": "2026-11-15",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "fnk0104s",
+   "raw_terms": [
+    "fnk0104s"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 32,
+   "clicks": 1,
+   "ctr": 0.0312,
+   "position": 8.6,
+   "events": null,
+   "zero_result": null,
+   "weight": 26.66,
+   "trends_interest": null,
+   "resolved": {
+    "board": "freenove-fnk0104s",
+    "board_model": "fnk0104s",
+    "chip": "esp32-s3",
+    "firmware_token": null,
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-s3",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "tagtinker",
+   "raw_terms": [
+    "tagtinker"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 31,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 8.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 26.35,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "tagtinker-adv",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/tagtinker-adv",
+   "first_seen": "2026-11-11",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "esp32 c2",
+   "raw_terms": [
+    "esp32 c2",
+    "esp32-c2"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 23,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 10.4,
+   "events": null,
+   "zero_result": null,
+   "weight": 23.92,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-c2"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-c2",
+   "first_seen": "2026-11-28",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "marauders esp",
+   "raw_terms": [
+    "marauders esp"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 14,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 13.0,
+   "events": null,
+   "zero_result": null,
+   "weight": 18.2,
+   "trends_interest": null,
+   "resolved": null,
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/firmware/esp32marauder",
+   "first_seen": "2026-11-27",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "evil cardputer",
+   "raw_terms": [
+    "evil cardputer"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 10,
+   "clicks": 1,
+   "ctr": 0.1,
+   "position": 19.6,
+   "events": null,
+   "zero_result": null,
+   "weight": 17.64,
+   "trends_interest": null,
+   "resolved": {
+    "board": "m5cardputer",
+    "board_model": null,
+    "chip": "esp32-s3",
+    "firmware_token": "evil-m5project",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/evil-portal-m5stack",
+   "first_seen": "2026-11-25",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "meshcore cardputer adv",
+   "raw_terms": [
+    "meshcore cardputer adv"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 16,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 10.0,
+   "events": null,
+   "zero_result": null,
+   "weight": 16.0,
+   "trends_interest": null,
+   "resolved": {
+    "board": "m5cardputer-adv",
+    "board_model": null,
+    "chip": "esp32-s3",
+    "firmware_token": "meshcore-cardputer",
+    "capability": [
+     "mesh"
+    ],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/meshcore-cardputer-adv",
+   "first_seen": "2026-11-20",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "m5gotchi",
+   "raw_terms": [
+    "m5gotchi"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 30,
+   "clicks": 1,
+   "ctr": 0.0333,
+   "position": 5.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 15.95,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "m5gotchi",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/m5gotchi",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "area512",
+   "raw_terms": [
+    "area512"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 30,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 4.9,
+   "events": null,
+   "zero_result": null,
+   "weight": 14.7,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "area512",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/area512",
+   "first_seen": "2026-11-19",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "teamnerdminer@getalby.com",
+   "raw_terms": [
+    "teamnerdminer@getalby.com"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 16,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 8.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 12.96,
+   "trends_interest": null,
+   "resolved": null,
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/firmware/nerdminer-v2",
+   "first_seen": "2026-11-25",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "keeloq_mfcodes",
+   "raw_terms": [
+    "keeloq_mfcodes"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 15,
+   "clicks": 1,
+   "ctr": 0.0667,
+   "position": 7.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 9.94,
+   "trends_interest": null,
+   "resolved": null,
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/firmware/flipper-zero-esp32-adv",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "palnagotchi",
+   "raw_terms": [
+    "palnagotchi"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 13,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 6.9,
+   "events": null,
+   "zero_result": null,
+   "weight": 8.97,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": null,
+    "firmware_token": "m5-palnagotchi",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/m5-palnagotchi",
+   "first_seen": "2026-11-27",
+   "last_seen": "2026-11-28"
+  },
+  {
+   "term": "esp32-h4 datasheet",
+   "raw_terms": [
+    "esp32-h4 datasheet"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 10,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 5.2,
+   "events": null,
+   "zero_result": null,
+   "weight": 5.2,
+   "trends_interest": null,
+   "resolved": {
+    "board": null,
+    "board_model": null,
+    "chip": "esp32-h4",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-h4"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-h4",
+   "first_seen": "2026-11-19",
+   "last_seen": "2026-11-28"
+  }
+ ],
+ "pages": [
+  {
+   "page": "/firmware/flipper-zero-esp32-adv",
+   "clicks": 21,
+   "impressions": 1297,
+   "position": 7.55
+  },
+  {
+   "page": "/firmware/bruce",
+   "clicks": 13,
+   "impressions": 681,
+   "position": 10.06
+  },
+  {
+   "page": "/firmware/flipper-zero-meets-m5stack-cardputer",
+   "clicks": 14,
+   "impressions": 587,
+   "position": 8.16
+  },
+  {
+   "page": "/firmware/esp32marauder",
+   "clicks": 11,
+   "impressions": 475,
+   "position": 9.17
+  },
+  {
+   "page": "/parts/esp32-c6",
+   "clicks": 2,
+   "impressions": 408,
+   "position": 11.69
+  },
+  {
+   "page": "/firmware/area512",
+   "clicks": 12,
+   "impressions": 356,
+   "position": 6.57
+  },
+  {
+   "page": "/firmware/launcher",
+   "clicks": 12,
+   "impressions": 316,
+   "position": 9.67
+  },
+  {
+   "page": "/firmware/evil-portal-m5stack",
+   "clicks": 4,
+   "impressions": 275,
+   "position": 9.31
+  },
+  {
+   "page": "/firmware/meshcore-cardputer-adv",
+   "clicks": 9,
+   "impressions": 259,
+   "position": 7.71
+  },
+  {
+   "page": "/firmware/nerdminer-v2",
+   "clicks": 12,
+   "impressions": 245,
+   "position": 7.68
+  },
+  {
+   "page": "/parts/esp32-s3",
+   "clicks": 1,
+   "impressions": 245,
+   "position": 17.08
+  },
+  {
+   "page": "/firmware/tamaputer",
+   "clicks": 11,
+   "impressions": 244,
+   "position": 5.87
+  },
+  {
+   "page": "/firmware/m5gotchi",
+   "clicks": 11,
+   "impressions": 234,
+   "position": 6.11
+  },
+  {
+   "page": "/parts/m5stick-s3",
+   "clicks": 1,
+   "impressions": 228,
+   "position": 8.43
+  },
+  {
+   "page": "/firmware/picoware",
+   "clicks": 2,
+   "impressions": 223,
+   "position": 7.04
+  },
+  {
+   "page": "/parts/esp32-c5",
+   "clicks": 2,
+   "impressions": 223,
+   "position": 20.78
+  },
+  {
+   "page": "/parts/esp32-s31",
+   "clicks": 2,
+   "impressions": 211,
+   "position": 12.21
+  },
+  {
+   "page": "/firmware/xiaozhi-esp32",
+   "clicks": 6,
+   "impressions": 209,
+   "position": 8.24
+  },
+  {
+   "page": "/firmware/cathack",
+   "clicks": 14,
+   "impressions": 206,
+   "position": 4.62
+  },
+  {
+   "page": "/firmware/m5stick-nemo",
+   "clicks": 5,
+   "impressions": 194,
+   "position": 6.73
+  },
+  {
+   "page": "/firmware/advanceos-for-cardputer",
+   "clicks": 13,
+   "impressions": 156,
+   "position": 4.96
+  },
+  {
+   "page": "/parts/esp32-h4",
+   "clicks": 2,
+   "impressions": 136,
+   "position": 8.45
+  },
+  {
+   "page": "/firmware/bettermochi",
+   "clicks": 15,
+   "impressions": 135,
+   "position": 6.17
+  },
+  {
+   "page": "/firmware/m5porkchop",
+   "clicks": 3,
+   "impressions": 133,
+   "position": 6.97
+  },
+  {
+   "page": "/firmware/ghostesp",
+   "clicks": 4,
+   "impressions": 115,
+   "position": 15.3
+  },
+  {
+   "page": "/firmware/rogueduck",
+   "clicks": 7,
+   "impressions": 115,
+   "position": 8.32
+  },
+  {
+   "page": "/firmware/m5cardputer-webradio",
+   "clicks": 2,
+   "impressions": 95,
+   "position": 6.68
+  },
+  {
+   "page": "/firmware/tagtinker-adv",
+   "clicks": 5,
+   "impressions": 94,
+   "position": 7.65
+  },
+  {
+   "page": "/firmware/esphome",
+   "clicks": 2,
+   "impressions": 88,
+   "position": 8.12
+  },
+  {
+   "page": "/firmware/stackchan-mcp",
+   "clicks": 0,
+   "impressions": 80,
+   "position": 10.78
+  },
+  {
+   "page": "/parts/esp32-s2",
+   "clicks": 0,
+   "impressions": 79,
+   "position": 38.28
+  },
+  {
+   "page": "/firmware/stack-chan",
+   "clicks": 5,
+   "impressions": 78,
+   "position": 9.63
+  },
+  {
+   "page": "/firmware/wled",
+   "clicks": 0,
+   "impressions": 77,
+   "position": 11.97
+  },
+  {
+   "page": "/",
+   "clicks": 2,
+   "impressions": 76,
+   "position": 6.95
+  },
+  {
+   "page": "/firmware/ghost-esp",
+   "clicks": 2,
+   "impressions": 75,
+   "position": 12.6
+  },
+  {
+   "page": "/parts/esp32-c2",
+   "clicks": 0,
+   "impressions": 75,
+   "position": 8.44
+  },
+  {
+   "page": "/parts/esp32-h2",
+   "clicks": 0,
+   "impressions": 74,
+   "position": 25.91
+  },
+  {
+   "page": "/firmware/cardbuddy",
+   "clicks": 7,
+   "impressions": 65,
+   "position": 4.35
+  },
+  {
+   "page": "/parts/esp32-c3",
+   "clicks": 0,
+   "impressions": 62,
+   "position": 28.73
+  },
+  {
+   "page": "/parts/esp32-p4",
+   "clicks": 0,
+   "impressions": 59,
+   "position": 20.31
+  },
+  {
+   "page": "/firmware/evil-m5project",
+   "clicks": 2,
+   "impressions": 58,
+   "position": 10.33
+  },
+  {
+   "page": "/parts/waveshare-esp32-s3-rlcd-42",
+   "clicks": 2,
+   "impressions": 57,
+   "position": 15.19
+  },
+  {
+   "page": "/firmware/m5apps",
+   "clicks": 1,
+   "impressions": 55,
+   "position": 7.51
+  },
+  {
+   "page": "/firmware/m5-palnagotchi",
+   "clicks": 2,
+   "impressions": 54,
+   "position": 5.11
+  },
+  {
+   "page": "/firmware/tasmota",
+   "clicks": 1,
+   "impressions": 54,
+   "position": 14.28
+  },
+  {
+   "page": "/parts/freenove-fnk0104b",
+   "clicks": 1,
+   "impressions": 50,
+   "position": 6.46
+  },
+  {
+   "page": "/boards",
+   "clicks": 1,
+   "impressions": 48,
+   "position": 33.12
+  },
+  {
+   "page": "/firmware/cyber-controller",
+   "clicks": 1,
+   "impressions": 43,
+   "position": 8.7
+  },
+  {
+   "page": "/parts/freenove-fnk0104s",
+   "clicks": 1,
+   "impressions": 43,
+   "position": 8.09
+  },
+  {
+   "page": "/firmware/esp-claw",
+   "clicks": 1,
+   "impressions": 42,
+   "position": 8.5
+  },
+  {
+   "page": "/firmware/squachwatch-cyd",
+   "clicks": 0,
+   "impressions": 42,
+   "position": 6.62
+  },
+  {
+   "page": "/firmware/ruview",
+   "clicks": 0,
+   "impressions": 40,
+   "position": 9.6
+  },
+  {
+   "page": "/firmware",
+   "clicks": 2,
+   "impressions": 38,
+   "position": 9.74
+  },
+  {
+   "page": "/firmware/m5tool",
+   "clicks": 3,
+   "impressions": 38,
+   "position": 6.26
+  },
+  {
+   "page": "/firmware/meshtastic",
+   "clicks": 1,
+   "impressions": 38,
+   "position": 14.89
+  },
+  {
+   "page": "/firmware/usbarmyknife",
+   "clicks": 1,
+   "impressions": 38,
+   "position": 7.53
+  },
+  {
+   "page": "/firmware/ai-cardputer-adv-a-portable-ai-assistant",
+   "clicks": 1,
+   "impressions": 36,
+   "position": 11.94
+  },
+  {
+   "page": "/firmware/esp32-homekit-remote",
+   "clicks": 1,
+   "impressions": 36,
+   "position": 7.97
+  },
+  {
+   "page": "/firmware/mclite",
+   "clicks": 1,
+   "impressions": 34,
+   "position": 6.71
+  },
+  {
+   "page": "/firmware/microgroove",
+   "clicks": 3,
+   "impressions": 34,
+   "position": 7.15
+  },
+  {
+   "page": "/firmware/stellar-map",
+   "clicks": 0,
+   "impressions": 33,
+   "position": 6.39
+  },
+  {
+   "page": "/firmware/droidputter",
+   "clicks": 3,
+   "impressions": 29,
+   "position": 7.86
+  },
+  {
+   "page": "/firmware/pydos",
+   "clicks": 0,
+   "impressions": 28,
+   "position": 7.07
+  },
+  {
+   "page": "/firmware/zx-spectrum-cardputer-internal",
+   "clicks": 0,
+   "impressions": 26,
+   "position": 9.08
+  },
+  {
+   "page": "/parts/lolin-d32",
+   "clicks": 0,
+   "impressions": 26,
+   "position": 6.65
+  },
+  {
+   "page": "/firmware/micro-journal",
+   "clicks": 2,
+   "impressions": 25,
+   "position": 6.88
+  },
+  {
+   "page": "/firmware/pyxis",
+   "clicks": 1,
+   "impressions": 24,
+   "position": 9.17
+  },
+  {
+   "page": "/brands/lolin",
+   "clicks": 1,
+   "impressions": 23,
+   "position": 8.3
+  },
+  {
+   "page": "/firmware/draftling",
+   "clicks": 0,
+   "impressions": 23,
+   "position": 11.65
+  },
+  {
+   "page": "/firmware/esp-game-server",
+   "clicks": 1,
+   "impressions": 23,
+   "position": 5.78
+  },
+  {
+   "page": "/firmware/tiny-journal",
+   "clicks": 1,
+   "impressions": 23,
+   "position": 7.74
+  },
+  {
+   "page": "/parts/adafruit-feather-esp32-s3-no-psram",
+   "clicks": 1,
+   "impressions": 23,
+   "position": 36.74
+  },
+  {
+   "page": "/firmware/nucleoos",
+   "clicks": 1,
+   "impressions": 22,
+   "position": 6.59
+  },
+  {
+   "page": "/parts/m5stack-cores3-se",
+   "clicks": 0,
+   "impressions": 22,
+   "position": 13.18
+  },
+  {
+   "page": "/firmware/cardputer-microhydra",
+   "clicks": 0,
+   "impressions": 20,
+   "position": 6.25
+  },
+  {
+   "page": "/firmware/openhasp",
+   "clicks": 2,
+   "impressions": 20,
+   "position": 6.8
+  },
+  {
+   "page": "/firmware/openmqttgateway",
+   "clicks": 0,
+   "impressions": 20,
+   "position": 25.8
+  },
+  {
+   "page": "/parts/xiao-esp32s3-sense",
+   "clicks": 0,
+   "impressions": 20,
+   "position": 7.6
+  },
+  {
+   "page": "/firmware/flock-you",
+   "clicks": 1,
+   "impressions": 19,
+   "position": 8.21
+  },
+  {
+   "page": "/firmware/m5-crystal",
+   "clicks": 1,
+   "impressions": 18,
+   "position": 7.22
+  },
+  {
+   "page": "/parts/heltec-wifi-lora-32-v4",
+   "clicks": 0,
+   "impressions": 18,
+   "position": 14.89
+  },
+  {
+   "page": "/firmware/boot-linux-esp32s3-playground",
+   "clicks": 1,
+   "impressions": 17,
+   "position": 6.47
+  },
+  {
+   "page": "/parts/adafruit-feather-esp32-c6",
+   "clicks": 0,
+   "impressions": 17,
+   "position": 37.94
+  },
+  {
+   "page": "/parts/esp32",
+   "clicks": 0,
+   "impressions": 17,
+   "position": 25.82
+  },
+  {
+   "page": "/parts/freenove-fnk0104a",
+   "clicks": 0,
+   "impressions": 17,
+   "position": 7.41
+  },
+  {
+   "page": "/parts/lolin-s3",
+   "clicks": 1,
+   "impressions": 17,
+   "position": 6.53
+  },
+  {
+   "page": "/parts/waveshare-esp32-s3-touch-lcd-349",
+   "clicks": 0,
+   "impressions": 17,
+   "position": 13.06
+  },
+  {
+   "page": "/firmware/breezybox-cardputer",
+   "clicks": 1,
+   "impressions": 16,
+   "position": 5.19
+  },
+  {
+   "page": "/firmware/m5hamradio",
+   "clicks": 0,
+   "impressions": 16,
+   "position": 7.56
+  },
+  {
+   "page": "/parts/esp32-c5-devkitc-1",
+   "clicks": 0,
+   "impressions": 16,
+   "position": 6.69
+  },
+  {
+   "page": "/parts/m5nanoc6",
+   "clicks": 0,
+   "impressions": 16,
+   "position": 7.75
+  },
+  {
+   "page": "/brands/unexpected-maker",
+   "clicks": 0,
+   "impressions": 14,
+   "position": 5.79
+  },
+  {
+   "page": "/firmware/esp32-r4sgate-for-redmond",
+   "clicks": 0,
+   "impressions": 14,
+   "position": 14.86
+  },
+  {
+   "page": "/parts/lolin-s2-mini",
+   "clicks": 0,
+   "impressions": 14,
+   "position": 7.71
+  },
+  {
+   "page": "/parts/m5stack-papers3",
+   "clicks": 0,
+   "impressions": 14,
+   "position": 8.14
+  },
+  {
+   "page": "/parts/m5stamp-s3",
+   "clicks": 0,
+   "impressions": 14,
+   "position": 6.86
+  },
+  {
+   "page": "/firmware/m5isobusvt",
+   "clicks": 0,
+   "impressions": 13,
+   "position": 7.15
+  },
+  {
+   "page": "/firmware/plai",
+   "clicks": 0,
+   "impressions": 13,
+   "position": 6.15
+  },
+  {
+   "page": "/firmware/wifi-capture-page-m5cardputer",
+   "clicks": 0,
+   "impressions": 13,
+   "position": 5.69
+  },
+  {
+   "page": "/how-we-work",
+   "clicks": 2,
+   "impressions": 13,
+   "position": 3.08
+  },
+  {
+   "page": "/parts/esp32-lyrat",
+   "clicks": 0,
+   "impressions": 13,
+   "position": 8.77
+  },
+  {
+   "page": "/parts/lolin-d32-pro",
+   "clicks": 0,
+   "impressions": 13,
+   "position": 6.31
+  },
+  {
+   "page": "/firmware/cardputergpsmap",
+   "clicks": 2,
+   "impressions": 12,
+   "position": 11.08
+  },
+  {
+   "page": "/firmware/m5stack-sd-updater",
+   "clicks": 0,
+   "impressions": 12,
+   "position": 6.42
+  },
+  {
+   "page": "/firmware/sound-terrarium",
+   "clicks": 0,
+   "impressions": 12,
+   "position": 6.42
+  },
+  {
+   "page": "/parts/esp32-c61",
+   "clicks": 0,
+   "impressions": 12,
+   "position": 10.75
+  },
+  {
+   "page": "/parts/esp32-wrover-e",
+   "clicks": 0,
+   "impressions": 12,
+   "position": 9.08
+  },
+  {
+   "page": "/brands/m5stack",
+   "clicks": 0,
+   "impressions": 11,
+   "position": 25.73
+  },
+  {
+   "page": "/firmware/cardputer-abs-b-radar",
+   "clicks": 2,
+   "impressions": 11,
+   "position": 5.73
+  },
+  {
+   "page": "/parts/lilygo-t-dongle-s3",
+   "clicks": 0,
+   "impressions": 11,
+   "position": 7.64
+  },
+  {
+   "page": "/wizard",
+   "clicks": 0,
+   "impressions": 11,
+   "position": 8.18
+  },
+  {
+   "page": "/firmware/bbn-m5stack-tough",
+   "clicks": 0,
+   "impressions": 10,
+   "position": 30.9
+  },
+  {
+   "page": "/firmware/esp32-bit-pirate",
+   "clicks": 0,
+   "impressions": 10,
+   "position": 36.1
+  },
+  {
+   "page": "/firmware/m5cardputer-voice-changer",
+   "clicks": 2,
+   "impressions": 10,
+   "position": 4.5
+  },
+  {
+   "page": "/firmware/raising-hell-cardputer",
+   "clicks": 0,
+   "impressions": 10,
+   "position": 13.5
+  },
+  {
+   "page": "/parts/esp32-devkitc-v4",
+   "clicks": 0,
+   "impressions": 10,
+   "position": 8.3
+  },
+  {
+   "page": "/parts/lolin-s3-mini",
+   "clicks": 0,
+   "impressions": 10,
+   "position": 4.6
+  },
+  {
+   "page": "/parts/m5cardputer",
+   "clicks": 1,
+   "impressions": 10,
+   "position": 7.6
+  },
+  {
+   "page": "/brands/seeed",
+   "clicks": 0,
+   "impressions": 9,
+   "position": 13.22
+  },
+  {
+   "page": "/firmware/ghostble",
+   "clicks": 0,
+   "impressions": 9,
+   "position": 8.44
+  },
+  {
+   "page": "/firmware/meshtastic-adv",
+   "clicks": 0,
+   "impressions": 9,
+   "position": 10.78
+  },
+  {
+   "page": "/parts/beetle-esp32-c6",
+   "clicks": 0,
+   "impressions": 9,
+   "position": 6.67
+  },
+  {
+   "page": "/parts/m5stack-cores3",
+   "clicks": 0,
+   "impressions": 9,
+   "position": 7.67
+  },
+  {
+   "page": "/firmware/cardputer-adv-wifi-ble-radar",
+   "clicks": 0,
+   "impressions": 8,
+   "position": 8.62
+  },
+  {
+   "page": "/firmware/cardputer-drums",
+   "clicks": 0,
+   "impressions": 8,
+   "position": 4.88
+  },
+  {
+   "page": "/firmware/clawputer",
+   "clicks": 0,
+   "impressions": 8,
+   "position": 8.38
+  },
+  {
+   "page": "/parts/adafruit-sparkle-motion",
+   "clicks": 0,
+   "impressions": 8,
+   "position": 58.62
+  },
+  {
+   "page": "/parts/esp32-ethernet-kit",
+   "clicks": 0,
+   "impressions": 8,
+   "position": 16.38
+  },
+  {
+   "page": "/parts/lolin-c3-mini",
+   "clicks": 0,
+   "impressions": 8,
+   "position": 6.75
+  },
+  {
+   "page": "/brands/adafruit",
+   "clicks": 0,
+   "impressions": 7,
+   "position": 33.43
+  },
+  {
+   "page": "/brands/lilygo",
+   "clicks": 0,
+   "impressions": 7,
+   "position": 12.86
+  },
+  {
+   "page": "/brands/sparkfun",
+   "clicks": 0,
+   "impressions": 7,
+   "position": 44.86
+  },
+  {
+   "page": "/firmware/m5stack-avatar-mic",
+   "clicks": 0,
+   "impressions": 7,
+   "position": 6.14
+  },
+  {
+   "page": "/parts/firebeetle-esp32",
+   "clicks": 0,
+   "impressions": 7,
+   "position": 8.29
+  },
+  {
+   "page": "/parts/um-nanos3",
+   "clicks": 0,
+   "impressions": 7,
+   "position": 5.0
+  },
+  {
+   "page": "/brands/heltec",
+   "clicks": 0,
+   "impressions": 6,
+   "position": 13.0
+  },
+  {
+   "page": "/firmware/saturn",
+   "clicks": 0,
+   "impressions": 6,
+   "position": 6.0
+  },
+  {
+   "page": "/parts/xiao-esp32s3",
+   "clicks": 0,
+   "impressions": 6,
+   "position": 15.17
+  },
+  {
+   "page": "/firmware/meshcoreterm",
+   "clicks": 0,
+   "impressions": 5,
+   "position": 5.2
+  },
+  {
+   "page": "/firmware/pigtail",
+   "clicks": 0,
+   "impressions": 5,
+   "position": 6.2
+  },
+  {
+   "page": "/firmware/ratcom",
+   "clicks": 0,
+   "impressions": 5,
+   "position": 3.8
+  },
+  {
+   "page": "/parts/adafruit-matrixportal-s3",
+   "clicks": 0,
+   "impressions": 5,
+   "position": 8.6
+  },
+  {
+   "page": "/parts/adafruit-qt-py-esp32-c3",
+   "clicks": 0,
+   "impressions": 5,
+   "position": 8.2
+  },
+  {
+   "page": "/parts/esp32-c3-mini-1",
+   "clicks": 0,
+   "impressions": 5,
+   "position": 19.2
+  },
+  {
+   "page": "/parts/firebeetle-2-esp32-c6",
+   "clicks": 0,
+   "impressions": 5,
+   "position": 9.0
+  },
+  {
+   "page": "/parts/firebeetle-2-esp32-s3",
+   "clicks": 0,
+   "impressions": 5,
+   "position": 7.4
+  },
+  {
+   "page": "/parts/m5dial",
+   "clicks": 0,
+   "impressions": 5,
+   "position": 8.0
+  },
+  {
+   "page": "/parts/m5stamp-c3",
+   "clicks": 0,
+   "impressions": 5,
+   "position": 5.0
+  },
+  {
+   "page": "/brands/freenove",
+   "clicks": 1,
+   "impressions": 4,
+   "position": 6.75
+  },
+  {
+   "page": "/firmware/ai-stackchan2-readme",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 7.0
+  },
+  {
+   "page": "/firmware/atom-watch",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 7.75
+  },
+  {
+   "page": "/firmware/badcard",
+   "clicks": 1,
+   "impressions": 4,
+   "position": 3.75
+  },
+  {
+   "page": "/firmware/breach-os",
+   "clicks": 1,
+   "impressions": 4,
+   "position": 6.0
+  },
+  {
+   "page": "/firmware/cardradio",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 1.5
+  },
+  {
+   "page": "/firmware/claude-desktop-buddy-cardputer",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 6.0
+  },
+  {
+   "page": "/firmware/little-devhelper",
+   "clicks": 2,
+   "impressions": 4,
+   "position": 3.0
+  },
+  {
+   "page": "/firmware/m5stickcplus2-seamonsue",
+   "clicks": 1,
+   "impressions": 4,
+   "position": 3.25
+  },
+  {
+   "page": "/parts/beetle-esp32-c3",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 5.5
+  },
+  {
+   "page": "/parts/lilygo-t5-epaper-s3-pro",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 19.0
+  },
+  {
+   "page": "/parts/m5atoms3-lite",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 7.75
+  },
+  {
+   "page": "/brands/espressif",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 50.0
+  },
+  {
+   "page": "/firmware/bitmap16dx",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 8.0
+  },
+  {
+   "page": "/firmware/m5cardputer-chat-with-gemini-api",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 8.0
+  },
+  {
+   "page": "/firmware/m5cardputer-userdemo",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 8.0
+  },
+  {
+   "page": "/firmware/paperweb",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 10.0
+  },
+  {
+   "page": "/parts/adafruit-feather-esp32-s3",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 9.0
+  },
+  {
+   "page": "/parts/adafruit-feather-esp32-s3-tft",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 3.0
+  },
+  {
+   "page": "/parts/adafruit-magtag",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 22.67
+  },
+  {
+   "page": "/parts/adafruit-metro-esp32-s3",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 6.67
+  },
+  {
+   "page": "/parts/esp32-c61-devkitc-1",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 8.33
+  },
+  {
+   "page": "/parts/esp32-s3-devkitc-1",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 10.67
+  },
+  {
+   "page": "/parts/m5atoms3",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 9.0
+  },
+  {
+   "page": "/parts/m5stack-core2",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 12.0
+  },
+  {
+   "page": "/parts/xiao-esp32c3",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 18.67
+  },
+  {
+   "page": "/firmware/cardputer-iss-tracker",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 9.5
+  },
+  {
+   "page": "/firmware/circuitpython",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 7.5
+  },
+  {
+   "page": "/firmware/deskpet-firmware",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 5.5
+  },
+  {
+   "page": "/firmware/furble",
+   "clicks": 1,
+   "impressions": 2,
+   "position": 2.0
+  },
+  {
+   "page": "/firmware/semi-evil-m5dial",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 7.5
+  },
+  {
+   "page": "/firmware/solotputer",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 1.0
+  },
+  {
+   "page": "/firmware/wadamesh",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 8.0
+  },
+  {
+   "page": "/parts/adafruit-feather-esp32-v2",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 10.0
+  },
+  {
+   "page": "/parts/adafruit-funhouse",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 7.5
+  },
+  {
+   "page": "/parts/adafruit-qt-py-esp32-s2",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 6.0
+  },
+  {
+   "page": "/parts/elecrow-crowpanel-esp32-s3-579-epaper",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 21.5
+  },
+  {
+   "page": "/parts/esp32-s3-devkitm-1",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 7.0
+  },
+  {
+   "page": "/parts/esp32-wroom-32e",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 5.5
+  },
+  {
+   "page": "/parts/firebeetle-2-esp32-e",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 16.5
+  },
+  {
+   "page": "/parts/lilygo-t-display",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 32.5
+  },
+  {
+   "page": "/parts/lilygo-t-qt-pro",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 7.0
+  },
+  {
+   "page": "/parts/xiao-esp32c6",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 6.0
+  },
+  {
+   "page": "/brands/elecrow",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 21.0
+  },
+  {
+   "page": "/brands/waveshare",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 35.0
+  },
+  {
+   "page": "/firmware/bytebed",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 2.0
+  },
+  {
+   "page": "/firmware/cardputer-ai",
+   "clicks": 1,
+   "impressions": 1,
+   "position": 2.0
+  },
+  {
+   "page": "/firmware/codebuddy",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 3.0
+  },
+  {
+   "page": "/firmware/crowos",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 1.0
+  },
+  {
+   "page": "/firmware/infiltra",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 5.0
+  },
+  {
+   "page": "/firmware/interactivesetup-m5cardputer-sshclient",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 5.0
+  },
+  {
+   "page": "/firmware/m5-clicker-hamster",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 9.0
+  },
+  {
+   "page": "/firmware/mp3playerform5cardputer",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 4.0
+  },
+  {
+   "page": "/firmware/nyan",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 10.0
+  },
+  {
+   "page": "/firmware/orca-one",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 2.0
+  },
+  {
+   "page": "/firmware/pip-boy-weather-clock",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 5.0
+  },
+  {
+   "page": "/firmware/taskhub-for-sticks3",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 7.0
+  },
+  {
+   "page": "/parts/adafruit-feather-esp32-s2-reverse-tft",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 73.0
+  },
+  {
+   "page": "/parts/adafruit-qt-py-esp32-s3",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 10.0
+  },
+  {
+   "page": "/parts/adafruit-qt-py-esp32-s3-no-psram",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 37.0
+  },
+  {
+   "page": "/parts/adafruit-sparkle-motion-mini",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 8.0
+  },
+  {
+   "page": "/parts/esp32-c6-devkitc-1",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 5.0
+  },
+  {
+   "page": "/parts/esp32-c6-devkitm-1",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 9.0
+  },
+  {
+   "page": "/parts/esp32-devkitm-1",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 6.0
+  },
+  {
+   "page": "/parts/esp32-pico-kit",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 9.0
+  },
+  {
+   "page": "/parts/esp32-s3-wroom-1",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 13.0
+  },
+  {
+   "page": "/parts/heltec-wireless-paper",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 9.0
+  },
+  {
+   "page": "/parts/lilygo-t-beam",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 3.0
+  },
+  {
+   "page": "/parts/lilygo-t-deck",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 6.0
+  },
+  {
+   "page": "/parts/lilygo-t-watch-s3",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 43.0
+  },
+  {
+   "page": "/parts/m5atom-lite",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 9.0
+  },
+  {
+   "page": "/parts/m5stick-cplus2",
+   "clicks": 1,
+   "impressions": 1,
+   "position": 6.0
+  },
+  {
+   "page": "/parts/soldered-inkplate-10",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 7.0
+  },
+  {
+   "page": "/parts/soldered-inkplate-2",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 21.0
+  },
+  {
+   "page": "/parts/sparkfun-iot-redboard-esp32",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 19.0
+  },
+  {
+   "page": "/parts/sparkfun-thing-plus-esp32-wroom",
+   "clicks": 0,
+   "impressions": 1,
+   "position": 16.0
+  }
+ ]
+}

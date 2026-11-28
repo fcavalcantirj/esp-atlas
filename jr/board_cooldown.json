@@ -1122,7 +1122,7 @@
     },
     "um-feathers3": {
       "board": "um-feathers3",
-      "expires": "2026-12-05T10:00:33.393246+00:00",
+      "expires": "2026-12-05T11:00:32.872748+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -1130,12 +1130,12 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-28T10:00:33.393246+00:00",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00",
       "url": "https://esp32s3.com/feathers3.html"
     },
     "um-nanos3": {
       "board": "um-nanos3",
-      "expires": "2026-12-05T10:00:33.393246+00:00",
+      "expires": "2026-12-05T11:00:32.872748+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -1143,12 +1143,12 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-28T10:00:33.393246+00:00",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00",
       "url": "https://esp32s3.com/nanos3.html"
     },
     "um-pros3": {
       "board": "um-pros3",
-      "expires": "2026-12-05T10:00:33.393246+00:00",
+      "expires": "2026-12-05T11:00:32.872748+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -1156,12 +1156,12 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-28T10:00:33.393246+00:00",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00",
       "url": "https://esp32s3.com/pros3.html"
     },
     "um-tinys3": {
       "board": "um-tinys3",
-      "expires": "2026-12-05T10:00:33.393246+00:00",
+      "expires": "2026-12-05T11:00:32.872748+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -1169,12 +1169,12 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-28T10:00:33.393246+00:00",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00",
       "url": "https://esp32s3.com/tinys3.html"
     },
     "waveshare-esp32-s3-rlcd-42": {
       "board": "waveshare-esp32-s3-rlcd-42",
-      "expires": "2026-12-05T10:00:33.393246+00:00",
+      "expires": "2026-12-05T11:00:32.872748+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -1187,7 +1187,7 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-28T10:00:33.393246+00:00",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00",
       "url": "https://docs.waveshare.com/ESP32-S3-RLCD-4.2"
     },
     "xiao-esp32c3": {
