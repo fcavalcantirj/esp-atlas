@@ -6,6 +6,7 @@ name: StickC
 soc: esp32
 aka:
 - M5Stick v1.1
+getting_started: https://docs.m5stack.com/en/core/m5stickc
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/m5stickc
@@ -13,6 +14,9 @@ sources:
 - field: aka
   url: https://github.com/7h30th3r0n3/Evil-M5Project#readme
   verified: '2026-09-21'
+- field: getting_started
+  url: https://docs.m5stack.com/en/core/m5stickc
+  verified: '2026-11-28'
 ---
 
 # StickC
