@@ -1,0 +1,68 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-11-28",
+ "notes": [],
+ "ref": "main",
+ "repo": "drivedeck/xadas-hud-link",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "xadas-hud-cyd",
+   "xadas-hud-es3c28p",
+   "xadas-hud-esp32c3-round",
+   "xadas-hud-tdisplay-s3"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "xadas-hud-cyd-1.1.0.bin",
+    "release": "v1.1.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "xadas-hud-cyd",
+   "url": "https://github.com/drivedeck/xadas-hud-link/releases/download/v1.1.0/xadas-hud-cyd-1.1.0.bin"
+  },
+  {
+   "extra": {
+    "asset": "xadas-hud-es3c28p-1.1.0.bin",
+    "release": "v1.1.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "xadas-hud-es3c28p",
+   "url": "https://github.com/drivedeck/xadas-hud-link/releases/download/v1.1.0/xadas-hud-es3c28p-1.1.0.bin"
+  },
+  {
+   "extra": {
+    "asset": "xadas-hud-esp32c3-round-1.1.0.bin",
+    "release": "v1.1.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "xadas-hud-esp32c3-round",
+   "url": "https://github.com/drivedeck/xadas-hud-link/releases/download/v1.1.0/xadas-hud-esp32c3-round-1.1.0.bin"
+  },
+  {
+   "extra": {
+    "asset": "xadas-hud-tdisplay-s3-1.1.0.bin",
+    "release": "v1.1.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "xadas-hud-tdisplay-s3",
+   "url": "https://github.com/drivedeck/xadas-hud-link/releases/download/v1.1.0/xadas-hud-tdisplay-s3-1.1.0.bin"
+  }
+ ]
+}

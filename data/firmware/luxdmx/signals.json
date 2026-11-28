@@ -1,0 +1,202 @@
+{
+ "calls": 7,
+ "errors": 0,
+ "fetched": "2026-11-28",
+ "notes": [
+  "latest release None has no binaries; read v1.0.308 instead"
+ ],
+ "ref": "master",
+ "repo": "tombueng/LuxDMX",
+ "resolved": {
+  "boards": [
+   "esp32-s3-devkitc-1"
+  ],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "bootloader-esp32s3",
+   "bootloader-esp32s3-psram",
+   "bootloader-wt32eth01",
+   "esp32-s3-devkitc1-n16r8",
+   "esp32dev",
+   "firmware-esp32s3",
+   "firmware-esp32s3-psram",
+   "firmware-wt32eth01",
+   "partitions-esp32s3",
+   "partitions-esp32s3-psram",
+   "partitions-wt32eth01",
+   "wt32-eth01"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "bootloader-esp32s3-psram.bin",
+    "release": "v1.0.308"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "bootloader-esp32s3-psram",
+   "url": "https://github.com/tombueng/LuxDMX/releases/download/v1.0.308/bootloader-esp32s3-psram.bin"
+  },
+  {
+   "extra": {
+    "asset": "bootloader-esp32s3.bin",
+    "release": "v1.0.308"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "bootloader-esp32s3",
+   "url": "https://github.com/tombueng/LuxDMX/releases/download/v1.0.308/bootloader-esp32s3.bin"
+  },
+  {
+   "extra": {
+    "asset": "bootloader-wt32eth01.bin",
+    "release": "v1.0.308"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "bootloader-wt32eth01",
+   "url": "https://github.com/tombueng/LuxDMX/releases/download/v1.0.308/bootloader-wt32eth01.bin"
+  },
+  {
+   "extra": {
+    "asset": "firmware-esp32s3-psram.bin",
+    "release": "v1.0.308"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "firmware-esp32s3-psram",
+   "url": "https://github.com/tombueng/LuxDMX/releases/download/v1.0.308/firmware-esp32s3-psram.bin"
+  },
+  {
+   "extra": {
+    "asset": "firmware-esp32s3.bin",
+    "release": "v1.0.308"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "firmware-esp32s3",
+   "url": "https://github.com/tombueng/LuxDMX/releases/download/v1.0.308/firmware-esp32s3.bin"
+  },
+  {
+   "extra": {
+    "asset": "firmware-wt32eth01.bin",
+    "release": "v1.0.308"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "firmware-wt32eth01",
+   "url": "https://github.com/tombueng/LuxDMX/releases/download/v1.0.308/firmware-wt32eth01.bin"
+  },
+  {
+   "extra": {
+    "asset": "partitions-esp32s3-psram.bin",
+    "release": "v1.0.308"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "partitions-esp32s3-psram",
+   "url": "https://github.com/tombueng/LuxDMX/releases/download/v1.0.308/partitions-esp32s3-psram.bin"
+  },
+  {
+   "extra": {
+    "asset": "partitions-esp32s3.bin",
+    "release": "v1.0.308"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "partitions-esp32s3",
+   "url": "https://github.com/tombueng/LuxDMX/releases/download/v1.0.308/partitions-esp32s3.bin"
+  },
+  {
+   "extra": {
+    "asset": "partitions-wt32eth01.bin",
+    "release": "v1.0.308"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "partitions-wt32eth01",
+   "url": "https://github.com/tombueng/LuxDMX/releases/download/v1.0.308/partitions-wt32eth01.bin"
+  },
+  {
+   "extra": {
+    "env": "esp32dev",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 69,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/tombueng/LuxDMX/blob/master/platformio.ini#L69"
+  },
+  {
+   "extra": {
+    "env": "esp32s3dev",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 83,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/tombueng/LuxDMX/blob/master/platformio.ini#L83"
+  },
+  {
+   "extra": {
+    "env": "wt32eth01",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 118,
+   "rank": 2,
+   "soc": null,
+   "token": "wt32-eth01",
+   "url": "https://github.com/tombueng/LuxDMX/blob/master/platformio.ini#L118"
+  },
+  {
+   "extra": {
+    "env": "esp32s3_psram",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 157,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc1-n16r8",
+   "url": "https://github.com/tombueng/LuxDMX/blob/master/platformio.ini#L157"
+  },
+  {
+   "extra": {
+    "env": "luxdmx_carrier",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 157,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc1-n16r8",
+   "url": "https://github.com/tombueng/LuxDMX/blob/master/platformio.ini#L157"
+  }
+ ]
+}
