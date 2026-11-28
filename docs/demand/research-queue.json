@@ -205,6 +205,37 @@
    "closed_on": "2026-11-08",
    "snapshot": "docs/demand/2026-11-07.json"
   },
+  "marauders esp": {
+   "term": "marauders esp",
+   "status": "closed",
+   "source": "gsc_query",
+   "first_seen": "2026-11-27",
+   "last_seen": "2026-11-27",
+   "window": {
+    "start": "2026-10-29",
+    "end": "2026-11-25"
+   },
+   "metrics": {
+    "impressions": 11,
+    "position": 13.2
+   },
+   "linked_work": [],
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-27",
+     "resolution": "rejected",
+     "work": "b3d7b58e692b9985",
+     "reason": "already catalogued as esp32marauder: 'marauders esp' is the ESP32 Marauder firmware (https://github.com/justcallmekoko/ESP32Marauder, 'A suite of WiFi/Bluetooth offensive and defensive tools for the ESP32'), recorded at data/firmware/esp32marauder and the query's own landing page https://esp-atlas.com/firmware/esp32marauder; not a distinct board"
+    }
+   ],
+   "outcome": {
+    "status": "rejected",
+    "reason": "already catalogued as esp32marauder: 'marauders esp' is the ESP32 Marauder firmware (https://github.com/justcallmekoko/ESP32Marauder, 'A suite of WiFi/Bluetooth offensive and defensive tools for the ESP32'), recorded at data/firmware/esp32marauder and the query's own landing page https://esp-atlas.com/firmware/esp32marauder; not a distinct board"
+   },
+   "closed_on": "2026-11-27",
+   "snapshot": "docs/demand/2026-11-27.json"
+  },
   "pam-0fb4ec9f138e2a6f989bcb03": {
    "term": "Arduino Nano ESP32",
    "source": "pam_feed",
@@ -2054,37 +2085,6 @@
    },
    "closed_on": "2026-11-10",
    "snapshot": "docs/demand/2026-11-10.json"
-  },
-  "marauders esp": {
-   "term": "marauders esp",
-   "status": "closed",
-   "source": "gsc_query",
-   "first_seen": "2026-11-27",
-   "last_seen": "2026-11-27",
-   "window": {
-    "start": "2026-10-29",
-    "end": "2026-11-25"
-   },
-   "metrics": {
-    "impressions": 11,
-    "position": 13.2
-   },
-   "linked_work": [],
-   "history": [
-    {
-     "event": "closed",
-     "date": "2026-11-27",
-     "resolution": "rejected",
-     "work": "b3d7b58e692b9985",
-     "reason": "already catalogued as esp32marauder: 'marauders esp' is the ESP32 Marauder firmware (https://github.com/justcallmekoko/ESP32Marauder, 'A suite of WiFi/Bluetooth offensive and defensive tools for the ESP32'), recorded at data/firmware/esp32marauder and the query's own landing page https://esp-atlas.com/firmware/esp32marauder; not a distinct board"
-    }
-   ],
-   "outcome": {
-    "status": "rejected",
-    "reason": "already catalogued as esp32marauder: 'marauders esp' is the ESP32 Marauder firmware (https://github.com/justcallmekoko/ESP32Marauder, 'A suite of WiFi/Bluetooth offensive and defensive tools for the ESP32'), recorded at data/firmware/esp32marauder and the query's own landing page https://esp-atlas.com/firmware/esp32marauder; not a distinct board"
-   },
-   "closed_on": "2026-11-27",
-   "snapshot": "docs/demand/2026-11-27.json"
   }
  }
 }

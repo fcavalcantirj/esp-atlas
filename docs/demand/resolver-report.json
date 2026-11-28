@@ -1,6 +1,6 @@
 {
  "version": 1,
- "date": "2026-11-27",
+ "date": "2026-11-28",
  "complete": true,
  "records": [
   {
@@ -126,30 +126,6 @@
    "ranks_poorly": 0
   },
   {
-   "vendor": "m5stack",
-   "field": "download_mode",
-   "missing": 14,
-   "records": 20,
-   "boards": [
-    "m5atom-lite",
-    "m5atoms3",
-    "m5atoms3-lite",
-    "m5cardputer",
-    "m5nanoc6",
-    "m5stack-core",
-    "m5stack-core-aws",
-    "m5stack-core2",
-    "m5stack-cores3-se",
-    "m5stack-fire",
-    "m5stamp-c3",
-    "m5stick-c",
-    "m5stick-cplus",
-    "m5stick-cplus2"
-   ],
-   "demand_impressions": 0,
-   "ranks_poorly": 0
-  },
-  {
    "vendor": "adafruit",
    "field": "dimensions_mm",
    "missing": 13,
@@ -174,8 +150,31 @@
   },
   {
    "vendor": "m5stack",
-   "field": "usb_serial",
+   "field": "download_mode",
    "missing": 13,
+   "records": 20,
+   "boards": [
+    "m5atom-lite",
+    "m5atoms3",
+    "m5atoms3-lite",
+    "m5cardputer",
+    "m5nanoc6",
+    "m5stack-core",
+    "m5stack-core-aws",
+    "m5stack-core2",
+    "m5stack-fire",
+    "m5stamp-c3",
+    "m5stick-c",
+    "m5stick-cplus",
+    "m5stick-cplus2"
+   ],
+   "demand_impressions": 0,
+   "ranks_poorly": 0
+  },
+  {
+   "vendor": "m5stack",
+   "field": "usb_serial",
+   "missing": 12,
    "records": 20,
    "boards": [
     "m5atom-lite",
@@ -185,7 +184,6 @@
     "m5stack-core",
     "m5stack-core-aws",
     "m5stack-cores3",
-    "m5stack-cores3-se",
     "m5stack-fire",
     "m5stamp-s3",
     "m5stick-c",
@@ -422,22 +420,6 @@
     "lolin-s2-mini",
     "lolin-s3",
     "lolin-s3-mini"
-   ],
-   "demand_impressions": 0,
-   "ranks_poorly": 0
-  },
-  {
-   "vendor": "m5stack",
-   "field": "getting_started",
-   "missing": 6,
-   "records": 20,
-   "boards": [
-    "m5stack-core",
-    "m5stack-core-aws",
-    "m5stack-cores3-se",
-    "m5stack-fire",
-    "m5stick-c",
-    "m5stick-cplus"
    ],
    "demand_impressions": 0,
    "ranks_poorly": 0
@@ -798,7 +780,7 @@
  ],
  "counts": {
   "vendors": 16,
-  "gaps": 46,
-  "boards_missing_total": 332
+  "gaps": 45,
+  "boards_missing_total": 324
  }
 }
