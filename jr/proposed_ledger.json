@@ -856,11 +856,11 @@
     },
     "beacons": {
       "id": "beacons",
-      "pr_ref": null,
+      "pr_ref": "#2189",
       "repo": "soyboitech/beacons",
       "repo_id": 1268072513,
-      "status": "proposed",
-      "timestamp": "2026-11-28T09:00:39.811039+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
     },
     "beamstalker": {
       "expires": "2026-12-05T20:00:59.980852+00:00",
@@ -4179,7 +4179,7 @@
       "pr_ref": "#2098",
       "repo": "martin-ger/esp32_nat_router",
       "status": "proposed",
-      "timestamp": "2026-11-28T09:00:39.811039+00:00"
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
     },
     "esp32-navigation": {
       "expires": "2026-12-16T05:00:31.772256+00:00",
@@ -16581,6 +16581,14 @@
       "status": "rejected",
       "timestamp": "2026-11-27T03:00:33.160697+00:00"
     },
+    "maptastic": {
+      "expires": "2026-12-28T10:00:33.393246+00:00",
+      "id": "maptastic",
+      "pr_ref": null,
+      "repo": "clats97/maptastic",
+      "status": "seen",
+      "timestamp": "2026-11-28T10:00:33.393246+00:00"
+    },
     "marauder-0-13-6-for-m5stickcplus2": {
       "expires": "2026-12-01T07:00:33.225443+00:00",
       "id": "marauder-0-13-6-for-m5stickcplus2",
@@ -17598,7 +17606,7 @@
       "pr_ref": "#2101",
       "repo": "forged-in-feathers-technology/observore",
       "status": "proposed",
-      "timestamp": "2026-11-28T09:00:39.811039+00:00"
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
     },
     "oddlings": {
       "id": "oddlings",
@@ -19891,6 +19899,15 @@
       "status": "rejected",
       "timestamp": "2026-11-27T11:00:32.872945+00:00"
     },
+    "repo-note:blakadder/zigbee": {
+      "expires": "2026-12-28T11:00:32.872748+00:00",
+      "id": "repo-note:blakadder/zigbee",
+      "pr_ref": null,
+      "reason": "stopword_name: 'zigbee' names a radio, not a firmware",
+      "repo": "blakadder/zigbee",
+      "status": "rejected",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
+    },
     "repo-note:blebarak/purple-face-watcher": {
       "expires": "2026-12-25T14:00:39.942222+00:00",
       "id": "repo-note:blebarak/purple-face-watcher",
@@ -20692,6 +20709,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T09:00:33.766355+00:00"
     },
+    "repo-note:domi04151309/homeapp": {
+      "expires": "2026-12-28T11:00:32.872748+00:00",
+      "id": "repo-note:domi04151309/homeapp",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'framework'",
+      "repo": "domi04151309/homeapp",
+      "status": "rejected",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
+    },
     "repo-note:douglaszuqueto/esp32-arduino-component": {
       "expires": "2026-12-22T04:00:33.436471+00:00",
       "id": "repo-note:douglaszuqueto/esp32-arduino-component",
@@ -20727,6 +20753,15 @@
       "repo": "dronebridge/esp32",
       "status": "rejected",
       "timestamp": "2026-11-17T19:00:32.203883+00:00"
+    },
+    "repo-note:drozmotix/iobroker.wled": {
+      "expires": "2026-12-28T10:00:33.393246+00:00",
+      "id": "repo-note:drozmotix/iobroker.wled",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "drozmotix/iobroker.wled",
+      "status": "rejected",
+      "timestamp": "2026-11-28T10:00:33.393246+00:00"
     },
     "repo-note:dudanov/iot-uni-dongle": {
       "expires": "2026-12-18T11:00:31.972357+00:00",
@@ -21286,6 +21321,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T09:00:33.766355+00:00"
     },
+    "repo-note:gabrielprat/jellyfin-ambilight": {
+      "expires": "2026-12-28T10:00:33.393246+00:00",
+      "id": "repo-note:gabrielprat/jellyfin-ambilight",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'library'",
+      "repo": "gabrielprat/jellyfin-ambilight",
+      "status": "rejected",
+      "timestamp": "2026-11-28T10:00:33.393246+00:00"
+    },
     "repo-note:galusperes/hometiles": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
       "id": "repo-note:galusperes/hometiles",
@@ -21628,6 +21672,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T17:00:31.748345+00:00"
     },
+    "repo-note:hassio-addons/app-tasmoadmin": {
+      "expires": "2026-12-28T11:00:32.872748+00:00",
+      "id": "repo-note:hassio-addons/app-tasmoadmin",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "hassio-addons/app-tasmoadmin",
+      "status": "rejected",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
+    },
     "repo-note:headblockhead/metronome": {
       "expires": "2027-02-20T09:00:33.493208+00:00",
       "id": "repo-note:headblockhead/metronome",
@@ -21672,6 +21725,15 @@
       "repo": "heltecautomation/platform-asrmicro650x",
       "status": "rejected",
       "timestamp": "2026-11-17T09:00:32.446822+00:00"
+    },
+    "repo-note:henne49/dbus-opendtu": {
+      "expires": "2026-12-28T11:00:32.872748+00:00",
+      "id": "repo-note:henne49/dbus-opendtu",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "henne49/dbus-opendtu",
+      "status": "rejected",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
     },
     "repo-note:henrique-1/openair-aqstation": {
       "expires": "2026-12-27T04:00:33.280906+00:00",
@@ -22257,6 +22319,15 @@
       "repo": "joelbaby/esp32-oled-animated-faces",
       "status": "rejected",
       "timestamp": "2026-11-25T14:00:39.942222+00:00"
+    },
+    "repo-note:joeltelling/hexhive": {
+      "expires": "2026-12-28T10:00:33.393246+00:00",
+      "id": "repo-note:joeltelling/hexhive",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "joeltelling/hexhive",
+      "status": "rejected",
+      "timestamp": "2026-11-28T10:00:33.393246+00:00"
     },
     "repo-note:joengenduvel/espwv32": {
       "expires": "2026-12-17T05:00:31.748945+00:00",
@@ -23563,6 +23634,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T17:00:31.748345+00:00"
     },
+    "repo-note:mdzio/ccu-jack": {
+      "expires": "2026-12-28T11:00:32.872748+00:00",
+      "id": "repo-note:mdzio/ccu-jack",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "mdzio/ccu-jack",
+      "status": "rejected",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
+    },
     "repo-note:mecp-org/mecp": {
       "expires": "2026-12-25T10:00:33.219895+00:00",
       "id": "repo-note:mecp-org/mecp",
@@ -23796,6 +23876,15 @@
       "repo": "monescuteodor/blocky-os-v7.6",
       "status": "rejected",
       "timestamp": "2026-11-18T12:00:31.958773+00:00"
+    },
+    "repo-note:moonmodules/moonlight": {
+      "expires": "2026-12-28T10:00:33.393246+00:00",
+      "id": "repo-note:moonmodules/moonlight",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "moonmodules/moonlight",
+      "status": "rejected",
+      "timestamp": "2026-11-28T10:00:33.393246+00:00"
     },
     "repo-note:mor1k/irbis-ir": {
       "expires": "2026-12-17T12:00:31.695549+00:00",
@@ -24040,6 +24129,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T12:00:31.695549+00:00"
     },
+    "repo-note:njh/sonoff-ota-flash-cli": {
+      "expires": "2026-12-28T11:00:32.872748+00:00",
+      "id": "repo-note:njh/sonoff-ota-flash-cli",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "njh/sonoff-ota-flash-cli",
+      "status": "rejected",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
+    },
     "repo-note:nkolban/esp32-snippets": {
       "expires": "2026-12-26T00:00:33.415656+00:00",
       "id": "repo-note:nkolban/esp32-snippets",
@@ -24138,6 +24236,15 @@
       "repo": "nrf24/rf24",
       "status": "rejected",
       "timestamp": "2026-11-19T15:00:33.556715+00:00"
+    },
+    "repo-note:ntalekt/homeassistant": {
+      "expires": "2026-12-28T11:00:32.872748+00:00",
+      "id": "repo-note:ntalekt/homeassistant",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "ntalekt/homeassistant",
+      "status": "rejected",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
     },
     "repo-note:nu31hackerspace/prismo": {
       "expires": "2026-12-26T01:00:33.067521+00:00",
@@ -24994,6 +25101,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T10:00:31.757324+00:00"
     },
+    "repo-note:reserve85/hoymileszeroexport": {
+      "expires": "2026-12-28T11:00:32.872748+00:00",
+      "id": "repo-note:reserve85/hoymileszeroexport",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "reserve85/hoymileszeroexport",
+      "status": "rejected",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
+    },
     "repo-note:retro-esp32/retroesp32": {
       "expires": "2026-12-17T19:00:32.203883+00:00",
       "id": "repo-note:retro-esp32/retroesp32",
@@ -25029,6 +25145,15 @@
       "repo": "rikodev/litescope",
       "status": "rejected",
       "timestamp": "2026-11-19T10:00:34.922574+00:00"
+    },
+    "repo-note:ritwickverma/tizenambilight": {
+      "expires": "2026-12-28T10:00:33.393246+00:00",
+      "id": "repo-note:ritwickverma/tizenambilight",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "ritwickverma/tizenambilight",
+      "status": "rejected",
+      "timestamp": "2026-11-28T10:00:33.393246+00:00"
     },
     "repo-note:rmh78/no2-measurement": {
       "expires": "2026-12-18T09:00:32.863482+00:00",
@@ -25173,6 +25298,15 @@
       "repo": "rust-embedded-community/epd-waveshare",
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
+    },
+    "repo-note:rusty4444/ha-lightfx": {
+      "expires": "2026-12-28T10:00:33.393246+00:00",
+      "id": "repo-note:rusty4444/ha-lightfx",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "rusty4444/ha-lightfx",
+      "status": "rejected",
+      "timestamp": "2026-11-28T10:00:33.393246+00:00"
     },
     "repo-note:rwaldron/johnny-five": {
       "expires": "2026-12-17T15:00:33.111992+00:00",
@@ -25723,6 +25857,15 @@
       "status": "rejected",
       "timestamp": "2026-11-28T02:00:33.114600+00:00"
     },
+    "repo-note:soif/espbuddy": {
+      "expires": "2026-12-28T10:00:33.393246+00:00",
+      "id": "repo-note:soif/espbuddy",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'Wrapper'",
+      "repo": "soif/espbuddy",
+      "status": "rejected",
+      "timestamp": "2026-11-28T10:00:33.393246+00:00"
+    },
     "repo-note:solid-droid/bubbleos": {
       "expires": "2026-12-24T07:00:33.225443+00:00",
       "id": "repo-note:solid-droid/bubbleos",
@@ -26110,6 +26253,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T14:00:32.325670+00:00"
     },
+    "repo-note:stanleyondrus/ledboxv2": {
+      "expires": "2026-12-28T10:00:33.393246+00:00",
+      "id": "repo-note:stanleyondrus/ledboxv2",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "stanleyondrus/ledboxv2",
+      "status": "rejected",
+      "timestamp": "2026-11-28T10:00:33.393246+00:00"
+    },
     "repo-note:stanleyondrus/reterminalem": {
       "expires": "2026-12-25T21:00:33.420028+00:00",
       "id": "repo-note:stanleyondrus/reterminalem",
@@ -26235,6 +26387,24 @@
       "repo": "tasmoadmin/tasmoadmin",
       "status": "rejected",
       "timestamp": "2026-11-27T11:00:32.872945+00:00"
+    },
+    "repo-note:tasmota/decode-config": {
+      "expires": "2026-12-28T11:00:32.872748+00:00",
+      "id": "repo-note:tasmota/decode-config",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "tasmota/decode-config",
+      "status": "rejected",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
+    },
+    "repo-note:tasmota/docs": {
+      "expires": "2026-12-28T11:00:32.872748+00:00",
+      "id": "repo-note:tasmota/docs",
+      "pr_ref": null,
+      "reason": "described_port_of_catalogued: description links arendst/tasmota",
+      "repo": "tasmota/docs",
+      "status": "rejected",
+      "timestamp": "2026-11-28T11:00:32.872748+00:00"
     },
     "repo-note:tasmota/install": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
@@ -26694,6 +26864,15 @@
       "repo": "undedinside/duckyscriptpayloads",
       "status": "rejected",
       "timestamp": "2026-11-19T13:00:31.983678+00:00"
+    },
+    "repo-note:upioneer/wledashboard": {
+      "expires": "2026-12-28T10:00:33.393246+00:00",
+      "id": "repo-note:upioneer/wledashboard",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "upioneer/wledashboard",
+      "status": "rejected",
+      "timestamp": "2026-11-28T10:00:33.393246+00:00"
     },
     "repo-note:v-cu/dpf-load-monitor-wide": {
       "expires": "2026-12-26T03:00:32.957094+00:00",
@@ -30515,6 +30694,7 @@
     "blackhole1/passportsim": "repo-note:blackhole1/passportsim",
     "blackymas/nspanel_ha_blueprint": "repo-note:blackymas/nspanel_ha_blueprint",
     "blakadder/templates": "repo-note:blakadder/templates",
+    "blakadder/zigbee": "repo-note:blakadder/zigbee",
     "blamouche/cardputer-dwight": "cardputer-dwight",
     "blebarak/purple-face-watcher": "repo-note:blebarak/purple-face-watcher",
     "blinker-iot/blinker-library": "repo-note:blinker-iot/blinker-library",
@@ -30618,6 +30798,7 @@
     "ciniml/openai-realtime-embedded-sdk": "openai-realtime-embedded-sdk",
     "ciniml/serial_wifi_logger": "serial-wifi-logger",
     "clackups/draftling": "draftling",
+    "clats97/maptastic": "maptastic",
     "claudemarais/gps_tracking_cat_collar_xiao_esp32-c3": "gps-tracking-cat-collar-xiao-esp32-c3",
     "clemenselflein/openmower": "repo-note:clemenselflein/openmower",
     "cmd": "cmd",
@@ -30808,6 +30989,7 @@
     "dmellok/meshssi": "repo-note:dmellok/meshssi",
     "dmohammed/lcd_touch_lcdwiki": "repo-note:dmohammed/lcd_touch_lcdwiki",
     "dmoibm/lorawan_bme280_thp": "repo-note:dmoibm/lorawan_bme280_thp",
+    "domi04151309/homeapp": "repo-note:domi04151309/homeapp",
     "dominicklee/3d-print-bed-leveler": "3d-print-bed-leveler",
     "douglasrubims/cardputer-barcode-wedge": "cardputer-barcode-wedge",
     "douglaszuqueto/esp32-arduino-component": "repo-note:douglaszuqueto/esp32-arduino-component",
@@ -30819,6 +31001,7 @@
     "drew-alleman/powershell-backdoor-generator": "repo-note:drew-alleman/powershell-backdoor-generator",
     "drivedeck/xadas-hud-link": "xadas-hud-link",
     "dronebridge/esp32": "repo-note:dronebridge/esp32",
+    "drozmotix/iobroker.wled": "repo-note:drozmotix/iobroker.wled",
     "drrhesus/rhesus-life": "rhesus-life",
     "drrhesus/rhesus-radio-v3": "rhesus-radio-v3",
     "drw41823/pocket-studio-cardputer-adv": "pocket-studio-cardputer-adv",
@@ -30978,6 +31161,7 @@
     "fwz233-re/m5claw": "m5claw",
     "g-hostproxy/cardputerremote": "cardputerremote",
     "g4lile0/esp32-wifi-hash-monster": "esp32-wifi-hash-monster",
+    "gabrielprat/jellyfin-ambilight": "repo-note:gabrielprat/jellyfin-ambilight",
     "gahingwoo/cyd-stream-deck": "cyd-stream-deck",
     "galusperes/hometiles": "repo-note:galusperes/hometiles",
     "galusperes/hometiles-bridge": "repo-note:galusperes/hometiles-bridge",
@@ -31091,6 +31275,7 @@
     "hardcoreerik/orcdial": "orcdial",
     "hardcoreerik/orcsdr": "orcsdr",
     "haris16-code/kryonos": "kryonos",
+    "hassio-addons/app-tasmoadmin": "repo-note:hassio-addons/app-tasmoadmin",
     "haswitchplate/openhasp": "openhasp",
     "headblockhead/metronome": "repo-note:headblockhead/metronome",
     "hedykan/feiyuos": "feiyuos",
@@ -31100,6 +31285,7 @@
     "heltecautomation/cubecell-arduino": "repo-note:heltecautomation/cubecell-arduino",
     "heltecautomation/platform-asrmicro650x": "repo-note:heltecautomation/platform-asrmicro650x",
     "hengmyj/xiaozhi-adv-car": "xiaozhi-adv-car",
+    "henne49/dbus-opendtu": "repo-note:henne49/dbus-opendtu",
     "henrique-1/openair-aqstation": "repo-note:henrique-1/openair-aqstation",
     "henriquesebastiao/saturn": "saturn",
     "henryoyoto/henryoyoto.github.io": "repo-note:henryoyoto/henryoyoto.github.io",
@@ -31264,6 +31450,7 @@
     "joejee90/cardputer-camera-companion": "cardputer-camera-companion",
     "joejee90/tiny-journal": "tiny-journal",
     "joelbaby/esp32-oled-animated-faces": "repo-note:joelbaby/esp32-oled-animated-faces",
+    "joeltelling/hexhive": "repo-note:joeltelling/hexhive",
     "joengenduvel/espwv32": "repo-note:joengenduvel/espwv32",
     "johannesl2/esp32-c6-temp-monitor": "repo-note:johannesl2/esp32-c6-temp-monitor",
     "john-odell/esp32-p4-rtl-sdr": "repo-note:john-odell/esp32-p4-rtl-sdr",
@@ -32481,6 +32668,7 @@
     "mcorts/meteoestacionlora": "repo-note:mcorts/meteoestacionlora",
     "mcuw/esp32-template": "esp32-template",
     "mcuw/esp32-thread-br": "repo-note:mcuw/esp32-thread-br",
+    "mdzio/ccu-jack": "repo-note:mdzio/ccu-jack",
     "mecp-org/mecp": "repo-note:mecp-org/mecp",
     "medialabuniovi/iot_airquality_drone": "repo-note:medialabuniovi/iot_airquality_drone",
     "medialabuniovi/iot_cooper": "repo-note:medialabuniovi/iot_cooper",
@@ -32549,6 +32737,7 @@
     "mongonta0716/stackchan_mic": "stackchan-mic",
     "moo93egy/cardping_multi.git": "cardping-multi",
     "moo93egy/cardputer_mp3_adv.git": "cardputer-mp3-adv",
+    "moonmodules/moonlight": "repo-note:moonmodules/moonlight",
     "mor1k/ibutton-firmware-for-m5-stickc-plus2": "ibutton-firmware-for-m5-stickc-plus2",
     "mor1k/irbis-ir": "repo-note:mor1k/irbis-ir",
     "moskic/cardputer-adv-recorder": "cardputer-adv-recorder",
@@ -32626,6 +32815,7 @@
     "nishad2m8/pip-boy-weather-clock": "pip-boy-weather-clock",
     "nishad2m8/wled-cardputer": "wled-cardputer",
     "nishad2m8/x-mas-tree-animated-gif": "x-mas-tree-animated-gif",
+    "njh/sonoff-ota-flash-cli": "repo-note:njh/sonoff-ota-flash-cli",
     "nkolban/esp32-snippets": "repo-note:nkolban/esp32-snippets",
     "nmicic/urtb": "repo-note:nmicic/urtb",
     "nmrr/flipperzero-geigercounter": "repo-note:nmrr/flipperzero-geigercounter",
@@ -32658,6 +32848,7 @@
     "nopnop2002/esp-idf-ultrasonic": "esp-idf-ultrasonic",
     "nrf24/rf24": "repo-note:nrf24/rf24",
     "ns96/cardputermictalk": "cardputermictalk",
+    "ntalekt/homeassistant": "repo-note:ntalekt/homeassistant",
     "nu31hackerspace/prismo": "repo-note:nu31hackerspace/prismo",
     "nullbeing/magpie-buddy": "magpie-buddy",
     "nullbeing/raincity-m5stack-cores3": "raincity-m5stack-cores3",
@@ -32858,6 +33049,7 @@
     "renbrant/meshcrossway": "repo-note:renbrant/meshcrossway",
     "rennancockles/m5-amiibolink": "m5-amiibolink",
     "rennancockles/m5-chameleon-ultra": "m5-chameleon-ultra",
+    "reserve85/hoymileszeroexport": "repo-note:reserve85/hoymileszeroexport",
     "retiredwizard/pydos": "pydos",
     "retr0kr0dy/non-magical-csi": "non-magical-csi",
     "retr0kr0dy/tab5-launchpad": "tab5-launchpad",
@@ -32872,6 +33064,7 @@
     "rikodev/litescope": "repo-note:rikodev/litescope",
     "rin-ofumi/wisun_arduino": "wisun-arduino",
     "risinek/esp32-wifi-penetration-too": "esp32-wifi-penetration-too",
+    "ritwickverma/tizenambilight": "repo-note:ritwickverma/tizenambilight",
     "riviarammer/m5term": "m5term",
     "riviarammer/m5wsjtx": "m5wsjtx",
     "rlee203/cardputeros.git": "cardputeros",
@@ -32910,6 +33103,7 @@
     "russhughes/thmi_py": "repo-note:russhughes/thmi_py",
     "russoz87/hourglass_adv": "hourglass-adv",
     "rust-embedded-community/epd-waveshare": "repo-note:rust-embedded-community/epd-waveshare",
+    "rusty4444/ha-lightfx": "repo-note:rusty4444/ha-lightfx",
     "ruvnet/ruview": "ruview",
     "rwaldron/johnny-five": "repo-note:rwaldron/johnny-five",
     "ry-ops/liner": "liner",
@@ -33036,6 +33230,7 @@
     "soe6/aethertone": "aethertone",
     "sohtamei/crcmd.qrcode2": "crcmd-qrcode2",
     "sohtamei/crcmd.tab5": "crcmd-tab5",
+    "soif/espbuddy": "repo-note:soif/espbuddy",
     "solid-droid/bubbleos": "repo-note:solid-droid/bubbleos",
     "solitary-dev-50/jishi-s3-open-source": "repo-note:solitary-dev-50/jishi-s3-open-source",
     "sonys9/antievilportal": "antievilportal",
@@ -33100,6 +33295,7 @@
     "stack-chan/stack-chan": "stack-chan",
     "stanleychanh/mcp2xiaozhi": "repo-note:stanleychanh/mcp2xiaozhi",
     "stanleychanh/xiaozhiflash": "repo-note:stanleychanh/xiaozhiflash",
+    "stanleyondrus/ledboxv2": "repo-note:stanleyondrus/ledboxv2",
     "stanleyondrus/reterminalem": "repo-note:stanleyondrus/reterminalem",
     "stego-lab/espflash": "repo-note:stego-lab/espflash",
     "steveatinfincia/circuitpython": "repo-note:steveatinfincia/circuitpython",
@@ -33139,6 +33335,8 @@
     "taraskad3o/m5stack-atoms3-ble-remote-for-canon": "m5stack-atoms3-ble-remote-for-canon",
     "taraskad3o/sticks3-canonremote": "sticks3-canonremote",
     "tasmoadmin/tasmoadmin": "repo-note:tasmoadmin/tasmoadmin",
+    "tasmota/decode-config": "repo-note:tasmota/decode-config",
+    "tasmota/docs": "repo-note:tasmota/docs",
     "tasmota/install": "repo-note:tasmota/install",
     "tasmota/tasmotizer": "repo-note:tasmota/tasmotizer",
     "tavden/tavden-field-suite": "tavden-field-suite",
@@ -33253,6 +33451,7 @@
     "unizersion/orbit-drum.git": "orbit-drum",
     "unizersion/tab5-launcher.git": "tab5-launcher",
     "unkyulee/micro-journal": "micro-journal",
+    "upioneer/wledashboard": "repo-note:upioneer/wledashboard",
     "urieldeveloper/spaceu-cardcomm": "spaceu-cardcomm",
     "urtubia/miniacid": "miniacid",
     "usachevip/marauderstudio": "marauderstudio",
